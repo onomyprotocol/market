@@ -14,6 +14,20 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
 
+		PoolList: []types.Pool{
+			{
+				Pair:   "0",
+				Denom1: "0",
+				Denom2: "0",
+				Leader: "0",
+			},
+			{
+				Pair:   "1",
+				Denom1: "1",
+				Denom2: "1",
+				Leader: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -25,5 +39,6 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
 
+	require.ElementsMatch(t, genesisState.PoolList, got.PoolList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -19,12 +19,46 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
+				PoolList: []types.Pool{
+					{
+						Pair:   "0",
+						Denom1: "0",
+						Denom2: "0",
+						Leader: "0",
+					},
+					{
+						Pair:   "1",
+						Denom1: "1",
+						Denom2: "1",
+						Leader: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated pool",
+			genState: &types.GenesisState{
+				PoolList: []types.Pool{
+					{
+						Pair:   "0",
+						Denom1: "0",
+						Denom2: "0",
+						Leader: "0",
+					},
+					{
+						Pair:   "0",
+						Denom1: "0",
+						Denom2: "0",
+						Leader: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
