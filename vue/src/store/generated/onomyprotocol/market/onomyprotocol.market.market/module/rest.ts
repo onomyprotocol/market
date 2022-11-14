@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type MarketMsgCreatePoolResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */
