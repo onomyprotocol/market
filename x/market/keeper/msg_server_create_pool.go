@@ -49,6 +49,18 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Burnings: "0",
 	}
 
+	// Create the uid
+	count := k.GetUidCount(ctx)
+
+	var drop = types.Drop{
+		Uid:    count,
+		Owner:  msg.Creator,
+		Pair:   pair,
+		Drops:  drops,
+		Sum:    drops,
+		Active: true,
+	}
+
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
@@ -64,6 +76,15 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		ctx,
 		pool,
 	)
+
+	// Add the drop to the keeper
+	k.SetDrop(
+		ctx,
+		drop,
+	)
+
+	// Update drop uid count
+	k.SetUidCount(ctx, count+1)
 
 	return &types.MsgCreatePoolResponse{}, nil
 }
