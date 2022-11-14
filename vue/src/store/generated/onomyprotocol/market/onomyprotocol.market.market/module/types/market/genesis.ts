@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { Params } from "../market/params";
 import { Pool } from "../market/pool";
+import { Drop } from "../market/drop";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "onomyprotocol.market.market";
@@ -8,8 +9,9 @@ export const protobufPackage = "onomyprotocol.market.market";
 /** GenesisState defines the market module's genesis state. */
 export interface GenesisState {
   params: Params | undefined;
-  /** this line is used by starport scaffolding # genesis/proto/state */
   poolList: Pool[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  dropList: Drop[];
 }
 
 const baseGenesisState: object = {};
@@ -22,6 +24,9 @@ export const GenesisState = {
     for (const v of message.poolList) {
       Pool.encode(v!, writer.uint32(18).fork()).ldelim();
     }
+    for (const v of message.dropList) {
+      Drop.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -30,6 +35,7 @@ export const GenesisState = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
     message.poolList = [];
+    message.dropList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -38,6 +44,9 @@ export const GenesisState = {
           break;
         case 2:
           message.poolList.push(Pool.decode(reader, reader.uint32()));
+          break;
+        case 3:
+          message.dropList.push(Drop.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -50,6 +59,7 @@ export const GenesisState = {
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
     message.poolList = [];
+    message.dropList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromJSON(object.params);
     } else {
@@ -58,6 +68,11 @@ export const GenesisState = {
     if (object.poolList !== undefined && object.poolList !== null) {
       for (const e of object.poolList) {
         message.poolList.push(Pool.fromJSON(e));
+      }
+    }
+    if (object.dropList !== undefined && object.dropList !== null) {
+      for (const e of object.dropList) {
+        message.dropList.push(Drop.fromJSON(e));
       }
     }
     return message;
@@ -74,12 +89,20 @@ export const GenesisState = {
     } else {
       obj.poolList = [];
     }
+    if (message.dropList) {
+      obj.dropList = message.dropList.map((e) =>
+        e ? Drop.toJSON(e) : undefined
+      );
+    } else {
+      obj.dropList = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
     message.poolList = [];
+    message.dropList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromPartial(object.params);
     } else {
@@ -88,6 +111,11 @@ export const GenesisState = {
     if (object.poolList !== undefined && object.poolList !== null) {
       for (const e of object.poolList) {
         message.poolList.push(Pool.fromPartial(e));
+      }
+    }
+    if (object.dropList !== undefined && object.dropList !== null) {
+      for (const e of object.dropList) {
+        message.dropList.push(Drop.fromPartial(e));
       }
     }
     return message;

@@ -28,6 +28,18 @@ func TestGenesis(t *testing.T) {
 				Leader: "1",
 			},
 		},
+		DropList: []types.Drop{
+			{
+				Uid:   0,
+				Owner: "0",
+				Pair:  "0",
+			},
+			{
+				Uid:   1,
+				Owner: "1",
+				Pair:  "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -40,5 +52,6 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(got)
 
 	require.ElementsMatch(t, genesisState.PoolList, got.PoolList)
+	require.ElementsMatch(t, genesisState.DropList, got.DropList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

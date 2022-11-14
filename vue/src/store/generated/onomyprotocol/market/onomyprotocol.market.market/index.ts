@@ -1,10 +1,11 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
 
+import { Drop } from "./module/types/market/drop"
 import { Params } from "./module/types/market/params"
 import { Pool } from "./module/types/market/pool"
 
 
-export { Params, Pool };
+export { Drop, Params, Pool };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -45,8 +46,11 @@ const getDefaultState = () => {
 				Params: {},
 				Pool: {},
 				PoolAll: {},
+				Drop: {},
+				DropAll: {},
 				
 				_Structure: {
+						Drop: getStructure(Drop.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						Pool: getStructure(Pool.fromPartial({})),
 						
@@ -94,6 +98,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.PoolAll[JSON.stringify(params)] ?? {}
+		},
+				getDrop: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Drop[JSON.stringify(params)] ?? {}
+		},
+				getDropAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.DropAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -194,6 +210,54 @@ export default {
 				return getters['getPoolAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryPoolAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryDrop({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryDrop( key.uid,  key.owner,  key.pair)).data
+				
+					
+				commit('QUERY', { query: 'Drop', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDrop', payload: { options: { all }, params: {...key},query }})
+				return getters['getDrop']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryDrop API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryDropAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryDropAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryDropAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'DropAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDropAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getDropAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryDropAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

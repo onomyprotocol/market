@@ -4,6 +4,7 @@ package onomyprotocol.market.market;
 import "gogoproto/gogo.proto";
 import "market/params.proto";
 import "market/pool.proto";
+import "market/drop.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/onomyprotocol/market/x/market/types";
@@ -12,5 +13,6 @@ option go_package = "github.com/onomyprotocol/market/x/market/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   repeated Pool poolList = 2 [(gogoproto.nullable) = false];
+  repeated Drop dropList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

@@ -9,6 +9,16 @@
  * ---------------------------------------------------------------
  */
 
+export interface MarketDrop {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  pair?: string;
+  drops?: string;
+  sum?: string;
+  active?: boolean;
+}
+
 export type MarketMsgCreatePoolResponse = object;
 
 /**
@@ -26,6 +36,21 @@ export interface MarketPool {
   burnings?: string;
 }
 
+export interface MarketQueryAllDropResponse {
+  drop?: MarketDrop[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryAllPoolResponse {
   pool?: MarketPool[];
 
@@ -39,6 +64,10 @@ export interface MarketQueryAllPoolResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryGetDropResponse {
+  drop?: MarketDrop;
 }
 
 export interface MarketQueryGetPoolResponse {
@@ -319,10 +348,52 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title market/genesis.proto
+ * @title market/drop.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDropAll
+   * @summary Queries a list of Drop items.
+   * @request GET:/onomyprotocol/market/market/drop
+   */
+  queryDropAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllDropResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/drop`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDrop
+   * @summary Queries a Drop by index.
+   * @request GET:/onomyprotocol/market/market/drop/{uid}/{owner}/{pair}
+   */
+  queryDrop = (uid: string, owner: string, pair: string, params: RequestParams = {}) =>
+    this.request<MarketQueryGetDropResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/drop/${uid}/${owner}/${pair}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *

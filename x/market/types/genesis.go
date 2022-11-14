@@ -11,6 +11,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		PoolList: []Pool{},
+		DropList: []Drop{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -28,6 +29,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for pool")
 		}
 		poolIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in drop
+	dropIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.DropList {
+		index := string(DropKey(elem.Uid, elem.Owner, elem.Pair))
+		if _, ok := dropIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for drop")
+		}
+		dropIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

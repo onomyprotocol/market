@@ -36,6 +36,18 @@ func TestGenesisState_Validate(t *testing.T) {
 						Leader: "1",
 					},
 				},
+				DropList: []types.Drop{
+					{
+						Uid:   0,
+						Owner: "0",
+						Pair:  "0",
+					},
+					{
+						Uid:   1,
+						Owner: "1",
+						Pair:  "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -55,6 +67,24 @@ func TestGenesisState_Validate(t *testing.T) {
 						Denom1: "0",
 						Denom2: "0",
 						Leader: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated drop",
+			genState: &types.GenesisState{
+				DropList: []types.Drop{
+					{
+						Uid:   0,
+						Owner: "0",
+						Pair:  "0",
+					},
+					{
+						Uid:   0,
+						Owner: "0",
+						Pair:  "0",
 					},
 				},
 			},

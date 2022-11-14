@@ -1,0 +1,15 @@
+syntax = "proto3";
+package onomyprotocol.market.market;
+
+option go_package = "github.com/onomyprotocol/market/x/market/types";
+
+message Drop {
+  uint64 uid = 1; 
+  string owner = 2; 
+  string pair = 3; 
+  string drops = 4; 
+  string sum = 5; 
+  bool active = 6; 
+  
+}
+

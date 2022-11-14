@@ -1,11 +1,13 @@
 /* eslint-disable */
-import { Reader, Writer } from "protobufjs/minimal";
+import { Reader, util, configure, Writer } from "protobufjs/minimal";
+import * as Long from "long";
 import { Params } from "../market/params";
 import { Pool } from "../market/pool";
 import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
+import { Drop } from "../market/drop";
 
 export const protobufPackage = "onomyprotocol.market.market";
 
@@ -35,6 +37,25 @@ export interface QueryAllPoolRequest {
 
 export interface QueryAllPoolResponse {
   pool: Pool[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryGetDropRequest {
+  uid: number;
+  owner: string;
+  pair: string;
+}
+
+export interface QueryGetDropResponse {
+  drop: Drop | undefined;
+}
+
+export interface QueryAllDropRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllDropResponse {
+  drop: Drop[];
   pagination: PageResponse | undefined;
 }
 
@@ -457,6 +478,306 @@ export const QueryAllPoolResponse = {
   },
 };
 
+const baseQueryGetDropRequest: object = { uid: 0, owner: "", pair: "" };
+
+export const QueryGetDropRequest = {
+  encode(
+    message: QueryGetDropRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.uid !== 0) {
+      writer.uint32(8).uint64(message.uid);
+    }
+    if (message.owner !== "") {
+      writer.uint32(18).string(message.owner);
+    }
+    if (message.pair !== "") {
+      writer.uint32(26).string(message.pair);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetDropRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetDropRequest } as QueryGetDropRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.uid = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.owner = reader.string();
+          break;
+        case 3:
+          message.pair = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetDropRequest {
+    const message = { ...baseQueryGetDropRequest } as QueryGetDropRequest;
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = Number(object.uid);
+    } else {
+      message.uid = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetDropRequest): unknown {
+    const obj: any = {};
+    message.uid !== undefined && (obj.uid = message.uid);
+    message.owner !== undefined && (obj.owner = message.owner);
+    message.pair !== undefined && (obj.pair = message.pair);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetDropRequest>): QueryGetDropRequest {
+    const message = { ...baseQueryGetDropRequest } as QueryGetDropRequest;
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = object.uid;
+    } else {
+      message.uid = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetDropResponse: object = {};
+
+export const QueryGetDropResponse = {
+  encode(
+    message: QueryGetDropResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.drop !== undefined) {
+      Drop.encode(message.drop, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetDropResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetDropResponse } as QueryGetDropResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.drop = Drop.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetDropResponse {
+    const message = { ...baseQueryGetDropResponse } as QueryGetDropResponse;
+    if (object.drop !== undefined && object.drop !== null) {
+      message.drop = Drop.fromJSON(object.drop);
+    } else {
+      message.drop = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetDropResponse): unknown {
+    const obj: any = {};
+    message.drop !== undefined &&
+      (obj.drop = message.drop ? Drop.toJSON(message.drop) : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetDropResponse>): QueryGetDropResponse {
+    const message = { ...baseQueryGetDropResponse } as QueryGetDropResponse;
+    if (object.drop !== undefined && object.drop !== null) {
+      message.drop = Drop.fromPartial(object.drop);
+    } else {
+      message.drop = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllDropRequest: object = {};
+
+export const QueryAllDropRequest = {
+  encode(
+    message: QueryAllDropRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllDropRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllDropRequest } as QueryAllDropRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllDropRequest {
+    const message = { ...baseQueryAllDropRequest } as QueryAllDropRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllDropRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryAllDropRequest>): QueryAllDropRequest {
+    const message = { ...baseQueryAllDropRequest } as QueryAllDropRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllDropResponse: object = {};
+
+export const QueryAllDropResponse = {
+  encode(
+    message: QueryAllDropResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.drop) {
+      Drop.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllDropResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllDropResponse } as QueryAllDropResponse;
+    message.drop = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.drop.push(Drop.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllDropResponse {
+    const message = { ...baseQueryAllDropResponse } as QueryAllDropResponse;
+    message.drop = [];
+    if (object.drop !== undefined && object.drop !== null) {
+      for (const e of object.drop) {
+        message.drop.push(Drop.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllDropResponse): unknown {
+    const obj: any = {};
+    if (message.drop) {
+      obj.drop = message.drop.map((e) => (e ? Drop.toJSON(e) : undefined));
+    } else {
+      obj.drop = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryAllDropResponse>): QueryAllDropResponse {
+    const message = { ...baseQueryAllDropResponse } as QueryAllDropResponse;
+    message.drop = [];
+    if (object.drop !== undefined && object.drop !== null) {
+      for (const e of object.drop) {
+        message.drop.push(Drop.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -465,6 +786,10 @@ export interface Query {
   Pool(request: QueryGetPoolRequest): Promise<QueryGetPoolResponse>;
   /** Queries a list of Pool items. */
   PoolAll(request: QueryAllPoolRequest): Promise<QueryAllPoolResponse>;
+  /** Queries a Drop by index. */
+  Drop(request: QueryGetDropRequest): Promise<QueryGetDropResponse>;
+  /** Queries a list of Drop items. */
+  DropAll(request: QueryAllDropRequest): Promise<QueryAllDropResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -505,6 +830,30 @@ export class QueryClientImpl implements Query {
       QueryAllPoolResponse.decode(new Reader(data))
     );
   }
+
+  Drop(request: QueryGetDropRequest): Promise<QueryGetDropResponse> {
+    const data = QueryGetDropRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "Drop",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetDropResponse.decode(new Reader(data))
+    );
+  }
+
+  DropAll(request: QueryAllDropRequest): Promise<QueryAllDropResponse> {
+    const data = QueryAllDropRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "DropAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllDropResponse.decode(new Reader(data))
+    );
+  }
 }
 
 interface Rpc {
@@ -514,6 +863,16 @@ interface Rpc {
     data: Uint8Array
   ): Promise<Uint8Array>;
 }
+
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
@@ -525,3 +884,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}
