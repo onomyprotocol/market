@@ -54,5 +54,9 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "amount is not a valid Coin object")
 	}
 
+	if coinA.Denom == coinB.Denom {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CoinA equal to CoinB")
+	}
+
 	return nil
 }
