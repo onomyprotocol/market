@@ -43,5 +43,16 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	coinA, _ := sdk.ParseCoinNormalized(msg.CoinA)
+	if !coinA.IsValid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "amount is not a valid Coin object")
+	}
+
+	coinB, _ := sdk.ParseCoinNormalized(msg.CoinB)
+	if !coinB.IsValid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "amount is not a valid Coin object")
+	}
+
 	return nil
 }
