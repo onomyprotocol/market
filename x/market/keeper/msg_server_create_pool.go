@@ -13,19 +13,19 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// CoinAmsg and CoinBmsg pre-sort from raw msg
-	coinAmsg, err := sdk.ParseCoinNormalized(msg.CoinA)
+	coinA, err := sdk.ParseCoinNormalized(msg.CoinA)
 	if err != nil {
 		panic(err)
 	}
 
-	coinBmsg, err := sdk.ParseCoinNormalized(msg.CoinB)
+	coinB, err := sdk.ParseCoinNormalized(msg.CoinB)
 	if err != nil {
 		panic(err)
 	}
 
-	coinPair := sdk.NewCoins(coinAmsg, coinBmsg)
+	coinPair := sdk.NewCoins(coinA, coinB)
 
-	// CoinA and CoinB after NewCoins sorting
+	// NewCoins sorts denoms
 	denom1 := coinPair.GetDenomByIndex(1)
 	denom2 := coinPair.GetDenomByIndex(2)
 
