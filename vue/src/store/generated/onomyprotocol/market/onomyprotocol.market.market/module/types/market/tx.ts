@@ -11,6 +11,14 @@ export interface MsgCreatePool {
 
 export interface MsgCreatePoolResponse {}
 
+export interface MsgCreateDrop {
+  creator: string;
+  pair: string;
+  drops: string;
+}
+
+export interface MsgCreateDropResponse {}
+
 const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
 export const MsgCreatePool = {
@@ -138,10 +146,138 @@ export const MsgCreatePoolResponse = {
   },
 };
 
+const baseMsgCreateDrop: object = { creator: "", pair: "", drops: "" };
+
+export const MsgCreateDrop = {
+  encode(message: MsgCreateDrop, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.pair !== "") {
+      writer.uint32(18).string(message.pair);
+    }
+    if (message.drops !== "") {
+      writer.uint32(26).string(message.drops);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateDrop {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateDrop } as MsgCreateDrop;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.pair = reader.string();
+          break;
+        case 3:
+          message.drops = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateDrop {
+    const message = { ...baseMsgCreateDrop } as MsgCreateDrop;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.drops !== undefined && object.drops !== null) {
+      message.drops = String(object.drops);
+    } else {
+      message.drops = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateDrop): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.drops !== undefined && (obj.drops = message.drops);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateDrop>): MsgCreateDrop {
+    const message = { ...baseMsgCreateDrop } as MsgCreateDrop;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.drops !== undefined && object.drops !== null) {
+      message.drops = object.drops;
+    } else {
+      message.drops = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateDropResponse: object = {};
+
+export const MsgCreateDropResponse = {
+  encode(_: MsgCreateDropResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateDropResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateDropResponse } as MsgCreateDropResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCreateDropResponse {
+    const message = { ...baseMsgCreateDropResponse } as MsgCreateDropResponse;
+    return message;
+  },
+
+  toJSON(_: MsgCreateDropResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgCreateDropResponse>): MsgCreateDropResponse {
+    const message = { ...baseMsgCreateDropResponse } as MsgCreateDropResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -158,6 +294,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreatePoolResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse> {
+    const data = MsgCreateDrop.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Msg",
+      "CreateDrop",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateDropResponse.decode(new Reader(data))
     );
   }
 }
