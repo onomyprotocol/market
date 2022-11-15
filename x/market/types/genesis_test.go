@@ -48,6 +48,18 @@ func TestGenesisState_Validate(t *testing.T) {
 						Pair:  "1",
 					},
 				},
+				MemberList: []types.Member{
+					{
+						Pair:   "0",
+						DenomA: "0",
+						DenomB: "0",
+					},
+					{
+						Pair:   "1",
+						DenomA: "1",
+						DenomB: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -85,6 +97,24 @@ func TestGenesisState_Validate(t *testing.T) {
 						Uid:   0,
 						Owner: "0",
 						Pair:  "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated member",
+			genState: &types.GenesisState{
+				MemberList: []types.Member{
+					{
+						Pair:   "0",
+						DenomA: "0",
+						DenomB: "0",
+					},
+					{
+						Pair:   "0",
+						DenomA: "0",
+						DenomB: "0",
 					},
 				},
 			},

@@ -40,6 +40,18 @@ func TestGenesis(t *testing.T) {
 				Pair:  "1",
 			},
 		},
+		MemberList: []types.Member{
+			{
+				Pair:   "0",
+				DenomA: "0",
+				DenomB: "0",
+			},
+			{
+				Pair:   "1",
+				DenomA: "1",
+				DenomB: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -53,5 +65,6 @@ func TestGenesis(t *testing.T) {
 
 	require.ElementsMatch(t, genesisState.PoolList, got.PoolList)
 	require.ElementsMatch(t, genesisState.DropList, got.DropList)
+	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

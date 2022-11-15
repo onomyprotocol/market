@@ -1,0 +1,15 @@
+syntax = "proto3";
+package onomyprotocol.market.market;
+
+option go_package = "github.com/onomyprotocol/market/x/market/types";
+
+message Member {
+  string pair = 1; 
+  string denomA = 2; 
+  string denomB = 3; 
+  string balance = 4; 
+  uint64 limit = 5; 
+  uint64 stop = 6; 
+  
+}
+

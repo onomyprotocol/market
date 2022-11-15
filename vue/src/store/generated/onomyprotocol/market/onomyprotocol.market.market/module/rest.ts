@@ -19,6 +19,19 @@ export interface MarketDrop {
   active?: boolean;
 }
 
+export interface MarketMember {
+  pair?: string;
+  denomA?: string;
+  denomB?: string;
+  balance?: string;
+
+  /** @format uint64 */
+  limit?: string;
+
+  /** @format uint64 */
+  stop?: string;
+}
+
 export type MarketMsgCreatePoolResponse = object;
 
 /**
@@ -51,6 +64,21 @@ export interface MarketQueryAllDropResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryAllMemberResponse {
+  member?: MarketMember[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryAllPoolResponse {
   pool?: MarketPool[];
 
@@ -68,6 +96,10 @@ export interface MarketQueryAllPoolResponse {
 
 export interface MarketQueryGetDropResponse {
   drop?: MarketDrop;
+}
+
+export interface MarketQueryGetMemberResponse {
+  member?: MarketMember;
 }
 
 export interface MarketQueryGetPoolResponse {
@@ -389,6 +421,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryDrop = (uid: string, owner: string, pair: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetDropResponse, RpcStatus>({
       path: `/onomyprotocol/market/market/drop/${uid}/${owner}/${pair}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryMemberAll
+   * @summary Queries a list of Member items.
+   * @request GET:/onomyprotocol/market/market/member
+   */
+  queryMemberAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllMemberResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/member`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryMember
+   * @summary Queries a Member by index.
+   * @request GET:/onomyprotocol/market/market/member/{pair}/{denomA}/{denomB}
+   */
+  queryMember = (pair: string, denomA: string, denomB: string, params: RequestParams = {}) =>
+    this.request<MarketQueryGetMemberResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/member/${pair}/${denomA}/${denomB}`,
       method: "GET",
       format: "json",
       ...params,

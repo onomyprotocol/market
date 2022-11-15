@@ -7,6 +7,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "market/params.proto";
 import "market/pool.proto";
 import "market/drop.proto";
+import "market/member.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/onomyprotocol/market/x/market/types";
@@ -35,6 +36,16 @@ service Query {
 	// Queries a list of Drop items.
 	rpc DropAll(QueryAllDropRequest) returns (QueryAllDropResponse) {
 		option (google.api.http).get = "/onomyprotocol/market/market/drop";
+	}
+
+// Queries a Member by index.
+	rpc Member(QueryGetMemberRequest) returns (QueryGetMemberResponse) {
+		option (google.api.http).get = "/onomyprotocol/market/market/member/{pair}/{denomA}/{denomB}";
+	}
+
+	// Queries a list of Member items.
+	rpc MemberAll(QueryAllMemberRequest) returns (QueryAllMemberResponse) {
+		option (google.api.http).get = "/onomyprotocol/market/market/member";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -87,6 +98,26 @@ message QueryAllDropRequest {
 
 message QueryAllDropResponse {
 	repeated Drop drop = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetMemberRequest {
+	  string pair = 1;
+  string denomA = 2;
+  string denomB = 3;
+
+}
+
+message QueryGetMemberResponse {
+	Member member = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllMemberRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllMemberResponse {
+	repeated Member member = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
