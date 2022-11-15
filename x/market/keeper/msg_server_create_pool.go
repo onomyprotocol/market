@@ -36,6 +36,16 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
 	}
 
+	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
+	// Get the borrower address
+	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
+
+	// Use the module account as pool account
+	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinPair)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
 	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2)).String()
 
 	// Create a new Pool with the following user input
@@ -47,6 +57,24 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Drops:    drops,
 		Earnings: "0",
 		Burnings: "0",
+	}
+
+	var member1 = types.Member{
+		Pair:    pair,
+		DenomA:  denom2,
+		DenomB:  denom1,
+		Balance: coinPair.AmountOf(denom1).String(),
+		Limit:   0,
+		Stop:    0,
+	}
+
+	var member2 = types.Member{
+		Pair:    pair,
+		DenomA:  denom1,
+		DenomB:  denom2,
+		Balance: coinPair.AmountOf(denom2).String(),
+		Limit:   0,
+		Stop:    0,
 	}
 
 	// Create the uid
@@ -61,20 +89,20 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Active: true,
 	}
 
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	// Get the borrower address
-	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
-
-	// Use the module account as pool account
-	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinPair)
-	if sdkError != nil {
-		return nil, sdkError
-	}
-
 	// Add the loan to the keeper
 	k.SetPool(
 		ctx,
 		pool,
+	)
+
+	k.SetMember(
+		ctx,
+		member1,
+	)
+
+	k.SetMember(
+		ctx,
+		member2,
 	)
 
 	// Add the drop to the keeper
