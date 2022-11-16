@@ -40,10 +40,13 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// poolSum == AMM A Coin Balance + AMM B Coin Balance
 	poolSum := member1.Balance.Add(member2.Balance)
 
+	drops, _ := sdk.NewIntFromString(msg.Drops)
+
 	// The beginning Drop Sum is defined as:
 	// dropSum == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
+	dropSum := ((drops.Mul(poolSum).Mul(sdk.NewInt(10 ^ 18))).Quo(pool.Drops)).Quo(sdk.NewInt(10 ^ 18))
 
-	_ = poolSum
+	_ = dropSum
 	_ = pool
 	_ = ctx
 
