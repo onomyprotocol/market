@@ -46,7 +46,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		return nil, sdkError
 	}
 
-	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2)).String()
+	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
 
 	// Create a new Pool with the following user input
 	var pool = types.Pool{
@@ -55,15 +55,15 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Denom1:   coinPair.GetDenomByIndex(1),
 		Denom2:   coinPair.GetDenomByIndex(2),
 		Drops:    drops,
-		Earnings: "0",
-		Burnings: "0",
+		Earnings: sdk.NewInt(0),
+		Burnings: sdk.NewInt(0),
 	}
 
 	var member1 = types.Member{
 		Pair:    pair,
 		DenomA:  denom2,
 		DenomB:  denom1,
-		Balance: coinPair.AmountOf(denom1).String(),
+		Balance: coinPair.AmountOf(denom1),
 		Limit:   0,
 		Stop:    0,
 	}
@@ -72,7 +72,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Pair:    pair,
 		DenomA:  denom1,
 		DenomB:  denom2,
-		Balance: coinPair.AmountOf(denom2).String(),
+		Balance: coinPair.AmountOf(denom2),
 		Limit:   0,
 		Stop:    0,
 	}

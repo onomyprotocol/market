@@ -1,15 +1,24 @@
 syntax = "proto3";
 package onomyprotocol.market.market;
 
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/onomyprotocol/market/x/market/types";
+option (gogoproto.goproto_stringer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
 
 message Drop {
   uint64 uid = 1; 
   string owner = 2; 
   string pair = 3; 
-  string drops = 4; 
-  string sum = 5; 
-  bool active = 6; 
-  
+  string drops = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string sum = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  bool active = 6;
 }
 
