@@ -8,8 +8,18 @@ import (
 
 // x/market module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	// ErrInvalidCoins - coin/coins are invalid.
+	ErrInvalidCoins = sdkerrors.Register(ModuleName, 1, "coins are invalid")
+	// ErrInsufficientBalance - the user balance is insufficient for the operation.
+	ErrInsufficientBalance = sdkerrors.Register(ModuleName, 2, "insufficient balance") // nolint: gomnd
 	// ErrPoolAlreadyExists - the pool is already exist.
-	ErrPoolAlreadyExists = sdkerrors.Register(ModuleName, 1, "the pool already exists") // nolint: gomnd
-	ErrPoolDoesNotExist  = sdkerrors.Register(ModuleName, 2, "the pool does not exist") // nolint: gomnd
+	ErrPoolAlreadyExists = sdkerrors.Register(ModuleName, 3, "the pool already exists") // nolint: gomnd
+	// ErrPoolNotFound - the pool not found.
+	ErrPoolNotFound = sdkerrors.Register(ModuleName, 4, "the pool not found") // nolint: gomnd
+	// ErrMemberNotFound - the pool member not found.
+	ErrMemberNotFound = sdkerrors.Register(ModuleName, 5, "the pool member not found") // nolint: gomnd
+	// ErrInvalidDropAmount - the drop amount is invalid.
+	ErrInvalidDropAmount = sdkerrors.Register(ModuleName, 6, "invalid drop amount") // nolint: gomnd
+	// ErrInvalidDenomsPair - invalid demos pair.
+	ErrInvalidDenomsPair = sdkerrors.Register(ModuleName, 7, "invalid demos pair") // nolint: gomnd
 )

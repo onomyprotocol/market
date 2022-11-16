@@ -34,9 +34,6 @@ func TestPoolGet(t *testing.T) {
 	for _, item := range items {
 		rst, found := keeper.GetPool(ctx,
 			item.Pair,
-			item.Denom1,
-			item.Denom2,
-			item.Leader,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -51,15 +48,9 @@ func TestPoolRemove(t *testing.T) {
 	for _, item := range items {
 		keeper.RemovePool(ctx,
 			item.Pair,
-			item.Denom1,
-			item.Denom2,
-			item.Leader,
 		)
 		_, found := keeper.GetPool(ctx,
 			item.Pair,
-			item.Denom1,
-			item.Denom2,
-			item.Leader,
 		)
 		require.False(t, found)
 	}
