@@ -48,9 +48,6 @@ func (k Keeper) Pool(c context.Context, req *types.QueryGetPoolRequest) (*types.
 	val, found := k.GetPool(
 		ctx,
 		req.Pair,
-		req.Denom1,
-		req.Denom2,
-		req.Leader,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

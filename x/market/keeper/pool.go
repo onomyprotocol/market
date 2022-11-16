@@ -10,7 +10,7 @@ import (
 func (k Keeper) SetPool(ctx sdk.Context, pool types.Pool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 	b := k.cdc.MustMarshal(&pool)
-	store.Set(types.PoolKey(
+	store.Set(types.PoolSetKey(
 		pool.Pair,
 		pool.Denom1,
 		pool.Denom2,
@@ -22,18 +22,11 @@ func (k Keeper) SetPool(ctx sdk.Context, pool types.Pool) {
 func (k Keeper) GetPool(
 	ctx sdk.Context,
 	pair string,
-	denom1 string,
-	denom2 string,
-	leader string,
-
 ) (val types.Pool, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 
 	b := store.Get(types.PoolKey(
 		pair,
-		denom1,
-		denom2,
-		leader,
 	))
 	if b == nil {
 		return val, false
@@ -47,17 +40,10 @@ func (k Keeper) GetPool(
 func (k Keeper) RemovePool(
 	ctx sdk.Context,
 	pair string,
-	denom1 string,
-	denom2 string,
-	leader string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 	store.Delete(types.PoolKey(
 		pair,
-		denom1,
-		denom2,
-		leader,
 	))
 }
 

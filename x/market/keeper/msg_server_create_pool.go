@@ -31,7 +31,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	pair := strings.Join([]string{denom1, denom2}, ",")
 
-	_, found := k.GetPool(ctx, pair, denom1, denom2, msg.Creator)
+	_, found := k.GetPool(ctx, pair)
 	if found {
 		return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
 	}

@@ -25,7 +25,7 @@ func (gs GenesisState) Validate() error {
 	poolIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.PoolList {
-		index := string(PoolKey(elem.Pair, elem.Denom1, elem.Denom2, elem.Leader))
+		index := string(PoolKey(elem.Pair))
 		if _, ok := poolIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for pool")
 		}
@@ -35,7 +35,7 @@ func (gs GenesisState) Validate() error {
 	dropIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.DropList {
-		index := string(DropKey(elem.Uid, elem.Owner, elem.Pair))
+		index := string(DropKey(elem.Uid))
 		if _, ok := dropIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for drop")
 		}
@@ -45,7 +45,7 @@ func (gs GenesisState) Validate() error {
 	memberIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.MemberList {
-		index := string(MemberKey(elem.Pair, elem.DenomA, elem.DenomB))
+		index := string(MemberKey(elem.DenomA, elem.DenomB))
 		if _, ok := memberIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for member")
 		}

@@ -36,7 +36,7 @@ func (k Keeper) SetUidCount(ctx sdk.Context, count uint64) {
 func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 	b := k.cdc.MustMarshal(&drop)
-	store.Set(types.DropKey(
+	store.Set(types.DropSetKey(
 		drop.Uid,
 		drop.Owner,
 		drop.Pair,
@@ -47,16 +47,11 @@ func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
 func (k Keeper) GetDrop(
 	ctx sdk.Context,
 	uid uint64,
-	owner string,
-	pair string,
-
 ) (val types.Drop, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 
 	b := store.Get(types.DropKey(
 		uid,
-		owner,
-		pair,
 	))
 	if b == nil {
 		return val, false
@@ -70,15 +65,10 @@ func (k Keeper) GetDrop(
 func (k Keeper) RemoveDrop(
 	ctx sdk.Context,
 	uid uint64,
-	owner string,
-	pair string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 	store.Delete(types.DropKey(
 		uid,
-		owner,
-		pair,
 	))
 }
 

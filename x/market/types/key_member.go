@@ -10,7 +10,7 @@ const (
 )
 
 // MemberKey returns the store key to retrieve a Member from the index fields
-func MemberKey(
+func MemberSetKey(
 	pair string,
 	denomA string,
 	denomB string,
@@ -20,6 +20,24 @@ func MemberKey(
 	pairBytes := []byte(pair)
 	key = append(key, pairBytes...)
 	key = append(key, []byte("/")...)
+
+	denomABytes := []byte(denomA)
+	key = append(key, denomABytes...)
+	key = append(key, []byte("/")...)
+
+	denomBBytes := []byte(denomB)
+	key = append(key, denomBBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
+}
+
+// MemberKey returns the store key to retrieve a Member from the index fields
+func MemberKey(
+	denomA string,
+	denomB string,
+) []byte {
+	var key []byte
 
 	denomABytes := []byte(denomA)
 	key = append(key, denomABytes...)
