@@ -61,6 +61,52 @@ func (k Keeper) GetDrop(
 	return val, true
 }
 
+// GetOwnerDrops returns drops from a single owner
+func (k Keeper) GetOwnerDrops(
+	ctx sdk.Context,
+	owner string,
+) (list []types.Drop) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DropOwnerKey(
+		owner,
+	))
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Drop
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
+// GetOwnerDrops returns drops from a single owner
+func (k Keeper) GetOwnerDropsInt(
+	ctx sdk.Context,
+	owner string,
+) (drops sdk.Int) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DropOwnerKey(
+		owner,
+	))
+
+	defer iterator.Close()
+
+	drops = sdk.NewInt(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Drop
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		drops = drops.Add(val.Drops)
+	}
+
+	return
+}
+
 // RemoveDrop removes a drop from the store
 func (k Keeper) RemoveDrop(
 	ctx sdk.Context,

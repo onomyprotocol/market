@@ -86,6 +86,16 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member2.Balance = member2.Balance.Add(amount2)
 	k.SetMember(ctx, member2)
 
+	// Get Drop Creator and Pool Leader total drops from all drops owned
+	sumDropsCreator := k.GetOwnerDropsInt(ctx, msg.Creator).Add(drops)
+	sumDropsLeader := k.GetOwnerDropsInt(ctx, pool.Leader)
+
+	// If Creator totaled owned drops is greater than Leader then
+	// Creator is new leader
+	if sumDropsCreator.GT(sumDropsLeader) {
+		pool.Leader = msg.Creator
+	}
+
 	pool.Drops = pool.Drops.Add(drops)
 	k.SetPool(ctx, pool)
 

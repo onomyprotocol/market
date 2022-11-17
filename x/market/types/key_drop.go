@@ -46,3 +46,16 @@ func DropSetKey(
 
 	return key
 }
+
+// DropKey returns the store key to retrieve a Drop from the index fields
+func DropOwnerKey(
+	owner string,
+) []byte {
+	var key []byte
+
+	ownerBytes := []byte(owner)
+	key = append(key, ownerBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
+}
