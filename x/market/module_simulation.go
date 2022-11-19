@@ -32,6 +32,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreateDrop int = 100
 
+	opWeightMsgRedeemDrop = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRedeemDrop int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -85,6 +89,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgCreateDrop,
 		marketsimulation.SimulateMsgCreateDrop(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgRedeemDrop int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRedeemDrop, &weightMsgRedeemDrop, nil,
+		func(_ *rand.Rand) {
+			weightMsgRedeemDrop = defaultWeightMsgRedeemDrop
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRedeemDrop,
+		marketsimulation.SimulateMsgRedeemDrop(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

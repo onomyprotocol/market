@@ -19,6 +19,13 @@ export interface MsgCreateDrop {
 
 export interface MsgCreateDropResponse {}
 
+export interface MsgRedeemDrop {
+  creator: string;
+  uid: string;
+}
+
+export interface MsgRedeemDropResponse {}
+
 const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
 export const MsgCreatePool = {
@@ -273,11 +280,122 @@ export const MsgCreateDropResponse = {
   },
 };
 
+const baseMsgRedeemDrop: object = { creator: "", uid: "" };
+
+export const MsgRedeemDrop = {
+  encode(message: MsgRedeemDrop, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.uid !== "") {
+      writer.uint32(18).string(message.uid);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRedeemDrop {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgRedeemDrop } as MsgRedeemDrop;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.uid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRedeemDrop {
+    const message = { ...baseMsgRedeemDrop } as MsgRedeemDrop;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = String(object.uid);
+    } else {
+      message.uid = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgRedeemDrop): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.uid !== undefined && (obj.uid = message.uid);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgRedeemDrop>): MsgRedeemDrop {
+    const message = { ...baseMsgRedeemDrop } as MsgRedeemDrop;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = object.uid;
+    } else {
+      message.uid = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgRedeemDropResponse: object = {};
+
+export const MsgRedeemDropResponse = {
+  encode(_: MsgRedeemDropResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRedeemDropResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgRedeemDropResponse } as MsgRedeemDropResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRedeemDropResponse {
+    const message = { ...baseMsgRedeemDropResponse } as MsgRedeemDropResponse;
+    return message;
+  },
+
+  toJSON(_: MsgRedeemDropResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgRedeemDropResponse>): MsgRedeemDropResponse {
+    const message = { ...baseMsgRedeemDropResponse } as MsgRedeemDropResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RedeemDrop(request: MsgRedeemDrop): Promise<MsgRedeemDropResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -306,6 +424,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreateDropResponse.decode(new Reader(data))
+    );
+  }
+
+  RedeemDrop(request: MsgRedeemDrop): Promise<MsgRedeemDropResponse> {
+    const data = MsgRedeemDrop.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Msg",
+      "RedeemDrop",
+      data
+    );
+    return promise.then((data) =>
+      MsgRedeemDropResponse.decode(new Reader(data))
     );
   }
 }

@@ -36,6 +36,8 @@ export type MarketMsgCreateDropResponse = object;
 
 export type MarketMsgCreatePoolResponse = object;
 
+export type MarketMsgRedeemDropResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

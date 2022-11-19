@@ -9,6 +9,7 @@ option go_package = "github.com/onomyprotocol/market/x/market/types";
 service Msg {
       rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc CreateDrop(MsgCreateDrop) returns (MsgCreateDropResponse);
+  rpc RedeemDrop(MsgRedeemDrop) returns (MsgRedeemDropResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -28,6 +29,14 @@ message MsgCreateDrop {
 }
 
 message MsgCreateDropResponse {
+}
+
+message MsgRedeemDrop {
+  string creator = 1;
+  string uid = 2;
+}
+
+message MsgRedeemDropResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

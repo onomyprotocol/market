@@ -16,10 +16,14 @@ var (
 	ErrPoolAlreadyExists = sdkerrors.Register(ModuleName, 3, "the pool already exists") // nolint: gomnd
 	// ErrPoolNotFound - the pool not found.
 	ErrPoolNotFound = sdkerrors.Register(ModuleName, 4, "the pool not found") // nolint: gomnd
+	// ErrPoolNotFound - the drop not found.
+	ErrDropNotFound = sdkerrors.Register(ModuleName, 5, "the pool not found") // nolint: gomnd
+	// ErrPoolNotFound - the drop not found.
+	ErrNotDropOwner = sdkerrors.Register(ModuleName, 6, "the pool not found") // nolint: gomnd
 	// ErrMemberNotFound - the pool member not found.
-	ErrMemberNotFound = sdkerrors.Register(ModuleName, 5, "the pool member not found") // nolint: gomnd
+	ErrMemberNotFound = sdkerrors.Register(ModuleName, 7, "the pool member not found") // nolint: gomnd
 	// ErrInvalidDropAmount - the drop amount is invalid.
-	ErrInvalidDropAmount = sdkerrors.Register(ModuleName, 6, "invalid drop amount") // nolint: gomnd
+	ErrInvalidDropAmount = sdkerrors.Register(ModuleName, 8, "invalid drop amount") // nolint: gomnd
 	// ErrInvalidDenomsPair - invalid demos pair.
-	ErrInvalidDenomsPair = sdkerrors.Register(ModuleName, 7, "invalid demos pair") // nolint: gomnd
+	ErrInvalidDenomsPair = sdkerrors.Register(ModuleName, 9, "invalid demos pair") // nolint: gomnd
 )

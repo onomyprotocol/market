@@ -219,17 +219,107 @@ func (m *MsgCreateDropResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateDropResponse proto.InternalMessageInfo
 
+type MsgRedeemDrop struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Uid     string `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+}
+
+func (m *MsgRedeemDrop) Reset()         { *m = MsgRedeemDrop{} }
+func (m *MsgRedeemDrop) String() string { return proto.CompactTextString(m) }
+func (*MsgRedeemDrop) ProtoMessage()    {}
+func (*MsgRedeemDrop) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{4}
+}
+func (m *MsgRedeemDrop) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRedeemDrop) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRedeemDrop.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRedeemDrop) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRedeemDrop.Merge(m, src)
+}
+func (m *MsgRedeemDrop) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRedeemDrop) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRedeemDrop.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRedeemDrop proto.InternalMessageInfo
+
+func (m *MsgRedeemDrop) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRedeemDrop) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+type MsgRedeemDropResponse struct {
+}
+
+func (m *MsgRedeemDropResponse) Reset()         { *m = MsgRedeemDropResponse{} }
+func (m *MsgRedeemDropResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRedeemDropResponse) ProtoMessage()    {}
+func (*MsgRedeemDropResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{5}
+}
+func (m *MsgRedeemDropResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRedeemDropResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRedeemDropResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRedeemDropResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRedeemDropResponse.Merge(m, src)
+}
+func (m *MsgRedeemDropResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRedeemDropResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRedeemDropResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRedeemDropResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreatePool)(nil), "onomyprotocol.market.market.MsgCreatePool")
 	proto.RegisterType((*MsgCreatePoolResponse)(nil), "onomyprotocol.market.market.MsgCreatePoolResponse")
 	proto.RegisterType((*MsgCreateDrop)(nil), "onomyprotocol.market.market.MsgCreateDrop")
 	proto.RegisterType((*MsgCreateDropResponse)(nil), "onomyprotocol.market.market.MsgCreateDropResponse")
+	proto.RegisterType((*MsgRedeemDrop)(nil), "onomyprotocol.market.market.MsgRedeemDrop")
+	proto.RegisterType((*MsgRedeemDropResponse)(nil), "onomyprotocol.market.market.MsgRedeemDropResponse")
 }
 
 func init() { proto.RegisterFile("market/tx.proto", fileDescriptor_2966ca2342567dca) }
 
 var fileDescriptor_2966ca2342567dca = []byte{
-	// 269 bytes of a gzipped FileDescriptorProto
+	// 311 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcf, 0x4d, 0x2c, 0xca,
 	0x4e, 0x2d, 0xd1, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0xce, 0xcf, 0xcb,
 	0xcf, 0xad, 0x04, 0xb3, 0x93, 0xf3, 0x73, 0xf4, 0x20, 0xd2, 0x50, 0x4a, 0x29, 0x94, 0x8b, 0xd7,
@@ -239,14 +329,17 @@ var fileDescriptor_2966ca2342567dca = []byte{
 	0x82, 0x19, 0x21, 0xea, 0xa4, 0x24, 0xce, 0x25, 0x8a, 0x62, 0x6c, 0x50, 0x6a, 0x71, 0x41, 0x7e,
 	0x5e, 0x71, 0xaa, 0x52, 0x30, 0x92, 0x7d, 0x2e, 0x45, 0xf9, 0x05, 0x78, 0xec, 0x13, 0xe2, 0x62,
 	0x29, 0x48, 0xcc, 0x2c, 0x82, 0x5a, 0x07, 0x66, 0x83, 0x6c, 0x4b, 0x29, 0xca, 0x2f, 0x28, 0x86,
-	0xd9, 0x06, 0xe6, 0xa0, 0xd8, 0x06, 0x32, 0x14, 0x66, 0x9b, 0xd1, 0x43, 0x46, 0x2e, 0x66, 0xdf,
-	0xe2, 0x74, 0xa1, 0x1c, 0x2e, 0x2e, 0x24, 0x2f, 0x6a, 0xe9, 0xe1, 0x09, 0x11, 0x3d, 0x14, 0x77,
-	0x4b, 0x19, 0x11, 0xaf, 0x16, 0x66, 0x2b, 0xc2, 0x36, 0xb0, 0x07, 0x89, 0xb4, 0x0d, 0xa4, 0x96,
-	0x58, 0xdb, 0x90, 0xfd, 0xe8, 0xe4, 0x71, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f,
-	0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c,
-	0x51, 0x7a, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x28, 0xe6, 0xea,
-	0x43, 0x93, 0x48, 0x05, 0x8c, 0x51, 0x52, 0x59, 0x90, 0x5a, 0x9c, 0xc4, 0x06, 0x96, 0x37, 0x06,
-	0x04, 0x00, 0x00, 0xff, 0xff, 0x59, 0x7c, 0xc7, 0xbf, 0x42, 0x02, 0x00, 0x00,
+	0xd9, 0x06, 0xe6, 0xa0, 0xd8, 0x06, 0x32, 0x14, 0x6e, 0x9b, 0x35, 0xd8, 0xb6, 0xa0, 0xd4, 0x94,
+	0xd4, 0xd4, 0x5c, 0x02, 0xb6, 0x09, 0x70, 0x31, 0x97, 0x66, 0xa6, 0x40, 0x2d, 0x03, 0x31, 0xa1,
+	0xa6, 0x22, 0x34, 0xc3, 0x4c, 0x35, 0x3a, 0xcf, 0xc4, 0xc5, 0xec, 0x5b, 0x9c, 0x2e, 0x94, 0xc3,
+	0xc5, 0x85, 0x14, 0x70, 0x5a, 0x7a, 0x78, 0xc2, 0x59, 0x0f, 0x25, 0x34, 0xa4, 0x8c, 0x88, 0x57,
+	0x0b, 0xb3, 0x15, 0x61, 0x1b, 0xd8, 0x23, 0x44, 0xda, 0x06, 0x52, 0x4b, 0xac, 0x6d, 0xc8, 0x7e,
+	0x04, 0xd9, 0x86, 0x14, 0x6c, 0x04, 0x6d, 0x43, 0xa8, 0x25, 0x6c, 0x1b, 0x66, 0x88, 0x3a, 0x79,
+	0x9c, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb,
+	0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x5e, 0x7a, 0x66, 0x49, 0x46,
+	0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae, 0x3e, 0x8a, 0xb9, 0xfa, 0xd0, 0x64, 0x5e, 0x01, 0x63, 0x94,
+	0x54, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0xe5, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x66,
+	0xe0, 0x5e, 0xc1, 0x06, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -263,6 +356,7 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	CreatePool(ctx context.Context, in *MsgCreatePool, opts ...grpc.CallOption) (*MsgCreatePoolResponse, error)
 	CreateDrop(ctx context.Context, in *MsgCreateDrop, opts ...grpc.CallOption) (*MsgCreateDropResponse, error)
+	RedeemDrop(ctx context.Context, in *MsgRedeemDrop, opts ...grpc.CallOption) (*MsgRedeemDropResponse, error)
 }
 
 type msgClient struct {
@@ -291,10 +385,20 @@ func (c *msgClient) CreateDrop(ctx context.Context, in *MsgCreateDrop, opts ...g
 	return out, nil
 }
 
+func (c *msgClient) RedeemDrop(ctx context.Context, in *MsgRedeemDrop, opts ...grpc.CallOption) (*MsgRedeemDropResponse, error) {
+	out := new(MsgRedeemDropResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Msg/RedeemDrop", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CreatePool(context.Context, *MsgCreatePool) (*MsgCreatePoolResponse, error)
 	CreateDrop(context.Context, *MsgCreateDrop) (*MsgCreateDropResponse, error)
+	RedeemDrop(context.Context, *MsgRedeemDrop) (*MsgRedeemDropResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -306,6 +410,9 @@ func (*UnimplementedMsgServer) CreatePool(ctx context.Context, req *MsgCreatePoo
 }
 func (*UnimplementedMsgServer) CreateDrop(ctx context.Context, req *MsgCreateDrop) (*MsgCreateDropResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDrop not implemented")
+}
+func (*UnimplementedMsgServer) RedeemDrop(ctx context.Context, req *MsgRedeemDrop) (*MsgRedeemDropResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedeemDrop not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -348,6 +455,24 @@ func _Msg_CreateDrop_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RedeemDrop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRedeemDrop)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RedeemDrop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Msg/RedeemDrop",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RedeemDrop(ctx, req.(*MsgRedeemDrop))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "onomyprotocol.market.market.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -359,6 +484,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateDrop",
 			Handler:    _Msg_CreateDrop_Handler,
+		},
+		{
+			MethodName: "RedeemDrop",
+			Handler:    _Msg_RedeemDrop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -499,6 +628,66 @@ func (m *MsgCreateDropResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgRedeemDrop) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRedeemDrop) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRedeemDrop) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Uid) > 0 {
+		i -= len(m.Uid)
+		copy(dAtA[i:], m.Uid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Uid)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRedeemDropResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRedeemDropResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRedeemDropResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -562,6 +751,32 @@ func (m *MsgCreateDrop) Size() (n int) {
 }
 
 func (m *MsgCreateDropResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRedeemDrop) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Uid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRedeemDropResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -945,6 +1160,170 @@ func (m *MsgCreateDropResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgCreateDropResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRedeemDrop) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRedeemDrop: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRedeemDrop: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Uid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Uid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRedeemDropResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRedeemDropResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRedeemDropResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
