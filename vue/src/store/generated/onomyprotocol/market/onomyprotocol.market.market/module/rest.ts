@@ -41,7 +41,10 @@ export type MarketMsgRedeemDropResponse = object;
 /**
  * Params defines the parameters for the module.
  */
-export type MarketParams = object;
+export interface MarketParams {
+  earn_rate?: string[];
+  burn_rate?: string[];
+}
 
 export interface MarketPool {
   pair?: string;
