@@ -31,9 +31,13 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	pair := strings.Join([]string{denom1, denom2}, ",")
 
-	_, found := k.GetPool(ctx, pair)
+	// Test if pool either exists and active or exists and inactive
+	// Inactive pool will be dry or have no drops
+	pool, found := k.GetPool(ctx, pair)
 	if found {
-		return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
+		if !pool.Drops.Equal(sdk.NewInt(0)) {
+			return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
+		}
 	}
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
@@ -48,15 +52,27 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
 
-	// Create a new Pool with the following user input
-	var pool = types.Pool{
-		Pair:     pair,
-		Leader:   msg.Creator,
-		Denom1:   coinPair.GetDenomByIndex(1),
-		Denom2:   coinPair.GetDenomByIndex(2),
-		Drops:    drops,
-		Earnings: sdk.NewInt(0),
-		Burnings: sdk.NewInt(0),
+	if found {
+		pool = types.Pool{
+			Pair:     pair,
+			Leader:   msg.Creator,
+			Denom1:   coinPair.GetDenomByIndex(1),
+			Denom2:   coinPair.GetDenomByIndex(2),
+			Drops:    drops,
+			Earnings: pool.Earnings,
+			Burnings: pool.Burnings,
+		}
+	} else {
+		// Create a new Pool with the following user input
+		pool = types.Pool{
+			Pair:     pair,
+			Leader:   msg.Creator,
+			Denom1:   coinPair.GetDenomByIndex(1),
+			Denom2:   coinPair.GetDenomByIndex(2),
+			Drops:    drops,
+			Earnings: sdk.NewInt(0),
+			Burnings: sdk.NewInt(0),
+		}
 	}
 
 	var member1 = types.Member{

@@ -24,7 +24,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrNotDropOwner, "%s", msg.Uid)
 	}
 
-	pair := strings.Split(msg.Pair, ",")
+	pair := strings.Split(drop.Pair, ",")
 
 	denom1 := pair[1]
 	denom2 := pair[2]
@@ -58,8 +58,6 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// If dropSumEnd is equal to _drop.sum then
 	// pool was created and then last drop redeemed
 	// before any trade were executed leaving nothing in the pool
-	// There-fore pool has no balances as basis for pricing
-	// and must be burned.
 	if dropSumEnd.Equal(drop.Sum) {
 
 	}
