@@ -122,15 +122,3 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	return &types.MsgCreateDropResponse{}, nil
 }
-
-func (k msgServer) validateSenderBalance(ctx sdk.Context, senderAddress sdk.AccAddress, coins sdk.Coins) error {
-	for _, coin := range coins {
-		balance := k.Keeper.bankKeeper.GetBalance(ctx, senderAddress, coin.Denom)
-		if balance.IsLT(coin) {
-			return sdkerrors.Wrapf(
-				types.ErrInsufficientBalance, "%s is smaller than %s", balance, coin)
-		}
-	}
-
-	return nil
-}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/onomyprotocol/market/x/market/types"
 )
@@ -47,4 +48,16 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) validateSenderBalance(ctx sdk.Context, senderAddress sdk.AccAddress, coins sdk.Coins) error {
+	for _, coin := range coins {
+		balance := k.bankKeeper.GetBalance(ctx, senderAddress, coin.Denom)
+		if balance.IsLT(coin) {
+			return sdkerrors.Wrapf(
+				types.ErrInsufficientBalance, "%s is smaller than %s", balance, coin)
+		}
+	}
+
+	return nil
 }
