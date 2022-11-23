@@ -52,17 +52,53 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
 	// Profit = dropSum(end) - dropSum(begin)
 	dropSumEnd := (poolSum.Mul(drop.Drops)).Quo(pool.Drops)
+	total2 := (dropSumEnd.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
+	total1 := dropSumEnd.Sub(total2)
 
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
-	// If dropSumEnd is equal to _drop.sum then
-	// pool was created and then last drop redeemed
-	// before any trade were executed leaving nothing in the pool
-	if dropSumEnd.Equal(drop.Sum) {
+	earnRate := k.EarnRate(ctx)
+	burnRate := k.BurnRate(ctx)
 
+	// (dropSumFinal * bigNum) / ( poolSum * bigNum / member2.balance )
+	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
+	earn2 := (profit2.Mul(earnRate[0])).Quo(earnRate[1])
+	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
+
+	// Redemption value in coin 2
+	drop2 := total2.Sub(earn2.Add(burn2))
+
+	profit1 := dropProfit.Sub(profit2)
+	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
+	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
+
+	// Redemption value in coin 1
+	drop1 := total1.Sub(earn1.Add(burn1))
+
+	// Update Pool Total Drops
+	pool.Drops = pool.Drops.Sub(drop.Drops)
+
+	// Withdraw from Pool
+	member1.Balance = member1.Balance.Sub(total1)
+	member2.Balance = member2.Balance.Sub(total2)
+
+	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
+	// Get the borrower address
+	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
+
+	coin1 := sdk.NewCoin(denom1, drop1)
+	coin2 := sdk.NewCoin(denom2, drop2)
+	coins := sdk.NewCoins(coin1, coin2)
+
+	// Increment Owner
+	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coins)
+	if sdkError != nil {
+		return nil, sdkError
 	}
 
-	_ = dropProfit
+	drop.Active = false
+
+	// Set Pool and Drop
 
 	return &types.MsgRedeemDropResponse{}, nil
 }
