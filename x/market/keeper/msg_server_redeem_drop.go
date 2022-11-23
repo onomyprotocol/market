@@ -60,7 +60,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	earnRate := k.EarnRate(ctx)
 	burnRate := k.BurnRate(ctx)
 
-	// (dropSumFinal * bigNum) / ( poolSum * bigNum / member2.balance )
+	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
 	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
 	earn2 := (profit2.Mul(earnRate[0])).Quo(earnRate[1])
 	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
@@ -98,7 +98,26 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	drop.Active = false
 
-	// Set Pool and Drop
+	// Set Pool Member and Drop
+	k.SetDrop(
+		ctx,
+		drop,
+	)
+
+	k.SetPool(
+		ctx,
+		pool,
+	)
+
+	k.SetMember(
+		ctx,
+		member1,
+	)
+
+	k.SetMember(
+		ctx,
+		member2,
+	)
 
 	return &types.MsgRedeemDropResponse{}, nil
 }
