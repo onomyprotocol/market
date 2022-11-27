@@ -59,7 +59,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			Denom1:   coinPair.GetDenomByIndex(1),
 			Denom2:   coinPair.GetDenomByIndex(2),
 			Drops:    drops,
-			Earnings: pool.Earnings,
 			Burnings: pool.Burnings,
 		}
 	} else {
@@ -70,7 +69,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			Denom1:   coinPair.GetDenomByIndex(1),
 			Denom2:   coinPair.GetDenomByIndex(2),
 			Drops:    drops,
-			Earnings: sdk.NewInt(0),
 			Burnings: sdk.NewInt(0),
 		}
 	}

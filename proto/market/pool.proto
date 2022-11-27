@@ -15,10 +15,6 @@ message Pool {
   string drops = 5 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
-  ]; 
-  string earnings = 6 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
   ];
   string burnings = 7 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",

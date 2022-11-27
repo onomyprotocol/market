@@ -28221,8 +28221,6 @@ paths:
                       type: string
                     drops:
                       type: string
-                    earnings:
-                      type: string
                     burnings:
                       type: string
               pagination:
@@ -28351,8 +28349,6 @@ paths:
                   leader:
                     type: string
                   drops:
-                    type: string
-                  earnings:
                     type: string
                   burnings:
                     type: string
@@ -47955,8 +47951,6 @@ definitions:
         type: string
       drops:
         type: string
-      earnings:
-        type: string
       burnings:
         type: string
   onomyprotocol.market.market.QueryAllDropResponse:
@@ -48070,8 +48064,6 @@ definitions:
               type: string
             drops:
               type: string
-            earnings:
-              type: string
             burnings:
               type: string
       pagination:
@@ -48153,8 +48145,6 @@ definitions:
           leader:
             type: string
           drops:
-            type: string
-          earnings:
             type: string
           burnings:
             type: string
