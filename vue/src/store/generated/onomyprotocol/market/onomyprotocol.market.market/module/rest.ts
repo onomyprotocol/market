@@ -52,7 +52,6 @@ export interface MarketPool {
   denom2?: string;
   leader?: string;
   drops?: string;
-  burnings?: string;
 }
 
 export interface MarketQueryAllDropResponse {

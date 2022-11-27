@@ -54,22 +54,20 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	if found {
 		pool = types.Pool{
-			Pair:     pair,
-			Leader:   msg.Creator,
-			Denom1:   coinPair.GetDenomByIndex(1),
-			Denom2:   coinPair.GetDenomByIndex(2),
-			Drops:    drops,
-			Burnings: pool.Burnings,
+			Pair:   pair,
+			Leader: msg.Creator,
+			Denom1: coinPair.GetDenomByIndex(1),
+			Denom2: coinPair.GetDenomByIndex(2),
+			Drops:  drops,
 		}
 	} else {
 		// Create a new Pool with the following user input
 		pool = types.Pool{
-			Pair:     pair,
-			Leader:   msg.Creator,
-			Denom1:   coinPair.GetDenomByIndex(1),
-			Denom2:   coinPair.GetDenomByIndex(2),
-			Drops:    drops,
-			Burnings: sdk.NewInt(0),
+			Pair:   pair,
+			Leader: msg.Creator,
+			Denom1: coinPair.GetDenomByIndex(1),
+			Denom2: coinPair.GetDenomByIndex(2),
+			Drops:  drops,
 		}
 	}
 

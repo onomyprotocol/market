@@ -28221,8 +28221,6 @@ paths:
                       type: string
                     drops:
                       type: string
-                    burnings:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -28349,8 +28347,6 @@ paths:
                   leader:
                     type: string
                   drops:
-                    type: string
-                  burnings:
                     type: string
         default:
           description: An unexpected error response.
@@ -47951,8 +47947,6 @@ definitions:
         type: string
       drops:
         type: string
-      burnings:
-        type: string
   onomyprotocol.market.market.QueryAllDropResponse:
     type: object
     properties:
@@ -48064,8 +48058,6 @@ definitions:
               type: string
             drops:
               type: string
-            burnings:
-              type: string
       pagination:
         type: object
         properties:
@@ -48145,8 +48137,6 @@ definitions:
           leader:
             type: string
           drops:
-            type: string
-          burnings:
             type: string
   onomyprotocol.market.market.QueryParamsResponse:
     type: object
