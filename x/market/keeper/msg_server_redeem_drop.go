@@ -66,14 +66,14 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
 
 	// Redemption value in coin 2
-	drop2 := total2.Sub(earn2.Add(burn2))
+	dropOwner2 := total2.Sub(earn2.Add(burn2))
 
 	profit1 := dropProfit.Sub(profit2)
 	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
 	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
 
 	// Redemption value in coin 1
-	drop1 := total1.Sub(earn1.Add(burn1))
+	dropOwner1 := total1.Sub(earn1.Add(burn1))
 
 	// Update Pool Total Drops
 	pool.Drops = pool.Drops.Sub(drop.Drops)
@@ -86,16 +86,29 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	coin1 := sdk.NewCoin(denom1, drop1)
-	coin2 := sdk.NewCoin(denom2, drop2)
-	coins := sdk.NewCoins(coin1, coin2)
+	coinOwner1 := sdk.NewCoin(denom1, dropOwner1)
+	coinOwner2 := sdk.NewCoin(denom2, dropOwner2)
+	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
-	// Increment Owner
-	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coins)
+	// Payout Owner
+	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsOwner)
 	if sdkError != nil {
 		return nil, sdkError
 	}
 
+	coinLeader1 := sdk.NewCoin(denom1, earn1)
+	coinLeader2 := sdk.NewCoin(denom2, earn2)
+	coinsLeader := sdk.NewCoins(coinLeader1, coinLeader2)
+
+	leader, _ := sdk.AccAddressFromBech32(pool.Leader)
+
+	// Payout Leader
+	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
+	// Deactivate drop
 	drop.Active = false
 
 	// Set Pool Member and Drop
