@@ -72,6 +72,29 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
 	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
 
+	// Update burnings
+	burnings1, found := k.GetBurnings(ctx, denom1)
+	if !found {
+		burnings1 = types.Burnings{
+			Denom:  denom1,
+			Amount: burn1,
+		}
+	} else {
+		burnings1.Amount = burnings1.Amount.Add(burn1)
+	}
+	k.SetBurnings(ctx, burnings1)
+
+	burnings2, found := k.GetBurnings(ctx, denom2)
+	if !found {
+		burnings2 = types.Burnings{
+			Denom:  denom2,
+			Amount: burn2,
+		}
+	} else {
+		burnings2.Amount = burnings2.Amount.Add(burn2)
+	}
+	k.SetBurnings(ctx, burnings2)
+
 	// Redemption value in coin 1
 	dropOwner1 := total1.Sub(earn1.Add(burn1))
 
