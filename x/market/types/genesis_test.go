@@ -60,6 +60,14 @@ func TestGenesisState_Validate(t *testing.T) {
 						DenomB: "1",
 					},
 				},
+				BurningsList: []types.Burnings{
+					{
+						Denom: "0",
+					},
+					{
+						Denom: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -115,6 +123,20 @@ func TestGenesisState_Validate(t *testing.T) {
 						Pair:   "0",
 						DenomA: "0",
 						DenomB: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated burnings",
+			genState: &types.GenesisState{
+				BurningsList: []types.Burnings{
+					{
+						Denom: "0",
+					},
+					{
+						Denom: "0",
 					},
 				},
 			},

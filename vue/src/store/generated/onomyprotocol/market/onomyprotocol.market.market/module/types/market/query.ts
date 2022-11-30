@@ -9,6 +9,7 @@ import {
 } from "../cosmos/base/query/v1beta1/pagination";
 import { Drop } from "../market/drop";
 import { Member } from "../market/member";
+import { Burnings } from "../market/burnings";
 
 export const protobufPackage = "onomyprotocol.market.market";
 
@@ -76,6 +77,23 @@ export interface QueryAllMemberRequest {
 
 export interface QueryAllMemberResponse {
   member: Member[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryGetBurningsRequest {
+  denom: string;
+}
+
+export interface QueryGetBurningsResponse {
+  burnings: Burnings | undefined;
+}
+
+export interface QueryAllBurningsRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllBurningsResponse {
+  burnings: Burnings[];
   pagination: PageResponse | undefined;
 }
 
@@ -1108,6 +1126,314 @@ export const QueryAllMemberResponse = {
   },
 };
 
+const baseQueryGetBurningsRequest: object = { denom: "" };
+
+export const QueryGetBurningsRequest = {
+  encode(
+    message: QueryGetBurningsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denom !== "") {
+      writer.uint32(10).string(message.denom);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetBurningsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetBurningsRequest,
+    } as QueryGetBurningsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetBurningsRequest {
+    const message = {
+      ...baseQueryGetBurningsRequest,
+    } as QueryGetBurningsRequest;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = String(object.denom);
+    } else {
+      message.denom = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetBurningsRequest): unknown {
+    const obj: any = {};
+    message.denom !== undefined && (obj.denom = message.denom);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetBurningsRequest>
+  ): QueryGetBurningsRequest {
+    const message = {
+      ...baseQueryGetBurningsRequest,
+    } as QueryGetBurningsRequest;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = object.denom;
+    } else {
+      message.denom = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetBurningsResponse: object = {};
+
+export const QueryGetBurningsResponse = {
+  encode(
+    message: QueryGetBurningsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.burnings !== undefined) {
+      Burnings.encode(message.burnings, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetBurningsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetBurningsResponse,
+    } as QueryGetBurningsResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.burnings = Burnings.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetBurningsResponse {
+    const message = {
+      ...baseQueryGetBurningsResponse,
+    } as QueryGetBurningsResponse;
+    if (object.burnings !== undefined && object.burnings !== null) {
+      message.burnings = Burnings.fromJSON(object.burnings);
+    } else {
+      message.burnings = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetBurningsResponse): unknown {
+    const obj: any = {};
+    message.burnings !== undefined &&
+      (obj.burnings = message.burnings
+        ? Burnings.toJSON(message.burnings)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetBurningsResponse>
+  ): QueryGetBurningsResponse {
+    const message = {
+      ...baseQueryGetBurningsResponse,
+    } as QueryGetBurningsResponse;
+    if (object.burnings !== undefined && object.burnings !== null) {
+      message.burnings = Burnings.fromPartial(object.burnings);
+    } else {
+      message.burnings = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllBurningsRequest: object = {};
+
+export const QueryAllBurningsRequest = {
+  encode(
+    message: QueryAllBurningsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllBurningsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllBurningsRequest,
+    } as QueryAllBurningsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllBurningsRequest {
+    const message = {
+      ...baseQueryAllBurningsRequest,
+    } as QueryAllBurningsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllBurningsRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllBurningsRequest>
+  ): QueryAllBurningsRequest {
+    const message = {
+      ...baseQueryAllBurningsRequest,
+    } as QueryAllBurningsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllBurningsResponse: object = {};
+
+export const QueryAllBurningsResponse = {
+  encode(
+    message: QueryAllBurningsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.burnings) {
+      Burnings.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryAllBurningsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllBurningsResponse,
+    } as QueryAllBurningsResponse;
+    message.burnings = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.burnings.push(Burnings.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllBurningsResponse {
+    const message = {
+      ...baseQueryAllBurningsResponse,
+    } as QueryAllBurningsResponse;
+    message.burnings = [];
+    if (object.burnings !== undefined && object.burnings !== null) {
+      for (const e of object.burnings) {
+        message.burnings.push(Burnings.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllBurningsResponse): unknown {
+    const obj: any = {};
+    if (message.burnings) {
+      obj.burnings = message.burnings.map((e) =>
+        e ? Burnings.toJSON(e) : undefined
+      );
+    } else {
+      obj.burnings = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllBurningsResponse>
+  ): QueryAllBurningsResponse {
+    const message = {
+      ...baseQueryAllBurningsResponse,
+    } as QueryAllBurningsResponse;
+    message.burnings = [];
+    if (object.burnings !== undefined && object.burnings !== null) {
+      for (const e of object.burnings) {
+        message.burnings.push(Burnings.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -1124,6 +1450,12 @@ export interface Query {
   Member(request: QueryGetMemberRequest): Promise<QueryGetMemberResponse>;
   /** Queries a list of Member items. */
   MemberAll(request: QueryAllMemberRequest): Promise<QueryAllMemberResponse>;
+  /** Queries a Burnings by index. */
+  Burnings(request: QueryGetBurningsRequest): Promise<QueryGetBurningsResponse>;
+  /** Queries a list of Burnings items. */
+  BurningsAll(
+    request: QueryAllBurningsRequest
+  ): Promise<QueryAllBurningsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -1210,6 +1542,34 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllMemberResponse.decode(new Reader(data))
+    );
+  }
+
+  Burnings(
+    request: QueryGetBurningsRequest
+  ): Promise<QueryGetBurningsResponse> {
+    const data = QueryGetBurningsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "Burnings",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetBurningsResponse.decode(new Reader(data))
+    );
+  }
+
+  BurningsAll(
+    request: QueryAllBurningsRequest
+  ): Promise<QueryAllBurningsResponse> {
+    const data = QueryAllBurningsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "BurningsAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllBurningsResponse.decode(new Reader(data))
     );
   }
 }

@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface MarketBurnings {
+  denom?: string;
+  amount?: string;
+}
+
 export interface MarketDrop {
   /** @format uint64 */
   uid?: string;
@@ -54,6 +59,21 @@ export interface MarketPool {
   drops?: string;
 }
 
+export interface MarketQueryAllBurningsResponse {
+  burnings?: MarketBurnings[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryAllDropResponse {
   drop?: MarketDrop[];
 
@@ -97,6 +117,10 @@ export interface MarketQueryAllPoolResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryGetBurningsResponse {
+  burnings?: MarketBurnings;
 }
 
 export interface MarketQueryGetDropResponse {
@@ -385,10 +409,52 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title market/drop.proto
+ * @title market/burnings.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBurningsAll
+   * @summary Queries a list of Burnings items.
+   * @request GET:/onomyprotocol/market/market/burnings
+   */
+  queryBurningsAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllBurningsResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/burnings`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBurnings
+   * @summary Queries a Burnings by index.
+   * @request GET:/onomyprotocol/market/market/burnings/{denom}
+   */
+  queryBurnings = (denom: string, params: RequestParams = {}) =>
+    this.request<MarketQueryGetBurningsResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/burnings/${denom}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *

@@ -1,12 +1,13 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
 
+import { Burnings } from "./module/types/market/burnings"
 import { Drop } from "./module/types/market/drop"
 import { Member } from "./module/types/market/member"
 import { Params } from "./module/types/market/params"
 import { Pool } from "./module/types/market/pool"
 
 
-export { Drop, Member, Params, Pool };
+export { Burnings, Drop, Member, Params, Pool };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -51,8 +52,11 @@ const getDefaultState = () => {
 				DropAll: {},
 				Member: {},
 				MemberAll: {},
+				Burnings: {},
+				BurningsAll: {},
 				
 				_Structure: {
+						Burnings: getStructure(Burnings.fromPartial({})),
 						Drop: getStructure(Drop.fromPartial({})),
 						Member: getStructure(Member.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
@@ -126,6 +130,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.MemberAll[JSON.stringify(params)] ?? {}
+		},
+				getBurnings: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Burnings[JSON.stringify(params)] ?? {}
+		},
+				getBurningsAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.BurningsAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -322,6 +338,54 @@ export default {
 				return getters['getMemberAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryMemberAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryBurnings({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryBurnings( key.denom)).data
+				
+					
+				commit('QUERY', { query: 'Burnings', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryBurnings', payload: { options: { all }, params: {...key},query }})
+				return getters['getBurnings']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryBurnings API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryBurningsAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryBurningsAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryBurningsAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'BurningsAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryBurningsAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getBurningsAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryBurningsAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

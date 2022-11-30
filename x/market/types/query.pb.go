@@ -721,6 +721,190 @@ func (m *QueryAllMemberResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+type QueryGetBurningsRequest struct {
+	Denom string `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
+}
+
+func (m *QueryGetBurningsRequest) Reset()         { *m = QueryGetBurningsRequest{} }
+func (m *QueryGetBurningsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetBurningsRequest) ProtoMessage()    {}
+func (*QueryGetBurningsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dc4839d34748ebb1, []int{14}
+}
+func (m *QueryGetBurningsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetBurningsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetBurningsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetBurningsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetBurningsRequest.Merge(m, src)
+}
+func (m *QueryGetBurningsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetBurningsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetBurningsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetBurningsRequest proto.InternalMessageInfo
+
+func (m *QueryGetBurningsRequest) GetDenom() string {
+	if m != nil {
+		return m.Denom
+	}
+	return ""
+}
+
+type QueryGetBurningsResponse struct {
+	Burnings Burnings `protobuf:"bytes,1,opt,name=burnings,proto3" json:"burnings"`
+}
+
+func (m *QueryGetBurningsResponse) Reset()         { *m = QueryGetBurningsResponse{} }
+func (m *QueryGetBurningsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetBurningsResponse) ProtoMessage()    {}
+func (*QueryGetBurningsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dc4839d34748ebb1, []int{15}
+}
+func (m *QueryGetBurningsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetBurningsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetBurningsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetBurningsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetBurningsResponse.Merge(m, src)
+}
+func (m *QueryGetBurningsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetBurningsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetBurningsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetBurningsResponse proto.InternalMessageInfo
+
+func (m *QueryGetBurningsResponse) GetBurnings() Burnings {
+	if m != nil {
+		return m.Burnings
+	}
+	return Burnings{}
+}
+
+type QueryAllBurningsRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllBurningsRequest) Reset()         { *m = QueryAllBurningsRequest{} }
+func (m *QueryAllBurningsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllBurningsRequest) ProtoMessage()    {}
+func (*QueryAllBurningsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dc4839d34748ebb1, []int{16}
+}
+func (m *QueryAllBurningsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllBurningsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllBurningsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllBurningsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllBurningsRequest.Merge(m, src)
+}
+func (m *QueryAllBurningsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllBurningsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllBurningsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllBurningsRequest proto.InternalMessageInfo
+
+func (m *QueryAllBurningsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllBurningsResponse struct {
+	Burnings   []Burnings          `protobuf:"bytes,1,rep,name=burnings,proto3" json:"burnings"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllBurningsResponse) Reset()         { *m = QueryAllBurningsResponse{} }
+func (m *QueryAllBurningsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllBurningsResponse) ProtoMessage()    {}
+func (*QueryAllBurningsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_dc4839d34748ebb1, []int{17}
+}
+func (m *QueryAllBurningsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllBurningsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllBurningsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllBurningsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllBurningsResponse.Merge(m, src)
+}
+func (m *QueryAllBurningsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllBurningsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllBurningsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllBurningsResponse proto.InternalMessageInfo
+
+func (m *QueryAllBurningsResponse) GetBurnings() []Burnings {
+	if m != nil {
+		return m.Burnings
+	}
+	return nil
+}
+
+func (m *QueryAllBurningsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "onomyprotocol.market.market.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "onomyprotocol.market.market.QueryParamsResponse")
@@ -736,62 +920,75 @@ func init() {
 	proto.RegisterType((*QueryGetMemberResponse)(nil), "onomyprotocol.market.market.QueryGetMemberResponse")
 	proto.RegisterType((*QueryAllMemberRequest)(nil), "onomyprotocol.market.market.QueryAllMemberRequest")
 	proto.RegisterType((*QueryAllMemberResponse)(nil), "onomyprotocol.market.market.QueryAllMemberResponse")
+	proto.RegisterType((*QueryGetBurningsRequest)(nil), "onomyprotocol.market.market.QueryGetBurningsRequest")
+	proto.RegisterType((*QueryGetBurningsResponse)(nil), "onomyprotocol.market.market.QueryGetBurningsResponse")
+	proto.RegisterType((*QueryAllBurningsRequest)(nil), "onomyprotocol.market.market.QueryAllBurningsRequest")
+	proto.RegisterType((*QueryAllBurningsResponse)(nil), "onomyprotocol.market.market.QueryAllBurningsResponse")
 }
 
 func init() { proto.RegisterFile("market/query.proto", fileDescriptor_dc4839d34748ebb1) }
 
 var fileDescriptor_dc4839d34748ebb1 = []byte{
-	// 796 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x95, 0xdf, 0x6b, 0xd3, 0x50,
-	0x14, 0xc7, 0x9b, 0xb5, 0xab, 0xec, 0xfa, 0xa2, 0x77, 0x75, 0x94, 0x2a, 0xd5, 0x65, 0xf8, 0x1b,
-	0x72, 0x6d, 0x06, 0x22, 0x28, 0x83, 0xd4, 0xe9, 0x04, 0x11, 0xb6, 0xfa, 0x22, 0x0e, 0x91, 0x74,
-	0xbd, 0xc4, 0x60, 0x92, 0x93, 0x25, 0xa9, 0x3a, 0x4a, 0x5f, 0xfc, 0x0b, 0x04, 0x5f, 0x14, 0x7c,
-	0x19, 0xf8, 0xe6, 0x1f, 0xa0, 0x7f, 0xc2, 0x1e, 0x07, 0xbe, 0xf8, 0x24, 0xb2, 0xf9, 0x87, 0xc8,
-	0xfd, 0x91, 0x36, 0xe9, 0x66, 0x77, 0x2b, 0xf3, 0x29, 0x37, 0x27, 0x39, 0xe7, 0x7c, 0xce, 0x39,
-	0xf7, 0x7e, 0x2f, 0xc2, 0xbe, 0x1d, 0xbd, 0xa4, 0x09, 0xd9, 0xec, 0xd2, 0x68, 0xcb, 0x08, 0x23,
-	0x48, 0x00, 0x9f, 0x85, 0x00, 0xfc, 0x2d, 0xbe, 0xde, 0x00, 0xcf, 0x10, 0x7f, 0xc8, 0x47, 0xad,
-	0xe2, 0x80, 0x03, 0xfc, 0x1b, 0x61, 0x2b, 0xe1, 0x52, 0x3b, 0xe7, 0x00, 0x38, 0x1e, 0x25, 0x76,
-	0xe8, 0x12, 0x3b, 0x08, 0x20, 0xb1, 0x13, 0x17, 0x82, 0x58, 0x7e, 0xbd, 0xb6, 0x01, 0xb1, 0x0f,
-	0x31, 0x69, 0xdb, 0x31, 0x15, 0x99, 0xc8, 0xab, 0x46, 0x9b, 0x26, 0x76, 0x83, 0x84, 0xb6, 0xe3,
-	0x06, 0xfc, 0x67, 0xf9, 0xef, 0xac, 0x04, 0x0a, 0xed, 0xc8, 0xf6, 0xd3, 0x00, 0xa7, 0x53, 0x23,
-	0x80, 0x37, 0x62, 0xea, 0x44, 0x10, 0x8e, 0xb8, 0xfa, 0xd4, 0x6f, 0xd3, 0x48, 0x18, 0xf5, 0x0a,
-	0xc2, 0x6b, 0x2c, 0xe3, 0x2a, 0x8f, 0xd7, 0xa2, 0x9b, 0x5d, 0x1a, 0x27, 0xfa, 0x13, 0x34, 0x9b,
-	0xb3, 0xc6, 0x21, 0x04, 0x31, 0xc5, 0x16, 0x2a, 0x8b, 0xbc, 0x55, 0xed, 0x82, 0x76, 0xe5, 0xa4,
-	0xb9, 0x60, 0x8c, 0x69, 0x85, 0x21, 0x9c, 0x9b, 0xa5, 0x9d, 0x9f, 0xe7, 0x0b, 0x2d, 0xe9, 0xa8,
-	0x6f, 0xca, 0xc8, 0x2b, 0x34, 0x59, 0x05, 0xf0, 0x64, 0x42, 0x8c, 0x51, 0x29, 0xb4, 0xdd, 0x88,
-	0xc7, 0x9d, 0x69, 0xf1, 0x35, 0x9e, 0x43, 0xe5, 0x0e, 0x0d, 0xc0, 0x6f, 0x54, 0xa7, 0xb8, 0x55,
-	0xbe, 0x0d, 0xec, 0x66, 0xb5, 0x98, 0xb1, 0x9b, 0xcc, 0xee, 0x51, 0xbb, 0x43, 0xa3, 0x6a, 0x49,
-	0xd8, 0xc5, 0x9b, 0xfe, 0x18, 0x55, 0xf2, 0x29, 0x65, 0x35, 0xb7, 0x51, 0x89, 0x35, 0x4c, 0xd6,
-	0x32, 0x3f, 0xbe, 0x16, 0x00, 0x4f, 0x56, 0xc2, 0x9d, 0xf4, 0x67, 0xb2, 0x0e, 0xcb, 0xf3, 0xb2,
-	0x75, 0xdc, 0x47, 0x68, 0x38, 0x32, 0x19, 0xf9, 0x92, 0x21, 0xe6, 0x6b, 0xb0, 0xf9, 0x1a, 0x62,
-	0x27, 0xc9, 0xf9, 0x1a, 0xab, 0xb6, 0x43, 0xa5, 0x6f, 0x2b, 0xe3, 0xa9, 0x7f, 0xd2, 0x24, 0xf4,
-	0x20, 0xfe, 0x01, 0xe8, 0xe2, 0xc4, 0xd0, 0x78, 0x25, 0x47, 0x37, 0xc5, 0xe9, 0x2e, 0x1f, 0x49,
-	0x27, 0x32, 0xe7, 0xf0, 0xd6, 0x86, 0x53, 0x5c, 0x8e, 0x20, 0x4c, 0xab, 0x3f, 0x85, 0x8a, 0x5d,
-	0xb7, 0xc3, 0xcb, 0x2e, 0xb5, 0xd8, 0x12, 0x57, 0xd0, 0x34, 0xbc, 0x0e, 0x68, 0x24, 0x47, 0x28,
-	0x5e, 0x06, 0xd3, 0x2e, 0x0e, 0xa7, 0x9d, 0x9d, 0x92, 0x08, 0x39, 0x2c, 0x98, 0xed, 0x61, 0xa5,
-	0x29, 0x31, 0xc7, 0xb4, 0x60, 0xe6, 0x94, 0x9d, 0x52, 0x96, 0xf3, 0x7f, 0x4c, 0xe9, 0x2f, 0xd0,
-	0xc5, 0x89, 0xa1, 0x8f, 0x6f, 0x4a, 0xeb, 0xe8, 0x4c, 0xda, 0xd2, 0x47, 0xfc, 0xcc, 0xab, 0x9c,
-	0x36, 0x2b, 0x77, 0xda, 0xac, 0x81, 0xbd, 0x99, 0x3b, 0x6d, 0x4d, 0x7d, 0x1d, 0xcd, 0x8d, 0x06,
-	0x1f, 0xaa, 0x84, 0x90, 0x18, 0x25, 0x95, 0x10, 0xce, 0xa9, 0x4a, 0x08, 0x47, 0xfd, 0xb9, 0x24,
-	0xb7, 0x3c, 0x2f, 0x4f, 0x7e, 0x5c, 0x93, 0xfb, 0xac, 0x49, 0xfc, 0x4c, 0x86, 0x43, 0xf0, 0x8b,
-	0xff, 0x84, 0x7f, 0x6c, 0x13, 0x34, 0xb7, 0x67, 0xd0, 0x34, 0xc7, 0xc4, 0x1f, 0x34, 0x54, 0x16,
-	0x82, 0x8a, 0xc9, 0x58, 0xa0, 0x83, 0x6a, 0x5e, 0xbb, 0xa1, 0xee, 0x20, 0x18, 0xf4, 0xeb, 0x6f,
-	0xbf, 0xff, 0x7e, 0x3f, 0x75, 0x11, 0x2f, 0x90, 0x9c, 0x27, 0x49, 0x6f, 0x90, 0xec, 0x1d, 0x84,
-	0xbf, 0x69, 0xa8, 0xc4, 0xa4, 0x06, 0x2b, 0xe4, 0xc9, 0xcb, 0x7e, 0xad, 0x31, 0x81, 0x87, 0x44,
-	0x7b, 0xc8, 0xd1, 0xee, 0xe1, 0xbb, 0xe3, 0xd1, 0x00, 0x3c, 0xd2, 0x63, 0x1b, 0xbb, 0x4f, 0x7a,
-	0xe2, 0xde, 0x48, 0x17, 0x66, 0x9f, 0xf4, 0xc4, 0xcd, 0xd0, 0xc7, 0x1f, 0x35, 0x74, 0x82, 0x45,
-	0xb7, 0x3c, 0x25, 0xfa, 0xbc, 0xd8, 0xab, 0xd0, 0x8f, 0xc8, 0xb7, 0x7e, 0x95, 0xd3, 0x2f, 0xe0,
-	0xf9, 0x23, 0xe9, 0xf1, 0x17, 0x0d, 0x95, 0x98, 0x36, 0x28, 0xb6, 0x35, 0xa3, 0x6f, 0x8a, 0x6d,
-	0xcd, 0x2a, 0x96, 0xbe, 0xc4, 0xc1, 0x6e, 0xe1, 0x9b, 0x63, 0xc1, 0x98, 0x3e, 0x91, 0x5e, 0xd7,
-	0xed, 0xf4, 0x49, 0x8f, 0x4b, 0x79, 0x5f, 0x36, 0x99, 0x77, 0x92, 0x05, 0x54, 0xef, 0xe4, 0x84,
-	0xc0, 0x23, 0x12, 0xab, 0xd8, 0x49, 0x2e, 0xa8, 0x5f, 0x35, 0x54, 0x16, 0xe7, 0x14, 0x9b, 0x4a,
-	0x9d, 0xc9, 0x69, 0x4e, 0x6d, 0x71, 0x22, 0x1f, 0x89, 0xb7, 0xcc, 0xf1, 0x96, 0xf0, 0x9d, 0xb1,
-	0x78, 0x42, 0x2f, 0xf2, 0x1b, 0xd5, 0x4a, 0x17, 0xcd, 0x3e, 0xde, 0xd6, 0xd0, 0x8c, 0x08, 0xcc,
-	0xfa, 0x6a, 0x2a, 0x75, 0x69, 0x62, 0xf8, 0x03, 0x12, 0xa8, 0x78, 0xfc, 0x05, 0x7c, 0xf3, 0xc1,
-	0xce, 0x5e, 0x5d, 0xdb, 0xdd, 0xab, 0x6b, 0xbf, 0xf6, 0xea, 0xda, 0xbb, 0xfd, 0x7a, 0x61, 0x77,
-	0xbf, 0x5e, 0xf8, 0xb1, 0x5f, 0x2f, 0x3c, 0x35, 0x1c, 0x37, 0x79, 0xd1, 0x6d, 0x1b, 0x1b, 0xe0,
-	0x1f, 0x1e, 0xe8, 0x4d, 0xba, 0x48, 0xb6, 0x42, 0x1a, 0xb7, 0xcb, 0xfc, 0xfb, 0xe2, 0x9f, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x07, 0x59, 0xde, 0xc7, 0x75, 0x0b, 0x00, 0x00,
+	// 939 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x96, 0xcf, 0x8b, 0x23, 0x45,
+	0x14, 0xc7, 0x53, 0x93, 0x4c, 0xdc, 0xad, 0xb9, 0x68, 0x6d, 0x76, 0x0d, 0x51, 0xa2, 0xdb, 0xc3,
+	0xb8, 0xfe, 0x60, 0xbb, 0x4c, 0x76, 0x57, 0x04, 0x65, 0xa1, 0xe3, 0xea, 0x08, 0x22, 0xcc, 0xc4,
+	0x8b, 0x38, 0x88, 0x74, 0x92, 0xa2, 0x6d, 0xec, 0xee, 0xea, 0xe9, 0xee, 0xa8, 0x43, 0xc8, 0xc5,
+	0xbf, 0x40, 0xf0, 0xa2, 0xe0, 0x45, 0xf0, 0x22, 0x8a, 0x57, 0xfd, 0x13, 0xe6, 0x38, 0xe0, 0xc5,
+	0x93, 0xc8, 0x8c, 0x7f, 0x87, 0x48, 0x55, 0xbd, 0x4a, 0xba, 0x93, 0xd8, 0x53, 0x19, 0xb2, 0xa7,
+	0x54, 0x57, 0xf7, 0x7b, 0xf5, 0x79, 0xdf, 0x6f, 0xf7, 0x7b, 0xc1, 0x24, 0x74, 0x93, 0xcf, 0x58,
+	0x46, 0x8f, 0xc7, 0x2c, 0x39, 0xb1, 0xe3, 0x84, 0x67, 0x9c, 0x3c, 0xc3, 0x23, 0x1e, 0x9e, 0xc8,
+	0xf5, 0x90, 0x07, 0xb6, 0x7a, 0x02, 0x7e, 0x5a, 0x0d, 0x8f, 0x7b, 0x5c, 0xde, 0xa3, 0x62, 0xa5,
+	0x42, 0x5a, 0xcf, 0x7a, 0x9c, 0x7b, 0x01, 0xa3, 0x6e, 0xec, 0x53, 0x37, 0x8a, 0x78, 0xe6, 0x66,
+	0x3e, 0x8f, 0x52, 0xb8, 0xfb, 0xf2, 0x90, 0xa7, 0x21, 0x4f, 0xe9, 0xc0, 0x4d, 0x99, 0x3a, 0x89,
+	0x7e, 0xde, 0x19, 0xb0, 0xcc, 0xed, 0xd0, 0xd8, 0xf5, 0xfc, 0x48, 0x3e, 0x0c, 0xcf, 0xde, 0x00,
+	0xa0, 0xd8, 0x4d, 0xdc, 0x50, 0x27, 0x78, 0x4a, 0x6f, 0x72, 0x1e, 0x2c, 0x6c, 0x8d, 0x12, 0x1e,
+	0x2f, 0x84, 0x86, 0x2c, 0x1c, 0xb0, 0x04, 0x36, 0x6f, 0xc2, 0xe6, 0x60, 0x9c, 0x44, 0x7e, 0xe4,
+	0x41, 0x46, 0xab, 0x81, 0xc9, 0xa1, 0x00, 0x39, 0x90, 0xc7, 0xf4, 0xd9, 0xf1, 0x98, 0xa5, 0x99,
+	0xf5, 0x21, 0xbe, 0x51, 0xd8, 0x4d, 0x63, 0x1e, 0xa5, 0x8c, 0x38, 0xb8, 0xae, 0x70, 0x9a, 0xe8,
+	0x79, 0xf4, 0xe2, 0x4e, 0x77, 0xd7, 0x2e, 0x51, 0xc8, 0x56, 0xc1, 0xbd, 0xda, 0xe9, 0x5f, 0xcf,
+	0x55, 0xfa, 0x10, 0x68, 0x1d, 0x43, 0xe6, 0x7d, 0x96, 0x1d, 0x70, 0x1e, 0xc0, 0x81, 0x84, 0xe0,
+	0x5a, 0xec, 0xfa, 0x89, 0xcc, 0x7b, 0xbd, 0x2f, 0xd7, 0xe4, 0x16, 0xae, 0x8f, 0x58, 0xc4, 0xc3,
+	0x4e, 0x73, 0x4b, 0xee, 0xc2, 0xd5, 0x6c, 0xbf, 0xdb, 0xac, 0xe6, 0xf6, 0xbb, 0x62, 0x3f, 0x60,
+	0xee, 0x88, 0x25, 0xcd, 0x9a, 0xda, 0x57, 0x57, 0xd6, 0x07, 0xb8, 0x51, 0x3c, 0x12, 0xaa, 0x79,
+	0x03, 0xd7, 0x84, 0x8e, 0x50, 0xcb, 0xed, 0xf2, 0x5a, 0x38, 0x0f, 0xa0, 0x12, 0x19, 0x64, 0x7d,
+	0x0c, 0x75, 0x38, 0x41, 0x90, 0xaf, 0xe3, 0x1d, 0x8c, 0xe7, 0x4e, 0x42, 0xe6, 0x17, 0x6c, 0x65,
+	0xbb, 0x2d, 0x6c, 0xb7, 0xd5, 0x0b, 0x06, 0xb6, 0xdb, 0x07, 0xae, 0xc7, 0x20, 0xb6, 0x9f, 0x8b,
+	0xb4, 0xbe, 0x47, 0x00, 0x3d, 0xcb, 0xbf, 0x04, 0x5d, 0x5d, 0x1b, 0x9a, 0xec, 0x17, 0xe8, 0xb6,
+	0x24, 0xdd, 0x9d, 0x4b, 0xe9, 0xd4, 0xc9, 0x05, 0xbc, 0xc3, 0xb9, 0x8b, 0x8f, 0x12, 0x1e, 0xeb,
+	0xea, 0x9f, 0xc4, 0xd5, 0xb1, 0x3f, 0x92, 0x65, 0xd7, 0xfa, 0x62, 0x49, 0x1a, 0x78, 0x9b, 0x7f,
+	0x11, 0xb1, 0x04, 0x2c, 0x54, 0x17, 0x33, 0xb7, 0xab, 0x73, 0xb7, 0xf3, 0x2e, 0xa9, 0x94, 0xf3,
+	0x82, 0xc5, 0xab, 0x6d, 0xe4, 0x92, 0x08, 0xd4, 0x05, 0x8b, 0xa0, 0xbc, 0x4b, 0x79, 0xce, 0xc7,
+	0xe1, 0xd2, 0xff, 0x40, 0x57, 0xd7, 0x86, 0xde, 0x9c, 0x4b, 0x47, 0xf8, 0xa6, 0x96, 0xf4, 0x7d,
+	0xd9, 0x0a, 0x4c, 0xbe, 0x36, 0xa7, 0xf0, 0xb5, 0x39, 0xb3, 0xfd, 0x5e, 0xe1, 0x6b, 0xeb, 0x59,
+	0x47, 0xf8, 0xd6, 0x62, 0xf2, 0x79, 0x97, 0x50, 0x9d, 0xc7, 0xa8, 0x4b, 0xa8, 0x60, 0xdd, 0x25,
+	0x54, 0xa0, 0xf5, 0x09, 0x90, 0x3b, 0x41, 0x50, 0x24, 0xdf, 0x94, 0x73, 0x3f, 0x22, 0xc0, 0xcf,
+	0x9d, 0xb0, 0x02, 0xbf, 0x7a, 0x25, 0xfc, 0xcd, 0x39, 0x48, 0xf1, 0xd3, 0x5a, 0xe4, 0x1e, 0xf4,
+	0x6d, 0xad, 0x44, 0x03, 0x6f, 0x4b, 0x27, 0xc0, 0x44, 0x75, 0x61, 0x0d, 0x71, 0x73, 0x39, 0x00,
+	0x0a, 0xdb, 0xc7, 0xd7, 0x74, 0xf3, 0x07, 0xe5, 0xf6, 0x4a, 0x4b, 0xd3, 0x09, 0xa0, 0xb8, 0x59,
+	0xb0, 0xe5, 0x02, 0x95, 0x13, 0x04, 0x8b, 0x54, 0x9b, 0xf2, 0xe7, 0x17, 0x04, 0x85, 0x14, 0xce,
+	0x58, 0x59, 0x48, 0xf5, 0xca, 0x85, 0x6c, 0xcc, 0xa7, 0xee, 0xbf, 0x3b, 0x78, 0x5b, 0xe2, 0x92,
+	0x6f, 0x11, 0xae, 0xab, 0xc1, 0x47, 0x68, 0x29, 0xd4, 0xf2, 0xd4, 0x6d, 0xbd, 0x6a, 0x1e, 0xa0,
+	0x18, 0xac, 0x57, 0xbe, 0xfa, 0xe3, 0x9f, 0x6f, 0xb6, 0xf6, 0xc8, 0x2e, 0x2d, 0x44, 0x52, 0xfd,
+	0x07, 0x20, 0xff, 0x17, 0x82, 0xfc, 0x8e, 0x70, 0x4d, 0x8c, 0x04, 0x62, 0x70, 0x4e, 0x71, 0x3c,
+	0xb7, 0x3a, 0x6b, 0x44, 0x00, 0xda, 0x7b, 0x12, 0xed, 0x6d, 0xf2, 0x56, 0x39, 0x1a, 0xe7, 0x01,
+	0x9d, 0x88, 0x06, 0x34, 0xa5, 0x13, 0x35, 0xdf, 0xf5, 0xa2, 0x3b, 0xa5, 0x13, 0x35, 0xc1, 0xa7,
+	0xe4, 0x3b, 0x84, 0x9f, 0x10, 0xd9, 0x9d, 0xc0, 0x88, 0xbe, 0x38, 0x94, 0x4d, 0xe8, 0x17, 0xc6,
+	0xac, 0xf5, 0x92, 0xa4, 0xdf, 0x25, 0xb7, 0x2f, 0xa5, 0x27, 0x3f, 0x23, 0x5c, 0x13, 0x3d, 0xdc,
+	0x50, 0xd6, 0xdc, 0x1c, 0x32, 0x94, 0x35, 0x3f, 0x59, 0xac, 0x87, 0x12, 0xec, 0x75, 0xf2, 0x5a,
+	0x29, 0x98, 0x98, 0x23, 0x74, 0x32, 0xf6, 0x47, 0x53, 0x3a, 0x91, 0x23, 0x77, 0x0a, 0x22, 0x4b,
+	0x25, 0x45, 0x42, 0x73, 0x25, 0xd7, 0x04, 0x5e, 0x18, 0x85, 0x86, 0x4a, 0xca, 0xc1, 0xf7, 0x1b,
+	0xc2, 0x75, 0xd5, 0x4f, 0x49, 0xd7, 0x48, 0x99, 0xc2, 0x6c, 0x68, 0xdd, 0x5b, 0x2b, 0x06, 0xf0,
+	0x1e, 0x49, 0xbc, 0x87, 0xe4, 0xcd, 0x52, 0x3c, 0xd5, 0xd7, 0x8b, 0x2f, 0xaa, 0xa3, 0x17, 0xbd,
+	0x29, 0xf9, 0x01, 0xe1, 0xeb, 0x2a, 0xb1, 0xd0, 0xb5, 0x6b, 0xa4, 0xd2, 0xda, 0xf0, 0x4b, 0xa3,
+	0xca, 0xf0, 0xf3, 0x87, 0xa1, 0xf4, 0x2b, 0xc2, 0xd7, 0x74, 0x27, 0x24, 0xf7, 0x8d, 0xb4, 0x5a,
+	0xe8, 0xee, 0xad, 0x07, 0x6b, 0x46, 0x01, 0xe6, 0x03, 0x89, 0x49, 0xc9, 0xdd, 0x52, 0x4c, 0xdd,
+	0x95, 0x41, 0xd5, 0x29, 0xf9, 0x09, 0xe1, 0x1d, 0x9d, 0x4b, 0xc8, 0x7a, 0xdf, 0x48, 0xa2, 0x2b,
+	0x30, 0xaf, 0x98, 0x31, 0xd6, 0x5d, 0xc9, 0x7c, 0x87, 0xec, 0x19, 0x31, 0xf7, 0xde, 0x3d, 0x3d,
+	0x6f, 0xa3, 0xb3, 0xf3, 0x36, 0xfa, 0xfb, 0xbc, 0x8d, 0xbe, 0xbe, 0x68, 0x57, 0xce, 0x2e, 0xda,
+	0x95, 0x3f, 0x2f, 0xda, 0x95, 0x8f, 0x6c, 0xcf, 0xcf, 0x3e, 0x1d, 0x0f, 0xec, 0x21, 0x0f, 0x57,
+	0xa7, 0xfa, 0x52, 0x2f, 0xb2, 0x93, 0x98, 0xa5, 0x83, 0xba, 0xbc, 0x7f, 0xef, 0xbf, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xe5, 0xfa, 0x5a, 0xf6, 0x91, 0x0e, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -820,6 +1017,10 @@ type QueryClient interface {
 	Member(ctx context.Context, in *QueryGetMemberRequest, opts ...grpc.CallOption) (*QueryGetMemberResponse, error)
 	// Queries a list of Member items.
 	MemberAll(ctx context.Context, in *QueryAllMemberRequest, opts ...grpc.CallOption) (*QueryAllMemberResponse, error)
+	// Queries a Burnings by index.
+	Burnings(ctx context.Context, in *QueryGetBurningsRequest, opts ...grpc.CallOption) (*QueryGetBurningsResponse, error)
+	// Queries a list of Burnings items.
+	BurningsAll(ctx context.Context, in *QueryAllBurningsRequest, opts ...grpc.CallOption) (*QueryAllBurningsResponse, error)
 }
 
 type queryClient struct {
@@ -893,6 +1094,24 @@ func (c *queryClient) MemberAll(ctx context.Context, in *QueryAllMemberRequest, 
 	return out, nil
 }
 
+func (c *queryClient) Burnings(ctx context.Context, in *QueryGetBurningsRequest, opts ...grpc.CallOption) (*QueryGetBurningsResponse, error) {
+	out := new(QueryGetBurningsResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Query/Burnings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) BurningsAll(ctx context.Context, in *QueryAllBurningsRequest, opts ...grpc.CallOption) (*QueryAllBurningsResponse, error) {
+	out := new(QueryAllBurningsResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Query/BurningsAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
@@ -909,6 +1128,10 @@ type QueryServer interface {
 	Member(context.Context, *QueryGetMemberRequest) (*QueryGetMemberResponse, error)
 	// Queries a list of Member items.
 	MemberAll(context.Context, *QueryAllMemberRequest) (*QueryAllMemberResponse, error)
+	// Queries a Burnings by index.
+	Burnings(context.Context, *QueryGetBurningsRequest) (*QueryGetBurningsResponse, error)
+	// Queries a list of Burnings items.
+	BurningsAll(context.Context, *QueryAllBurningsRequest) (*QueryAllBurningsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -935,6 +1158,12 @@ func (*UnimplementedQueryServer) Member(ctx context.Context, req *QueryGetMember
 }
 func (*UnimplementedQueryServer) MemberAll(ctx context.Context, req *QueryAllMemberRequest) (*QueryAllMemberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MemberAll not implemented")
+}
+func (*UnimplementedQueryServer) Burnings(ctx context.Context, req *QueryGetBurningsRequest) (*QueryGetBurningsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Burnings not implemented")
+}
+func (*UnimplementedQueryServer) BurningsAll(ctx context.Context, req *QueryAllBurningsRequest) (*QueryAllBurningsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BurningsAll not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1067,6 +1296,42 @@ func _Query_MemberAll_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Burnings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetBurningsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Burnings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Query/Burnings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Burnings(ctx, req.(*QueryGetBurningsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_BurningsAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllBurningsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).BurningsAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Query/BurningsAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).BurningsAll(ctx, req.(*QueryAllBurningsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "onomyprotocol.market.market.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -1098,6 +1363,14 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MemberAll",
 			Handler:    _Query_MemberAll_Handler,
+		},
+		{
+			MethodName: "Burnings",
+			Handler:    _Query_Burnings_Handler,
+		},
+		{
+			MethodName: "BurningsAll",
+			Handler:    _Query_BurningsAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1648,6 +1921,153 @@ func (m *QueryAllMemberResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetBurningsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetBurningsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetBurningsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Denom) > 0 {
+		i -= len(m.Denom)
+		copy(dAtA[i:], m.Denom)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Denom)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetBurningsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetBurningsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetBurningsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Burnings.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllBurningsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllBurningsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllBurningsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllBurningsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllBurningsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllBurningsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Burnings) > 0 {
+		for iNdEx := len(m.Burnings) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Burnings[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -1863,6 +2283,62 @@ func (m *QueryAllMemberResponse) Size() (n int) {
 	_ = l
 	if len(m.Member) > 0 {
 		for _, e := range m.Member {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetBurningsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Denom)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetBurningsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Burnings.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllBurningsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllBurningsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Burnings) > 0 {
+		for _, e := range m.Burnings {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -3277,6 +3753,377 @@ func (m *QueryAllMemberResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.Member = append(m.Member, Member{})
 			if err := m.Member[len(m.Member)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetBurningsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetBurningsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetBurningsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Denom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetBurningsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetBurningsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetBurningsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Burnings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Burnings.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllBurningsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllBurningsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllBurningsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllBurningsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllBurningsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllBurningsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Burnings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Burnings = append(m.Burnings, Burnings{})
+			if err := m.Burnings[len(m.Burnings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
