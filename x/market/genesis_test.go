@@ -60,6 +60,24 @@ func TestGenesis(t *testing.T) {
 				Denom: "1",
 			},
 		},
+		OrderList: []types.Order{
+			{
+				Uid:       0,
+				Owner:     "0",
+				Active:    true,
+				OrderType: "0",
+				DenomAsk:  "0",
+				DenomBid:  "0",
+			},
+			{
+				Uid:       1,
+				Owner:     "1",
+				Active:    false,
+				OrderType: "1",
+				DenomAsk:  "1",
+				DenomBid:  "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -75,5 +93,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.DropList, got.DropList)
 	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
 	require.ElementsMatch(t, genesisState.BurningsList, got.BurningsList)
+	require.ElementsMatch(t, genesisState.OrderList, got.OrderList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -43,6 +43,24 @@ export type MarketMsgCreatePoolResponse = object;
 
 export type MarketMsgRedeemDropResponse = object;
 
+export interface MarketOrder {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  active?: boolean;
+  orderType?: string;
+  denomAsk?: string;
+  denomBid?: string;
+  amount?: string;
+  rate?: string[];
+
+  /** @format uint64 */
+  prev?: string;
+
+  /** @format uint64 */
+  next?: string;
+}
+
 /**
  * Params defines the parameters for the module.
  */
@@ -104,6 +122,21 @@ export interface MarketQueryAllMemberResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryAllOrderResponse {
+  order?: MarketOrder[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryAllPoolResponse {
   pool?: MarketPool[];
 
@@ -129,6 +162,10 @@ export interface MarketQueryGetDropResponse {
 
 export interface MarketQueryGetMemberResponse {
   member?: MarketMember;
+}
+
+export interface MarketQueryGetOrderResponse {
+  order?: MarketOrder;
 }
 
 export interface MarketQueryGetPoolResponse {
@@ -534,6 +571,56 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryMember = (pair: string, denomA: string, denomB: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetMemberResponse, RpcStatus>({
       path: `/onomyprotocol/market/market/member/${pair}/${denomA}/${denomB}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrderAll
+   * @summary Queries a list of Order items.
+   * @request GET:/onomyprotocol/market/market/order
+   */
+  queryOrderAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllOrderResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/order`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrder
+   * @summary Queries a Order by index.
+   * @request GET:/onomyprotocol/market/market/order/{uid}/{owner}/{active}/{orderType}/{denomAsk}/{denomBid}
+   */
+  queryOrder = (
+    uid: string,
+    owner: string,
+    active: boolean,
+    orderType: string,
+    denomAsk: string,
+    denomBid: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryGetOrderResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/order/${uid}/${owner}/${active}/${orderType}/${denomAsk}/${denomBid}`,
       method: "GET",
       format: "json",
       ...params,

@@ -10,6 +10,7 @@ import {
 import { Drop } from "../market/drop";
 import { Member } from "../market/member";
 import { Burnings } from "../market/burnings";
+import { Order } from "../market/order";
 
 export const protobufPackage = "onomyprotocol.market.market";
 
@@ -94,6 +95,28 @@ export interface QueryAllBurningsRequest {
 
 export interface QueryAllBurningsResponse {
   burnings: Burnings[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryGetOrderRequest {
+  uid: number;
+  owner: string;
+  active: boolean;
+  orderType: string;
+  denomAsk: string;
+  denomBid: string;
+}
+
+export interface QueryGetOrderResponse {
+  order: Order | undefined;
+}
+
+export interface QueryAllOrderRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllOrderResponse {
+  order: Order[];
   pagination: PageResponse | undefined;
 }
 
@@ -1434,6 +1457,368 @@ export const QueryAllBurningsResponse = {
   },
 };
 
+const baseQueryGetOrderRequest: object = {
+  uid: 0,
+  owner: "",
+  active: false,
+  orderType: "",
+  denomAsk: "",
+  denomBid: "",
+};
+
+export const QueryGetOrderRequest = {
+  encode(
+    message: QueryGetOrderRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.uid !== 0) {
+      writer.uint32(8).uint64(message.uid);
+    }
+    if (message.owner !== "") {
+      writer.uint32(18).string(message.owner);
+    }
+    if (message.active === true) {
+      writer.uint32(24).bool(message.active);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(34).string(message.orderType);
+    }
+    if (message.denomAsk !== "") {
+      writer.uint32(42).string(message.denomAsk);
+    }
+    if (message.denomBid !== "") {
+      writer.uint32(50).string(message.denomBid);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetOrderRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetOrderRequest } as QueryGetOrderRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.uid = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.owner = reader.string();
+          break;
+        case 3:
+          message.active = reader.bool();
+          break;
+        case 4:
+          message.orderType = reader.string();
+          break;
+        case 5:
+          message.denomAsk = reader.string();
+          break;
+        case 6:
+          message.denomBid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetOrderRequest {
+    const message = { ...baseQueryGetOrderRequest } as QueryGetOrderRequest;
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = Number(object.uid);
+    } else {
+      message.uid = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
+    }
+    if (object.active !== undefined && object.active !== null) {
+      message.active = Boolean(object.active);
+    } else {
+      message.active = false;
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = String(object.denomAsk);
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = String(object.denomBid);
+    } else {
+      message.denomBid = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetOrderRequest): unknown {
+    const obj: any = {};
+    message.uid !== undefined && (obj.uid = message.uid);
+    message.owner !== undefined && (obj.owner = message.owner);
+    message.active !== undefined && (obj.active = message.active);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
+    message.denomBid !== undefined && (obj.denomBid = message.denomBid);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetOrderRequest>): QueryGetOrderRequest {
+    const message = { ...baseQueryGetOrderRequest } as QueryGetOrderRequest;
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = object.uid;
+    } else {
+      message.uid = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
+    }
+    if (object.active !== undefined && object.active !== null) {
+      message.active = object.active;
+    } else {
+      message.active = false;
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = object.denomAsk;
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = object.denomBid;
+    } else {
+      message.denomBid = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetOrderResponse: object = {};
+
+export const QueryGetOrderResponse = {
+  encode(
+    message: QueryGetOrderResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.order !== undefined) {
+      Order.encode(message.order, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetOrderResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetOrderResponse } as QueryGetOrderResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.order = Order.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetOrderResponse {
+    const message = { ...baseQueryGetOrderResponse } as QueryGetOrderResponse;
+    if (object.order !== undefined && object.order !== null) {
+      message.order = Order.fromJSON(object.order);
+    } else {
+      message.order = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetOrderResponse): unknown {
+    const obj: any = {};
+    message.order !== undefined &&
+      (obj.order = message.order ? Order.toJSON(message.order) : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetOrderResponse>
+  ): QueryGetOrderResponse {
+    const message = { ...baseQueryGetOrderResponse } as QueryGetOrderResponse;
+    if (object.order !== undefined && object.order !== null) {
+      message.order = Order.fromPartial(object.order);
+    } else {
+      message.order = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllOrderRequest: object = {};
+
+export const QueryAllOrderRequest = {
+  encode(
+    message: QueryAllOrderRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllOrderRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllOrderRequest } as QueryAllOrderRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllOrderRequest {
+    const message = { ...baseQueryAllOrderRequest } as QueryAllOrderRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllOrderRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryAllOrderRequest>): QueryAllOrderRequest {
+    const message = { ...baseQueryAllOrderRequest } as QueryAllOrderRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllOrderResponse: object = {};
+
+export const QueryAllOrderResponse = {
+  encode(
+    message: QueryAllOrderResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.order) {
+      Order.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllOrderResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllOrderResponse } as QueryAllOrderResponse;
+    message.order = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.order.push(Order.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllOrderResponse {
+    const message = { ...baseQueryAllOrderResponse } as QueryAllOrderResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllOrderResponse): unknown {
+    const obj: any = {};
+    if (message.order) {
+      obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
+    } else {
+      obj.order = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllOrderResponse>
+  ): QueryAllOrderResponse {
+    const message = { ...baseQueryAllOrderResponse } as QueryAllOrderResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -1456,6 +1841,10 @@ export interface Query {
   BurningsAll(
     request: QueryAllBurningsRequest
   ): Promise<QueryAllBurningsResponse>;
+  /** Queries a Order by index. */
+  Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse>;
+  /** Queries a list of Order items. */
+  OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -1570,6 +1959,30 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllBurningsResponse.decode(new Reader(data))
+    );
+  }
+
+  Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse> {
+    const data = QueryGetOrderRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "Order",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetOrderResponse.decode(new Reader(data))
+    );
+  }
+
+  OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse> {
+    const data = QueryAllOrderRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "OrderAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllOrderResponse.decode(new Reader(data))
     );
   }
 }

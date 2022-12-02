@@ -25,6 +25,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.BurningsList {
 		k.SetBurnings(ctx, elem)
 	}
+	// Set all the order
+	for _, elem := range genState.OrderList {
+		k.SetOrder(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 	k.SetParams(ctx, genState.Params)
 }
@@ -38,6 +42,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.DropList = k.GetAllDrop(ctx)
 	genesis.MemberList = k.GetAllMember(ctx)
 	genesis.BurningsList = k.GetAllBurnings(ctx)
+	genesis.OrderList = k.GetAllOrder(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

@@ -68,6 +68,24 @@ func TestGenesisState_Validate(t *testing.T) {
 						Denom: "1",
 					},
 				},
+				OrderList: []types.Order{
+					{
+						Uid:       0,
+						Owner:     "0",
+						Active:    true,
+						OrderType: "0",
+						DenomAsk:  "0",
+						DenomBid:  "0",
+					},
+					{
+						Uid:       1,
+						Owner:     "1",
+						Active:    false,
+						OrderType: "1",
+						DenomAsk:  "1",
+						DenomBid:  "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -137,6 +155,30 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 					{
 						Denom: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated order",
+			genState: &types.GenesisState{
+				OrderList: []types.Order{
+					{
+						Uid:       0,
+						Owner:     "0",
+						Active:    true,
+						OrderType: "0",
+						DenomAsk:  "0",
+						DenomBid:  "0",
+					},
+					{
+						Uid:       0,
+						Owner:     "0",
+						Active:    true,
+						OrderType: "0",
+						DenomAsk:  "0",
+						DenomBid:  "0",
 					},
 				},
 			},
