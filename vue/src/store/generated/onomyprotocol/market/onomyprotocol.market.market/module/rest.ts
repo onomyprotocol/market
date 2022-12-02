@@ -39,6 +39,8 @@ export interface MarketMember {
 
 export type MarketMsgCreateDropResponse = object;
 
+export type MarketMsgCreateOrderResponse = object;
+
 export type MarketMsgCreatePoolResponse = object;
 
 export type MarketMsgRedeemDropResponse = object;

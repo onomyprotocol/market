@@ -26,4 +26,6 @@ var (
 	ErrInvalidDropAmount = sdkerrors.Register(ModuleName, 8, "invalid drop amount") // nolint: gomnd
 	// ErrInvalidDenomsPair - invalid demos pair.
 	ErrInvalidDenomsPair = sdkerrors.Register(ModuleName, 9, "invalid demos pair") // nolint: gomnd
+	// ErrInvalidOrder - invalid demos pair.
+	ErrInvalidOrder = sdkerrors.Register(ModuleName, 10, "invalid order") // nolint: gomnd
 )

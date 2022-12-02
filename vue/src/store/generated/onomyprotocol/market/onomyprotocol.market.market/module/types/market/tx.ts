@@ -26,6 +26,19 @@ export interface MsgRedeemDrop {
 
 export interface MsgRedeemDropResponse {}
 
+export interface MsgCreateOrder {
+  creator: string;
+  denomAsk: string;
+  denomBid: string;
+  orderType: string;
+  amount: string;
+  rate: string[];
+  prev: string;
+  next: string;
+}
+
+export interface MsgCreateOrderResponse {}
+
 const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
 export const MsgCreatePool = {
@@ -390,12 +403,241 @@ export const MsgRedeemDropResponse = {
   },
 };
 
+const baseMsgCreateOrder: object = {
+  creator: "",
+  denomAsk: "",
+  denomBid: "",
+  orderType: "",
+  amount: "",
+  rate: "",
+  prev: "",
+  next: "",
+};
+
+export const MsgCreateOrder = {
+  encode(message: MsgCreateOrder, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.denomAsk !== "") {
+      writer.uint32(18).string(message.denomAsk);
+    }
+    if (message.denomBid !== "") {
+      writer.uint32(26).string(message.denomBid);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(34).string(message.orderType);
+    }
+    if (message.amount !== "") {
+      writer.uint32(42).string(message.amount);
+    }
+    for (const v of message.rate) {
+      writer.uint32(50).string(v!);
+    }
+    if (message.prev !== "") {
+      writer.uint32(58).string(message.prev);
+    }
+    if (message.next !== "") {
+      writer.uint32(66).string(message.next);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateOrder {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateOrder } as MsgCreateOrder;
+    message.rate = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.denomAsk = reader.string();
+          break;
+        case 3:
+          message.denomBid = reader.string();
+          break;
+        case 4:
+          message.orderType = reader.string();
+          break;
+        case 5:
+          message.amount = reader.string();
+          break;
+        case 6:
+          message.rate.push(reader.string());
+          break;
+        case 7:
+          message.prev = reader.string();
+          break;
+        case 8:
+          message.next = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateOrder {
+    const message = { ...baseMsgCreateOrder } as MsgCreateOrder;
+    message.rate = [];
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = String(object.denomAsk);
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = String(object.denomBid);
+    } else {
+      message.denomBid = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(String(e));
+      }
+    }
+    if (object.prev !== undefined && object.prev !== null) {
+      message.prev = String(object.prev);
+    } else {
+      message.prev = "";
+    }
+    if (object.next !== undefined && object.next !== null) {
+      message.next = String(object.next);
+    } else {
+      message.next = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateOrder): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
+    message.denomBid !== undefined && (obj.denomBid = message.denomBid);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    message.amount !== undefined && (obj.amount = message.amount);
+    if (message.rate) {
+      obj.rate = message.rate.map((e) => e);
+    } else {
+      obj.rate = [];
+    }
+    message.prev !== undefined && (obj.prev = message.prev);
+    message.next !== undefined && (obj.next = message.next);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateOrder>): MsgCreateOrder {
+    const message = { ...baseMsgCreateOrder } as MsgCreateOrder;
+    message.rate = [];
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = object.denomAsk;
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = object.denomBid;
+    } else {
+      message.denomBid = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(e);
+      }
+    }
+    if (object.prev !== undefined && object.prev !== null) {
+      message.prev = object.prev;
+    } else {
+      message.prev = "";
+    }
+    if (object.next !== undefined && object.next !== null) {
+      message.next = object.next;
+    } else {
+      message.next = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateOrderResponse: object = {};
+
+export const MsgCreateOrderResponse = {
+  encode(_: MsgCreateOrderResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateOrderResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateOrderResponse } as MsgCreateOrderResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCreateOrderResponse {
+    const message = { ...baseMsgCreateOrderResponse } as MsgCreateOrderResponse;
+    return message;
+  },
+
+  toJSON(_: MsgCreateOrderResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgCreateOrderResponse>): MsgCreateOrderResponse {
+    const message = { ...baseMsgCreateOrderResponse } as MsgCreateOrderResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
   CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RedeemDrop(request: MsgRedeemDrop): Promise<MsgRedeemDropResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  CreateOrder(request: MsgCreateOrder): Promise<MsgCreateOrderResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -436,6 +678,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgRedeemDropResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateOrder(request: MsgCreateOrder): Promise<MsgCreateOrderResponse> {
+    const data = MsgCreateOrder.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Msg",
+      "CreateOrder",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateOrderResponse.decode(new Reader(data))
     );
   }
 }

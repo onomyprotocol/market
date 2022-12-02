@@ -10,6 +10,7 @@ service Msg {
       rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc CreateDrop(MsgCreateDrop) returns (MsgCreateDropResponse);
   rpc RedeemDrop(MsgRedeemDrop) returns (MsgRedeemDropResponse);
+  rpc CreateOrder(MsgCreateOrder) returns (MsgCreateOrderResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -37,6 +38,20 @@ message MsgRedeemDrop {
 }
 
 message MsgRedeemDropResponse {
+}
+
+message MsgCreateOrder {
+  string creator = 1;
+  string denomAsk = 2;
+  string denomBid = 3;
+  string orderType = 4;
+  string amount = 5;
+  repeated string rate = 6;
+  string prev = 7;
+  string next = 8;
+}
+
+message MsgCreateOrderResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

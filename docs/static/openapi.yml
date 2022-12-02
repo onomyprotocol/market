@@ -48316,6 +48316,8 @@ definitions:
         format: uint64
   onomyprotocol.market.market.MsgCreateDropResponse:
     type: object
+  onomyprotocol.market.market.MsgCreateOrderResponse:
+    type: object
   onomyprotocol.market.market.MsgCreatePoolResponse:
     type: object
   onomyprotocol.market.market.MsgRedeemDropResponse:
