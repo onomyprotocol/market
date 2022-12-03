@@ -73,6 +73,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			k.SetUidCount(ctx, uid+1)
 
 			var order = types.Order{
+				Uid:       uid,
 				Owner:     msg.Creator,
 				Active:    true,
 				DenomAsk:  msg.DenomAsk,
@@ -84,8 +85,40 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				Next:      0,
 			}
 
-			_ = order
+			k.SetOrder(ctx, order)
+			k.SetMember(ctx, memberBid)
 		}
+
+		if msg.OrderType == "limit" {
+			if memberBid.Limit != 0 {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Bid Member limit field not 0")
+			}
+
+			// Create the uid
+			uid := k.GetUidCount(ctx)
+
+			memberBid.Limit = uid
+
+			// Update drop uid count
+			k.SetUidCount(ctx, uid+1)
+
+			var order = types.Order{
+				Uid:       uid,
+				Owner:     msg.Creator,
+				Active:    true,
+				DenomAsk:  msg.DenomAsk,
+				DenomBid:  msg.DenomBid,
+				OrderType: "limit",
+				Amount:    amount,
+				Rate:      rate,
+				Prev:      0,
+				Next:      0,
+			}
+
+			k.SetOrder(ctx, order)
+			k.SetMember(ctx, memberBid)
+		}
+
 	}
 
 	_ = memberAsk
