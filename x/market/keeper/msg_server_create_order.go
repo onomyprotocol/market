@@ -268,6 +268,86 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
 			}
 		}
+
+		// Case 4
+		// IF next position and prev position are stated
+		if order.Prev > 0 && order.Next > 0 {
+			prevOrder, _ := k.GetOrder(ctx, prev)
+			nextOrder, _ := k.GetOrder(ctx, next)
+
+			if !prevOrder.Active {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not active")
+			}
+			if !nextOrder.Active {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
+			}
+
+			if !(nextOrder.Prev == prevOrder.Uid && prevOrder.Next == nextOrder.Uid) {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev and Next are not adjacent")
+			}
+
+			if msg.OrderType == "stop" {
+
+				if types.GT(order.Rate, prevOrder.Rate) {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
+				}
+
+				if types.LTE(order.Rate, nextOrder.Rate) {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate less than or equal to Next")
+				}
+
+				prevOrder.Next = uid
+				nextOrder.Prev = uid
+
+				// Transfer order amount to module
+				sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
+				if sdkError != nil {
+					return nil, sdkError
+				}
+
+				// Increment UID Counter
+				k.SetUidCount(ctx, uid+1)
+
+				// Set Orders and MemberBid
+				k.SetOrder(ctx, order)
+				k.SetOrder(ctx, prevOrder)
+				k.SetOrder(ctx, nextOrder)
+				k.SetMember(ctx, memberBid)
+
+				// executeLimit(coinBid, coinAsk, memberBid, memberAsk, 0);
+			}
+
+			if msg.OrderType == "limit" {
+
+				if types.LT(order.Rate, prevOrder.Rate) {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate less than Prev")
+				}
+
+				if types.GTE(order.Rate, nextOrder.Rate) {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than or equal to Next")
+				}
+
+				prevOrder.Next = uid
+				nextOrder.Prev = uid
+
+				// Transfer order amount to module
+				sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
+				if sdkError != nil {
+					return nil, sdkError
+				}
+
+				// Increment UID Counter
+				k.SetUidCount(ctx, uid+1)
+
+				// Set Orders and MemberBid
+				k.SetOrder(ctx, order)
+				k.SetOrder(ctx, prevOrder)
+				k.SetOrder(ctx, nextOrder)
+				k.SetMember(ctx, memberBid)
+
+				// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+			}
+		}
 	}
 
 	_ = memberAsk
