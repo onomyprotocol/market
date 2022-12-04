@@ -6,15 +6,15 @@ import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "
 import { Api } from "./rest";
 import { MsgRedeemDrop } from "./types/market/tx";
 import { MsgCreatePool } from "./types/market/tx";
-import { MsgCreateOrder } from "./types/market/tx";
 import { MsgCreateDrop } from "./types/market/tx";
+import { MsgCreateOrder } from "./types/market/tx";
 
 
 const types = [
   ["/onomyprotocol.market.market.MsgRedeemDrop", MsgRedeemDrop],
   ["/onomyprotocol.market.market.MsgCreatePool", MsgCreatePool],
-  ["/onomyprotocol.market.market.MsgCreateOrder", MsgCreateOrder],
   ["/onomyprotocol.market.market.MsgCreateDrop", MsgCreateDrop],
+  ["/onomyprotocol.market.market.MsgCreateOrder", MsgCreateOrder],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -49,8 +49,8 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgRedeemDrop: (data: MsgRedeemDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgRedeemDrop", value: MsgRedeemDrop.fromPartial( data ) }),
     msgCreatePool: (data: MsgCreatePool): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreatePool", value: MsgCreatePool.fromPartial( data ) }),
-    msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
     msgCreateDrop: (data: MsgCreateDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateDrop", value: MsgCreateDrop.fromPartial( data ) }),
+    msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
     
   };
 };

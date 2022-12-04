@@ -147,13 +147,13 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
 		}
 		if nextOrder.Prev != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not head of book")
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not currently head of book")
 		}
 
 		if msg.OrderType == "stop" {
 
-			if types.LT(order.Rate, nextOrder.Rate) {
-				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate less than Next")
+			if types.LTE(order.Rate, nextOrder.Rate) {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate less than or equal Next")
 			}
 
 			// Set order as new head of MemberBid Stop
@@ -180,8 +180,8 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 		if msg.OrderType == "limit" {
 
-			if types.GT(order.Rate, nextOrder.Rate) {
-				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Next")
+			if types.GTE(order.Rate, nextOrder.Rate) {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than or equal Next")
 			}
 
 			// Set order as new head of MemberBid Limit
@@ -204,6 +204,69 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			k.SetMember(ctx, memberBid)
 
 			// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+		}
+
+		// Case 3
+		// New tail of book
+		if order.Prev > 0 && order.Next == 0 {
+
+			prevOrder, _ := k.GetOrder(ctx, prev)
+			if !prevOrder.Active {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not active")
+			}
+			if prevOrder.Next != 0 {
+				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not currently tail of book")
+			}
+
+			if msg.OrderType == "stop" {
+
+				if types.GT(order.Rate, nextOrder.Rate) {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
+				}
+
+				// Set nextOrder Next field to Order
+				nextOrder.Next = uid
+
+				// Transfer order amount to module
+				sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
+				if sdkError != nil {
+					return nil, sdkError
+				}
+
+				// Increment UID Counter
+				k.SetUidCount(ctx, uid+1)
+
+				// Set Order and MemberBid
+				k.SetOrder(ctx, order)
+				k.SetMember(ctx, memberBid)
+
+				// executeLimit(coinBid, coinAsk, memberBid, memberAsk, 0);
+			}
+
+			if msg.OrderType == "limit" {
+
+				if types.LT(order.Rate, nextOrder.Rate) {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate less than Prev")
+				}
+
+				// Set nextOrder Next field to Order
+				nextOrder.Next = uid
+
+				// Transfer order amount to module
+				sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
+				if sdkError != nil {
+					return nil, sdkError
+				}
+
+				// Increment UID Counter
+				k.SetUidCount(ctx, uid+1)
+
+				// Set Order and MemberBid
+				k.SetOrder(ctx, order)
+				k.SetMember(ctx, memberBid)
+
+				// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+			}
 		}
 	}
 
