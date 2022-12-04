@@ -358,38 +358,17 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	return &types.MsgCreateOrderResponse{}, nil
 }
 
-// / @notice Execute limit order.
-// / @param coinAsk is the coinAsk address.
-// / @param coinBid is the coinBid address.
-// / @param memberAsk is the pools memberAsk. May be modified from current contract state
-// / @param memberBid is the pools memberBid. May be modified from current contract state
-// / @param stage is the execution stage (0-execute stop and limit, 1-execute limit only).
-// / @return always true.
-func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member, stage uint64) (bool, error) {
+func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member) (bool, error) {
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
 	if memberBid.Limit == 0 {
-		// Check if this is stage 0
-		// If stage == 0 then execute stop
-		if stage == 0 {
-			// Else Execute the askStop
-			// executeStop(coinBid, coinAsk, memberBid, memberAsk);
-			return true, nil
-		}
-		k.SetMember(ctx, memberAsk)
-		k.SetMember(ctx, memberBid)
+		// executeStop(coinBid, coinAsk, memberBid, memberAsk);
 		return true, nil
 	}
 
 	limitHead, _ := k.GetOrder(ctx, memberBid.Limit)
 
 	if types.LTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, limitHead.Rate) {
-		if stage == 0 {
-			// Else Execute the askStop
-			// executeStop(coinBid, coinAsk, memberBid, memberAsk);
-			return true, nil
-		}
-		k.SetMember(ctx, memberAsk)
-		k.SetMember(ctx, memberBid)
+		// executeStop(coinBid, coinAsk, memberBid, memberAsk);
 		return true, nil
 	}
 
@@ -413,6 +392,7 @@ func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid strin
 		if limitHead.Next != 0 {
 			limitNext, _ := k.GetOrder(ctx, limitHead.Next)
 			limitNext.Prev = 0
+			k.SetOrder(ctx, limitNext)
 		}
 	} else {
 		strikeAmountBid = maxAmountBid
@@ -428,7 +408,7 @@ func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid strin
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(limitHead.Owner)
 
-	coinAsk := sdk.NewCoin(denomBid, strikeAmountAsk)
+	coinAsk := sdk.NewCoin(denomAsk, strikeAmountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)
 
 	// Transfer ask order amount to owner account
@@ -447,4 +427,70 @@ func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid strin
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 	return true, nil
+}
+
+func (k msgServer) ExecuteStop(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member) bool {
+	// Checking for existence of stop order at the memberBid head
+	if memberBid.Stop == 0 {
+		return true
+	}
+
+	stopHead, _ := k.GetOrder(ctx, memberBid.Stop)
+
+	if types.GTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, stopHead.Rate) {
+		return true
+	}
+
+	// Execute Stop Order
+
+	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
+	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
+
+	// Strike Bid Amount: The amountBid of the bid coin exchanged
+	strikeAmountBid := stopHead.Amount
+	var strikeAmountAsk sdk.Int
+
+	if stopHead.Amount.GT(maxMemberBidAmount) {
+		strikeAmountBid = maxMemberBidAmount
+		strikeAmountAsk = (strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid))).Quo(memberBid.Balance.Add(strikeAmountBid))
+	} else {
+		strikeAmountAsk = strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid)).Quo(memberBid.Balance.Add(strikeAmountBid))
+		// THEN set Head(Stop) active to false as entire order will be filled
+		stopHead.Active = false
+		// Set Next Position as Head of Stop Book
+		memberBid.Stop = stopHead.Next
+
+		if stopHead.Next != 0 {
+			stopNext, _ := k.GetOrder(ctx, stopHead.Next)
+			stopNext.Prev = 0
+			k.SetOrder(ctx, stopNext)
+		}
+
+		// At this point the Head(Stop) position has been deactivated and the Next
+		// Stop position has been set as the Head Stop
+	}
+
+	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
+	// Get the borrower address
+	owner, _ := sdk.AccAddressFromBech32(stopHead.Owner)
+
+	coinAsk := sdk.NewCoin(denomAsk, strikeAmountAsk)
+	coinsAsk := sdk.NewCoins(coinAsk)
+
+	// Transfer ask order amount to owner account
+	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsAsk)
+	if sdkError != nil {
+		return false
+	}
+
+	stopHead.Amount = stopHead.Amount.Sub(strikeAmountBid)
+
+	k.SetOrder(ctx, stopHead)
+
+	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
+	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
+	return true
 }
