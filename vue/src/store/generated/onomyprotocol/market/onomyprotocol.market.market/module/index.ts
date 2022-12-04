@@ -5,16 +5,16 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgRedeemDrop } from "./types/market/tx";
-import { MsgCreateDrop } from "./types/market/tx";
-import { MsgCreateOrder } from "./types/market/tx";
 import { MsgCreatePool } from "./types/market/tx";
+import { MsgCreateOrder } from "./types/market/tx";
+import { MsgCreateDrop } from "./types/market/tx";
 
 
 const types = [
   ["/onomyprotocol.market.market.MsgRedeemDrop", MsgRedeemDrop],
-  ["/onomyprotocol.market.market.MsgCreateDrop", MsgCreateDrop],
-  ["/onomyprotocol.market.market.MsgCreateOrder", MsgCreateOrder],
   ["/onomyprotocol.market.market.MsgCreatePool", MsgCreatePool],
+  ["/onomyprotocol.market.market.MsgCreateOrder", MsgCreateOrder],
+  ["/onomyprotocol.market.market.MsgCreateDrop", MsgCreateDrop],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -48,9 +48,9 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgRedeemDrop: (data: MsgRedeemDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgRedeemDrop", value: MsgRedeemDrop.fromPartial( data ) }),
-    msgCreateDrop: (data: MsgCreateDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateDrop", value: MsgCreateDrop.fromPartial( data ) }),
-    msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
     msgCreatePool: (data: MsgCreatePool): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreatePool", value: MsgCreatePool.fromPartial( data ) }),
+    msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
+    msgCreateDrop: (data: MsgCreateDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateDrop", value: MsgCreateDrop.fromPartial( data ) }),
     
   };
 };

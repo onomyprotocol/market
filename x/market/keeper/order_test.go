@@ -36,11 +36,6 @@ func TestOrderGet(t *testing.T) {
 	for _, item := range items {
 		rst, found := keeper.GetOrder(ctx,
 			item.Uid,
-			item.Owner,
-			item.Active,
-			item.OrderType,
-			item.DenomAsk,
-			item.DenomBid,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -55,19 +50,9 @@ func TestOrderRemove(t *testing.T) {
 	for _, item := range items {
 		keeper.RemoveOrder(ctx,
 			item.Uid,
-			item.Owner,
-			item.Active,
-			item.OrderType,
-			item.DenomAsk,
-			item.DenomBid,
 		)
 		_, found := keeper.GetOrder(ctx,
 			item.Uid,
-			item.Owner,
-			item.Active,
-			item.OrderType,
-			item.DenomAsk,
-			item.DenomBid,
 		)
 		require.False(t, found)
 	}

@@ -10,7 +10,7 @@ import (
 func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
 	b := k.cdc.MustMarshal(&order)
-	store.Set(types.OrderKey(
+	store.Set(types.OrderSetKey(
 		order.Uid,
 		order.Owner,
 		order.Active,
@@ -24,22 +24,11 @@ func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
 func (k Keeper) GetOrder(
 	ctx sdk.Context,
 	uid uint64,
-	owner string,
-	active bool,
-	orderType string,
-	denomAsk string,
-	denomBid string,
-
 ) (val types.Order, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
 
-	b := store.Get(types.OrderKey(
+	b := store.Get(types.OrderGetKey(
 		uid,
-		owner,
-		active,
-		orderType,
-		denomAsk,
-		denomBid,
 	))
 	if b == nil {
 		return val, false
@@ -53,21 +42,10 @@ func (k Keeper) GetOrder(
 func (k Keeper) RemoveOrder(
 	ctx sdk.Context,
 	uid uint64,
-	owner string,
-	active bool,
-	orderType string,
-	denomAsk string,
-	denomBid string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
-	store.Delete(types.OrderKey(
+	store.Delete(types.OrderGetKey(
 		uid,
-		owner,
-		active,
-		orderType,
-		denomAsk,
-		denomBid,
 	))
 }
 

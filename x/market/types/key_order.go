@@ -10,7 +10,7 @@ const (
 )
 
 // OrderKey returns the store key to retrieve a Order from the index fields
-func OrderKey(
+func OrderSetKey(
 	uid uint64,
 	owner string,
 	active bool,
@@ -46,6 +46,19 @@ func OrderKey(
 
 	denomBidBytes := []byte(denomBid)
 	key = append(key, denomBidBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
+}
+
+func OrderGetKey(
+	uid uint64,
+) []byte {
+	var key []byte
+
+	uidBytes := make([]byte, 8)
+	binary.BigEndian.PutUint64(uidBytes, uid)
+	key = append(key, uidBytes...)
 	key = append(key, []byte("/")...)
 
 	return key
