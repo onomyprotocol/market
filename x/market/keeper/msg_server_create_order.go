@@ -357,3 +357,112 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 	return &types.MsgCreateOrderResponse{}, nil
 }
+
+/// @notice Execute limit order.
+/// @param coinAsk is the coinAsk address.
+/// @param coinBid is the coinBid address.
+/// @param memberAsk is the pools memberAsk. May be modified from current contract state
+/// @param memberBid is the pools memberBid. May be modified from current contract state
+/// @param stage is the execution stage (0-execute stop and limit, 1-execute limit only).
+/// @return always true.
+func ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member, stage uint64) {
+	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
+	if (memberBid.Limit == 0) {
+		// Check if this is stage 0
+		// If stage == 0 then execute stop
+		if (stage == 0) {
+			// Else Execute the askStop
+			executeStop(coinBid, coinAsk, memberBid, memberAsk);
+			return true;
+		}
+		pools.setMember(coinBid, coinAsk, memberAsk);
+		pools.setMember(coinAsk, coinBid, memberBid);
+		return true;
+	}
+
+	if (MarketMath.lte([memberAsk.balance, memberBid.balance], limits[coinAsk][coinBid][memberBid.limit].rate)) {
+		if (stage == 0) {
+			// Else Execute the askStop
+			executeStop(coinBid, coinAsk, memberBid, memberAsk);
+			return true;
+		}
+		pools.setMember(coinBid, coinAsk, memberAsk);
+		pools.setMember(coinAsk, coinBid, memberBid);
+		return true;
+	}
+
+	// Execute Head Limit
+	Orders.Position storage limitHead = limits[coinAsk][coinBid][memberBid.limit];
+
+	// The AMM Balance of the Bid Coin corresponding to Limit Order Exchange Rate
+	uint256 maxMemberBidBalance = coinBidBalanceFinal(
+		memberAsk.balance,
+		memberBid.balance,
+		limitHead.rate
+	);
+
+	// Maximum amountBid of the Bid Coin that the AMM may accept at Limit Order Exchange Rate
+	uint256 maxAmountBid = maxMemberBidBalance.sub(memberBid.balance);
+
+	// Strike Bid Amount: The amountBid of the bid coin exchanged
+	uint256 strikeAmountBid;
+
+	// Strike Bid Amount given by the user exchange account and received by the
+	// Pair AMM Pool B Member is the lesser of maxPoolBid or limit amountBid
+	if (limitHead.amountBid <= maxAmountBid) {
+		strikeAmountBid = limitHead.amountBid;
+	} else {
+		strikeAmountBid = maxAmountBid;
+	}
+
+	require(wallets.balanceBonded(limitHead.owner, coinBid) >= strikeAmountBid, "Insufficient Bond");
+	require(strikeAmountBid.mul(limitHead.rate[0]).mul(10 ** 18) > 10 ** 18, "StrikeAskAmount Overflow");
+
+	// StrikeAmountAsk = StrikeAmountBid * ExchangeRate(A/B)
+	// Exchange Rate is held constant at initial AMM balances
+	uint256 strikeAmountAsk = ((strikeAmountBid.mul(limitHead.rate[0]).mul(10 ** 18)).div(limitHead.rate[1])).div(10 ** 18);
+
+	if (limitHead.amountBid > strikeAmountBid) {
+		
+		emit ExecutePosition(
+			memberBid.limit,
+			limits[coinAsk][coinBid][memberBid.limit].owner,
+			1,
+			coinAsk,
+			coinBid,
+			strikeAmountAsk,
+			strikeAmountBid,
+			true
+		);
+
+	} else {
+
+		emit ExecutePosition(
+			memberBid.limit,
+			limits[coinAsk][coinBid][memberBid.limit].owner,
+			1,
+			coinAsk,
+			coinBid,
+			strikeAmountAsk,
+			strikeAmountBid,
+			false
+		);
+		
+		limitHead.active = false;
+		memberBid.limit = limitHead.next;
+		limits[coinAsk][coinBid][limitHead.next].prev = 0;
+	}
+
+	
+	wallets.spendBond(limitHead.owner, coinBid, strikeAmountBid);
+	wallets.incrementAccount(limitHead.owner, coinAsk, strikeAmountAsk);
+
+	memberBid.balance = memberBid.balance.add(strikeAmountBid);
+	memberAsk.balance = memberAsk.balance.sub(strikeAmountAsk);
+	
+	limitHead.amountBid = limitHead.amountBid.sub(strikeAmountBid);
+
+	pools.setMember(coinBid, coinAsk, memberAsk);
+	pools.setMember(coinAsk, coinBid, memberBid);
+	return true;
+}
