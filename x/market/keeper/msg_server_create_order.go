@@ -358,111 +358,93 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	return &types.MsgCreateOrderResponse{}, nil
 }
 
-/// @notice Execute limit order.
-/// @param coinAsk is the coinAsk address.
-/// @param coinBid is the coinBid address.
-/// @param memberAsk is the pools memberAsk. May be modified from current contract state
-/// @param memberBid is the pools memberBid. May be modified from current contract state
-/// @param stage is the execution stage (0-execute stop and limit, 1-execute limit only).
-/// @return always true.
-func ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member, stage uint64) {
+// / @notice Execute limit order.
+// / @param coinAsk is the coinAsk address.
+// / @param coinBid is the coinBid address.
+// / @param memberAsk is the pools memberAsk. May be modified from current contract state
+// / @param memberBid is the pools memberBid. May be modified from current contract state
+// / @param stage is the execution stage (0-execute stop and limit, 1-execute limit only).
+// / @return always true.
+func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member, stage uint64) (bool, error) {
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
-	if (memberBid.Limit == 0) {
+	if memberBid.Limit == 0 {
 		// Check if this is stage 0
 		// If stage == 0 then execute stop
-		if (stage == 0) {
+		if stage == 0 {
 			// Else Execute the askStop
-			executeStop(coinBid, coinAsk, memberBid, memberAsk);
-			return true;
+			// executeStop(coinBid, coinAsk, memberBid, memberAsk);
+			return true, nil
 		}
-		pools.setMember(coinBid, coinAsk, memberAsk);
-		pools.setMember(coinAsk, coinBid, memberBid);
-		return true;
+		k.SetMember(ctx, memberAsk)
+		k.SetMember(ctx, memberBid)
+		return true, nil
 	}
 
-	if (MarketMath.lte([memberAsk.balance, memberBid.balance], limits[coinAsk][coinBid][memberBid.limit].rate)) {
-		if (stage == 0) {
+	limitHead, _ := k.GetOrder(ctx, memberBid.Limit)
+
+	if types.LTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, limitHead.Rate) {
+		if stage == 0 {
 			// Else Execute the askStop
-			executeStop(coinBid, coinAsk, memberBid, memberAsk);
-			return true;
+			// executeStop(coinBid, coinAsk, memberBid, memberAsk);
+			return true, nil
 		}
-		pools.setMember(coinBid, coinAsk, memberAsk);
-		pools.setMember(coinAsk, coinBid, memberBid);
-		return true;
+		k.SetMember(ctx, memberAsk)
+		k.SetMember(ctx, memberBid)
+		return true, nil
 	}
 
 	// Execute Head Limit
-	Orders.Position storage limitHead = limits[coinAsk][coinBid][memberBid.limit];
-
 	// The AMM Balance of the Bid Coin corresponding to Limit Order Exchange Rate
-	uint256 maxMemberBidBalance = coinBidBalanceFinal(
-		memberAsk.balance,
-		memberBid.balance,
-		limitHead.rate
-	);
+	maxMemberBidBalance :=
+		limitHead.Rate[1].Mul(memberAsk.Balance.Add(memberBid.Balance)).Quo(limitHead.Rate[1].Add(limitHead.Rate[0]))
 
 	// Maximum amountBid of the Bid Coin that the AMM may accept at Limit Order Exchange Rate
-	uint256 maxAmountBid = maxMemberBidBalance.sub(memberBid.balance);
+	maxAmountBid := maxMemberBidBalance.Sub(memberBid.Balance)
 
 	// Strike Bid Amount: The amountBid of the bid coin exchanged
-	uint256 strikeAmountBid;
+	var strikeAmountBid sdk.Int
 
 	// Strike Bid Amount given by the user exchange account and received by the
 	// Pair AMM Pool B Member is the lesser of maxPoolBid or limit amountBid
-	if (limitHead.amountBid <= maxAmountBid) {
-		strikeAmountBid = limitHead.amountBid;
+	if limitHead.Amount.LTE(maxAmountBid) {
+		strikeAmountBid = limitHead.Amount
+		limitHead.Active = false
+		memberBid.Limit = limitHead.Next
+		if limitHead.Next != 0 {
+			limitNext, _ := k.GetOrder(ctx, limitHead.Next)
+			limitNext.Prev = 0
+		}
 	} else {
-		strikeAmountBid = maxAmountBid;
+		strikeAmountBid = maxAmountBid
 	}
 
-	require(wallets.balanceBonded(limitHead.owner, coinBid) >= strikeAmountBid, "Insufficient Bond");
-	require(strikeAmountBid.mul(limitHead.rate[0]).mul(10 ** 18) > 10 ** 18, "StrikeAskAmount Overflow");
+	// Need limits on Rates.
 
 	// StrikeAmountAsk = StrikeAmountBid * ExchangeRate(A/B)
 	// Exchange Rate is held constant at initial AMM balances
-	uint256 strikeAmountAsk = ((strikeAmountBid.mul(limitHead.rate[0]).mul(10 ** 18)).div(limitHead.rate[1])).div(10 ** 18);
+	strikeAmountAsk := (strikeAmountBid.Mul(limitHead.Rate[0])).Quo(limitHead.Rate[1])
 
-	if (limitHead.amountBid > strikeAmountBid) {
-		
-		emit ExecutePosition(
-			memberBid.limit,
-			limits[coinAsk][coinBid][memberBid.limit].owner,
-			1,
-			coinAsk,
-			coinBid,
-			strikeAmountAsk,
-			strikeAmountBid,
-			true
-		);
+	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
+	// Get the borrower address
+	owner, _ := sdk.AccAddressFromBech32(limitHead.Owner)
 
-	} else {
+	coinAsk := sdk.NewCoin(denomBid, strikeAmountAsk)
+	coinsAsk := sdk.NewCoins(coinAsk)
 
-		emit ExecutePosition(
-			memberBid.limit,
-			limits[coinAsk][coinBid][memberBid.limit].owner,
-			1,
-			coinAsk,
-			coinBid,
-			strikeAmountAsk,
-			strikeAmountBid,
-			false
-		);
-		
-		limitHead.active = false;
-		memberBid.limit = limitHead.next;
-		limits[coinAsk][coinBid][limitHead.next].prev = 0;
+	// Transfer ask order amount to owner account
+	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsAsk)
+	if sdkError != nil {
+		return false, sdkError
 	}
 
-	
-	wallets.spendBond(limitHead.owner, coinBid, strikeAmountBid);
-	wallets.incrementAccount(limitHead.owner, coinAsk, strikeAmountAsk);
+	limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
-	memberBid.balance = memberBid.balance.add(strikeAmountBid);
-	memberAsk.balance = memberAsk.balance.sub(strikeAmountAsk);
-	
-	limitHead.amountBid = limitHead.amountBid.sub(strikeAmountBid);
+	k.SetOrder(ctx, limitHead)
 
-	pools.setMember(coinBid, coinAsk, memberAsk);
-	pools.setMember(coinAsk, coinBid, memberBid);
-	return true;
+	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
+	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
+	return true, nil
 }
