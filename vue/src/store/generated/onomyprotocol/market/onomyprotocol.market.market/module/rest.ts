@@ -37,6 +37,8 @@ export interface MarketMember {
   stop?: string;
 }
 
+export type MarketMsgCancelOrderResponse = object;
+
 export type MarketMsgCreateDropResponse = object;
 
 export type MarketMsgCreateOrderResponse = object;

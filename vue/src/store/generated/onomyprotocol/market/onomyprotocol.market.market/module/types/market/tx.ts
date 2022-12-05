@@ -39,6 +39,13 @@ export interface MsgCreateOrder {
 
 export interface MsgCreateOrderResponse {}
 
+export interface MsgCancelOrder {
+  creator: string;
+  uid: string;
+}
+
+export interface MsgCancelOrderResponse {}
+
 const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
 export const MsgCreatePool = {
@@ -631,13 +638,124 @@ export const MsgCreateOrderResponse = {
   },
 };
 
+const baseMsgCancelOrder: object = { creator: "", uid: "" };
+
+export const MsgCancelOrder = {
+  encode(message: MsgCancelOrder, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.uid !== "") {
+      writer.uint32(18).string(message.uid);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCancelOrder {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCancelOrder } as MsgCancelOrder;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.uid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCancelOrder {
+    const message = { ...baseMsgCancelOrder } as MsgCancelOrder;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = String(object.uid);
+    } else {
+      message.uid = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCancelOrder): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.uid !== undefined && (obj.uid = message.uid);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCancelOrder>): MsgCancelOrder {
+    const message = { ...baseMsgCancelOrder } as MsgCancelOrder;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = object.uid;
+    } else {
+      message.uid = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCancelOrderResponse: object = {};
+
+export const MsgCancelOrderResponse = {
+  encode(_: MsgCancelOrderResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCancelOrderResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCancelOrderResponse } as MsgCancelOrderResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCancelOrderResponse {
+    const message = { ...baseMsgCancelOrderResponse } as MsgCancelOrderResponse;
+    return message;
+  },
+
+  toJSON(_: MsgCancelOrderResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgCancelOrderResponse>): MsgCancelOrderResponse {
+    const message = { ...baseMsgCancelOrderResponse } as MsgCancelOrderResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
   CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse>;
   RedeemDrop(request: MsgRedeemDrop): Promise<MsgRedeemDropResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateOrder(request: MsgCreateOrder): Promise<MsgCreateOrderResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  CancelOrder(request: MsgCancelOrder): Promise<MsgCancelOrderResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -690,6 +808,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreateOrderResponse.decode(new Reader(data))
+    );
+  }
+
+  CancelOrder(request: MsgCancelOrder): Promise<MsgCancelOrderResponse> {
+    const data = MsgCancelOrder.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Msg",
+      "CancelOrder",
+      data
+    );
+    return promise.then((data) =>
+      MsgCancelOrderResponse.decode(new Reader(data))
     );
   }
 }

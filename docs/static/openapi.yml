@@ -48314,6 +48314,8 @@ definitions:
       stop:
         type: string
         format: uint64
+  onomyprotocol.market.market.MsgCancelOrderResponse:
+    type: object
   onomyprotocol.market.market.MsgCreateDropResponse:
     type: object
   onomyprotocol.market.market.MsgCreateOrderResponse:

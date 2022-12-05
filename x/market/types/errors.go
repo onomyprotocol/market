@@ -19,7 +19,7 @@ var (
 	// ErrPoolNotFound - the drop not found.
 	ErrDropNotFound = sdkerrors.Register(ModuleName, 5, "the pool not found") // nolint: gomnd
 	// ErrPoolNotFound - the drop not found.
-	ErrNotDropOwner = sdkerrors.Register(ModuleName, 6, "the pool not found") // nolint: gomnd
+	ErrNotDropOwner = sdkerrors.Register(ModuleName, 6, "not order owner") // nolint: gomnd
 	// ErrMemberNotFound - the pool member not found.
 	ErrMemberNotFound = sdkerrors.Register(ModuleName, 7, "the pool member not found") // nolint: gomnd
 	// ErrInvalidDropAmount - the drop amount is invalid.
@@ -28,4 +28,9 @@ var (
 	ErrInvalidDenomsPair = sdkerrors.Register(ModuleName, 9, "invalid demos pair") // nolint: gomnd
 	// ErrInvalidOrder - invalid demos pair.
 	ErrInvalidOrder = sdkerrors.Register(ModuleName, 10, "invalid order") // nolint: gomnd
+	// ErrPoolNotFound - the drop not found.
+	ErrOrderNotFound = sdkerrors.Register(ModuleName, 11, "order not found") // nolint: gomnd
+	// ErrPoolNotFound - the drop not found.
+	ErrNotOrderOwner = sdkerrors.Register(ModuleName, 12, "not order owner") // nolint: gomnd
+	// ErrMemberNotFound - the pool member not found.
 )
