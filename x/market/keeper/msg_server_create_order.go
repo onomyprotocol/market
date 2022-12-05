@@ -106,8 +106,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			// guard in the case there is a stop run.
 			// Stop run would potentially take place if
 			// stop book is checked first repeatedly during price fall
-			// Execute Limit executeLimit(coinBid, coinAsk, memberBid, memberAsk, 0);
-
+			ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		}
 
 		if msg.OrderType == "limit" {
@@ -133,9 +132,8 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				return nil, sdkError
 			}
 
-			// Execute Limit executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+			ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		}
-
 	}
 
 	// Case 2
@@ -175,7 +173,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			k.SetOrder(ctx, order)
 			k.SetMember(ctx, memberBid)
 
-			// executeLimit(coinBid, coinAsk, memberBid, memberAsk, 0);
+			ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		}
 
 		if msg.OrderType == "limit" {
@@ -203,7 +201,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			k.SetOrder(ctx, order)
 			k.SetMember(ctx, memberBid)
 
-			// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+			ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		}
 
 		// Case 3
@@ -240,7 +238,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				k.SetOrder(ctx, order)
 				k.SetMember(ctx, memberBid)
 
-				// executeLimit(coinBid, coinAsk, memberBid, memberAsk, 0);
+				ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 			}
 
 			if msg.OrderType == "limit" {
@@ -265,7 +263,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				k.SetOrder(ctx, order)
 				k.SetMember(ctx, memberBid)
 
-				// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+				ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 			}
 		}
 
@@ -314,7 +312,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				k.SetOrder(ctx, nextOrder)
 				k.SetMember(ctx, memberBid)
 
-				// executeLimit(coinBid, coinAsk, memberBid, memberAsk, 0);
+				ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 			}
 
 			if msg.OrderType == "limit" {
@@ -345,20 +343,15 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				k.SetOrder(ctx, nextOrder)
 				k.SetMember(ctx, memberBid)
 
-				// executeLimit(coinAsk, coinBid, memberAsk, memberBid, 0);
+				ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 			}
 		}
 	}
 
-	_ = memberAsk
-	_ = memberBid
-
-	_ = ctx
-
 	return &types.MsgCreateOrderResponse{}, nil
 }
 
-func (k msgServer) ExecuteLimit(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member) (bool, error) {
+func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
 	if memberBid.Limit == 0 {
 		// executeStop(coinBid, coinAsk, memberBid, memberAsk);
