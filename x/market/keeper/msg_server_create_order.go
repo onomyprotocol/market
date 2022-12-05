@@ -354,14 +354,14 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
 	if memberBid.Limit == 0 {
-		// executeStop(coinBid, coinAsk, memberBid, memberAsk);
+		ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
 		return true, nil
 	}
 
 	limitHead, _ := k.GetOrder(ctx, memberBid.Limit)
 
 	if types.LTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, limitHead.Rate) {
-		// executeStop(coinBid, coinAsk, memberBid, memberAsk);
+		ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
 		return true, nil
 	}
 
@@ -422,7 +422,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	return true, nil
 }
 
-func (k msgServer) ExecuteStop(ctx sdk.Context, denomAsk string, denomBid string, memberBid types.Member, memberAsk types.Member) bool {
+func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) bool {
 	// Checking for existence of stop order at the memberBid head
 	if memberBid.Stop == 0 {
 		return true
