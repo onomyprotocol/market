@@ -23,36 +23,70 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 		return nil, sdkerrors.Wrapf(types.ErrNotOrderOwner, "%s", msg.Uid)
 	}
 
-	if order.Prev == 0 {
-		memberBid, found := k.GetMember(ctx, order.DenomAsk, order.DenomBid)
-		if !found {
-			return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", order.DenomBid)
-		}
+	memberBid, found := k.GetMember(ctx, order.DenomAsk, order.DenomBid)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", order.DenomBid)
+	}
 
+	if order.Prev == 0 {
 		if memberBid.Stop != order.Uid {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "%s", order.Uid)
 		}
 
 		if order.Next == 0 {
-			memberBid.Stop = 0
+			if order.OrderType == "stop" {
+				memberBid.Stop = 0
+			}
+
+			if order.OrderType == "limit" {
+				memberBid.Limit = 0
+			}
+
+			k.SetMember(ctx, memberBid)
+		} else {
+			nextOrder, found := k.GetOrder(ctx, order.Next)
+			if !found {
+				return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%s", order.Next)
+			}
+
+			nextOrder.Prev = 0
+
+			if order.OrderType == "stop" {
+				memberBid.Stop = order.Next
+			}
+
+			if order.OrderType == "limit" {
+				memberBid.Limit = order.Next
+			}
+
+			k.SetMember(ctx, memberBid)
+			k.SetOrder(ctx, nextOrder)
+		}
+	} else {
+		prevOrder, found := k.GetOrder(ctx, order.Prev)
+		if !found {
+			return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%s", order.Prev)
 		}
 
-		if order.Next > 0 {
-			memberBid.Stop = order.Next
+		if order.Next == 0 {
+			prevOrder.Next = 0
+			k.SetOrder(ctx, prevOrder)
+		} else {
+			nextOrder, found := k.GetOrder(ctx, order.Next)
+			if !found {
+				return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%s", order.Next)
+			}
+
+			nextOrder.Prev = order.Prev
+			prevOrder.Next = order.Next
+
+			k.SetOrder(ctx, prevOrder)
+			k.SetOrder(ctx, nextOrder)
 		}
 	}
 
-	if order.Next == 0 {
-		stops[coinAsk][coinBid][position.prev].next = 0
-	}
-
-	// TODO: I think this needs to be two conditionals?
-	if order.Prev > 0 || order.Next > 0 {
-		stops[coinAsk][coinBid][position.next].prev = position.prev
-		stops[coinAsk][coinBid][position.prev].next = position.next
-	}
-
-	_ = ctx
+	order.Active = false
+	k.SetOrder(ctx, order)
 
 	return &types.MsgCancelOrderResponse{}, nil
 }
