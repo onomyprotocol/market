@@ -1,6 +1,8 @@
 package types
 
 import (
+	"strconv"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -48,5 +50,45 @@ func (msg *MsgCreateOrder) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	coinAsk, _ := sdk.ParseCoinNormalized(`{1}{` + msg.DenomAsk + `}`)
+	if !coinAsk.IsValid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid ask denom")
+	}
+
+	coinBid, _ := sdk.ParseCoinNormalized(`{1}{` + msg.DenomBid + `}`)
+	if !coinBid.IsValid() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bid denom")
+	}
+
+	if msg.OrderType != "stop" && msg.OrderType != "limit" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid order type")
+	}
+
+	_, ok := sdk.NewIntFromString(msg.Amount)
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+
+	_, ok = sdk.NewIntFromString(msg.Rate[0])
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	_, ok = sdk.NewIntFromString(msg.Rate[1])
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	_, err = strconv.ParseUint(msg.Prev, 10, 64)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "prev uid is not an integer")
+	}
+
+	_, err = strconv.ParseUint(msg.Next, 10, 64)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "next uid is not an integer")
+	}
+
 	return nil
 }
