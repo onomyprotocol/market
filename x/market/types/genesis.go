@@ -67,7 +67,7 @@ func (gs GenesisState) Validate() error {
 	orderIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.OrderList {
-		index := string(OrderGetKey(elem.Uid))
+		index := string(OrderKey(elem.Uid))
 		if _, ok := orderIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for order")
 		}
