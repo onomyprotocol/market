@@ -62,7 +62,7 @@ service Query {
 
 // Queries a Order by index.
 	rpc Order(QueryGetOrderRequest) returns (QueryGetOrderResponse) {
-		option (google.api.http).get = "/onomyprotocol/market/market/order/{uid}/{owner}/{active}/{orderType}/{denomAsk}/{denomBid}";
+		option (google.api.http).get = "/onomyprotocol/market/market/order/{uid}";
 	}
 
 	// Queries a list of Order items.

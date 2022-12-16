@@ -612,20 +612,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryOrder
    * @summary Queries a Order by index.
-   * @request GET:/onomyprotocol/market/market/order/{uid}/{owner}/{active}/{orderType}/{denomAsk}/{denomBid}
+   * @request GET:/onomyprotocol/market/market/order/{uid}
    */
   queryOrder = (
     uid: string,
-    owner: string,
-    active: boolean,
-    orderType: string,
-    denomAsk: string,
-    denomBid: string,
+    query?: { owner?: string; active?: boolean; orderType?: string; denomAsk?: string; denomBid?: string },
     params: RequestParams = {},
   ) =>
     this.request<MarketQueryGetOrderResponse, RpcStatus>({
-      path: `/onomyprotocol/market/market/order/${uid}/${owner}/${active}/${orderType}/${denomAsk}/${denomBid}`,
+      path: `/onomyprotocol/market/market/order/${uid}`,
       method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

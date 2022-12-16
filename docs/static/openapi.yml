@@ -28458,7 +28458,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/onomyprotocol/market/market/order/{uid}/{owner}/{active}/{orderType}/{denomAsk}/{denomBid}':
+  '/onomyprotocol/market/market/order/{uid}':
     get:
       summary: Queries a Order by index.
       operationId: OnomyprotocolMarketMarketOrder
@@ -28521,24 +28521,24 @@ paths:
           type: string
           format: uint64
         - name: owner
-          in: path
-          required: true
+          in: query
+          required: false
           type: string
         - name: active
-          in: path
-          required: true
+          in: query
+          required: false
           type: boolean
         - name: orderType
-          in: path
-          required: true
+          in: query
+          required: false
           type: string
         - name: denomAsk
-          in: path
-          required: true
+          in: query
+          required: false
           type: string
         - name: denomBid
-          in: path
-          required: true
+          in: query
+          required: false
           type: string
       tags:
         - Query

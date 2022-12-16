@@ -30,7 +30,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 
 	if order.Prev == 0 {
 		if memberBid.Stop != order.Uid {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "%s", order.Uid)
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "%c", order.Uid)
 		}
 
 		if order.Next == 0 {
@@ -46,7 +46,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 		} else {
 			nextOrder, found := k.GetOrder(ctx, order.Next)
 			if !found {
-				return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%s", order.Next)
+				return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%c", order.Next)
 			}
 
 			nextOrder.Prev = 0
@@ -65,7 +65,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 	} else {
 		prevOrder, found := k.GetOrder(ctx, order.Prev)
 		if !found {
-			return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%s", order.Prev)
+			return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%c", order.Prev)
 		}
 
 		if order.Next == 0 {
@@ -74,7 +74,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 		} else {
 			nextOrder, found := k.GetOrder(ctx, order.Next)
 			if !found {
-				return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%s", order.Next)
+				return nil, sdkerrors.Wrapf(types.ErrOrderNotFound, "%c", order.Next)
 			}
 
 			nextOrder.Prev = order.Prev

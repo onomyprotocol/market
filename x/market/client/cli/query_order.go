@@ -45,9 +45,9 @@ func CmdListOrder() *cobra.Command {
 
 func CmdShowOrder() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-order [uid] [owner] [active] [order-type] [denom-ask] [denom-bid]",
+		Use:   "show-order [uid]",
 		Short: "shows a order",
-		Args:  cobra.ExactArgs(6),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -57,22 +57,9 @@ func CmdShowOrder() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argOwner := args[1]
-			argActive, err := cast.ToBoolE(args[2])
-			if err != nil {
-				return err
-			}
-			argOrderType := args[3]
-			argDenomAsk := args[4]
-			argDenomBid := args[5]
 
 			params := &types.QueryGetOrderRequest{
-				Uid:       argUid,
-				Owner:     argOwner,
-				Active:    argActive,
-				OrderType: argOrderType,
-				DenomAsk:  argDenomAsk,
-				DenomBid:  argDenomBid,
+				Uid: argUid,
 			}
 
 			res, err := queryClient.Order(context.Background(), params)

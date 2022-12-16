@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
@@ -35,6 +37,8 @@ func networkWithOrderObjects(t *testing.T, n int) (*network.Network, []types.Ord
 			OrderType: strconv.Itoa(i),
 			DenomAsk:  strconv.Itoa(i),
 			DenomBid:  strconv.Itoa(i),
+			Amount:    sdk.NewInt(int64(i)),
+			Rate:      []sdk.Int{sdk.NewInt(int64(i)), sdk.NewInt(int64(i))},
 		}
 		nullify.Fill(&order)
 		state.OrderList = append(state.OrderList, order)
@@ -60,6 +64,8 @@ func TestShowOrder(t *testing.T) {
 		idOrderType string
 		idDenomAsk  string
 		idDenomBid  string
+		idAmount    sdk.Int
+		idRate      []sdk.Int
 
 		args []string
 		err  error
@@ -73,6 +79,8 @@ func TestShowOrder(t *testing.T) {
 			idOrderType: objs[0].OrderType,
 			idDenomAsk:  objs[0].DenomAsk,
 			idDenomBid:  objs[0].DenomBid,
+			idAmount:    objs[0].Amount,
+			idRate:      objs[0].Rate,
 
 			args: common,
 			obj:  objs[0],
@@ -85,6 +93,8 @@ func TestShowOrder(t *testing.T) {
 			idOrderType: strconv.Itoa(100000),
 			idDenomAsk:  strconv.Itoa(100000),
 			idDenomBid:  strconv.Itoa(100000),
+			idAmount:    sdk.NewInt(int64(100000)),
+			idRate:      []sdk.Int{sdk.NewInt(int64(100000)), sdk.NewInt(int64(100000))},
 
 			args: common,
 			err:  status.Error(codes.InvalidArgument, "not found"),
@@ -94,11 +104,6 @@ func TestShowOrder(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
 				strconv.Itoa(int(tc.idUid)),
-				tc.idOwner,
-				strconv.FormatBool(tc.idActive),
-				tc.idOrderType,
-				tc.idDenomAsk,
-				tc.idDenomBid,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowOrder(), args)
