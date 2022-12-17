@@ -24,6 +24,8 @@ func createNOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Order {
 		items[i].OrderType = strconv.Itoa(i)
 		items[i].DenomAsk = strconv.Itoa(i)
 		items[i].DenomBid = strconv.Itoa(i)
+		items[i].Amount = sdk.NewInt(int64(i))
+		items[i].Rate = []sdk.Int{sdk.NewInt(int64(i)), sdk.NewInt(int64(i))}
 
 		keeper.SetOrder(ctx, items[i])
 	}
