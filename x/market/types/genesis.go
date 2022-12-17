@@ -15,6 +15,7 @@ func DefaultGenesis() *GenesisState {
 		MemberList:   []Member{},
 		BurningsList: []Burnings{},
 		OrderList:    []Order{},
+		AssetList:    []Asset{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -72,6 +73,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for order")
 		}
 		orderIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in asset
+	assetIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.AssetList {
+		index := string(AssetKey(elem.Active, elem.Owner, elem.AssetType))
+		if _, ok := assetIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for asset")
+		}
+		assetIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

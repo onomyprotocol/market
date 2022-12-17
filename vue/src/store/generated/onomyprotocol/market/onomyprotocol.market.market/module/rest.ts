@@ -9,6 +9,15 @@
  * ---------------------------------------------------------------
  */
 
+export interface MarketAsset {
+  active?: boolean;
+  owner?: string;
+  assetType?: string;
+
+  /** @format uint64 */
+  uid?: string;
+}
+
 export interface MarketBurnings {
   denom?: string;
   amount?: string;
@@ -79,6 +88,21 @@ export interface MarketPool {
   denom2?: string;
   leader?: string;
   drops?: string;
+}
+
+export interface MarketQueryAllAssetResponse {
+  asset?: MarketAsset[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 export interface MarketQueryAllBurningsResponse {
@@ -154,6 +178,10 @@ export interface MarketQueryAllPoolResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryGetAssetResponse {
+  asset?: MarketAsset;
 }
 
 export interface MarketQueryGetBurningsResponse {
@@ -450,10 +478,52 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title market/burnings.proto
+ * @title market/asset.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAssetAll
+   * @summary Queries a list of Asset items.
+   * @request GET:/onomyprotocol/market/market/asset
+   */
+  queryAssetAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllAssetResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/asset`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAsset
+   * @summary Queries a Asset by index.
+   * @request GET:/onomyprotocol/market/market/asset/{active}/{owner}/{assetType}
+   */
+  queryAsset = (active: boolean, owner: string, assetType: string, params: RequestParams = {}) =>
+    this.request<MarketQueryGetAssetResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/asset/${active}/${owner}/${assetType}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *

@@ -5,6 +5,7 @@ import { Drop } from "../market/drop";
 import { Member } from "../market/member";
 import { Burnings } from "../market/burnings";
 import { Order } from "../market/order";
+import { Asset } from "../market/asset";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "onomyprotocol.market.market";
@@ -16,8 +17,9 @@ export interface GenesisState {
   dropList: Drop[];
   memberList: Member[];
   burningsList: Burnings[];
-  /** this line is used by starport scaffolding # genesis/proto/state */
   orderList: Order[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  assetList: Asset[];
 }
 
 const baseGenesisState: object = {};
@@ -42,6 +44,9 @@ export const GenesisState = {
     for (const v of message.orderList) {
       Order.encode(v!, writer.uint32(50).fork()).ldelim();
     }
+    for (const v of message.assetList) {
+      Asset.encode(v!, writer.uint32(58).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -54,6 +59,7 @@ export const GenesisState = {
     message.memberList = [];
     message.burningsList = [];
     message.orderList = [];
+    message.assetList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -75,6 +81,9 @@ export const GenesisState = {
         case 6:
           message.orderList.push(Order.decode(reader, reader.uint32()));
           break;
+        case 7:
+          message.assetList.push(Asset.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -90,6 +99,7 @@ export const GenesisState = {
     message.memberList = [];
     message.burningsList = [];
     message.orderList = [];
+    message.assetList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromJSON(object.params);
     } else {
@@ -118,6 +128,11 @@ export const GenesisState = {
     if (object.orderList !== undefined && object.orderList !== null) {
       for (const e of object.orderList) {
         message.orderList.push(Order.fromJSON(e));
+      }
+    }
+    if (object.assetList !== undefined && object.assetList !== null) {
+      for (const e of object.assetList) {
+        message.assetList.push(Asset.fromJSON(e));
       }
     }
     return message;
@@ -162,6 +177,13 @@ export const GenesisState = {
     } else {
       obj.orderList = [];
     }
+    if (message.assetList) {
+      obj.assetList = message.assetList.map((e) =>
+        e ? Asset.toJSON(e) : undefined
+      );
+    } else {
+      obj.assetList = [];
+    }
     return obj;
   },
 
@@ -172,6 +194,7 @@ export const GenesisState = {
     message.memberList = [];
     message.burningsList = [];
     message.orderList = [];
+    message.assetList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromPartial(object.params);
     } else {
@@ -200,6 +223,11 @@ export const GenesisState = {
     if (object.orderList !== undefined && object.orderList !== null) {
       for (const e of object.orderList) {
         message.orderList.push(Order.fromPartial(e));
+      }
+    }
+    if (object.assetList !== undefined && object.assetList !== null) {
+      for (const e of object.assetList) {
+        message.assetList.push(Asset.fromPartial(e));
       }
     }
     return message;

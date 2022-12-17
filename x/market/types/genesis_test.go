@@ -86,6 +86,18 @@ func TestGenesisState_Validate(t *testing.T) {
 						DenomBid:  "1",
 					},
 				},
+				AssetList: []types.Asset{
+					{
+						Active:    true,
+						Owner:     "0",
+						AssetType: "0",
+					},
+					{
+						Active:    false,
+						Owner:     "1",
+						AssetType: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -179,6 +191,24 @@ func TestGenesisState_Validate(t *testing.T) {
 						OrderType: "0",
 						DenomAsk:  "0",
 						DenomBid:  "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated asset",
+			genState: &types.GenesisState{
+				AssetList: []types.Asset{
+					{
+						Active:    true,
+						Owner:     "0",
+						AssetType: "0",
+					},
+					{
+						Active:    true,
+						Owner:     "0",
+						AssetType: "0",
 					},
 				},
 			},
