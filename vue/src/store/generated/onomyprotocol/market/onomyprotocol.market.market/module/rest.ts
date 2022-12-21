@@ -184,6 +184,21 @@ export interface MarketQueryGetAssetResponse {
   asset?: MarketAsset;
 }
 
+export interface MarketQueryGetBookResponse {
+  order?: MarketOrder[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryGetBurningsResponse {
   burnings?: MarketBurnings;
 }
@@ -604,6 +619,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<MarketQueryGetDropResponse, RpcStatus>({
       path: `/onomyprotocol/market/market/drop/${uid}/${owner}/${pair}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryGetBook
+   * @summary Queries a list of GetBook items.
+   * @request GET:/onomyprotocol/market/market/get_book/{denomA}/{denomB}/{orderType}
+   */
+  queryGetBook = (
+    denomA: string,
+    denomB: string,
+    orderType: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryGetBookResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/get_book/${denomA}/${denomB}/${orderType}`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

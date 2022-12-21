@@ -140,6 +140,18 @@ export interface QueryAllAssetResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryGetBookRequest {
+  denomA: string;
+  denomB: string;
+  orderType: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryGetBookResponse {
+  order: Order[];
+  pagination: PageResponse | undefined;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -2147,6 +2159,210 @@ export const QueryAllAssetResponse = {
   },
 };
 
+const baseQueryGetBookRequest: object = {
+  denomA: "",
+  denomB: "",
+  orderType: "",
+};
+
+export const QueryGetBookRequest = {
+  encode(
+    message: QueryGetBookRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denomA !== "") {
+      writer.uint32(10).string(message.denomA);
+    }
+    if (message.denomB !== "") {
+      writer.uint32(18).string(message.denomB);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(26).string(message.orderType);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(34).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetBookRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denomA = reader.string();
+          break;
+        case 2:
+          message.denomB = reader.string();
+          break;
+        case 3:
+          message.orderType = reader.string();
+          break;
+        case 4:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetBookRequest {
+    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+    if (object.denomA !== undefined && object.denomA !== null) {
+      message.denomA = String(object.denomA);
+    } else {
+      message.denomA = "";
+    }
+    if (object.denomB !== undefined && object.denomB !== null) {
+      message.denomB = String(object.denomB);
+    } else {
+      message.denomB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetBookRequest): unknown {
+    const obj: any = {};
+    message.denomA !== undefined && (obj.denomA = message.denomA);
+    message.denomB !== undefined && (obj.denomB = message.denomB);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetBookRequest>): QueryGetBookRequest {
+    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+    if (object.denomA !== undefined && object.denomA !== null) {
+      message.denomA = object.denomA;
+    } else {
+      message.denomA = "";
+    }
+    if (object.denomB !== undefined && object.denomB !== null) {
+      message.denomB = object.denomB;
+    } else {
+      message.denomB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetBookResponse: object = {};
+
+export const QueryGetBookResponse = {
+  encode(
+    message: QueryGetBookResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.order) {
+      Order.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetBookResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+    message.order = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.order.push(Order.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetBookResponse {
+    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetBookResponse): unknown {
+    const obj: any = {};
+    if (message.order) {
+      obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
+    } else {
+      obj.order = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetBookResponse>): QueryGetBookResponse {
+    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -2177,6 +2393,8 @@ export interface Query {
   Asset(request: QueryGetAssetRequest): Promise<QueryGetAssetResponse>;
   /** Queries a list of Asset items. */
   AssetAll(request: QueryAllAssetRequest): Promise<QueryAllAssetResponse>;
+  /** Queries a list of GetBook items. */
+  GetBook(request: QueryGetBookRequest): Promise<QueryGetBookResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2339,6 +2557,18 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllAssetResponse.decode(new Reader(data))
+    );
+  }
+
+  GetBook(request: QueryGetBookRequest): Promise<QueryGetBookResponse> {
+    const data = QueryGetBookRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Query",
+      "GetBook",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetBookResponse.decode(new Reader(data))
     );
   }
 }

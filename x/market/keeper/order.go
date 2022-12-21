@@ -74,3 +74,39 @@ func (k Keeper) GetAllOrder(ctx sdk.Context) (list []types.Order) {
 
 	return
 }
+
+// GetOrder returns a order from its index
+func (k Keeper) GetOrderBook(
+	ctx sdk.Context,
+	denomA string,
+	denomB string,
+	orderType string,
+) (list []types.Order) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	member, _ := k.GetMember(ctx, denomA, denomB)
+
+	var uid uint64
+
+	if orderType == "limit" {
+		uid = member.Limit
+	} else {
+		uid = member.Stop
+	}
+
+	if uid == 0 {
+		return nil
+	}
+
+	for uid > 0 {
+		b := store.Get(types.OrderKey(
+			uid,
+		))
+		var val types.Order
+		k.cdc.MustUnmarshal(b, &val)
+		list = append(list, val)
+		uid = val.Next
+	}
+
+	return
+}
