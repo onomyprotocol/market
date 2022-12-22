@@ -10,7 +10,7 @@ import {
 import { Drop } from "../market/drop";
 import { Member } from "../market/member";
 import { Burnings } from "../market/burnings";
-import { Order } from "../market/order";
+import { Order, OrderResponse } from "../market/order";
 import { Asset } from "../market/asset";
 
 export const protobufPackage = "onomyprotocol.market.market";
@@ -148,8 +148,7 @@ export interface QueryGetBookRequest {
 }
 
 export interface QueryGetBookResponse {
-  order: Order[];
-  pagination: PageResponse | undefined;
+  book: OrderResponse[];
 }
 
 const baseQueryParamsRequest: object = {};
@@ -2282,14 +2281,8 @@ export const QueryGetBookResponse = {
     message: QueryGetBookResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    for (const v of message.order) {
-      Order.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(
-        message.pagination,
-        writer.uint32(18).fork()
-      ).ldelim();
+    for (const v of message.book) {
+      OrderResponse.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -2298,15 +2291,12 @@ export const QueryGetBookResponse = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
-    message.order = [];
+    message.book = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.order.push(Order.decode(reader, reader.uint32()));
-          break;
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32());
+          message.book.push(OrderResponse.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -2318,46 +2308,34 @@ export const QueryGetBookResponse = {
 
   fromJSON(object: any): QueryGetBookResponse {
     const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
-    message.order = [];
-    if (object.order !== undefined && object.order !== null) {
-      for (const e of object.order) {
-        message.order.push(Order.fromJSON(e));
+    message.book = [];
+    if (object.book !== undefined && object.book !== null) {
+      for (const e of object.book) {
+        message.book.push(OrderResponse.fromJSON(e));
       }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
     }
     return message;
   },
 
   toJSON(message: QueryGetBookResponse): unknown {
     const obj: any = {};
-    if (message.order) {
-      obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
+    if (message.book) {
+      obj.book = message.book.map((e) =>
+        e ? OrderResponse.toJSON(e) : undefined
+      );
     } else {
-      obj.order = [];
+      obj.book = [];
     }
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageResponse.toJSON(message.pagination)
-        : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryGetBookResponse>): QueryGetBookResponse {
     const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
-    message.order = [];
-    if (object.order !== undefined && object.order !== null) {
-      for (const e of object.order) {
-        message.order.push(Order.fromPartial(e));
+    message.book = [];
+    if (object.book !== undefined && object.book !== null) {
+      for (const e of object.book) {
+        message.book.push(OrderResponse.fromPartial(e));
       }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
     }
     return message;
   },
@@ -2394,7 +2372,7 @@ export interface Query {
   /** Queries a list of Asset items. */
   AssetAll(request: QueryAllAssetRequest): Promise<QueryAllAssetResponse>;
   /** Queries a list of GetBook items. */
-  GetBook(request: QueryGetBookRequest): Promise<QueryGetBookResponse>;
+  Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2560,11 +2538,11 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  GetBook(request: QueryGetBookRequest): Promise<QueryGetBookResponse> {
+  Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse> {
     const data = QueryGetBookRequest.encode(request).finish();
     const promise = this.rpc.request(
       "onomyprotocol.market.market.Query",
-      "GetBook",
+      "Book",
       data
     );
     return promise.then((data) =>

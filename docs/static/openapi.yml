@@ -28307,14 +28307,14 @@ paths:
   '/onomyprotocol/market/market/get_book/{denomA}/{denomB}/{orderType}':
     get:
       summary: Queries a list of GetBook items.
-      operationId: OnomyprotocolMarketMarketGetBook
+      operationId: OnomyprotocolMarketMarketBook
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              order:
+              book:
                 type: array
                 items:
                   type: object
@@ -28344,33 +28344,6 @@ paths:
                     next:
                       type: string
                       format: uint64
-              pagination:
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
         default:
           description: An unexpected error response.
           schema:
@@ -48703,6 +48676,34 @@ definitions:
       next:
         type: string
         format: uint64
+  onomyprotocol.market.market.OrderResponse:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+      owner:
+        type: string
+      active:
+        type: boolean
+      orderType:
+        type: string
+      denomAsk:
+        type: string
+      denomBid:
+        type: string
+      amount:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
   onomyprotocol.market.market.Params:
     type: object
     properties:
@@ -49021,7 +49022,7 @@ definitions:
   onomyprotocol.market.market.QueryGetBookResponse:
     type: object
     properties:
-      order:
+      book:
         type: array
         items:
           type: object
@@ -49051,31 +49052,6 @@ definitions:
             next:
               type: string
               format: uint64
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
   onomyprotocol.market.market.QueryGetBurningsResponse:
     type: object
     properties:

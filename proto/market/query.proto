@@ -82,7 +82,7 @@ service Query {
 	}
 
 // Queries a list of GetBook items.
-	rpc GetBook(QueryGetBookRequest) returns (QueryGetBookResponse) {
+	rpc Book(QueryGetBookRequest) returns (QueryGetBookResponse) {
 		option (google.api.http).get = "/onomyprotocol/market/market/get_book/{denomA}/{denomB}/{orderType}";
 	}
 
@@ -227,8 +227,7 @@ cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
 message QueryGetBookResponse {
-	repeated Order order = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+	repeated OrderResponse book = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

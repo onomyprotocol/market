@@ -74,6 +74,24 @@ export interface MarketOrder {
   next?: string;
 }
 
+export interface MarketOrderResponse {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  active?: boolean;
+  orderType?: string;
+  denomAsk?: string;
+  denomBid?: string;
+  amount?: string;
+  rate?: string[];
+
+  /** @format uint64 */
+  prev?: string;
+
+  /** @format uint64 */
+  next?: string;
+}
+
 /**
  * Params defines the parameters for the module.
  */
@@ -185,18 +203,7 @@ export interface MarketQueryGetAssetResponse {
 }
 
 export interface MarketQueryGetBookResponse {
-  order?: MarketOrder[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
+  book?: MarketOrderResponse[];
 }
 
 export interface MarketQueryGetBurningsResponse {
@@ -627,11 +634,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryGetBook
+   * @name QueryBook
    * @summary Queries a list of GetBook items.
    * @request GET:/onomyprotocol/market/market/get_book/{denomA}/{denomB}/{orderType}
    */
-  queryGetBook = (
+  queryBook = (
     denomA: string,
     denomB: string,
     orderType: string,

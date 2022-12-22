@@ -55,3 +55,15 @@ func (k Keeper) Order(c context.Context, req *types.QueryGetOrderRequest) (*type
 
 	return &types.QueryGetOrderResponse{Order: val}, nil
 }
+
+func (k Keeper) Book(goCtx context.Context, req *types.QueryGetBookRequest) (*types.QueryGetBookResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	book := k.GetBook(ctx, req.DenomA, req.DenomB, req.OrderType)
+
+	return &types.QueryGetBookResponse{Book: book}, nil
+}

@@ -29,19 +29,12 @@ func CmdGetBook() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryGetBookRequest{
-
 				DenomA:    reqDenomA,
 				DenomB:    reqDenomB,
 				OrderType: reqOrderType,
 			}
 
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-			params.Pagination = pageReq
-
-			res, err := queryClient.GetBook(cmd.Context(), params)
+			res, err := queryClient.Book(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

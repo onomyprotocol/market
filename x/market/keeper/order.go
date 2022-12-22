@@ -76,12 +76,12 @@ func (k Keeper) GetAllOrder(ctx sdk.Context) (list []types.Order) {
 }
 
 // GetOrder returns a order from its index
-func (k Keeper) GetOrderBook(
+func (k Keeper) GetBook(
 	ctx sdk.Context,
 	denomA string,
 	denomB string,
 	orderType string,
-) (list []types.Order) {
+) (list []types.OrderResponse) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
 
 	member, _ := k.GetMember(ctx, denomA, denomB)
@@ -102,10 +102,22 @@ func (k Keeper) GetOrderBook(
 		b := store.Get(types.OrderKey(
 			uid,
 		))
-		var val types.Order
-		k.cdc.MustUnmarshal(b, &val)
-		list = append(list, val)
-		uid = val.Next
+		var order types.Order
+		k.cdc.MustUnmarshal(b, &order)
+		orderResponse := types.OrderResponse{
+			Uid:       order.Uid,
+			Owner:     order.Owner,
+			Active:    order.Active,
+			OrderType: order.OrderType,
+			DenomAsk:  order.DenomAsk,
+			DenomBid:  order.DenomBid,
+			Amount:    order.Amount.String(),
+			Rate:      []string{order.Rate[0].String(), order.Rate[1].String()},
+			Prev:      order.Prev,
+			Next:      order.Next,
+		}
+		list = append(list, orderResponse)
+		uid = order.Next
 	}
 
 	return
