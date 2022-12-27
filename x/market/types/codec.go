@@ -13,6 +13,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRedeemDrop{}, "market/RedeemDrop", nil)
 	cdc.RegisterConcrete(&MsgCreateOrder{}, "market/CreateOrder", nil)
 	cdc.RegisterConcrete(&MsgCancelOrder{}, "market/CancelOrder", nil)
+	cdc.RegisterConcrete(&MsgMarketOrder{}, "market/MarketOrder", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -31,6 +32,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCancelOrder{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgMarketOrder{},
 	)
 	// this line is used by starport scaffolding # 3
 

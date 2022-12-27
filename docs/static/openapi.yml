@@ -48646,6 +48646,8 @@ definitions:
     type: object
   onomyprotocol.market.market.MsgCreatePoolResponse:
     type: object
+  onomyprotocol.market.market.MsgMarketOrderResponse:
+    type: object
   onomyprotocol.market.market.MsgRedeemDropResponse:
     type: object
   onomyprotocol.market.market.Order:

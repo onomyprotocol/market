@@ -32,5 +32,8 @@ var (
 	ErrOrderNotFound = sdkerrors.Register(ModuleName, 11, "order not found") // nolint: gomnd
 	// ErrPoolNotFound - the drop not found.
 	ErrNotOrderOwner = sdkerrors.Register(ModuleName, 12, "not order owner") // nolint: gomnd
-	// ErrMemberNotFound - the pool member not found.
+	// ErrInvalidOrderAmount - invalid bid amount
+	ErrInvalidOrderAmount = sdkerrors.Register(ModuleName, 13, "invalid order amount") // nolint: gomnd
+	// ErrSlippageTooGreat - slippage over limit
+	ErrSlippageTooGreat = sdkerrors.Register(ModuleName, 14, "slippage too great") // nolint: gomnd
 )

@@ -54,6 +54,8 @@ export type MarketMsgCreateOrderResponse = object;
 
 export type MarketMsgCreatePoolResponse = object;
 
+export type MarketMsgMarketOrderResponse = object;
+
 export type MarketMsgRedeemDropResponse = object;
 
 export interface MarketOrder {

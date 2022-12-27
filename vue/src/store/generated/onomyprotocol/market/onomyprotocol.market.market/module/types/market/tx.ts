@@ -46,6 +46,17 @@ export interface MsgCancelOrder {
 
 export interface MsgCancelOrderResponse {}
 
+export interface MsgMarketOrder {
+  creator: string;
+  denomAsk: string;
+  denomBid: string;
+  amountBid: string;
+  quoteAsk: string;
+  slippage: string;
+}
+
+export interface MsgMarketOrderResponse {}
+
 const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
 export const MsgCreatePool = {
@@ -748,14 +759,200 @@ export const MsgCancelOrderResponse = {
   },
 };
 
+const baseMsgMarketOrder: object = {
+  creator: "",
+  denomAsk: "",
+  denomBid: "",
+  amountBid: "",
+  quoteAsk: "",
+  slippage: "",
+};
+
+export const MsgMarketOrder = {
+  encode(message: MsgMarketOrder, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.denomAsk !== "") {
+      writer.uint32(18).string(message.denomAsk);
+    }
+    if (message.denomBid !== "") {
+      writer.uint32(26).string(message.denomBid);
+    }
+    if (message.amountBid !== "") {
+      writer.uint32(34).string(message.amountBid);
+    }
+    if (message.quoteAsk !== "") {
+      writer.uint32(42).string(message.quoteAsk);
+    }
+    if (message.slippage !== "") {
+      writer.uint32(50).string(message.slippage);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgMarketOrder {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgMarketOrder } as MsgMarketOrder;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.denomAsk = reader.string();
+          break;
+        case 3:
+          message.denomBid = reader.string();
+          break;
+        case 4:
+          message.amountBid = reader.string();
+          break;
+        case 5:
+          message.quoteAsk = reader.string();
+          break;
+        case 6:
+          message.slippage = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgMarketOrder {
+    const message = { ...baseMsgMarketOrder } as MsgMarketOrder;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = String(object.denomAsk);
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = String(object.denomBid);
+    } else {
+      message.denomBid = "";
+    }
+    if (object.amountBid !== undefined && object.amountBid !== null) {
+      message.amountBid = String(object.amountBid);
+    } else {
+      message.amountBid = "";
+    }
+    if (object.quoteAsk !== undefined && object.quoteAsk !== null) {
+      message.quoteAsk = String(object.quoteAsk);
+    } else {
+      message.quoteAsk = "";
+    }
+    if (object.slippage !== undefined && object.slippage !== null) {
+      message.slippage = String(object.slippage);
+    } else {
+      message.slippage = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgMarketOrder): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
+    message.denomBid !== undefined && (obj.denomBid = message.denomBid);
+    message.amountBid !== undefined && (obj.amountBid = message.amountBid);
+    message.quoteAsk !== undefined && (obj.quoteAsk = message.quoteAsk);
+    message.slippage !== undefined && (obj.slippage = message.slippage);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgMarketOrder>): MsgMarketOrder {
+    const message = { ...baseMsgMarketOrder } as MsgMarketOrder;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = object.denomAsk;
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = object.denomBid;
+    } else {
+      message.denomBid = "";
+    }
+    if (object.amountBid !== undefined && object.amountBid !== null) {
+      message.amountBid = object.amountBid;
+    } else {
+      message.amountBid = "";
+    }
+    if (object.quoteAsk !== undefined && object.quoteAsk !== null) {
+      message.quoteAsk = object.quoteAsk;
+    } else {
+      message.quoteAsk = "";
+    }
+    if (object.slippage !== undefined && object.slippage !== null) {
+      message.slippage = object.slippage;
+    } else {
+      message.slippage = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgMarketOrderResponse: object = {};
+
+export const MsgMarketOrderResponse = {
+  encode(_: MsgMarketOrderResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgMarketOrderResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgMarketOrderResponse } as MsgMarketOrderResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgMarketOrderResponse {
+    const message = { ...baseMsgMarketOrderResponse } as MsgMarketOrderResponse;
+    return message;
+  },
+
+  toJSON(_: MsgMarketOrderResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgMarketOrderResponse>): MsgMarketOrderResponse {
+    const message = { ...baseMsgMarketOrderResponse } as MsgMarketOrderResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
   CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse>;
   RedeemDrop(request: MsgRedeemDrop): Promise<MsgRedeemDropResponse>;
   CreateOrder(request: MsgCreateOrder): Promise<MsgCreateOrderResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CancelOrder(request: MsgCancelOrder): Promise<MsgCancelOrderResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  MarketOrder(request: MsgMarketOrder): Promise<MsgMarketOrderResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -820,6 +1017,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCancelOrderResponse.decode(new Reader(data))
+    );
+  }
+
+  MarketOrder(request: MsgMarketOrder): Promise<MsgMarketOrderResponse> {
+    const data = MsgMarketOrder.encode(request).finish();
+    const promise = this.rpc.request(
+      "onomyprotocol.market.market.Msg",
+      "MarketOrder",
+      data
+    );
+    return promise.then((data) =>
+      MsgMarketOrderResponse.decode(new Reader(data))
     );
   }
 }
