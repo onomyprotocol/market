@@ -25,11 +25,11 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	coinsBid := sdk.NewCoins(coinBid)
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	// Get the borrower address
-	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
+	// Get the trader address
+	trader, _ := sdk.AccAddressFromBech32(msg.Creator)
 
 	// Check if order creator has available balance
-	if err := k.validateSenderBalance(ctx, creator, coinsBid); err != nil {
+	if err := k.validateSenderBalance(ctx, trader, coinsBid); err != nil {
 		return nil, err
 	}
 
@@ -46,6 +46,7 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
 	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
 
+	// No partial order at the moment
 	if amountBid.GT(maxMemberBidAmount) {
 		return nil, sdkerrors.Wrapf(types.ErrInvalidOrderAmount, "Max bid amount %s", maxMemberBidAmount.String())
 	}
@@ -74,6 +75,25 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 			return nil, sdkerrors.Wrapf(types.ErrSlippageTooGreat, "Slippage %s", strikeSlippage)
 		}
 	}
+
+	// Transfer order amount to module
+	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, trader, types.ModuleName, coinsBid)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
+	coinAsk := sdk.NewCoin(msg.DenomAsk, amountAsk)
+	coinsAsk := sdk.NewCoins(coinAsk)
+
+	// Transfer ask order amount to owner account
+	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, trader, coinsAsk)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
+	memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
+	memberBid.Balance = memberBid.Balance.Add(amountBid)
+
 	return &types.MsgMarketOrderResponse{}, nil
 
 }
