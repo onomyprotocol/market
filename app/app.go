@@ -366,6 +366,7 @@ func New(
 		app.GetSubspace(marketmoduletypes.ModuleName),
 
 		app.BankKeeper,
+		app.StakingKeeper,
 	)
 	marketModule := marketmodule.NewAppModule(appCodec, app.MarketKeeper, app.AccountKeeper, app.BankKeeper)
 
