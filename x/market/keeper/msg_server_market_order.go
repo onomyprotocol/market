@@ -76,7 +76,7 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 		}
 	}
 
-	// Transfer order amount to module
+	// Transfer bid amount from trader account to module
 	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, trader, types.ModuleName, coinsBid)
 	if sdkError != nil {
 		return nil, sdkError
@@ -85,7 +85,7 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	coinAsk := sdk.NewCoin(msg.DenomAsk, amountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)
 
-	// Transfer ask order amount to owner account
+	// Transfer ask amount from module to trader account
 	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, trader, coinsAsk)
 	if sdkError != nil {
 		return nil, sdkError
@@ -93,6 +93,9 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 
 	memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
 	memberBid.Balance = memberBid.Balance.Add(amountBid)
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
 
 	return &types.MsgMarketOrderResponse{}, nil
 
