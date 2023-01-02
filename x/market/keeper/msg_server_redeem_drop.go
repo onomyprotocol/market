@@ -157,3 +157,81 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	return &types.MsgRedeemDropResponse{}, nil
 }
+
+func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) types.Burnings {
+
+	amountBid := burnings.Amount
+
+	coinBid := sdk.NewCoin(burnings.Denom, burnings.Amount)
+
+	coinsBid := sdk.NewCoins(coinBid)
+
+	denomStake := k.stakingKeeper.BondDenom(ctx)
+
+	memberAsk, found := k.GetMember(ctx, burnings.Denom, denomStake)
+	if !found {
+		return burnings
+	}
+
+	memberBid, found := k.GetMember(ctx, denomStake, burnings.Denom)
+	if !found {
+		return burnings
+	}
+
+	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
+	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
+
+	// No partial order at the moment
+	if amountBid.GT(maxMemberBidAmount) {
+		return burnings
+	}
+
+	// Summation Invariant
+	// A(i) + B(i) = A(f) + B(f)
+
+	// Derivation
+	// A(f) = A(i) + B(i) - B(f)
+	// A(f) = A(i) - amountBid
+	// Exch(f) = A(f) / B(f)
+	// Exch(f) = (A(i) - amountBid) / B(f)
+	// B(f) = B(i) + amountBid
+	// Exch(f) =  (A(i) - amountBid) / (B(i) + amountBid)
+	// amountAsk = amountBid * Exch(f) = [amountBid * (A(i) - amountBid)] / (B(i) + amountBid)
+	amountAsk := (amountBid.Mul(memberAsk.Balance.Sub(amountBid))).Quo(memberBid.Balance.Add(amountBid))
+
+	quoteAsk, _ := sdk.NewIntFromString(msg.QuoteAsk)
+
+	// If quote of ask coin is greater than strike ask amount then check slippage
+	// Market order without slippage has quoteAsk set to zero
+	if quoteAsk.GT(amountAsk) {
+		strikeSlippage := ((quoteAsk.Sub(amountAsk)).Mul(sdk.NewInt(10000))).Quo(quoteAsk)
+		slippage, _ := sdk.NewIntFromString(msg.Slippage)
+		if strikeSlippage.GT(slippage) {
+			return nil, sdkerrors.Wrapf(types.ErrSlippageTooGreat, "Slippage %s", strikeSlippage)
+		}
+	}
+
+	// Transfer bid amount from trader account to module
+	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, trader, types.ModuleName, coinsBid)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
+	coinAsk := sdk.NewCoin(msg.DenomAsk, amountAsk)
+	coinsAsk := sdk.NewCoins(coinAsk)
+
+	// Transfer ask amount from module to trader account
+	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, trader, coinsAsk)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
+	memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
+	memberBid.Balance = memberBid.Balance.Add(amountBid)
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
+
+	return &types.MsgMarketOrderResponse{}, nil
+
+}
