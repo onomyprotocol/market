@@ -72,6 +72,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
 	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
 
+	var sdkError error
+
 	// Update burnings
 	burnings1, found := k.GetBurnings(ctx, denom1)
 	if !found {
@@ -79,8 +81,16 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 			Denom:  denom1,
 			Amount: burn1,
 		}
+		burnings1, sdkError = Burn(k, ctx, burnings1)
+		if sdkError != nil {
+			return nil, sdkError
+		}
 	} else {
 		burnings1.Amount = burnings1.Amount.Add(burn1)
+		burnings1, sdkError = Burn(k, ctx, burnings1)
+		if sdkError != nil {
+			return nil, sdkError
+		}
 	}
 	k.SetBurnings(ctx, burnings1)
 
@@ -90,8 +100,16 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 			Denom:  denom2,
 			Amount: burn2,
 		}
+		burnings2, sdkError = Burn(k, ctx, burnings2)
+		if sdkError != nil {
+			return nil, sdkError
+		}
 	} else {
 		burnings2.Amount = burnings2.Amount.Add(burn2)
+		burnings2, sdkError = Burn(k, ctx, burnings2)
+		if sdkError != nil {
+			return nil, sdkError
+		}
 	}
 	k.SetBurnings(ctx, burnings2)
 
@@ -114,7 +132,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
 	// Payout Owner
-	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsOwner)
+	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsOwner)
 	if sdkError != nil {
 		return nil, sdkError
 	}
@@ -158,32 +176,29 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	return &types.MsgRedeemDropResponse{}, nil
 }
 
-func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) types.Burnings {
+func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings, error) {
 
 	amountBid := burnings.Amount
 
-	coinBid := sdk.NewCoin(burnings.Denom, burnings.Amount)
-
-	coinsBid := sdk.NewCoins(coinBid)
-
+	// The staking coin will be burned
 	denomStake := k.stakingKeeper.BondDenom(ctx)
 
 	memberAsk, found := k.GetMember(ctx, burnings.Denom, denomStake)
 	if !found {
-		return burnings
+		return burnings, nil
 	}
 
 	memberBid, found := k.GetMember(ctx, denomStake, burnings.Denom)
 	if !found {
-		return burnings
+		return burnings, nil
 	}
 
 	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
 	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
 
-	// No partial order at the moment
+	// Partial order may consume only half of memberAsk pool amount
 	if amountBid.GT(maxMemberBidAmount) {
-		return burnings
+		amountBid = maxMemberBidAmount
 	}
 
 	// Summation Invariant
@@ -199,31 +214,13 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) types.Burnings 
 	// amountAsk = amountBid * Exch(f) = [amountBid * (A(i) - amountBid)] / (B(i) + amountBid)
 	amountAsk := (amountBid.Mul(memberAsk.Balance.Sub(amountBid))).Quo(memberBid.Balance.Add(amountBid))
 
-	quoteAsk, _ := sdk.NewIntFromString(msg.QuoteAsk)
-
-	// If quote of ask coin is greater than strike ask amount then check slippage
-	// Market order without slippage has quoteAsk set to zero
-	if quoteAsk.GT(amountAsk) {
-		strikeSlippage := ((quoteAsk.Sub(amountAsk)).Mul(sdk.NewInt(10000))).Quo(quoteAsk)
-		slippage, _ := sdk.NewIntFromString(msg.Slippage)
-		if strikeSlippage.GT(slippage) {
-			return nil, sdkerrors.Wrapf(types.ErrSlippageTooGreat, "Slippage %s", strikeSlippage)
-		}
-	}
-
-	// Transfer bid amount from trader account to module
-	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, trader, types.ModuleName, coinsBid)
-	if sdkError != nil {
-		return nil, sdkError
-	}
-
-	coinAsk := sdk.NewCoin(msg.DenomAsk, amountAsk)
+	coinAsk := sdk.NewCoin(denomStake, amountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)
 
-	// Transfer ask amount from module to trader account
-	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, trader, coinsAsk)
+	// Burn Ask Amount of Stake Coin
+	sdkError := k.bankKeeper.BurnCoins(ctx, "mint", coinsAsk)
 	if sdkError != nil {
-		return nil, sdkError
+		return burnings, sdkError
 	}
 
 	memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
@@ -232,6 +229,7 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) types.Burnings 
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 
-	return &types.MsgMarketOrderResponse{}, nil
+	burnings.Amount = burnings.Amount.Sub(amountBid)
 
+	return burnings, nil
 }
