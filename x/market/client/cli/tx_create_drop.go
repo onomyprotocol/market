@@ -3,6 +3,8 @@ package cli
 import (
 	"strconv"
 
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -20,6 +22,8 @@ func CmdCreateDrop() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argPair := args[0]
 			argDrops := args[1]
+			argRate1 := strings.Split(args[2], listSeparator)
+			argRate2 := strings.Split(args[3], listSeparator)
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -30,6 +34,8 @@ func CmdCreateDrop() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				argPair,
 				argDrops,
+				argRate1,
+				argRate2,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
