@@ -28140,6 +28140,14 @@ paths:
                       type: string
                     active:
                       type: boolean
+                    rate1:
+                      type: array
+                      items:
+                        type: string
+                    rate2:
+                      type: array
+                      items:
+                        type: string
               pagination:
                 type: object
                 properties:
@@ -28270,6 +28278,14 @@ paths:
                     type: string
                   active:
                     type: boolean
+                  rate1:
+                    type: array
+                    items:
+                      type: string
+                  rate2:
+                    type: array
+                    items:
+                      type: string
         default:
           description: An unexpected error response.
           schema:
@@ -48621,6 +48637,14 @@ definitions:
         type: string
       active:
         type: boolean
+      rate1:
+        type: array
+        items:
+          type: string
+      rate2:
+        type: array
+        items:
+          type: string
   onomyprotocol.market.market.Member:
     type: object
     properties:
@@ -48833,6 +48857,14 @@ definitions:
               type: string
             active:
               type: boolean
+            rate1:
+              type: array
+              items:
+                type: string
+            rate2:
+              type: array
+              items:
+                type: string
       pagination:
         type: object
         properties:
@@ -49083,6 +49115,14 @@ definitions:
             type: string
           active:
             type: boolean
+          rate1:
+            type: array
+            items:
+              type: string
+          rate2:
+            type: array
+            items:
+              type: string
   onomyprotocol.market.market.QueryGetMemberResponse:
     type: object
     properties:

@@ -69,5 +69,25 @@ func (msg *MsgCreateDrop) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not a valid integer")
 	}
 
+	_, ok = sdk.NewIntFromString(msg.Rate1[0])
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	_, ok = sdk.NewIntFromString(msg.Rate1[1])
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	_, ok = sdk.NewIntFromString(msg.Rate2[0])
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	_, ok = sdk.NewIntFromString(msg.Rate2[1])
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
 	return nil
 }

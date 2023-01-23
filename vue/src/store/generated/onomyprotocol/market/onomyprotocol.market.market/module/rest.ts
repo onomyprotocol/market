@@ -31,6 +31,8 @@ export interface MarketDrop {
   drops?: string;
   sum?: string;
   active?: boolean;
+  rate1?: string[];
+  rate2?: string[];
 }
 
 export interface MarketMember {

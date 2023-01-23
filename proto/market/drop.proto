@@ -10,7 +10,7 @@ option (gogoproto.goproto_getters_all) = false;
 message Drop {
   uint64 uid = 1; 
   string owner = 2; 
-  string pair = 3; 
+  string pair = 3;
   string drops = 4 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
@@ -18,7 +18,15 @@ message Drop {
   string sum = 5 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
-  ];
+  ]; 
   bool active = 6;
+  repeated string rate1 = 7 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  repeated string rate2 = 8 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
 }
 
