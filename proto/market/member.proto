@@ -16,7 +16,7 @@ message Member {
     (gogoproto.nullable) = false
   ]; 
   uint64 limit = 5; 
-  uint64 stop = 6; 
-  
+  uint64 stop = 6;
+  uint64 protect = 7;
 }
 

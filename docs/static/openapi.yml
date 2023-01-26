@@ -28478,6 +28478,9 @@ paths:
                     stop:
                       type: string
                       format: uint64
+                    protect:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -28607,6 +28610,9 @@ paths:
                     type: string
                     format: uint64
                   stop:
+                    type: string
+                    format: uint64
+                  protect:
                     type: string
                     format: uint64
         default:
@@ -48662,6 +48668,9 @@ definitions:
       stop:
         type: string
         format: uint64
+      protect:
+        type: string
+        format: uint64
   onomyprotocol.market.market.MsgCancelOrderResponse:
     type: object
   onomyprotocol.market.market.MsgCreateDropResponse:
@@ -48912,6 +48921,9 @@ definitions:
             stop:
               type: string
               format: uint64
+            protect:
+              type: string
+              format: uint64
       pagination:
         type: object
         properties:
@@ -49141,6 +49153,9 @@ definitions:
             type: string
             format: uint64
           stop:
+            type: string
+            format: uint64
+          protect:
             type: string
             format: uint64
   onomyprotocol.market.market.QueryGetOrderResponse:

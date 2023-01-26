@@ -7,6 +7,8 @@ export interface MsgCreatePool {
   creator: string;
   coinA: string;
   coinB: string;
+  rate1: string[];
+  rate2: string[];
 }
 
 export interface MsgCreatePoolResponse {}
@@ -59,7 +61,13 @@ export interface MsgMarketOrder {
 
 export interface MsgMarketOrderResponse {}
 
-const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
+const baseMsgCreatePool: object = {
+  creator: "",
+  coinA: "",
+  coinB: "",
+  rate1: "",
+  rate2: "",
+};
 
 export const MsgCreatePool = {
   encode(message: MsgCreatePool, writer: Writer = Writer.create()): Writer {
@@ -72,6 +80,12 @@ export const MsgCreatePool = {
     if (message.coinB !== "") {
       writer.uint32(26).string(message.coinB);
     }
+    for (const v of message.rate1) {
+      writer.uint32(34).string(v!);
+    }
+    for (const v of message.rate2) {
+      writer.uint32(42).string(v!);
+    }
     return writer;
   },
 
@@ -79,6 +93,8 @@ export const MsgCreatePool = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreatePool } as MsgCreatePool;
+    message.rate1 = [];
+    message.rate2 = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -91,6 +107,12 @@ export const MsgCreatePool = {
         case 3:
           message.coinB = reader.string();
           break;
+        case 4:
+          message.rate1.push(reader.string());
+          break;
+        case 5:
+          message.rate2.push(reader.string());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -101,6 +123,8 @@ export const MsgCreatePool = {
 
   fromJSON(object: any): MsgCreatePool {
     const message = { ...baseMsgCreatePool } as MsgCreatePool;
+    message.rate1 = [];
+    message.rate2 = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -116,6 +140,16 @@ export const MsgCreatePool = {
     } else {
       message.coinB = "";
     }
+    if (object.rate1 !== undefined && object.rate1 !== null) {
+      for (const e of object.rate1) {
+        message.rate1.push(String(e));
+      }
+    }
+    if (object.rate2 !== undefined && object.rate2 !== null) {
+      for (const e of object.rate2) {
+        message.rate2.push(String(e));
+      }
+    }
     return message;
   },
 
@@ -124,11 +158,23 @@ export const MsgCreatePool = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.coinA !== undefined && (obj.coinA = message.coinA);
     message.coinB !== undefined && (obj.coinB = message.coinB);
+    if (message.rate1) {
+      obj.rate1 = message.rate1.map((e) => e);
+    } else {
+      obj.rate1 = [];
+    }
+    if (message.rate2) {
+      obj.rate2 = message.rate2.map((e) => e);
+    } else {
+      obj.rate2 = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<MsgCreatePool>): MsgCreatePool {
     const message = { ...baseMsgCreatePool } as MsgCreatePool;
+    message.rate1 = [];
+    message.rate2 = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -143,6 +189,16 @@ export const MsgCreatePool = {
       message.coinB = object.coinB;
     } else {
       message.coinB = "";
+    }
+    if (object.rate1 !== undefined && object.rate1 !== null) {
+      for (const e of object.rate1) {
+        message.rate1.push(e);
+      }
+    }
+    if (object.rate2 !== undefined && object.rate2 !== null) {
+      for (const e of object.rate2) {
+        message.rate2.push(e);
+      }
     }
     return message;
   },

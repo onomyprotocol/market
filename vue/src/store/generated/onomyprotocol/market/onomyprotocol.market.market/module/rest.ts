@@ -46,6 +46,9 @@ export interface MarketMember {
 
   /** @format uint64 */
   stop?: string;
+
+  /** @format uint64 */
+  protect?: string;
 }
 
 export type MarketMsgCancelOrderResponse = object;

@@ -78,6 +78,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Balance: coinPair.AmountOf(denom1),
 		Limit:   0,
 		Stop:    0,
+		Protect: 0,
 	}
 
 	var member2 = types.Member{
@@ -87,6 +88,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Balance: coinPair.AmountOf(denom2),
 		Limit:   0,
 		Stop:    0,
+		Protect: 0,
 	}
 
 	// Create the uid
