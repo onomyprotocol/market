@@ -2,6 +2,7 @@ package cli
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -20,6 +21,8 @@ func CmdCreatePool() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argCoinA := args[0]
 			argCoinB := args[1]
+			argRateA := strings.Split(args[2], listSeparator)
+			argRateB := strings.Split(args[3], listSeparator)
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -30,6 +33,8 @@ func CmdCreatePool() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				argCoinA,
 				argCoinB,
+				argRateA,
+				argRateB,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

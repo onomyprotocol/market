@@ -20,8 +20,8 @@ message MsgCreatePool {
   string creator = 1;
   string coinA = 2;
   string coinB = 3;
-  repeated string rate1 = 4;
-  repeated string rate2 = 5;
+  repeated string rateA = 4;
+  repeated string rateB = 5;
 }
 
 message MsgCreatePoolResponse {
