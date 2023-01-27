@@ -18,7 +18,11 @@ export interface MsgCreateDrop {
   pair: string;
   drops: string;
   rate1: string[];
+  prev1: string;
+  next1: string;
   rate2: string[];
+  prev2: string;
+  next2: string;
 }
 
 export interface MsgCreateDropResponse {}
@@ -247,7 +251,11 @@ const baseMsgCreateDrop: object = {
   pair: "",
   drops: "",
   rate1: "",
+  prev1: "",
+  next1: "",
   rate2: "",
+  prev2: "",
+  next2: "",
 };
 
 export const MsgCreateDrop = {
@@ -264,8 +272,20 @@ export const MsgCreateDrop = {
     for (const v of message.rate1) {
       writer.uint32(34).string(v!);
     }
+    if (message.prev1 !== "") {
+      writer.uint32(42).string(message.prev1);
+    }
+    if (message.next1 !== "") {
+      writer.uint32(50).string(message.next1);
+    }
     for (const v of message.rate2) {
-      writer.uint32(42).string(v!);
+      writer.uint32(58).string(v!);
+    }
+    if (message.prev2 !== "") {
+      writer.uint32(66).string(message.prev2);
+    }
+    if (message.next2 !== "") {
+      writer.uint32(74).string(message.next2);
     }
     return writer;
   },
@@ -292,7 +312,19 @@ export const MsgCreateDrop = {
           message.rate1.push(reader.string());
           break;
         case 5:
+          message.prev1 = reader.string();
+          break;
+        case 6:
+          message.next1 = reader.string();
+          break;
+        case 7:
           message.rate2.push(reader.string());
+          break;
+        case 8:
+          message.prev2 = reader.string();
+          break;
+        case 9:
+          message.next2 = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -326,10 +358,30 @@ export const MsgCreateDrop = {
         message.rate1.push(String(e));
       }
     }
+    if (object.prev1 !== undefined && object.prev1 !== null) {
+      message.prev1 = String(object.prev1);
+    } else {
+      message.prev1 = "";
+    }
+    if (object.next1 !== undefined && object.next1 !== null) {
+      message.next1 = String(object.next1);
+    } else {
+      message.next1 = "";
+    }
     if (object.rate2 !== undefined && object.rate2 !== null) {
       for (const e of object.rate2) {
         message.rate2.push(String(e));
       }
+    }
+    if (object.prev2 !== undefined && object.prev2 !== null) {
+      message.prev2 = String(object.prev2);
+    } else {
+      message.prev2 = "";
+    }
+    if (object.next2 !== undefined && object.next2 !== null) {
+      message.next2 = String(object.next2);
+    } else {
+      message.next2 = "";
     }
     return message;
   },
@@ -344,11 +396,15 @@ export const MsgCreateDrop = {
     } else {
       obj.rate1 = [];
     }
+    message.prev1 !== undefined && (obj.prev1 = message.prev1);
+    message.next1 !== undefined && (obj.next1 = message.next1);
     if (message.rate2) {
       obj.rate2 = message.rate2.map((e) => e);
     } else {
       obj.rate2 = [];
     }
+    message.prev2 !== undefined && (obj.prev2 = message.prev2);
+    message.next2 !== undefined && (obj.next2 = message.next2);
     return obj;
   },
 
@@ -376,10 +432,30 @@ export const MsgCreateDrop = {
         message.rate1.push(e);
       }
     }
+    if (object.prev1 !== undefined && object.prev1 !== null) {
+      message.prev1 = object.prev1;
+    } else {
+      message.prev1 = "";
+    }
+    if (object.next1 !== undefined && object.next1 !== null) {
+      message.next1 = object.next1;
+    } else {
+      message.next1 = "";
+    }
     if (object.rate2 !== undefined && object.rate2 !== null) {
       for (const e of object.rate2) {
         message.rate2.push(e);
       }
+    }
+    if (object.prev2 !== undefined && object.prev2 !== null) {
+      message.prev2 = object.prev2;
+    } else {
+      message.prev2 = "";
+    }
+    if (object.next2 !== undefined && object.next2 !== null) {
+      message.next2 = object.next2;
+    } else {
+      message.next2 = "";
     }
     return message;
   },

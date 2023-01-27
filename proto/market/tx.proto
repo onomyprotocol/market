@@ -32,7 +32,11 @@ message MsgCreateDrop {
   string pair = 2;
   string drops = 3;
   repeated string rate1 = 4;
-  repeated string rate2 = 5;
+  string prev1 = 5;
+  string next1 = 6;
+  repeated string rate2 = 7;
+  string prev2 = 8;
+  string next2 = 9;
 }
 
 message MsgCreateDropResponse {

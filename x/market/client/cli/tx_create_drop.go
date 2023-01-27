@@ -23,7 +23,11 @@ func CmdCreateDrop() *cobra.Command {
 			argPair := args[0]
 			argDrops := args[1]
 			argRate1 := strings.Split(args[2], listSeparator)
-			argRate2 := strings.Split(args[3], listSeparator)
+			argPrev1 := args[3]
+			argNext1 := args[4]
+			argRate2 := strings.Split(args[5], listSeparator)
+			argPrev2 := args[6]
+			argNext2 := args[7]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -35,7 +39,11 @@ func CmdCreateDrop() *cobra.Command {
 				argPair,
 				argDrops,
 				argRate1,
+				argPrev1,
+				argNext1,
 				argRate2,
+				argPrev2,
+				argNext2,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
