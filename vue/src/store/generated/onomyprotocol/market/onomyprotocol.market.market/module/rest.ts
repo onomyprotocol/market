@@ -32,7 +32,19 @@ export interface MarketDrop {
   sum?: string;
   active?: boolean;
   rate1?: string[];
+
+  /** @format uint64 */
+  prev1?: string;
+
+  /** @format uint64 */
+  next1?: string;
   rate2?: string[];
+
+  /** @format uint64 */
+  prev2?: string;
+
+  /** @format uint64 */
+  next2?: string;
 }
 
 export interface MarketMember {

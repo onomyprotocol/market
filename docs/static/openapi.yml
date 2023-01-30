@@ -28144,10 +28144,22 @@ paths:
                       type: array
                       items:
                         type: string
+                    prev1:
+                      type: string
+                      format: uint64
+                    next1:
+                      type: string
+                      format: uint64
                     rate2:
                       type: array
                       items:
                         type: string
+                    prev2:
+                      type: string
+                      format: uint64
+                    next2:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -28282,10 +28294,22 @@ paths:
                     type: array
                     items:
                       type: string
+                  prev1:
+                    type: string
+                    format: uint64
+                  next1:
+                    type: string
+                    format: uint64
                   rate2:
                     type: array
                     items:
                       type: string
+                  prev2:
+                    type: string
+                    format: uint64
+                  next2:
+                    type: string
+                    format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -48647,10 +48671,22 @@ definitions:
         type: array
         items:
           type: string
+      prev1:
+        type: string
+        format: uint64
+      next1:
+        type: string
+        format: uint64
       rate2:
         type: array
         items:
           type: string
+      prev2:
+        type: string
+        format: uint64
+      next2:
+        type: string
+        format: uint64
   onomyprotocol.market.market.Member:
     type: object
     properties:
@@ -48870,10 +48906,22 @@ definitions:
               type: array
               items:
                 type: string
+            prev1:
+              type: string
+              format: uint64
+            next1:
+              type: string
+              format: uint64
             rate2:
               type: array
               items:
                 type: string
+            prev2:
+              type: string
+              format: uint64
+            next2:
+              type: string
+              format: uint64
       pagination:
         type: object
         properties:
@@ -49131,10 +49179,22 @@ definitions:
             type: array
             items:
               type: string
+          prev1:
+            type: string
+            format: uint64
+          next1:
+            type: string
+            format: uint64
           rate2:
             type: array
             items:
               type: string
+          prev2:
+            type: string
+            format: uint64
+          next2:
+            type: string
+            format: uint64
   onomyprotocol.market.market.QueryGetMemberResponse:
     type: object
     properties:

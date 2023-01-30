@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"sort"
+	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -34,6 +35,73 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member2, found := k.GetMember(ctx, denom1, denom2)
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "%s", pair)
+	}
+
+	// Create the uid
+	dropID := k.GetUidCount(ctx)
+
+	prev1, _ := strconv.ParseUint(msg.Prev1, 10, 64)
+	next1, _ := strconv.ParseUint(msg.Next1, 10, 64)
+	prev2, _ := strconv.ParseUint(msg.Prev2, 10, 64)
+	next2, _ := strconv.ParseUint(msg.Next2, 10, 64)
+
+	// Case 1
+	// Only drop in pool
+	if prev1 == 0 && next1 == 0 && prev2 == 0 && next2 == 0 {
+		if member1.Protect != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Member 1 protect field not 0")
+		}
+
+		if member2.Protect != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Member 2 protect field not 0")
+		}
+
+		member1.Protect = dropID
+		member2.Protect = dropID
+	}
+
+	// Case 2 Side 1
+	// New head of the book
+	if prev1 == 0 && next1 > 0 {
+		/**
+		nextDrop, _ := k.GetDrop(ctx, next1)
+		if !nextOrder.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
+		}
+		if nextDrop.Prev1 != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not currently head of book")
+		}
+		**/
+	}
+
+	// Case 2 Side 2
+	// New head of the book
+	if prev2 == 0 && next2 > 0 {
+
+	}
+
+	// Case 3 Side 1
+	// New tail of book
+	if prev1 > 0 && next1 == 0 {
+
+	}
+
+	// Case 3 Side 2
+	// New tail of book
+	if prev2 > 0 && next2 == 0 {
+
+	}
+
+	// Case 4 Side 1
+	// IF next position and prev position are stated
+	if prev1 > 0 && next1 > 0 {
+
+	}
+
+	// Case 4 Side 2
+	// IF next position and prev position are stated
+	if prev2 > 0 && next2 > 0 {
+
 	}
 
 	// The Pool Sum current is defined as:
@@ -99,11 +167,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	pool.Drops = pool.Drops.Add(drops)
 	k.SetPool(ctx, pool)
 
-	// Create the uid
-	count := k.GetUidCount(ctx)
-
 	var drop = types.Drop{
-		Uid:    count,
+		Uid:    dropID,
 		Owner:  msg.Creator,
 		Pair:   pair,
 		Drops:  drops,
@@ -118,7 +183,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	)
 
 	// Update drop uid count
-	k.SetUidCount(ctx, count+1)
+	k.SetUidCount(ctx, dropID+1)
 
 	return &types.MsgCreateDropResponse{}, nil
 }
