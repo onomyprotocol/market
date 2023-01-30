@@ -38,12 +38,21 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	}
 
 	// Create the uid
-	dropID := k.GetUidCount(ctx)
+	uid := k.GetUidCount(ctx)
 
 	prev1, _ := strconv.ParseUint(msg.Prev1, 10, 64)
 	next1, _ := strconv.ParseUint(msg.Next1, 10, 64)
+
+	numerator1, _ := sdk.NewIntFromString(msg.Rate1[0])
+	denominator1, _ := sdk.NewIntFromString(msg.Rate1[1])
+	rate1 := []sdk.Int{numerator1, denominator1}
+
 	prev2, _ := strconv.ParseUint(msg.Prev2, 10, 64)
 	next2, _ := strconv.ParseUint(msg.Next2, 10, 64)
+
+	numerator2, _ := sdk.NewIntFromString(msg.Rate1[0])
+	denominator2, _ := sdk.NewIntFromString(msg.Rate1[1])
+	rate2 := []sdk.Int{numerator2, denominator2}
 
 	// Case 1
 	// Only drop in pool
@@ -56,28 +65,55 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Member 2 protect field not 0")
 		}
 
-		member1.Protect = dropID
-		member2.Protect = dropID
+		member1.Protect = uid
+		member2.Protect = uid
 	}
+
+	// Drop Protection Book modelled as a Stop - Decreasing exchange rates
+	// Justification: Exchange rate decreases while trades are executed
 
 	// Case 2 Side 1
 	// New head of the book
 	if prev1 == 0 && next1 > 0 {
-		/**
-		nextDrop, _ := k.GetDrop(ctx, next1)
-		if !nextOrder.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
+		nextDrop1, _ := k.GetDrop(ctx, next1)
+		if !nextDrop1.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not active")
 		}
-		if nextDrop.Prev1 != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not currently head of book")
+		if nextDrop1.Prev1 != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not currently head of book")
 		}
-		**/
+
+		if types.LTE(rate1, nextDrop1.Rate1) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate1 less than or equal Next1")
+		}
+
+		// Set drop as new head of Member1 Protect
+		member1.Protect = uid
+
+		// Set nextOrder prev field to order
+		nextDrop1.Prev1 = uid
 	}
 
 	// Case 2 Side 2
 	// New head of the book
 	if prev2 == 0 && next2 > 0 {
+		nextDrop2, _ := k.GetDrop(ctx, next2)
+		if !nextDrop2.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
+		}
+		if nextDrop2.Prev1 != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not currently head of book")
+		}
 
+		if types.LTE(rate2, nextDrop2.Rate2) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate2 less than or equal Next1")
+		}
+
+		// Set drop as new head of Member1 Protect
+		member2.Protect = uid
+
+		// Set nextOrder prev field to order
+		nextDrop2.Prev2 = uid
 	}
 
 	// Case 3 Side 1
@@ -168,7 +204,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	k.SetPool(ctx, pool)
 
 	var drop = types.Drop{
-		Uid:    dropID,
+		Uid:    uid,
 		Owner:  msg.Creator,
 		Pair:   pair,
 		Drops:  drops,
@@ -183,7 +219,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	)
 
 	// Update drop uid count
-	k.SetUidCount(ctx, dropID+1)
+	k.SetUidCount(ctx, uid+1)
 
 	return &types.MsgCreateDropResponse{}, nil
 }
