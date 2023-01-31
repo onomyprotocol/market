@@ -120,11 +120,43 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// New tail of book
 	if prev1 > 0 && next1 == 0 {
 
+		prevDrop1, _ := k.GetDrop(ctx, prev1)
+
+		if !prevDrop1.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not active")
+		}
+		if prevDrop1.Next1 != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not currently tail of book")
+		}
+
+		if types.GT(rate1, prevDrop1.Rate1) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
+		}
+
+		// Set nextDrop1 Next1 field to Drop UID
+		prevDrop1.Next1 = uid
+
 	}
 
 	// Case 3 Side 2
 	// New tail of book
 	if prev2 > 0 && next2 == 0 {
+
+		prevDrop2, _ := k.GetDrop(ctx, prev2)
+
+		if !prevDrop2.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not active")
+		}
+		if prevDrop2.Next2 != 0 {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not currently tail of book")
+		}
+
+		if types.GT(rate1, prevDrop2.Rate2) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop rate2 greater than Prev2 rate2")
+		}
+
+		// Set nextDrop1 Next1 field to Drop UID
+		prevDrop2.Next2 = uid
 
 	}
 
@@ -132,11 +164,39 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// IF next position and prev position are stated
 	if prev1 > 0 && next1 > 0 {
 
+		prevDrop1, _ := k.GetDrop(ctx, prev1)
+		nextDrop1, _ := k.GetOrder(ctx, next1)
+
+		if !prevDrop1.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not active")
+		}
+		if !nextDrop1.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not active")
+		}
+
+		if !(nextDrop1.Prev == prevDrop1.Uid && prevDrop1.Next1 == nextDrop1.Uid) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 and Next1 are not adjacent")
+		}
+
 	}
 
 	// Case 4 Side 2
 	// IF next position and prev position are stated
 	if prev2 > 0 && next2 > 0 {
+
+		prevDrop2, _ := k.GetDrop(ctx, prev2)
+		nextDrop2, _ := k.GetOrder(ctx, next2)
+
+		if !prevDrop2.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not active")
+		}
+		if !nextDrop2.Active {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
+		}
+
+		if !(nextDrop2.Prev == prevDrop2.Uid && prevDrop2.Next1 == nextDrop2.Uid) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 and Next2 are not adjacent")
+		}
 
 	}
 
