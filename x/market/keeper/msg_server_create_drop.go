@@ -67,6 +67,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 		member1.Protect = uid
 		member2.Protect = uid
+
 	}
 
 	// Drop Protection Book modelled as a Stop - Decreasing exchange rates
@@ -92,6 +93,11 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 		// Set nextOrder prev field to order
 		nextDrop1.Prev1 = uid
+
+		k.SetDrop(
+			ctx,
+			nextDrop1,
+		)
 	}
 
 	// Case 2 Side 2
@@ -114,6 +120,11 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 		// Set nextOrder prev field to order
 		nextDrop2.Prev2 = uid
+
+		k.SetDrop(
+			ctx,
+			nextDrop2,
+		)
 	}
 
 	// Case 3 Side 1
@@ -136,6 +147,10 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		// Set nextDrop1 Next1 field to Drop UID
 		prevDrop1.Next1 = uid
 
+		k.SetDrop(
+			ctx,
+			prevDrop1,
+		)
 	}
 
 	// Case 3 Side 2
@@ -158,6 +173,10 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		// Set nextDrop1 Next1 field to Drop UID
 		prevDrop2.Next2 = uid
 
+		k.SetDrop(
+			ctx,
+			prevDrop2,
+		)
 	}
 
 	// Case 4 Side 1
@@ -165,7 +184,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	if prev1 > 0 && next1 > 0 {
 
 		prevDrop1, _ := k.GetDrop(ctx, prev1)
-		nextDrop1, _ := k.GetOrder(ctx, next1)
+		nextDrop1, _ := k.GetDrop(ctx, next1)
 
 		if !prevDrop1.Active {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not active")
@@ -174,10 +193,19 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not active")
 		}
 
-		if !(nextDrop1.Prev == prevDrop1.Uid && prevDrop1.Next1 == nextDrop1.Uid) {
+		if !(nextDrop1.Prev1 == prevDrop1.Uid && prevDrop1.Next1 == nextDrop1.Uid) {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 and Next1 are not adjacent")
 		}
 
+		k.SetDrop(
+			ctx,
+			prevDrop1,
+		)
+
+		k.SetDrop(
+			ctx,
+			nextDrop1,
+		)
 	}
 
 	// Case 4 Side 2
@@ -185,7 +213,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	if prev2 > 0 && next2 > 0 {
 
 		prevDrop2, _ := k.GetDrop(ctx, prev2)
-		nextDrop2, _ := k.GetOrder(ctx, next2)
+		nextDrop2, _ := k.GetDrop(ctx, next2)
 
 		if !prevDrop2.Active {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not active")
@@ -194,10 +222,19 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
 		}
 
-		if !(nextDrop2.Prev == prevDrop2.Uid && prevDrop2.Next1 == nextDrop2.Uid) {
+		if !(nextDrop2.Prev2 == prevDrop2.Uid && prevDrop2.Next1 == nextDrop2.Uid) {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 and Next2 are not adjacent")
 		}
 
+		k.SetDrop(
+			ctx,
+			prevDrop2,
+		)
+
+		k.SetDrop(
+			ctx,
+			nextDrop2,
+		)
 	}
 
 	// The Pool Sum current is defined as:
