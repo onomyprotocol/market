@@ -4,21 +4,21 @@ import { StdFee } from "@cosmjs/launchpad";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
+import { MsgMarketOrder } from "./types/market/tx";
 import { MsgCreateOrder } from "./types/market/tx";
 import { MsgCancelOrder } from "./types/market/tx";
-import { MsgRedeemDrop } from "./types/market/tx";
 import { MsgCreatePool } from "./types/market/tx";
+import { MsgRedeemDrop } from "./types/market/tx";
 import { MsgCreateDrop } from "./types/market/tx";
-import { MsgMarketOrder } from "./types/market/tx";
 
 
 const types = [
+  ["/onomyprotocol.market.market.MsgMarketOrder", MsgMarketOrder],
   ["/onomyprotocol.market.market.MsgCreateOrder", MsgCreateOrder],
   ["/onomyprotocol.market.market.MsgCancelOrder", MsgCancelOrder],
-  ["/onomyprotocol.market.market.MsgRedeemDrop", MsgRedeemDrop],
   ["/onomyprotocol.market.market.MsgCreatePool", MsgCreatePool],
+  ["/onomyprotocol.market.market.MsgRedeemDrop", MsgRedeemDrop],
   ["/onomyprotocol.market.market.MsgCreateDrop", MsgCreateDrop],
-  ["/onomyprotocol.market.market.MsgMarketOrder", MsgMarketOrder],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -51,12 +51,12 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
+    msgMarketOrder: (data: MsgMarketOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgMarketOrder", value: MsgMarketOrder.fromPartial( data ) }),
     msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
     msgCancelOrder: (data: MsgCancelOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCancelOrder", value: MsgCancelOrder.fromPartial( data ) }),
-    msgRedeemDrop: (data: MsgRedeemDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgRedeemDrop", value: MsgRedeemDrop.fromPartial( data ) }),
     msgCreatePool: (data: MsgCreatePool): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreatePool", value: MsgCreatePool.fromPartial( data ) }),
+    msgRedeemDrop: (data: MsgRedeemDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgRedeemDrop", value: MsgRedeemDrop.fromPartial( data ) }),
     msgCreateDrop: (data: MsgCreateDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateDrop", value: MsgCreateDrop.fromPartial( data ) }),
-    msgMarketOrder: (data: MsgMarketOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgMarketOrder", value: MsgMarketOrder.fromPartial( data ) }),
     
   };
 };

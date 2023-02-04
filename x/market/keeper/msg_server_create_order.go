@@ -415,6 +415,9 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	k.SetOrder(ctx, limitHead)
 
+	memberBid.Previous = memberBid.Balance
+	memberAsk.Previous = memberAsk.Balance
+
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
@@ -480,6 +483,9 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	stopHead.Amount = stopHead.Amount.Sub(strikeAmountBid)
 
 	k.SetOrder(ctx, stopHead)
+
+	memberBid.Previous = memberBid.Balance
+	memberAsk.Previous = memberAsk.Balance
 
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
