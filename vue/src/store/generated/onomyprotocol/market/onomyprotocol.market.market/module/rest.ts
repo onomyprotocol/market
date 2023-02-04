@@ -52,6 +52,7 @@ export interface MarketMember {
   denomA?: string;
   denomB?: string;
   balance?: string;
+  previous?: string;
 
   /** @format uint64 */
   limit?: string;

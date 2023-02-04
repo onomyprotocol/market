@@ -14,9 +14,13 @@ message Member {
   string balance = 4 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
+  ];
+  string previous = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
   ]; 
-  uint64 limit = 5; 
-  uint64 stop = 6;
-  uint64 protect = 7;
+  uint64 limit = 6; 
+  uint64 stop = 7;
+  uint64 protect = 8;
 }
 

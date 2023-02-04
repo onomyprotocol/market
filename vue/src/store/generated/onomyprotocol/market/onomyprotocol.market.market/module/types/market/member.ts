@@ -9,6 +9,7 @@ export interface Member {
   denomA: string;
   denomB: string;
   balance: string;
+  previous: string;
   limit: number;
   stop: number;
   protect: number;
@@ -19,6 +20,7 @@ const baseMember: object = {
   denomA: "",
   denomB: "",
   balance: "",
+  previous: "",
   limit: 0,
   stop: 0,
   protect: 0,
@@ -38,14 +40,17 @@ export const Member = {
     if (message.balance !== "") {
       writer.uint32(34).string(message.balance);
     }
+    if (message.previous !== "") {
+      writer.uint32(42).string(message.previous);
+    }
     if (message.limit !== 0) {
-      writer.uint32(40).uint64(message.limit);
+      writer.uint32(48).uint64(message.limit);
     }
     if (message.stop !== 0) {
-      writer.uint32(48).uint64(message.stop);
+      writer.uint32(56).uint64(message.stop);
     }
     if (message.protect !== 0) {
-      writer.uint32(56).uint64(message.protect);
+      writer.uint32(64).uint64(message.protect);
     }
     return writer;
   },
@@ -70,12 +75,15 @@ export const Member = {
           message.balance = reader.string();
           break;
         case 5:
-          message.limit = longToNumber(reader.uint64() as Long);
+          message.previous = reader.string();
           break;
         case 6:
-          message.stop = longToNumber(reader.uint64() as Long);
+          message.limit = longToNumber(reader.uint64() as Long);
           break;
         case 7:
+          message.stop = longToNumber(reader.uint64() as Long);
+          break;
+        case 8:
           message.protect = longToNumber(reader.uint64() as Long);
           break;
         default:
@@ -108,6 +116,11 @@ export const Member = {
     } else {
       message.balance = "";
     }
+    if (object.previous !== undefined && object.previous !== null) {
+      message.previous = String(object.previous);
+    } else {
+      message.previous = "";
+    }
     if (object.limit !== undefined && object.limit !== null) {
       message.limit = Number(object.limit);
     } else {
@@ -132,6 +145,7 @@ export const Member = {
     message.denomA !== undefined && (obj.denomA = message.denomA);
     message.denomB !== undefined && (obj.denomB = message.denomB);
     message.balance !== undefined && (obj.balance = message.balance);
+    message.previous !== undefined && (obj.previous = message.previous);
     message.limit !== undefined && (obj.limit = message.limit);
     message.stop !== undefined && (obj.stop = message.stop);
     message.protect !== undefined && (obj.protect = message.protect);
@@ -159,6 +173,11 @@ export const Member = {
       message.balance = object.balance;
     } else {
       message.balance = "";
+    }
+    if (object.previous !== undefined && object.previous !== null) {
+      message.previous = object.previous;
+    } else {
+      message.previous = "";
     }
     if (object.limit !== undefined && object.limit !== null) {
       message.limit = object.limit;

@@ -28496,6 +28496,8 @@ paths:
                       type: string
                     balance:
                       type: string
+                    previous:
+                      type: string
                     limit:
                       type: string
                       format: uint64
@@ -28629,6 +28631,8 @@ paths:
                   denomB:
                     type: string
                   balance:
+                    type: string
+                  previous:
                     type: string
                   limit:
                     type: string
@@ -48698,6 +48702,8 @@ definitions:
         type: string
       balance:
         type: string
+      previous:
+        type: string
       limit:
         type: string
         format: uint64
@@ -48963,6 +48969,8 @@ definitions:
               type: string
             balance:
               type: string
+            previous:
+              type: string
             limit:
               type: string
               format: uint64
@@ -49208,6 +49216,8 @@ definitions:
           denomB:
             type: string
           balance:
+            type: string
+          previous:
             type: string
           limit:
             type: string
