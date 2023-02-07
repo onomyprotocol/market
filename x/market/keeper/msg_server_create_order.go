@@ -490,7 +490,37 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
+	memberAsk, memberBid = LiquidateDrop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 	return true
+}
+
+func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member) {
+
+	pool, _ := k.GetPool(ctx, memberBid.Pair)
+	protectHead, _ := k.GetDrop(ctx, memberBid.Protect)
+
+	// Rates are Ask/Bid and books are stored Bid side
+	// Denom1 Member books would have Denom2/Denom1 rates
+	// Orders fulfilled by Denom1 books would decrease the Denom2/Denom1 rate
+	// Protect book ordered like Stop book
+
+	avgAskBal := (memberAsk.Balance.Add(memberAsk.Previous)).Quo(sdk.NewInt(2))
+	avgBidBal := (memberBid.Balance.Add(memberBid.Previous)).Quo(sdk.NewInt(2))
+
+	if memberBid.DenomA == pool.Denom1 {
+		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, protectHead.Rate1) {
+			return memberAsk, memberBid
+		}
+	}
+
+	if memberBid.DenomA == pool.Denom2 {
+		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, protectHead.Rate2) {
+			return memberAsk, memberBid
+		}
+	}
+
+	return memberAsk, memberBid
 }
