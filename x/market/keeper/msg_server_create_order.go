@@ -345,7 +345,10 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			k.SetOrder(ctx, nextOrder)
 			k.SetMember(ctx, memberBid)
 
-			ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+			_, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+			if error != nil {
+				return nil, error
+			}
 		}
 	}
 
@@ -421,21 +424,27 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
+	memberAsk, memberBid, sdkError = LiquidateDrop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+
+	if sdkError != nil {
+		return false, sdkError
+	}
+
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 	return true, nil
 }
 
-func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) bool {
+func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
 	// Checking for existence of stop order at the memberBid head
 	if memberBid.Stop == 0 {
-		return true
+		return true, nil
 	}
 
 	stopHead, _ := k.GetOrder(ctx, memberBid.Stop)
 
 	if types.GTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, stopHead.Rate) {
-		return true
+		return true, nil
 	}
 
 	// Execute Stop Order
@@ -477,7 +486,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// Transfer ask order amount to owner account
 	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsAsk)
 	if sdkError != nil {
-		return false
+		return false, sdkError
 	}
 
 	stopHead.Amount = stopHead.Amount.Sub(strikeAmountBid)
@@ -490,14 +499,18 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
-	memberAsk, memberBid = LiquidateDrop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+	memberAsk, memberBid, sdkError = LiquidateDrop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+
+	if sdkError != nil {
+		return false, sdkError
+	}
 
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
-	return true
+	return true, nil
 }
 
-func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member) {
+func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member, error) {
 
 	pool, _ := k.GetPool(ctx, memberBid.Pair)
 	drop, _ := k.GetDrop(ctx, memberBid.Protect)
@@ -512,13 +525,13 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 
 	if memberBid.DenomA == pool.Denom1 {
 		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, drop.Rate1) {
-			return memberAsk, memberBid
+			return memberAsk, memberBid, nil
 		}
 	}
 
 	if memberBid.DenomA == pool.Denom2 {
 		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, drop.Rate2) {
-			return memberAsk, memberBid
+			return memberAsk, memberBid, nil
 		}
 	}
 
@@ -561,13 +574,13 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 		}
 		burningsAsk, sdkError = Burn(k, ctx, burningsAsk)
 		if sdkError != nil {
-			return nil, sdkError
+			return memberAsk, memberBid, sdkError
 		}
 	} else {
 		burningsAsk.Amount = burningsAsk.Amount.Add(burnAsk)
 		burningsAsk, sdkError = Burn(k, ctx, burningsAsk)
 		if sdkError != nil {
-			return nil, sdkError
+			return memberAsk, memberBid, sdkError
 		}
 	}
 	k.SetBurnings(ctx, burningsAsk)
@@ -580,13 +593,13 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 		}
 		burningsBid, sdkError = Burn(k, ctx, burningsBid)
 		if sdkError != nil {
-			return nil, sdkError
+			return memberAsk, memberBid, sdkError
 		}
 	} else {
 		burningsBid.Amount = burningsBid.Amount.Add(burnBid)
 		burningsBid, sdkError = Burn(k, ctx, burningsBid)
 		if sdkError != nil {
-			return nil, sdkError
+			return memberAsk, memberBid, sdkError
 		}
 	}
 	k.SetBurnings(ctx, burningsBid)
@@ -602,8 +615,7 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 	memberBid.Balance = memberBid.Balance.Sub(totalBid)
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	// Get the borrower address
-	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
+	owner, _ := sdk.AccAddressFromBech32(drop.Owner)
 
 	coinOwnerAsk := sdk.NewCoin(denomAsk, dropOwnerAsk)
 	coinOwnerBid := sdk.NewCoin(denomBid, dropOwnerBid)
@@ -612,7 +624,7 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 	// Payout Owner
 	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsOwner)
 	if sdkError != nil {
-		return nil, sdkError
+		return memberAsk, memberBid, sdkError
 	}
 
 	coinLeaderAsk := sdk.NewCoin(denomAsk, earnAsk)
@@ -624,7 +636,7 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 	// Payout Leader
 	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
 	if sdkError != nil {
-		return nil, sdkError
+		return memberAsk, memberBid, sdkError
 	}
 
 	// Deactivate drop
@@ -641,5 +653,5 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 		pool,
 	)
 
-	return memberAsk, memberBid
+	return memberAsk, memberBid, nil
 }
