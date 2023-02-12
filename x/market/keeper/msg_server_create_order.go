@@ -358,14 +358,20 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
 	if memberBid.Limit == 0 {
-		ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+		_, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+		if sdkError != nil {
+			return false, sdkError
+		}
 		return true, nil
 	}
 
 	limitHead, _ := k.GetOrder(ctx, memberBid.Limit)
 
 	if types.LTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, limitHead.Rate) {
-		ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+		_, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+		if sdkError != nil {
+			return false, sdkError
+		}
 		return true, nil
 	}
 
@@ -523,12 +529,18 @@ func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid strin
 	avgAskBal := (memberAsk.Balance.Add(memberAsk.Previous)).Quo(sdk.NewInt(2))
 	avgBidBal := (memberBid.Balance.Add(memberBid.Previous)).Quo(sdk.NewInt(2))
 
+	// memberBid.DenomA is Pool Denom1 then
+	// Test if AMM Average Rate is GTE Rate2
+	// If drop is enabled then continue liquidation
 	if memberBid.DenomA == pool.Denom1 {
 		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, drop.Rate1) {
 			return memberAsk, memberBid, nil
 		}
 	}
 
+	// memberBid.DenomA is Pool Denom2 then
+	// Test if AMM Average Rate is GTE Rate2
+	// If drop is enabled then continue liquidation
 	if memberBid.DenomA == pool.Denom2 {
 		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, drop.Rate2) {
 			return memberAsk, memberBid, nil
