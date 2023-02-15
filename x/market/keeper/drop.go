@@ -1,42 +1,16 @@
 package keeper
 
 import (
-	"encoding/binary"
-
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/onomyprotocol/market/x/market/types"
 )
 
-// GetUidCount get the total number of uid
-func (k Keeper) GetUidCount(ctx sdk.Context) uint64 {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
-	byteKey := types.KeyPrefix(types.UidKey)
-	bz := store.Get(byteKey)
-
-	// Count doesn't exist: no element
-	if bz == nil {
-		return 0
-	}
-
-	// Parse bytes
-	return binary.BigEndian.Uint64(bz)
-}
-
-// SetUidCount set the total number of uid
-func (k Keeper) SetUidCount(ctx sdk.Context, count uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
-	byteKey := types.KeyPrefix(types.UidKey)
-	bz := make([]byte, 8)
-	binary.BigEndian.PutUint64(bz, count)
-	store.Set(byteKey, bz)
-}
-
 // SetDrop set a specific drop in the store from its index
 func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 	b := k.cdc.MustMarshal(&drop)
-	store.Set(types.DropKey(
+	store.Set(types.DropSetKey(
 		drop.Uid,
 		drop.Owner,
 		drop.Pair,
@@ -47,16 +21,11 @@ func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
 func (k Keeper) GetDrop(
 	ctx sdk.Context,
 	uid uint64,
-	owner string,
-	pair string,
-
 ) (val types.Drop, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 
 	b := store.Get(types.DropKey(
 		uid,
-		owner,
-		pair,
 	))
 	if b == nil {
 		return val, false
@@ -66,19 +35,60 @@ func (k Keeper) GetDrop(
 	return val, true
 }
 
+// GetOwnerDrops returns drops from a single owner
+func (k Keeper) GetOwnerDrops(
+	ctx sdk.Context,
+	owner string,
+) (list []types.Drop) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DropOwnerKey(
+		owner,
+	))
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Drop
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
+// GetOwnerDrops returns drops from a single owner
+func (k Keeper) GetOwnerDropsInt(
+	ctx sdk.Context,
+	owner string,
+) (drops sdk.Int) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DropOwnerKey(
+		owner,
+	))
+
+	defer iterator.Close()
+
+	drops = sdk.NewInt(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Drop
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		drops = drops.Add(val.Drops)
+	}
+
+	return
+}
+
 // RemoveDrop removes a drop from the store
 func (k Keeper) RemoveDrop(
 	ctx sdk.Context,
 	uid uint64,
-	owner string,
-	pair string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 	store.Delete(types.DropKey(
 		uid,
-		owner,
-		pair,
 	))
 }
 

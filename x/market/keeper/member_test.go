@@ -32,7 +32,6 @@ func TestMemberGet(t *testing.T) {
 	items := createNMember(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetMember(ctx,
-			item.Pair,
 			item.DenomA,
 			item.DenomB,
 		)
@@ -48,12 +47,10 @@ func TestMemberRemove(t *testing.T) {
 	items := createNMember(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveMember(ctx,
-			item.Pair,
 			item.DenomA,
 			item.DenomB,
 		)
 		_, found := keeper.GetMember(ctx,
-			item.Pair,
 			item.DenomA,
 			item.DenomB,
 		)

@@ -9,8 +9,6 @@ export interface Pool {
   denom2: string;
   leader: string;
   drops: string;
-  earnings: string;
-  burnings: string;
 }
 
 const basePool: object = {
@@ -19,8 +17,6 @@ const basePool: object = {
   denom2: "",
   leader: "",
   drops: "",
-  earnings: "",
-  burnings: "",
 };
 
 export const Pool = {
@@ -39,12 +35,6 @@ export const Pool = {
     }
     if (message.drops !== "") {
       writer.uint32(42).string(message.drops);
-    }
-    if (message.earnings !== "") {
-      writer.uint32(50).string(message.earnings);
-    }
-    if (message.burnings !== "") {
-      writer.uint32(58).string(message.burnings);
     }
     return writer;
   },
@@ -70,12 +60,6 @@ export const Pool = {
           break;
         case 5:
           message.drops = reader.string();
-          break;
-        case 6:
-          message.earnings = reader.string();
-          break;
-        case 7:
-          message.burnings = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -112,16 +96,6 @@ export const Pool = {
     } else {
       message.drops = "";
     }
-    if (object.earnings !== undefined && object.earnings !== null) {
-      message.earnings = String(object.earnings);
-    } else {
-      message.earnings = "";
-    }
-    if (object.burnings !== undefined && object.burnings !== null) {
-      message.burnings = String(object.burnings);
-    } else {
-      message.burnings = "";
-    }
     return message;
   },
 
@@ -132,8 +106,6 @@ export const Pool = {
     message.denom2 !== undefined && (obj.denom2 = message.denom2);
     message.leader !== undefined && (obj.leader = message.leader);
     message.drops !== undefined && (obj.drops = message.drops);
-    message.earnings !== undefined && (obj.earnings = message.earnings);
-    message.burnings !== undefined && (obj.burnings = message.burnings);
     return obj;
   },
 
@@ -163,16 +135,6 @@ export const Pool = {
       message.drops = object.drops;
     } else {
       message.drops = "";
-    }
-    if (object.earnings !== undefined && object.earnings !== null) {
-      message.earnings = object.earnings;
-    } else {
-      message.earnings = "";
-    }
-    if (object.burnings !== undefined && object.burnings !== null) {
-      message.burnings = object.burnings;
-    } else {
-      message.burnings = "";
     }
     return message;
   },

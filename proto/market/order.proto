@@ -1,0 +1,40 @@
+syntax = "proto3";
+package onomyprotocol.market.market;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/onomyprotocol/market/x/market/types";
+option (gogoproto.goproto_stringer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message Order {
+  uint64 uid = 1; 
+  string owner = 2; 
+  bool active = 3; 
+  string orderType = 4; 
+  string denomAsk = 5; 
+  string denomBid = 6; 
+  string amount = 7 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];  
+  repeated string rate = 8 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 prev = 9;
+  uint64 next = 10;
+}
+
+message OrderResponse {
+  uint64 uid = 1; 
+  string owner = 2; 
+  bool active = 3; 
+  string orderType = 4; 
+  string denomAsk = 5; 
+  string denomBid = 6; 
+  string amount = 7;  
+  repeated string rate = 8;
+  uint64 prev = 9;
+  uint64 next = 10;
+}

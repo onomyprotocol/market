@@ -27764,6 +27764,354 @@ paths:
           format: uint64
       tags:
         - Query
+  /onomyprotocol/market/market/asset:
+    get:
+      summary: Queries a list of Asset items.
+      operationId: OnomyprotocolMarketMarketAssetAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              asset:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    active:
+                      type: boolean
+                    owner:
+                      type: string
+                    assetType:
+                      type: string
+                    uid:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/onomyprotocol/market/market/asset/{active}/{owner}/{assetType}':
+    get:
+      summary: Queries a Asset by index.
+      operationId: OnomyprotocolMarketMarketAsset
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              asset:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                  owner:
+                    type: string
+                  assetType:
+                    type: string
+                  uid:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: active
+          in: path
+          required: true
+          type: boolean
+        - name: owner
+          in: path
+          required: true
+          type: string
+        - name: assetType
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /onomyprotocol/market/market/burnings:
+    get:
+      summary: Queries a list of Burnings items.
+      operationId: OnomyprotocolMarketMarketBurningsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              burnings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/onomyprotocol/market/market/burnings/{denom}':
+    get:
+      summary: Queries a Burnings by index.
+      operationId: OnomyprotocolMarketMarketBurnings
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              burnings:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /onomyprotocol/market/market/drop:
     get:
       summary: Queries a list of Drop items.
@@ -27792,6 +28140,26 @@ paths:
                       type: string
                     active:
                       type: boolean
+                    rate1:
+                      type: array
+                      items:
+                        type: string
+                    prev1:
+                      type: string
+                      format: uint64
+                    next1:
+                      type: string
+                      format: uint64
+                    rate2:
+                      type: array
+                      items:
+                        type: string
+                    prev2:
+                      type: string
+                      format: uint64
+                    next2:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -27922,6 +28290,26 @@ paths:
                     type: string
                   active:
                     type: boolean
+                  rate1:
+                    type: array
+                    items:
+                      type: string
+                  prev1:
+                    type: string
+                    format: uint64
+                  next1:
+                    type: string
+                    format: uint64
+                  rate2:
+                    type: array
+                    items:
+                      type: string
+                  prev2:
+                    type: string
+                    format: uint64
+                  next2:
+                    type: string
+                    format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -27956,6 +28344,135 @@ paths:
           type: string
       tags:
         - Query
+  '/onomyprotocol/market/market/get_book/{denomA}/{denomB}/{orderType}':
+    get:
+      summary: Queries a list of GetBook items.
+      operationId: OnomyprotocolMarketMarketBook
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              book:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    active:
+                      type: boolean
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomA
+          in: path
+          required: true
+          type: string
+        - name: denomB
+          in: path
+          required: true
+          type: string
+        - name: orderType
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /onomyprotocol/market/market/member:
     get:
       summary: Queries a list of Member items.
@@ -27979,10 +28496,15 @@ paths:
                       type: string
                     balance:
                       type: string
+                    previous:
+                      type: string
                     limit:
                       type: string
                       format: uint64
                     stop:
+                      type: string
+                      format: uint64
+                    protect:
                       type: string
                       format: uint64
               pagination:
@@ -28110,10 +28632,15 @@ paths:
                     type: string
                   balance:
                     type: string
+                  previous:
+                    type: string
                   limit:
                     type: string
                     format: uint64
                   stop:
+                    type: string
+                    format: uint64
+                  protect:
                     type: string
                     format: uint64
         default:
@@ -28149,6 +28676,234 @@ paths:
           type: string
       tags:
         - Query
+  /onomyprotocol/market/market/order:
+    get:
+      summary: Queries a list of Order items.
+      operationId: OnomyprotocolMarketMarketOrderAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              order:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    active:
+                      type: boolean
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/onomyprotocol/market/market/order/{uid}':
+    get:
+      summary: Queries a Order by index.
+      operationId: OnomyprotocolMarketMarketOrder
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              order:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    format: uint64
+                  owner:
+                    type: string
+                  active:
+                    type: boolean
+                  orderType:
+                    type: string
+                  denomAsk:
+                    type: string
+                  denomBid:
+                    type: string
+                  amount:
+                    type: string
+                  rate:
+                    type: array
+                    items:
+                      type: string
+                  prev:
+                    type: string
+                    format: uint64
+                  next:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: owner
+          in: query
+          required: false
+          type: string
+        - name: active
+          in: query
+          required: false
+          type: boolean
+        - name: orderType
+          in: query
+          required: false
+          type: string
+        - name: denomAsk
+          in: query
+          required: false
+          type: string
+        - name: denomBid
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
   /onomyprotocol/market/market/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -28162,6 +28917,17 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  earn_rate:
+                    type: array
+                    items:
+                      type: string
+                    title: leader earnings rate
+                  burn_rate:
+                    type: array
+                    items:
+                      type: string
+                    title: pool burning rate
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -28209,10 +28975,6 @@ paths:
                     leader:
                       type: string
                     drops:
-                      type: string
-                    earnings:
-                      type: string
-                    burnings:
                       type: string
               pagination:
                 type: object
@@ -28340,10 +29102,6 @@ paths:
                   leader:
                     type: string
                   drops:
-                    type: string
-                  earnings:
-                    type: string
-                  burnings:
                     type: string
         default:
           description: An unexpected error response.
@@ -47878,6 +48636,25 @@ definitions:
     description: >-
       QueryAppVersionResponse is the response type for the Query/AppVersion RPC
       method.
+  onomyprotocol.market.market.Asset:
+    type: object
+    properties:
+      active:
+        type: boolean
+      owner:
+        type: string
+      assetType:
+        type: string
+      uid:
+        type: string
+        format: uint64
+  onomyprotocol.market.market.Burnings:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
   onomyprotocol.market.market.Drop:
     type: object
     properties:
@@ -47894,6 +48671,26 @@ definitions:
         type: string
       active:
         type: boolean
+      rate1:
+        type: array
+        items:
+          type: string
+      prev1:
+        type: string
+        format: uint64
+      next1:
+        type: string
+        format: uint64
+      rate2:
+        type: array
+        items:
+          type: string
+      prev2:
+        type: string
+        format: uint64
+      next2:
+        type: string
+        format: uint64
   onomyprotocol.market.market.Member:
     type: object
     properties:
@@ -47905,16 +48702,98 @@ definitions:
         type: string
       balance:
         type: string
+      previous:
+        type: string
       limit:
         type: string
         format: uint64
       stop:
         type: string
         format: uint64
+      protect:
+        type: string
+        format: uint64
+  onomyprotocol.market.market.MsgCancelOrderResponse:
+    type: object
+  onomyprotocol.market.market.MsgCreateDropResponse:
+    type: object
+  onomyprotocol.market.market.MsgCreateOrderResponse:
+    type: object
   onomyprotocol.market.market.MsgCreatePoolResponse:
     type: object
+  onomyprotocol.market.market.MsgMarketOrderResponse:
+    type: object
+  onomyprotocol.market.market.MsgRedeemDropResponse:
+    type: object
+  onomyprotocol.market.market.Order:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+      owner:
+        type: string
+      active:
+        type: boolean
+      orderType:
+        type: string
+      denomAsk:
+        type: string
+      denomBid:
+        type: string
+      amount:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
+  onomyprotocol.market.market.OrderResponse:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+      owner:
+        type: string
+      active:
+        type: boolean
+      orderType:
+        type: string
+      denomAsk:
+        type: string
+      denomBid:
+        type: string
+      amount:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
   onomyprotocol.market.market.Params:
     type: object
+    properties:
+      earn_rate:
+        type: array
+        items:
+          type: string
+        title: leader earnings rate
+      burn_rate:
+        type: array
+        items:
+          type: string
+        title: pool burning rate
     description: Params defines the parameters for the module.
   onomyprotocol.market.market.Pool:
     type: object
@@ -47929,10 +48808,85 @@ definitions:
         type: string
       drops:
         type: string
-      earnings:
-        type: string
+  onomyprotocol.market.market.QueryAllAssetResponse:
+    type: object
+    properties:
+      asset:
+        type: array
+        items:
+          type: object
+          properties:
+            active:
+              type: boolean
+            owner:
+              type: string
+            assetType:
+              type: string
+            uid:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  onomyprotocol.market.market.QueryAllBurningsResponse:
+    type: object
+    properties:
       burnings:
-        type: string
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   onomyprotocol.market.market.QueryAllDropResponse:
     type: object
     properties:
@@ -47954,6 +48908,26 @@ definitions:
               type: string
             active:
               type: boolean
+            rate1:
+              type: array
+              items:
+                type: string
+            prev1:
+              type: string
+              format: uint64
+            next1:
+              type: string
+              format: uint64
+            rate2:
+              type: array
+              items:
+                type: string
+            prev2:
+              type: string
+              format: uint64
+            next2:
+              type: string
+              format: uint64
       pagination:
         type: object
         properties:
@@ -47995,10 +48969,73 @@ definitions:
               type: string
             balance:
               type: string
+            previous:
+              type: string
             limit:
               type: string
               format: uint64
             stop:
+              type: string
+              format: uint64
+            protect:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  onomyprotocol.market.market.QueryAllOrderResponse:
+    type: object
+    properties:
+      order:
+        type: array
+        items:
+          type: object
+          properties:
+            uid:
+              type: string
+              format: uint64
+            owner:
+              type: string
+            active:
+              type: boolean
+            orderType:
+              type: string
+            denomAsk:
+              type: string
+            denomBid:
+              type: string
+            amount:
+              type: string
+            rate:
+              type: array
+              items:
+                type: string
+            prev:
+              type: string
+              format: uint64
+            next:
               type: string
               format: uint64
       pagination:
@@ -48044,10 +49081,6 @@ definitions:
               type: string
             drops:
               type: string
-            earnings:
-              type: string
-            burnings:
-              type: string
       pagination:
         type: object
         properties:
@@ -48073,6 +49106,64 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  onomyprotocol.market.market.QueryGetAssetResponse:
+    type: object
+    properties:
+      asset:
+        type: object
+        properties:
+          active:
+            type: boolean
+          owner:
+            type: string
+          assetType:
+            type: string
+          uid:
+            type: string
+            format: uint64
+  onomyprotocol.market.market.QueryGetBookResponse:
+    type: object
+    properties:
+      book:
+        type: array
+        items:
+          type: object
+          properties:
+            uid:
+              type: string
+              format: uint64
+            owner:
+              type: string
+            active:
+              type: boolean
+            orderType:
+              type: string
+            denomAsk:
+              type: string
+            denomBid:
+              type: string
+            amount:
+              type: string
+            rate:
+              type: array
+              items:
+                type: string
+            prev:
+              type: string
+              format: uint64
+            next:
+              type: string
+              format: uint64
+  onomyprotocol.market.market.QueryGetBurningsResponse:
+    type: object
+    properties:
+      burnings:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
   onomyprotocol.market.market.QueryGetDropResponse:
     type: object
     properties:
@@ -48092,6 +49183,26 @@ definitions:
             type: string
           active:
             type: boolean
+          rate1:
+            type: array
+            items:
+              type: string
+          prev1:
+            type: string
+            format: uint64
+          next1:
+            type: string
+            format: uint64
+          rate2:
+            type: array
+            items:
+              type: string
+          prev2:
+            type: string
+            format: uint64
+          next2:
+            type: string
+            format: uint64
   onomyprotocol.market.market.QueryGetMemberResponse:
     type: object
     properties:
@@ -48106,10 +49217,46 @@ definitions:
             type: string
           balance:
             type: string
+          previous:
+            type: string
           limit:
             type: string
             format: uint64
           stop:
+            type: string
+            format: uint64
+          protect:
+            type: string
+            format: uint64
+  onomyprotocol.market.market.QueryGetOrderResponse:
+    type: object
+    properties:
+      order:
+        type: object
+        properties:
+          uid:
+            type: string
+            format: uint64
+          owner:
+            type: string
+          active:
+            type: boolean
+          orderType:
+            type: string
+          denomAsk:
+            type: string
+          denomBid:
+            type: string
+          amount:
+            type: string
+          rate:
+            type: array
+            items:
+              type: string
+          prev:
+            type: string
+            format: uint64
+          next:
             type: string
             format: uint64
   onomyprotocol.market.market.QueryGetPoolResponse:
@@ -48128,14 +49275,21 @@ definitions:
             type: string
           drops:
             type: string
-          earnings:
-            type: string
-          burnings:
-            type: string
   onomyprotocol.market.market.QueryParamsResponse:
     type: object
     properties:
       params:
         description: params holds all the parameters of this module.
         type: object
+        properties:
+          earn_rate:
+            type: array
+            items:
+              type: string
+            title: leader earnings rate
+          burn_rate:
+            type: array
+            items:
+              type: string
+            title: pool burning rate
     description: QueryParamsResponse is response type for the Query/Params RPC method.

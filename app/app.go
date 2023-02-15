@@ -177,6 +177,12 @@ func init() {
 	}
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
+
+	// change default power reduction to 18 digits, since the onomy anom is 18 digits based.
+	sdk.DefaultPowerReduction = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
+	// change default min deposit token to 18 digits.
+	govtypes.DefaultMinDepositTokens = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
+
 }
 
 // App extends an ABCI application, but with most of its parameters exported.
@@ -360,6 +366,7 @@ func New(
 		app.GetSubspace(marketmoduletypes.ModuleName),
 
 		app.BankKeeper,
+		app.StakingKeeper,
 	)
 	marketModule := marketmodule.NewAppModule(appCodec, app.MarketKeeper, app.AccountKeeper, app.BankKeeper)
 

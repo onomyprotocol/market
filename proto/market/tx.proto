@@ -8,6 +8,11 @@ option go_package = "github.com/onomyprotocol/market/x/market/types";
 // Msg defines the Msg service.
 service Msg {
       rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  rpc CreateDrop(MsgCreateDrop) returns (MsgCreateDropResponse);
+  rpc RedeemDrop(MsgRedeemDrop) returns (MsgRedeemDropResponse);
+  rpc CreateOrder(MsgCreateOrder) returns (MsgCreateOrderResponse);
+  rpc CancelOrder(MsgCancelOrder) returns (MsgCancelOrderResponse);
+  rpc MarketOrder(MsgMarketOrder) returns (MsgMarketOrderResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -15,9 +20,68 @@ message MsgCreatePool {
   string creator = 1;
   string coinA = 2;
   string coinB = 3;
+  repeated string rateA = 4;
+  repeated string rateB = 5;
 }
 
 message MsgCreatePoolResponse {
+}
+
+message MsgCreateDrop {
+  string creator = 1;
+  string pair = 2;
+  string drops = 3;
+  repeated string rate1 = 4;
+  string prev1 = 5;
+  string next1 = 6;
+  repeated string rate2 = 7;
+  string prev2 = 8;
+  string next2 = 9;
+}
+
+message MsgCreateDropResponse {
+}
+
+message MsgRedeemDrop {
+  string creator = 1;
+  string uid = 2;
+}
+
+message MsgRedeemDropResponse {
+}
+
+message MsgCreateOrder {
+  string creator = 1;
+  string denomAsk = 2;
+  string denomBid = 3;
+  string orderType = 4;
+  string amount = 5;
+  repeated string rate = 6;
+  string prev = 7;
+  string next = 8;
+}
+
+message MsgCreateOrderResponse {
+}
+
+message MsgCancelOrder {
+  string creator = 1;
+  string uid = 2;
+}
+
+message MsgCancelOrderResponse {
+}
+
+message MsgMarketOrder {
+  string creator = 1;
+  string denomAsk = 2;
+  string denomBid = 3;
+  string amountBid = 4;
+  string quoteAsk = 5;
+  string slippage = 6;
+}
+
+message MsgMarketOrderResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

@@ -10,9 +10,12 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default Capability genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		PoolList:   []Pool{},
-		DropList:   []Drop{},
-		MemberList: []Member{},
+		PoolList:     []Pool{},
+		DropList:     []Drop{},
+		MemberList:   []Member{},
+		BurningsList: []Burnings{},
+		OrderList:    []Order{},
+		AssetList:    []Asset{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -25,7 +28,7 @@ func (gs GenesisState) Validate() error {
 	poolIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.PoolList {
-		index := string(PoolKey(elem.Pair, elem.Denom1, elem.Denom2, elem.Leader))
+		index := string(PoolKey(elem.Pair))
 		if _, ok := poolIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for pool")
 		}
@@ -35,7 +38,7 @@ func (gs GenesisState) Validate() error {
 	dropIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.DropList {
-		index := string(DropKey(elem.Uid, elem.Owner, elem.Pair))
+		index := string(DropKey(elem.Uid))
 		if _, ok := dropIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for drop")
 		}
@@ -45,11 +48,41 @@ func (gs GenesisState) Validate() error {
 	memberIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.MemberList {
-		index := string(MemberKey(elem.Pair, elem.DenomA, elem.DenomB))
+		index := string(MemberKey(elem.DenomA, elem.DenomB))
 		if _, ok := memberIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for member")
 		}
 		memberIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in burnings
+	burningsIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.BurningsList {
+		index := string(BurningsKey(elem.Denom))
+		if _, ok := burningsIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for burnings")
+		}
+		burningsIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in order
+	orderIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.OrderList {
+		index := string(OrderKey(elem.Uid))
+		if _, ok := orderIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for order")
+		}
+		orderIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in asset
+	assetIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.AssetList {
+		index := string(AssetKey(elem.Active, elem.Owner, elem.AssetType))
+		if _, ok := assetIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for asset")
+		}
+		assetIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

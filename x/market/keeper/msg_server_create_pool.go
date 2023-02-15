@@ -29,11 +29,28 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	denom1 := coinPair.GetDenomByIndex(1)
 	denom2 := coinPair.GetDenomByIndex(2)
 
+	numeratorA, _ := sdk.NewIntFromString(msg.RateA[0])
+	denominatorA, _ := sdk.NewIntFromString(msg.RateA[1])
+	rate1 := []sdk.Int{numeratorA, denominatorA}
+
+	numeratorB, _ := sdk.NewIntFromString(msg.RateB[0])
+	denominatorB, _ := sdk.NewIntFromString(msg.RateB[1])
+	rate2 := []sdk.Int{numeratorB, denominatorB}
+
+	if denom1 != coinA.Denom {
+		rate1 = rate2
+		rate2 = []sdk.Int{numeratorA, denominatorA}
+	}
+
 	pair := strings.Join([]string{denom1, denom2}, ",")
 
-	_, found := k.GetPool(ctx, pair, denom1, denom2, msg.Creator)
+	// Test if pool either exists and active or exists and inactive
+	// Inactive pool will be dry or have no drops
+	pool, found := k.GetPool(ctx, pair)
 	if found {
-		return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
+		if !pool.Drops.Equal(sdk.NewInt(0)) {
+			return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
+		}
 	}
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
@@ -46,35 +63,25 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		return nil, sdkError
 	}
 
-	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2)).String()
+	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
 
-	// Create a new Pool with the following user input
-	var pool = types.Pool{
-		Pair:     pair,
-		Leader:   msg.Creator,
-		Denom1:   coinPair.GetDenomByIndex(1),
-		Denom2:   coinPair.GetDenomByIndex(2),
-		Drops:    drops,
-		Earnings: "0",
-		Burnings: "0",
-	}
-
-	var member1 = types.Member{
-		Pair:    pair,
-		DenomA:  denom2,
-		DenomB:  denom1,
-		Balance: coinPair.AmountOf(denom1).String(),
-		Limit:   0,
-		Stop:    0,
-	}
-
-	var member2 = types.Member{
-		Pair:    pair,
-		DenomA:  denom1,
-		DenomB:  denom2,
-		Balance: coinPair.AmountOf(denom2).String(),
-		Limit:   0,
-		Stop:    0,
+	if found {
+		pool = types.Pool{
+			Pair:   pair,
+			Leader: msg.Creator,
+			Denom1: coinPair.GetDenomByIndex(1),
+			Denom2: coinPair.GetDenomByIndex(2),
+			Drops:  drops,
+		}
+	} else {
+		// Create a new Pool with the following user input
+		pool = types.Pool{
+			Pair:   pair,
+			Leader: msg.Creator,
+			Denom1: coinPair.GetDenomByIndex(1),
+			Denom2: coinPair.GetDenomByIndex(2),
+			Drops:  drops,
+		}
 	}
 
 	// Create the uid
@@ -87,6 +94,30 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Drops:  drops,
 		Sum:    drops,
 		Active: true,
+		Rate1:  rate1,
+		Rate2:  rate2,
+	}
+
+	var member1 = types.Member{
+		Pair:    pair,
+		DenomA:  denom2,
+		DenomB:  denom1,
+		Balance: coinPair.AmountOf(denom1),
+		Limit:   0,
+		Stop:    0,
+		// Add drop to head of protect book on member
+		Protect: count,
+	}
+
+	var member2 = types.Member{
+		Pair:    pair,
+		DenomA:  denom1,
+		DenomB:  denom2,
+		Balance: coinPair.AmountOf(denom2),
+		Limit:   0,
+		Stop:    0,
+		// Add drop to head of protect book on member
+		Protect: count,
 	}
 
 	// Add the loan to the keeper

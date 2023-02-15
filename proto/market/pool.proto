@@ -1,16 +1,20 @@
 syntax = "proto3";
 package onomyprotocol.market.market;
 
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/onomyprotocol/market/x/market/types";
+option (gogoproto.goproto_stringer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
 
 message Pool {
   string pair = 1; 
   string denom1 = 2; 
   string denom2 = 3; 
   string leader = 4; 
-  string drops = 5; 
-  string earnings = 6; 
-  string burnings = 7; 
-  
+  string drops = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
 }
 

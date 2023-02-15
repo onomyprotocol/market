@@ -28,9 +28,11 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MsgCreatePool struct {
-	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	CoinA   string `protobuf:"bytes,2,opt,name=coinA,proto3" json:"coinA,omitempty"`
-	CoinB   string `protobuf:"bytes,3,opt,name=coinB,proto3" json:"coinB,omitempty"`
+	Creator string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	CoinA   string   `protobuf:"bytes,2,opt,name=coinA,proto3" json:"coinA,omitempty"`
+	CoinB   string   `protobuf:"bytes,3,opt,name=coinB,proto3" json:"coinB,omitempty"`
+	RateA   []string `protobuf:"bytes,4,rep,name=rateA,proto3" json:"rateA,omitempty"`
+	RateB   []string `protobuf:"bytes,5,rep,name=rateB,proto3" json:"rateB,omitempty"`
 }
 
 func (m *MsgCreatePool) Reset()         { *m = MsgCreatePool{} }
@@ -87,6 +89,20 @@ func (m *MsgCreatePool) GetCoinB() string {
 	return ""
 }
 
+func (m *MsgCreatePool) GetRateA() []string {
+	if m != nil {
+		return m.RateA
+	}
+	return nil
+}
+
+func (m *MsgCreatePool) GetRateB() []string {
+	if m != nil {
+		return m.RateB
+	}
+	return nil
+}
+
 type MsgCreatePoolResponse struct {
 }
 
@@ -123,29 +139,638 @@ func (m *MsgCreatePoolResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreatePoolResponse proto.InternalMessageInfo
 
+type MsgCreateDrop struct {
+	Creator string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Pair    string   `protobuf:"bytes,2,opt,name=pair,proto3" json:"pair,omitempty"`
+	Drops   string   `protobuf:"bytes,3,opt,name=drops,proto3" json:"drops,omitempty"`
+	Rate1   []string `protobuf:"bytes,4,rep,name=rate1,proto3" json:"rate1,omitempty"`
+	Prev1   string   `protobuf:"bytes,5,opt,name=prev1,proto3" json:"prev1,omitempty"`
+	Next1   string   `protobuf:"bytes,6,opt,name=next1,proto3" json:"next1,omitempty"`
+	Rate2   []string `protobuf:"bytes,7,rep,name=rate2,proto3" json:"rate2,omitempty"`
+	Prev2   string   `protobuf:"bytes,8,opt,name=prev2,proto3" json:"prev2,omitempty"`
+	Next2   string   `protobuf:"bytes,9,opt,name=next2,proto3" json:"next2,omitempty"`
+}
+
+func (m *MsgCreateDrop) Reset()         { *m = MsgCreateDrop{} }
+func (m *MsgCreateDrop) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateDrop) ProtoMessage()    {}
+func (*MsgCreateDrop) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{2}
+}
+func (m *MsgCreateDrop) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateDrop) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateDrop.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateDrop) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateDrop.Merge(m, src)
+}
+func (m *MsgCreateDrop) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateDrop) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateDrop.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateDrop proto.InternalMessageInfo
+
+func (m *MsgCreateDrop) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgCreateDrop) GetPair() string {
+	if m != nil {
+		return m.Pair
+	}
+	return ""
+}
+
+func (m *MsgCreateDrop) GetDrops() string {
+	if m != nil {
+		return m.Drops
+	}
+	return ""
+}
+
+func (m *MsgCreateDrop) GetRate1() []string {
+	if m != nil {
+		return m.Rate1
+	}
+	return nil
+}
+
+func (m *MsgCreateDrop) GetPrev1() string {
+	if m != nil {
+		return m.Prev1
+	}
+	return ""
+}
+
+func (m *MsgCreateDrop) GetNext1() string {
+	if m != nil {
+		return m.Next1
+	}
+	return ""
+}
+
+func (m *MsgCreateDrop) GetRate2() []string {
+	if m != nil {
+		return m.Rate2
+	}
+	return nil
+}
+
+func (m *MsgCreateDrop) GetPrev2() string {
+	if m != nil {
+		return m.Prev2
+	}
+	return ""
+}
+
+func (m *MsgCreateDrop) GetNext2() string {
+	if m != nil {
+		return m.Next2
+	}
+	return ""
+}
+
+type MsgCreateDropResponse struct {
+}
+
+func (m *MsgCreateDropResponse) Reset()         { *m = MsgCreateDropResponse{} }
+func (m *MsgCreateDropResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateDropResponse) ProtoMessage()    {}
+func (*MsgCreateDropResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{3}
+}
+func (m *MsgCreateDropResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateDropResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateDropResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateDropResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateDropResponse.Merge(m, src)
+}
+func (m *MsgCreateDropResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateDropResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateDropResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateDropResponse proto.InternalMessageInfo
+
+type MsgRedeemDrop struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Uid     string `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+}
+
+func (m *MsgRedeemDrop) Reset()         { *m = MsgRedeemDrop{} }
+func (m *MsgRedeemDrop) String() string { return proto.CompactTextString(m) }
+func (*MsgRedeemDrop) ProtoMessage()    {}
+func (*MsgRedeemDrop) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{4}
+}
+func (m *MsgRedeemDrop) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRedeemDrop) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRedeemDrop.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRedeemDrop) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRedeemDrop.Merge(m, src)
+}
+func (m *MsgRedeemDrop) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRedeemDrop) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRedeemDrop.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRedeemDrop proto.InternalMessageInfo
+
+func (m *MsgRedeemDrop) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRedeemDrop) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+type MsgRedeemDropResponse struct {
+}
+
+func (m *MsgRedeemDropResponse) Reset()         { *m = MsgRedeemDropResponse{} }
+func (m *MsgRedeemDropResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRedeemDropResponse) ProtoMessage()    {}
+func (*MsgRedeemDropResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{5}
+}
+func (m *MsgRedeemDropResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRedeemDropResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRedeemDropResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRedeemDropResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRedeemDropResponse.Merge(m, src)
+}
+func (m *MsgRedeemDropResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRedeemDropResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRedeemDropResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRedeemDropResponse proto.InternalMessageInfo
+
+type MsgCreateOrder struct {
+	Creator   string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	DenomAsk  string   `protobuf:"bytes,2,opt,name=denomAsk,proto3" json:"denomAsk,omitempty"`
+	DenomBid  string   `protobuf:"bytes,3,opt,name=denomBid,proto3" json:"denomBid,omitempty"`
+	OrderType string   `protobuf:"bytes,4,opt,name=orderType,proto3" json:"orderType,omitempty"`
+	Amount    string   `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	Rate      []string `protobuf:"bytes,6,rep,name=rate,proto3" json:"rate,omitempty"`
+	Prev      string   `protobuf:"bytes,7,opt,name=prev,proto3" json:"prev,omitempty"`
+	Next      string   `protobuf:"bytes,8,opt,name=next,proto3" json:"next,omitempty"`
+}
+
+func (m *MsgCreateOrder) Reset()         { *m = MsgCreateOrder{} }
+func (m *MsgCreateOrder) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateOrder) ProtoMessage()    {}
+func (*MsgCreateOrder) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{6}
+}
+func (m *MsgCreateOrder) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateOrder) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateOrder.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateOrder) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateOrder.Merge(m, src)
+}
+func (m *MsgCreateOrder) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateOrder) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateOrder.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateOrder proto.InternalMessageInfo
+
+func (m *MsgCreateOrder) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgCreateOrder) GetDenomAsk() string {
+	if m != nil {
+		return m.DenomAsk
+	}
+	return ""
+}
+
+func (m *MsgCreateOrder) GetDenomBid() string {
+	if m != nil {
+		return m.DenomBid
+	}
+	return ""
+}
+
+func (m *MsgCreateOrder) GetOrderType() string {
+	if m != nil {
+		return m.OrderType
+	}
+	return ""
+}
+
+func (m *MsgCreateOrder) GetAmount() string {
+	if m != nil {
+		return m.Amount
+	}
+	return ""
+}
+
+func (m *MsgCreateOrder) GetRate() []string {
+	if m != nil {
+		return m.Rate
+	}
+	return nil
+}
+
+func (m *MsgCreateOrder) GetPrev() string {
+	if m != nil {
+		return m.Prev
+	}
+	return ""
+}
+
+func (m *MsgCreateOrder) GetNext() string {
+	if m != nil {
+		return m.Next
+	}
+	return ""
+}
+
+type MsgCreateOrderResponse struct {
+}
+
+func (m *MsgCreateOrderResponse) Reset()         { *m = MsgCreateOrderResponse{} }
+func (m *MsgCreateOrderResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateOrderResponse) ProtoMessage()    {}
+func (*MsgCreateOrderResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{7}
+}
+func (m *MsgCreateOrderResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateOrderResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateOrderResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateOrderResponse.Merge(m, src)
+}
+func (m *MsgCreateOrderResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateOrderResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateOrderResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateOrderResponse proto.InternalMessageInfo
+
+type MsgCancelOrder struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Uid     string `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+}
+
+func (m *MsgCancelOrder) Reset()         { *m = MsgCancelOrder{} }
+func (m *MsgCancelOrder) String() string { return proto.CompactTextString(m) }
+func (*MsgCancelOrder) ProtoMessage()    {}
+func (*MsgCancelOrder) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{8}
+}
+func (m *MsgCancelOrder) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCancelOrder) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCancelOrder.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCancelOrder) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCancelOrder.Merge(m, src)
+}
+func (m *MsgCancelOrder) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCancelOrder) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCancelOrder.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCancelOrder proto.InternalMessageInfo
+
+func (m *MsgCancelOrder) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgCancelOrder) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+type MsgCancelOrderResponse struct {
+}
+
+func (m *MsgCancelOrderResponse) Reset()         { *m = MsgCancelOrderResponse{} }
+func (m *MsgCancelOrderResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCancelOrderResponse) ProtoMessage()    {}
+func (*MsgCancelOrderResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{9}
+}
+func (m *MsgCancelOrderResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCancelOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCancelOrderResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCancelOrderResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCancelOrderResponse.Merge(m, src)
+}
+func (m *MsgCancelOrderResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCancelOrderResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCancelOrderResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCancelOrderResponse proto.InternalMessageInfo
+
+type MsgMarketOrder struct {
+	Creator   string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	DenomAsk  string `protobuf:"bytes,2,opt,name=denomAsk,proto3" json:"denomAsk,omitempty"`
+	DenomBid  string `protobuf:"bytes,3,opt,name=denomBid,proto3" json:"denomBid,omitempty"`
+	AmountBid string `protobuf:"bytes,4,opt,name=amountBid,proto3" json:"amountBid,omitempty"`
+	QuoteAsk  string `protobuf:"bytes,5,opt,name=quoteAsk,proto3" json:"quoteAsk,omitempty"`
+	Slippage  string `protobuf:"bytes,6,opt,name=slippage,proto3" json:"slippage,omitempty"`
+}
+
+func (m *MsgMarketOrder) Reset()         { *m = MsgMarketOrder{} }
+func (m *MsgMarketOrder) String() string { return proto.CompactTextString(m) }
+func (*MsgMarketOrder) ProtoMessage()    {}
+func (*MsgMarketOrder) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{10}
+}
+func (m *MsgMarketOrder) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgMarketOrder) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgMarketOrder.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgMarketOrder) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgMarketOrder.Merge(m, src)
+}
+func (m *MsgMarketOrder) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgMarketOrder) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgMarketOrder.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgMarketOrder proto.InternalMessageInfo
+
+func (m *MsgMarketOrder) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgMarketOrder) GetDenomAsk() string {
+	if m != nil {
+		return m.DenomAsk
+	}
+	return ""
+}
+
+func (m *MsgMarketOrder) GetDenomBid() string {
+	if m != nil {
+		return m.DenomBid
+	}
+	return ""
+}
+
+func (m *MsgMarketOrder) GetAmountBid() string {
+	if m != nil {
+		return m.AmountBid
+	}
+	return ""
+}
+
+func (m *MsgMarketOrder) GetQuoteAsk() string {
+	if m != nil {
+		return m.QuoteAsk
+	}
+	return ""
+}
+
+func (m *MsgMarketOrder) GetSlippage() string {
+	if m != nil {
+		return m.Slippage
+	}
+	return ""
+}
+
+type MsgMarketOrderResponse struct {
+}
+
+func (m *MsgMarketOrderResponse) Reset()         { *m = MsgMarketOrderResponse{} }
+func (m *MsgMarketOrderResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgMarketOrderResponse) ProtoMessage()    {}
+func (*MsgMarketOrderResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2966ca2342567dca, []int{11}
+}
+func (m *MsgMarketOrderResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgMarketOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgMarketOrderResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgMarketOrderResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgMarketOrderResponse.Merge(m, src)
+}
+func (m *MsgMarketOrderResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgMarketOrderResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgMarketOrderResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgMarketOrderResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreatePool)(nil), "onomyprotocol.market.market.MsgCreatePool")
 	proto.RegisterType((*MsgCreatePoolResponse)(nil), "onomyprotocol.market.market.MsgCreatePoolResponse")
+	proto.RegisterType((*MsgCreateDrop)(nil), "onomyprotocol.market.market.MsgCreateDrop")
+	proto.RegisterType((*MsgCreateDropResponse)(nil), "onomyprotocol.market.market.MsgCreateDropResponse")
+	proto.RegisterType((*MsgRedeemDrop)(nil), "onomyprotocol.market.market.MsgRedeemDrop")
+	proto.RegisterType((*MsgRedeemDropResponse)(nil), "onomyprotocol.market.market.MsgRedeemDropResponse")
+	proto.RegisterType((*MsgCreateOrder)(nil), "onomyprotocol.market.market.MsgCreateOrder")
+	proto.RegisterType((*MsgCreateOrderResponse)(nil), "onomyprotocol.market.market.MsgCreateOrderResponse")
+	proto.RegisterType((*MsgCancelOrder)(nil), "onomyprotocol.market.market.MsgCancelOrder")
+	proto.RegisterType((*MsgCancelOrderResponse)(nil), "onomyprotocol.market.market.MsgCancelOrderResponse")
+	proto.RegisterType((*MsgMarketOrder)(nil), "onomyprotocol.market.market.MsgMarketOrder")
+	proto.RegisterType((*MsgMarketOrderResponse)(nil), "onomyprotocol.market.market.MsgMarketOrderResponse")
 }
 
 func init() { proto.RegisterFile("market/tx.proto", fileDescriptor_2966ca2342567dca) }
 
 var fileDescriptor_2966ca2342567dca = []byte{
-	// 215 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcf, 0x4d, 0x2c, 0xca,
-	0x4e, 0x2d, 0xd1, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0xce, 0xcf, 0xcb,
-	0xcf, 0xad, 0x04, 0xb3, 0x93, 0xf3, 0x73, 0xf4, 0x20, 0xd2, 0x50, 0x4a, 0x29, 0x94, 0x8b, 0xd7,
-	0xb7, 0x38, 0xdd, 0xb9, 0x28, 0x35, 0xb1, 0x24, 0x35, 0x20, 0x3f, 0x3f, 0x47, 0x48, 0x82, 0x8b,
-	0x3d, 0x19, 0xc4, 0xcb, 0x2f, 0x92, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0x71, 0x85, 0x44,
-	0xb8, 0x58, 0x93, 0xf3, 0x33, 0xf3, 0x1c, 0x25, 0x98, 0xc0, 0xe2, 0x10, 0x0e, 0x4c, 0xd4, 0x49,
-	0x82, 0x19, 0x21, 0xea, 0xa4, 0x24, 0xce, 0x25, 0x8a, 0x62, 0x6c, 0x50, 0x6a, 0x71, 0x41, 0x7e,
-	0x5e, 0x71, 0xaa, 0x51, 0x31, 0x17, 0xb3, 0x6f, 0x71, 0xba, 0x50, 0x0e, 0x17, 0x17, 0x92, 0x9d,
-	0x5a, 0x7a, 0x78, 0x9c, 0xa8, 0x87, 0x62, 0x90, 0x94, 0x11, 0xf1, 0x6a, 0x61, 0x96, 0x3a, 0x79,
-	0x9c, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb,
-	0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x5e, 0x7a, 0x66, 0x49, 0x46,
-	0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae, 0x3e, 0x8a, 0xb9, 0xfa, 0xd0, 0x50, 0xac, 0x80, 0x31, 0x4a,
-	0x2a, 0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0xf2, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xfe,
-	0x04, 0xce, 0x65, 0x65, 0x01, 0x00, 0x00,
+	// 584 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x55, 0xbd, 0x8e, 0xd3, 0x40,
+	0x10, 0x8e, 0xc9, 0xdf, 0x65, 0x11, 0x3f, 0xb2, 0xe0, 0x58, 0x05, 0x64, 0x9d, 0x52, 0x21, 0x90,
+	0x1c, 0xc5, 0x57, 0x42, 0x13, 0x43, 0x41, 0x13, 0x81, 0x22, 0x2a, 0x3a, 0x5f, 0x3c, 0x0a, 0xd6,
+	0xc5, 0x5e, 0xb3, 0x76, 0xa2, 0xa4, 0xe4, 0x0d, 0x78, 0x06, 0x9e, 0x82, 0x47, 0xa0, 0xbc, 0x02,
+	0x09, 0x4a, 0x94, 0xbc, 0x08, 0x9a, 0xf5, 0xfe, 0xd8, 0x0a, 0x8a, 0x4d, 0x41, 0x95, 0x9d, 0x6f,
+	0xc6, 0xdf, 0x37, 0xf3, 0x79, 0xc7, 0x21, 0xf7, 0xe2, 0x80, 0x5f, 0x43, 0x3e, 0xce, 0xb7, 0x6e,
+	0xca, 0x59, 0xce, 0xec, 0xc7, 0x2c, 0x61, 0xf1, 0x4e, 0x9c, 0x17, 0x6c, 0xe5, 0x16, 0x69, 0xf9,
+	0x33, 0xfa, 0x6c, 0x91, 0x3b, 0xb3, 0x6c, 0xf9, 0x8a, 0x43, 0x90, 0xc3, 0x3b, 0xc6, 0x56, 0x36,
+	0x25, 0xfd, 0x05, 0x46, 0x8c, 0x53, 0xeb, 0xc2, 0x7a, 0x3a, 0x98, 0xab, 0xd0, 0x7e, 0x40, 0xba,
+	0x0b, 0x16, 0x25, 0x53, 0x7a, 0x4b, 0xe0, 0x45, 0xa0, 0x50, 0x9f, 0xb6, 0x0d, 0xea, 0x23, 0xca,
+	0x83, 0x1c, 0xa6, 0xb4, 0x73, 0xd1, 0x46, 0x54, 0x04, 0x0a, 0xf5, 0x69, 0xd7, 0xa0, 0xfe, 0xe8,
+	0x11, 0x79, 0x58, 0x69, 0x61, 0x0e, 0x59, 0xca, 0x92, 0x0c, 0x46, 0x3f, 0xcb, 0xcd, 0xbd, 0xe6,
+	0x2c, 0x3d, 0xd1, 0x9c, 0x4d, 0x3a, 0x69, 0x10, 0x71, 0xd9, 0x9b, 0x38, 0xa3, 0x5c, 0xc8, 0x59,
+	0x9a, 0xa9, 0xd6, 0x44, 0xa0, 0x9a, 0x98, 0x94, 0x5b, 0x9b, 0x20, 0x9a, 0x72, 0xd8, 0x4c, 0x68,
+	0xb7, 0xa8, 0x15, 0x01, 0xa2, 0x09, 0x6c, 0xf3, 0x09, 0xed, 0x15, 0xa8, 0x08, 0x14, 0x83, 0x47,
+	0xfb, 0x86, 0xc1, 0x53, 0x0c, 0x1e, 0x3d, 0x33, 0x0c, 0x9e, 0x62, 0xf0, 0xe8, 0xc0, 0x30, 0x78,
+	0x95, 0x91, 0x71, 0x30, 0x3d, 0xf2, 0x0b, 0x31, 0xf1, 0x1c, 0x42, 0x80, 0xb8, 0x66, 0xe2, 0xfb,
+	0xa4, 0xbd, 0x8e, 0x42, 0x39, 0x30, 0x1e, 0x25, 0xab, 0x79, 0x58, 0xb3, 0xfe, 0xb0, 0xc8, 0x5d,
+	0xad, 0xf7, 0x96, 0x87, 0xc0, 0x4f, 0xf0, 0x0e, 0xc9, 0x59, 0x08, 0x09, 0x8b, 0xa7, 0xd9, 0xb5,
+	0x24, 0xd7, 0xb1, 0xce, 0xf9, 0x51, 0x28, 0x4d, 0xd5, 0xb1, 0xfd, 0x84, 0x0c, 0x18, 0x52, 0xbf,
+	0xdf, 0xa5, 0x40, 0x3b, 0x22, 0x69, 0x00, 0xfb, 0x9c, 0xf4, 0x82, 0x98, 0xad, 0x93, 0x5c, 0x1a,
+	0x2c, 0x23, 0x7c, 0x6f, 0x68, 0x1f, 0xed, 0x09, 0x2b, 0xc5, 0x59, 0xbc, 0x4b, 0x0e, 0x1b, 0xda,
+	0x97, 0xef, 0x92, 0xc3, 0x06, 0x31, 0xb4, 0x4e, 0x9a, 0x2b, 0xce, 0x23, 0x4a, 0xce, 0xab, 0x53,
+	0xe9, 0x81, 0x5f, 0x16, 0xf3, 0x06, 0xc9, 0x02, 0x56, 0x75, 0xf3, 0x1e, 0xfb, 0x28, 0x79, 0xcd,
+	0xd3, 0x9a, 0xf7, 0x5b, 0x61, 0xe4, 0x4c, 0x2c, 0xcf, 0x7f, 0x34, 0xb2, 0x30, 0x07, 0x93, 0xd2,
+	0x48, 0x0d, 0xe0, 0x93, 0x9f, 0xd6, 0x2c, 0x07, 0x64, 0x2d, 0xac, 0xd4, 0x31, 0xe6, 0xb2, 0x55,
+	0x94, 0xa6, 0xc1, 0x12, 0xe4, 0x8d, 0xd5, 0xb1, 0x1c, 0xaa, 0xd4, 0xb9, 0x1a, 0xca, 0xfb, 0xda,
+	0x25, 0xed, 0x59, 0xb6, 0xb4, 0x57, 0x84, 0x94, 0xbe, 0x03, 0xcf, 0xdc, 0x13, 0xdf, 0x0d, 0xb7,
+	0xb2, 0xb0, 0x43, 0xaf, 0x79, 0xad, 0x52, 0x35, 0x6a, 0xe2, 0x9a, 0x37, 0x54, 0xc3, 0xda, 0xa6,
+	0x6a, 0xe5, 0x0d, 0x40, 0xb5, 0xd2, 0x52, 0xd5, 0xaa, 0x99, 0xda, 0x7a, 0xb5, 0xe3, 0x7d, 0xb3,
+	0x19, 0xb9, 0x5d, 0xde, 0xb5, 0xe7, 0xcd, 0x1a, 0x16, 0xc5, 0xc3, 0xcb, 0x7f, 0x28, 0xae, 0x08,
+	0x96, 0x2e, 0x7b, 0xbd, 0xa0, 0x29, 0x6e, 0x20, 0x78, 0xbc, 0x08, 0x28, 0x58, 0x5e, 0x82, 0x5a,
+	0xc1, 0x52, 0x71, 0xbd, 0xe0, 0x5f, 0x2e, 0xa9, 0xff, 0xe6, 0xfb, 0xde, 0xb1, 0x6e, 0xf6, 0x8e,
+	0xf5, 0x7b, 0xef, 0x58, 0x5f, 0x0e, 0x4e, 0xeb, 0xe6, 0xe0, 0xb4, 0x7e, 0x1d, 0x9c, 0xd6, 0x07,
+	0x77, 0x19, 0xe5, 0x1f, 0xd7, 0x57, 0xee, 0x82, 0xc5, 0xe3, 0x0a, 0xf1, 0x58, 0xfe, 0x13, 0x6e,
+	0xd5, 0x21, 0xdf, 0xa5, 0x90, 0x5d, 0xf5, 0x44, 0xfe, 0xf2, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0xcd, 0xc1, 0x64, 0xb6, 0x29, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -161,6 +786,11 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	CreatePool(ctx context.Context, in *MsgCreatePool, opts ...grpc.CallOption) (*MsgCreatePoolResponse, error)
+	CreateDrop(ctx context.Context, in *MsgCreateDrop, opts ...grpc.CallOption) (*MsgCreateDropResponse, error)
+	RedeemDrop(ctx context.Context, in *MsgRedeemDrop, opts ...grpc.CallOption) (*MsgRedeemDropResponse, error)
+	CreateOrder(ctx context.Context, in *MsgCreateOrder, opts ...grpc.CallOption) (*MsgCreateOrderResponse, error)
+	CancelOrder(ctx context.Context, in *MsgCancelOrder, opts ...grpc.CallOption) (*MsgCancelOrderResponse, error)
+	MarketOrder(ctx context.Context, in *MsgMarketOrder, opts ...grpc.CallOption) (*MsgMarketOrderResponse, error)
 }
 
 type msgClient struct {
@@ -180,9 +810,59 @@ func (c *msgClient) CreatePool(ctx context.Context, in *MsgCreatePool, opts ...g
 	return out, nil
 }
 
+func (c *msgClient) CreateDrop(ctx context.Context, in *MsgCreateDrop, opts ...grpc.CallOption) (*MsgCreateDropResponse, error) {
+	out := new(MsgCreateDropResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Msg/CreateDrop", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RedeemDrop(ctx context.Context, in *MsgRedeemDrop, opts ...grpc.CallOption) (*MsgRedeemDropResponse, error) {
+	out := new(MsgRedeemDropResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Msg/RedeemDrop", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) CreateOrder(ctx context.Context, in *MsgCreateOrder, opts ...grpc.CallOption) (*MsgCreateOrderResponse, error) {
+	out := new(MsgCreateOrderResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Msg/CreateOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) CancelOrder(ctx context.Context, in *MsgCancelOrder, opts ...grpc.CallOption) (*MsgCancelOrderResponse, error) {
+	out := new(MsgCancelOrderResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Msg/CancelOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) MarketOrder(ctx context.Context, in *MsgMarketOrder, opts ...grpc.CallOption) (*MsgMarketOrderResponse, error) {
+	out := new(MsgMarketOrderResponse)
+	err := c.cc.Invoke(ctx, "/onomyprotocol.market.market.Msg/MarketOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CreatePool(context.Context, *MsgCreatePool) (*MsgCreatePoolResponse, error)
+	CreateDrop(context.Context, *MsgCreateDrop) (*MsgCreateDropResponse, error)
+	RedeemDrop(context.Context, *MsgRedeemDrop) (*MsgRedeemDropResponse, error)
+	CreateOrder(context.Context, *MsgCreateOrder) (*MsgCreateOrderResponse, error)
+	CancelOrder(context.Context, *MsgCancelOrder) (*MsgCancelOrderResponse, error)
+	MarketOrder(context.Context, *MsgMarketOrder) (*MsgMarketOrderResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -191,6 +871,21 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) CreatePool(ctx context.Context, req *MsgCreatePool) (*MsgCreatePoolResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePool not implemented")
+}
+func (*UnimplementedMsgServer) CreateDrop(ctx context.Context, req *MsgCreateDrop) (*MsgCreateDropResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDrop not implemented")
+}
+func (*UnimplementedMsgServer) RedeemDrop(ctx context.Context, req *MsgRedeemDrop) (*MsgRedeemDropResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedeemDrop not implemented")
+}
+func (*UnimplementedMsgServer) CreateOrder(ctx context.Context, req *MsgCreateOrder) (*MsgCreateOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
+}
+func (*UnimplementedMsgServer) CancelOrder(ctx context.Context, req *MsgCancelOrder) (*MsgCancelOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (*UnimplementedMsgServer) MarketOrder(ctx context.Context, req *MsgMarketOrder) (*MsgMarketOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarketOrder not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -215,6 +910,96 @@ func _Msg_CreatePool_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CreateDrop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateDrop)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateDrop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Msg/CreateDrop",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateDrop(ctx, req.(*MsgCreateDrop))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RedeemDrop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRedeemDrop)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RedeemDrop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Msg/RedeemDrop",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RedeemDrop(ctx, req.(*MsgRedeemDrop))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateOrder)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Msg/CreateOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateOrder(ctx, req.(*MsgCreateOrder))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCancelOrder)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CancelOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Msg/CancelOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CancelOrder(ctx, req.(*MsgCancelOrder))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_MarketOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgMarketOrder)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).MarketOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/onomyprotocol.market.market.Msg/MarketOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).MarketOrder(ctx, req.(*MsgMarketOrder))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "onomyprotocol.market.market.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -222,6 +1007,26 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePool",
 			Handler:    _Msg_CreatePool_Handler,
+		},
+		{
+			MethodName: "CreateDrop",
+			Handler:    _Msg_CreateDrop_Handler,
+		},
+		{
+			MethodName: "RedeemDrop",
+			Handler:    _Msg_RedeemDrop_Handler,
+		},
+		{
+			MethodName: "CreateOrder",
+			Handler:    _Msg_CreateOrder_Handler,
+		},
+		{
+			MethodName: "CancelOrder",
+			Handler:    _Msg_CancelOrder_Handler,
+		},
+		{
+			MethodName: "MarketOrder",
+			Handler:    _Msg_MarketOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -248,6 +1053,24 @@ func (m *MsgCreatePool) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.RateB) > 0 {
+		for iNdEx := len(m.RateB) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.RateB[iNdEx])
+			copy(dAtA[i:], m.RateB[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.RateB[iNdEx])))
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.RateA) > 0 {
+		for iNdEx := len(m.RateA) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.RateA[iNdEx])
+			copy(dAtA[i:], m.RateA[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.RateA[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
 	if len(m.CoinB) > 0 {
 		i -= len(m.CoinB)
 		copy(dAtA[i:], m.CoinB)
@@ -295,6 +1118,431 @@ func (m *MsgCreatePoolResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgCreateDrop) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateDrop) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateDrop) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Next2) > 0 {
+		i -= len(m.Next2)
+		copy(dAtA[i:], m.Next2)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Next2)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if len(m.Prev2) > 0 {
+		i -= len(m.Prev2)
+		copy(dAtA[i:], m.Prev2)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Prev2)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Rate2) > 0 {
+		for iNdEx := len(m.Rate2) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Rate2[iNdEx])
+			copy(dAtA[i:], m.Rate2[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.Rate2[iNdEx])))
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
+	if len(m.Next1) > 0 {
+		i -= len(m.Next1)
+		copy(dAtA[i:], m.Next1)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Next1)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Prev1) > 0 {
+		i -= len(m.Prev1)
+		copy(dAtA[i:], m.Prev1)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Prev1)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Rate1) > 0 {
+		for iNdEx := len(m.Rate1) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Rate1[iNdEx])
+			copy(dAtA[i:], m.Rate1[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.Rate1[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Drops) > 0 {
+		i -= len(m.Drops)
+		copy(dAtA[i:], m.Drops)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Drops)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Pair) > 0 {
+		i -= len(m.Pair)
+		copy(dAtA[i:], m.Pair)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Pair)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateDropResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateDropResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateDropResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRedeemDrop) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRedeemDrop) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRedeemDrop) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Uid) > 0 {
+		i -= len(m.Uid)
+		copy(dAtA[i:], m.Uid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Uid)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRedeemDropResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRedeemDropResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRedeemDropResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateOrder) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateOrder) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateOrder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Next) > 0 {
+		i -= len(m.Next)
+		copy(dAtA[i:], m.Next)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Next)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Prev) > 0 {
+		i -= len(m.Prev)
+		copy(dAtA[i:], m.Prev)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Prev)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.Rate) > 0 {
+		for iNdEx := len(m.Rate) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Rate[iNdEx])
+			copy(dAtA[i:], m.Rate[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.Rate[iNdEx])))
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if len(m.Amount) > 0 {
+		i -= len(m.Amount)
+		copy(dAtA[i:], m.Amount)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Amount)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.OrderType) > 0 {
+		i -= len(m.OrderType)
+		copy(dAtA[i:], m.OrderType)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.OrderType)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.DenomBid) > 0 {
+		i -= len(m.DenomBid)
+		copy(dAtA[i:], m.DenomBid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DenomBid)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.DenomAsk) > 0 {
+		i -= len(m.DenomAsk)
+		copy(dAtA[i:], m.DenomAsk)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DenomAsk)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateOrderResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateOrderResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateOrderResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCancelOrder) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCancelOrder) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCancelOrder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Uid) > 0 {
+		i -= len(m.Uid)
+		copy(dAtA[i:], m.Uid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Uid)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCancelOrderResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCancelOrderResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCancelOrderResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgMarketOrder) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgMarketOrder) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgMarketOrder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Slippage) > 0 {
+		i -= len(m.Slippage)
+		copy(dAtA[i:], m.Slippage)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Slippage)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.QuoteAsk) > 0 {
+		i -= len(m.QuoteAsk)
+		copy(dAtA[i:], m.QuoteAsk)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.QuoteAsk)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.AmountBid) > 0 {
+		i -= len(m.AmountBid)
+		copy(dAtA[i:], m.AmountBid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.AmountBid)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.DenomBid) > 0 {
+		i -= len(m.DenomBid)
+		copy(dAtA[i:], m.DenomBid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DenomBid)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.DenomAsk) > 0 {
+		i -= len(m.DenomAsk)
+		copy(dAtA[i:], m.DenomAsk)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DenomAsk)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgMarketOrderResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgMarketOrderResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgMarketOrderResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -324,10 +1572,226 @@ func (m *MsgCreatePool) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	if len(m.RateA) > 0 {
+		for _, s := range m.RateA {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	if len(m.RateB) > 0 {
+		for _, s := range m.RateB {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
 	return n
 }
 
 func (m *MsgCreatePoolResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCreateDrop) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Pair)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Drops)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Rate1) > 0 {
+		for _, s := range m.Rate1 {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	l = len(m.Prev1)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Next1)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Rate2) > 0 {
+		for _, s := range m.Rate2 {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	l = len(m.Prev2)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Next2)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCreateDropResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRedeemDrop) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Uid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRedeemDropResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCreateOrder) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.DenomAsk)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.DenomBid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.OrderType)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Amount)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Rate) > 0 {
+		for _, s := range m.Rate {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	l = len(m.Prev)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Next)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCreateOrderResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCancelOrder) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Uid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCancelOrderResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgMarketOrder) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.DenomAsk)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.DenomBid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.AmountBid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.QuoteAsk)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Slippage)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgMarketOrderResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -467,6 +1931,70 @@ func (m *MsgCreatePool) Unmarshal(dAtA []byte) error {
 			}
 			m.CoinB = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RateA", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RateA = append(m.RateA, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RateB", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RateB = append(m.RateB, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -515,6 +2043,1370 @@ func (m *MsgCreatePoolResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgCreatePoolResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateDrop) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateDrop: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateDrop: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pair", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Pair = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Drops", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Drops = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rate1", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Rate1 = append(m.Rate1, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prev1", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prev1 = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Next1", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Next1 = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rate2", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Rate2 = append(m.Rate2, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prev2", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prev2 = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Next2", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Next2 = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateDropResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateDropResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateDropResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRedeemDrop) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRedeemDrop: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRedeemDrop: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Uid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Uid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRedeemDropResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRedeemDropResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRedeemDropResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateOrder) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateOrder: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateOrder: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DenomAsk", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DenomAsk = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DenomBid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DenomBid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OrderType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OrderType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Amount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rate", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Rate = append(m.Rate, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prev", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prev = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Next", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Next = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateOrderResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateOrderResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateOrderResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCancelOrder) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCancelOrder: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCancelOrder: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Uid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Uid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCancelOrderResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCancelOrderResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCancelOrderResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgMarketOrder) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgMarketOrder: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgMarketOrder: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DenomAsk", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DenomAsk = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DenomBid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DenomBid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmountBid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmountBid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field QuoteAsk", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.QuoteAsk = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Slippage", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Slippage = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgMarketOrderResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgMarketOrderResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgMarketOrderResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

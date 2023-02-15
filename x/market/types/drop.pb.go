@@ -5,6 +5,8 @@ package types
 
 import (
 	fmt "fmt"
+	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -23,12 +25,18 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Drop struct {
-	Uid    uint64 `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Owner  string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
-	Pair   string `protobuf:"bytes,3,opt,name=pair,proto3" json:"pair,omitempty"`
-	Drops  string `protobuf:"bytes,4,opt,name=drops,proto3" json:"drops,omitempty"`
-	Sum    string `protobuf:"bytes,5,opt,name=sum,proto3" json:"sum,omitempty"`
-	Active bool   `protobuf:"varint,6,opt,name=active,proto3" json:"active,omitempty"`
+	Uid    uint64                                   `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	Owner  string                                   `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	Pair   string                                   `protobuf:"bytes,3,opt,name=pair,proto3" json:"pair,omitempty"`
+	Drops  github_com_cosmos_cosmos_sdk_types.Int   `protobuf:"bytes,4,opt,name=drops,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"drops"`
+	Sum    github_com_cosmos_cosmos_sdk_types.Int   `protobuf:"bytes,5,opt,name=sum,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"sum"`
+	Active bool                                     `protobuf:"varint,6,opt,name=active,proto3" json:"active,omitempty"`
+	Rate1  []github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,7,rep,name=rate1,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"rate1"`
+	Prev1  uint64                                   `protobuf:"varint,8,opt,name=prev1,proto3" json:"prev1,omitempty"`
+	Next1  uint64                                   `protobuf:"varint,9,opt,name=next1,proto3" json:"next1,omitempty"`
+	Rate2  []github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,10,rep,name=rate2,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"rate2"`
+	Prev2  uint64                                   `protobuf:"varint,11,opt,name=prev2,proto3" json:"prev2,omitempty"`
+	Next2  uint64                                   `protobuf:"varint,12,opt,name=next2,proto3" json:"next2,omitempty"`
 }
 
 func (m *Drop) Reset()         { *m = Drop{} }
@@ -64,48 +72,6 @@ func (m *Drop) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Drop proto.InternalMessageInfo
 
-func (m *Drop) GetUid() uint64 {
-	if m != nil {
-		return m.Uid
-	}
-	return 0
-}
-
-func (m *Drop) GetOwner() string {
-	if m != nil {
-		return m.Owner
-	}
-	return ""
-}
-
-func (m *Drop) GetPair() string {
-	if m != nil {
-		return m.Pair
-	}
-	return ""
-}
-
-func (m *Drop) GetDrops() string {
-	if m != nil {
-		return m.Drops
-	}
-	return ""
-}
-
-func (m *Drop) GetSum() string {
-	if m != nil {
-		return m.Sum
-	}
-	return ""
-}
-
-func (m *Drop) GetActive() bool {
-	if m != nil {
-		return m.Active
-	}
-	return false
-}
-
 func init() {
 	proto.RegisterType((*Drop)(nil), "onomyprotocol.market.market.Drop")
 }
@@ -113,21 +79,28 @@ func init() {
 func init() { proto.RegisterFile("market/drop.proto", fileDescriptor_3961bee11a1276cb) }
 
 var fileDescriptor_3961bee11a1276cb = []byte{
-	// 215 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0xcc, 0x4d, 0x2c, 0xca,
-	0x4e, 0x2d, 0xd1, 0x4f, 0x29, 0xca, 0x2f, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0xce,
-	0xcf, 0xcb, 0xcf, 0xad, 0x04, 0xb3, 0x93, 0xf3, 0x73, 0xf4, 0x20, 0x0a, 0xa0, 0x94, 0x52, 0x13,
-	0x23, 0x17, 0x8b, 0x4b, 0x51, 0x7e, 0x81, 0x90, 0x00, 0x17, 0x73, 0x69, 0x66, 0x8a, 0x04, 0xa3,
-	0x02, 0xa3, 0x06, 0x4b, 0x10, 0x88, 0x29, 0x24, 0xc2, 0xc5, 0x9a, 0x5f, 0x9e, 0x97, 0x5a, 0x24,
-	0xc1, 0xa4, 0xc0, 0xa8, 0xc1, 0x19, 0x04, 0xe1, 0x08, 0x09, 0x71, 0xb1, 0x14, 0x24, 0x66, 0x16,
-	0x49, 0x30, 0x83, 0x05, 0xc1, 0x6c, 0x90, 0x4a, 0x90, 0x7d, 0xc5, 0x12, 0x2c, 0x10, 0x95, 0x60,
-	0x0e, 0xc8, 0xc4, 0xe2, 0xd2, 0x5c, 0x09, 0x56, 0xb0, 0x18, 0x88, 0x29, 0x24, 0xc6, 0xc5, 0x96,
-	0x98, 0x5c, 0x92, 0x59, 0x96, 0x2a, 0xc1, 0xa6, 0xc0, 0xa8, 0xc1, 0x11, 0x04, 0xe5, 0x39, 0x79,
-	0x9c, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb,
-	0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x5e, 0x7a, 0x66, 0x49, 0x46,
-	0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae, 0x3e, 0x8a, 0x37, 0xf4, 0xa1, 0xfe, 0xac, 0x80, 0x31, 0x4a,
-	0x2a, 0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0xf2, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9c,
-	0x32, 0xce, 0x66, 0x07, 0x01, 0x00, 0x00,
+	// 332 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x52, 0x41, 0x4f, 0xf2, 0x40,
+	0x14, 0xec, 0x7e, 0x2d, 0x7c, 0xb0, 0x7a, 0xd0, 0x0d, 0x31, 0x2f, 0x9a, 0x2c, 0x8d, 0x07, 0xc3,
+	0xc5, 0x36, 0xd4, 0x3f, 0x60, 0x08, 0x17, 0x6f, 0xa6, 0x47, 0x6f, 0xa5, 0x6c, 0xb0, 0xc1, 0xf6,
+	0x35, 0xdb, 0x05, 0xe1, 0x5f, 0xf8, 0xab, 0x0c, 0x47, 0x8e, 0xc4, 0x03, 0x11, 0xf8, 0x23, 0x66,
+	0xb7, 0x6d, 0xd0, 0x2b, 0xa7, 0x9d, 0x99, 0xd7, 0xe9, 0x4c, 0x5e, 0x1e, 0xbd, 0x4c, 0x23, 0x39,
+	0x15, 0xca, 0x1f, 0x4b, 0xcc, 0xbd, 0x5c, 0xa2, 0x42, 0x76, 0x83, 0x19, 0xa6, 0x4b, 0x83, 0x63,
+	0x7c, 0xf3, 0xca, 0x0f, 0xaa, 0xe7, 0xba, 0x33, 0xc1, 0x09, 0x9a, 0x99, 0xaf, 0x51, 0x69, 0xb9,
+	0xfd, 0xb4, 0xa9, 0x33, 0x94, 0x98, 0xb3, 0x0b, 0x6a, 0xcf, 0x92, 0x31, 0x10, 0x97, 0xf4, 0x9c,
+	0x50, 0x43, 0xd6, 0xa1, 0x0d, 0x7c, 0xcf, 0x84, 0x84, 0x7f, 0x2e, 0xe9, 0xb5, 0xc3, 0x92, 0x30,
+	0x46, 0x9d, 0x3c, 0x4a, 0x24, 0xd8, 0x46, 0x34, 0x98, 0x0d, 0x69, 0x43, 0xb7, 0x28, 0xc0, 0xd1,
+	0xe2, 0xc0, 0x5b, 0x6d, 0xbb, 0xd6, 0xd7, 0xb6, 0x7b, 0x37, 0x49, 0xd4, 0xeb, 0x6c, 0xe4, 0xc5,
+	0x98, 0xfa, 0x31, 0x16, 0x29, 0x16, 0xd5, 0x73, 0x5f, 0x8c, 0xa7, 0xbe, 0x5a, 0xe6, 0xa2, 0xf0,
+	0x9e, 0x32, 0x15, 0x96, 0x66, 0xf6, 0x48, 0xed, 0x62, 0x96, 0x42, 0xe3, 0xa4, 0x7f, 0x68, 0x2b,
+	0xbb, 0xa2, 0xcd, 0x28, 0x56, 0xc9, 0x5c, 0x40, 0xd3, 0x25, 0xbd, 0x56, 0x58, 0x31, 0xdd, 0x4f,
+	0x46, 0x4a, 0xf4, 0xe1, 0xbf, 0x6b, 0x9f, 0xd2, 0xcf, 0x98, 0xf5, 0x3e, 0x72, 0x29, 0xe6, 0x7d,
+	0x68, 0x99, 0x1d, 0x95, 0x44, 0xab, 0x99, 0x58, 0xa8, 0x3e, 0xb4, 0x4b, 0xd5, 0x90, 0x3a, 0x31,
+	0x00, 0x7a, 0x7a, 0x62, 0x50, 0x27, 0x06, 0x70, 0x76, 0x4c, 0x0c, 0xea, 0xc4, 0x00, 0xce, 0x8f,
+	0x89, 0xc1, 0xe0, 0x79, 0xb5, 0xe3, 0xd6, 0x66, 0xc7, 0xc9, 0x6a, 0xcf, 0xc9, 0x7a, 0xcf, 0xc9,
+	0xf7, 0x9e, 0x93, 0x8f, 0x03, 0xb7, 0xd6, 0x07, 0x6e, 0x6d, 0x0e, 0xdc, 0x7a, 0xf1, 0x7e, 0x85,
+	0xff, 0x39, 0x14, 0xbf, 0xba, 0xa4, 0x45, 0x0d, 0x4c, 0x91, 0x51, 0xd3, 0xcc, 0x1f, 0x7e, 0x02,
+	0x00, 0x00, 0xff, 0xff, 0x25, 0x56, 0x32, 0xec, 0x69, 0x02, 0x00, 0x00,
 }
 
 func (m *Drop) Marshal() (dAtA []byte, err error) {
@@ -150,6 +123,54 @@ func (m *Drop) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Next2 != 0 {
+		i = encodeVarintDrop(dAtA, i, uint64(m.Next2))
+		i--
+		dAtA[i] = 0x60
+	}
+	if m.Prev2 != 0 {
+		i = encodeVarintDrop(dAtA, i, uint64(m.Prev2))
+		i--
+		dAtA[i] = 0x58
+	}
+	if len(m.Rate2) > 0 {
+		for iNdEx := len(m.Rate2) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size := m.Rate2[iNdEx].Size()
+				i -= size
+				if _, err := m.Rate2[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+					return 0, err
+				}
+				i = encodeVarintDrop(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x52
+		}
+	}
+	if m.Next1 != 0 {
+		i = encodeVarintDrop(dAtA, i, uint64(m.Next1))
+		i--
+		dAtA[i] = 0x48
+	}
+	if m.Prev1 != 0 {
+		i = encodeVarintDrop(dAtA, i, uint64(m.Prev1))
+		i--
+		dAtA[i] = 0x40
+	}
+	if len(m.Rate1) > 0 {
+		for iNdEx := len(m.Rate1) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size := m.Rate1[iNdEx].Size()
+				i -= size
+				if _, err := m.Rate1[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+					return 0, err
+				}
+				i = encodeVarintDrop(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
 	if m.Active {
 		i--
 		if m.Active {
@@ -160,20 +181,26 @@ func (m *Drop) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x30
 	}
-	if len(m.Sum) > 0 {
-		i -= len(m.Sum)
-		copy(dAtA[i:], m.Sum)
-		i = encodeVarintDrop(dAtA, i, uint64(len(m.Sum)))
-		i--
-		dAtA[i] = 0x2a
+	{
+		size := m.Sum.Size()
+		i -= size
+		if _, err := m.Sum.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintDrop(dAtA, i, uint64(size))
 	}
-	if len(m.Drops) > 0 {
-		i -= len(m.Drops)
-		copy(dAtA[i:], m.Drops)
-		i = encodeVarintDrop(dAtA, i, uint64(len(m.Drops)))
-		i--
-		dAtA[i] = 0x22
+	i--
+	dAtA[i] = 0x2a
+	{
+		size := m.Drops.Size()
+		i -= size
+		if _, err := m.Drops.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintDrop(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x22
 	if len(m.Pair) > 0 {
 		i -= len(m.Pair)
 		copy(dAtA[i:], m.Pair)
@@ -224,16 +251,36 @@ func (m *Drop) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovDrop(uint64(l))
 	}
-	l = len(m.Drops)
-	if l > 0 {
-		n += 1 + l + sovDrop(uint64(l))
-	}
-	l = len(m.Sum)
-	if l > 0 {
-		n += 1 + l + sovDrop(uint64(l))
-	}
+	l = m.Drops.Size()
+	n += 1 + l + sovDrop(uint64(l))
+	l = m.Sum.Size()
+	n += 1 + l + sovDrop(uint64(l))
 	if m.Active {
 		n += 2
+	}
+	if len(m.Rate1) > 0 {
+		for _, e := range m.Rate1 {
+			l = e.Size()
+			n += 1 + l + sovDrop(uint64(l))
+		}
+	}
+	if m.Prev1 != 0 {
+		n += 1 + sovDrop(uint64(m.Prev1))
+	}
+	if m.Next1 != 0 {
+		n += 1 + sovDrop(uint64(m.Next1))
+	}
+	if len(m.Rate2) > 0 {
+		for _, e := range m.Rate2 {
+			l = e.Size()
+			n += 1 + l + sovDrop(uint64(l))
+		}
+	}
+	if m.Prev2 != 0 {
+		n += 1 + sovDrop(uint64(m.Prev2))
+	}
+	if m.Next2 != 0 {
+		n += 1 + sovDrop(uint64(m.Next2))
 	}
 	return n
 }
@@ -386,7 +433,9 @@ func (m *Drop) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Drops = string(dAtA[iNdEx:postIndex])
+			if err := m.Drops.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -418,7 +467,9 @@ func (m *Drop) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Sum = string(dAtA[iNdEx:postIndex])
+			if err := m.Sum.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 6:
 			if wireType != 0 {
@@ -440,6 +491,154 @@ func (m *Drop) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Active = bool(v != 0)
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rate1", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDrop
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDrop
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDrop
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			var v github_com_cosmos_cosmos_sdk_types.Int
+			m.Rate1 = append(m.Rate1, v)
+			if err := m.Rate1[len(m.Rate1)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prev1", wireType)
+			}
+			m.Prev1 = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDrop
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Prev1 |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Next1", wireType)
+			}
+			m.Next1 = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDrop
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Next1 |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rate2", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDrop
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDrop
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDrop
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			var v github_com_cosmos_cosmos_sdk_types.Int
+			m.Rate2 = append(m.Rate2, v)
+			if err := m.Rate2[len(m.Rate2)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prev2", wireType)
+			}
+			m.Prev2 = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDrop
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Prev2 |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Next2", wireType)
+			}
+			m.Next2 = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDrop
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Next2 |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDrop(dAtA[iNdEx:])

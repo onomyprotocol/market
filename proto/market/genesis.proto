@@ -6,6 +6,9 @@ import "market/params.proto";
 import "market/pool.proto";
 import "market/drop.proto";
 import "market/member.proto";
+import "market/burnings.proto";
+import "market/order.proto";
+import "market/asset.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/onomyprotocol/market/x/market/types";
@@ -16,5 +19,8 @@ message GenesisState {
   repeated Pool poolList = 2 [(gogoproto.nullable) = false];
   repeated Drop dropList = 3 [(gogoproto.nullable) = false];
   repeated Member memberList = 4 [(gogoproto.nullable) = false];
+  repeated Burnings burningsList = 5 [(gogoproto.nullable) = false];
+  repeated Order orderList = 6 [(gogoproto.nullable) = false];
+  repeated Asset assetList = 7 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

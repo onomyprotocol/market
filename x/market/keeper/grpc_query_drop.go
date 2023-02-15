@@ -48,8 +48,6 @@ func (k Keeper) Drop(c context.Context, req *types.QueryGetDropRequest) (*types.
 	val, found := k.GetDrop(
 		ctx,
 		req.Uid,
-		req.Owner,
-		req.Pair,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

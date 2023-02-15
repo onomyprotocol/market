@@ -1,0 +1,13 @@
+syntax = "proto3";
+package onomyprotocol.market.market;
+
+option go_package = "github.com/onomyprotocol/market/x/market/types";
+
+message Asset {
+  bool active = 1; 
+  string owner = 2; 
+  string assetType = 3; 
+  uint64 uid = 4; 
+  
+}
+

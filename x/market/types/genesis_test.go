@@ -60,6 +60,44 @@ func TestGenesisState_Validate(t *testing.T) {
 						DenomB: "1",
 					},
 				},
+				BurningsList: []types.Burnings{
+					{
+						Denom: "0",
+					},
+					{
+						Denom: "1",
+					},
+				},
+				OrderList: []types.Order{
+					{
+						Uid:       0,
+						Owner:     "0",
+						Active:    true,
+						OrderType: "0",
+						DenomAsk:  "0",
+						DenomBid:  "0",
+					},
+					{
+						Uid:       1,
+						Owner:     "1",
+						Active:    false,
+						OrderType: "1",
+						DenomAsk:  "1",
+						DenomBid:  "1",
+					},
+				},
+				AssetList: []types.Asset{
+					{
+						Active:    true,
+						Owner:     "0",
+						AssetType: "0",
+					},
+					{
+						Active:    false,
+						Owner:     "1",
+						AssetType: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -115,6 +153,62 @@ func TestGenesisState_Validate(t *testing.T) {
 						Pair:   "0",
 						DenomA: "0",
 						DenomB: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated burnings",
+			genState: &types.GenesisState{
+				BurningsList: []types.Burnings{
+					{
+						Denom: "0",
+					},
+					{
+						Denom: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated order",
+			genState: &types.GenesisState{
+				OrderList: []types.Order{
+					{
+						Uid:       0,
+						Owner:     "0",
+						Active:    true,
+						OrderType: "0",
+						DenomAsk:  "0",
+						DenomBid:  "0",
+					},
+					{
+						Uid:       0,
+						Owner:     "0",
+						Active:    true,
+						OrderType: "0",
+						DenomAsk:  "0",
+						DenomBid:  "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated asset",
+			genState: &types.GenesisState{
+				AssetList: []types.Asset{
+					{
+						Active:    true,
+						Owner:     "0",
+						AssetType: "0",
+					},
+					{
+						Active:    true,
+						Owner:     "0",
+						AssetType: "0",
 					},
 				},
 			},

@@ -11,6 +11,12 @@ export interface Drop {
   drops: string;
   sum: string;
   active: boolean;
+  rate1: string[];
+  prev1: number;
+  next1: number;
+  rate2: string[];
+  prev2: number;
+  next2: number;
 }
 
 const baseDrop: object = {
@@ -20,6 +26,12 @@ const baseDrop: object = {
   drops: "",
   sum: "",
   active: false,
+  rate1: "",
+  prev1: 0,
+  next1: 0,
+  rate2: "",
+  prev2: 0,
+  next2: 0,
 };
 
 export const Drop = {
@@ -42,6 +54,24 @@ export const Drop = {
     if (message.active === true) {
       writer.uint32(48).bool(message.active);
     }
+    for (const v of message.rate1) {
+      writer.uint32(58).string(v!);
+    }
+    if (message.prev1 !== 0) {
+      writer.uint32(64).uint64(message.prev1);
+    }
+    if (message.next1 !== 0) {
+      writer.uint32(72).uint64(message.next1);
+    }
+    for (const v of message.rate2) {
+      writer.uint32(82).string(v!);
+    }
+    if (message.prev2 !== 0) {
+      writer.uint32(88).uint64(message.prev2);
+    }
+    if (message.next2 !== 0) {
+      writer.uint32(96).uint64(message.next2);
+    }
     return writer;
   },
 
@@ -49,6 +79,8 @@ export const Drop = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseDrop } as Drop;
+    message.rate1 = [];
+    message.rate2 = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -70,6 +102,24 @@ export const Drop = {
         case 6:
           message.active = reader.bool();
           break;
+        case 7:
+          message.rate1.push(reader.string());
+          break;
+        case 8:
+          message.prev1 = longToNumber(reader.uint64() as Long);
+          break;
+        case 9:
+          message.next1 = longToNumber(reader.uint64() as Long);
+          break;
+        case 10:
+          message.rate2.push(reader.string());
+          break;
+        case 11:
+          message.prev2 = longToNumber(reader.uint64() as Long);
+          break;
+        case 12:
+          message.next2 = longToNumber(reader.uint64() as Long);
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -80,6 +130,8 @@ export const Drop = {
 
   fromJSON(object: any): Drop {
     const message = { ...baseDrop } as Drop;
+    message.rate1 = [];
+    message.rate2 = [];
     if (object.uid !== undefined && object.uid !== null) {
       message.uid = Number(object.uid);
     } else {
@@ -110,6 +162,36 @@ export const Drop = {
     } else {
       message.active = false;
     }
+    if (object.rate1 !== undefined && object.rate1 !== null) {
+      for (const e of object.rate1) {
+        message.rate1.push(String(e));
+      }
+    }
+    if (object.prev1 !== undefined && object.prev1 !== null) {
+      message.prev1 = Number(object.prev1);
+    } else {
+      message.prev1 = 0;
+    }
+    if (object.next1 !== undefined && object.next1 !== null) {
+      message.next1 = Number(object.next1);
+    } else {
+      message.next1 = 0;
+    }
+    if (object.rate2 !== undefined && object.rate2 !== null) {
+      for (const e of object.rate2) {
+        message.rate2.push(String(e));
+      }
+    }
+    if (object.prev2 !== undefined && object.prev2 !== null) {
+      message.prev2 = Number(object.prev2);
+    } else {
+      message.prev2 = 0;
+    }
+    if (object.next2 !== undefined && object.next2 !== null) {
+      message.next2 = Number(object.next2);
+    } else {
+      message.next2 = 0;
+    }
     return message;
   },
 
@@ -121,11 +203,27 @@ export const Drop = {
     message.drops !== undefined && (obj.drops = message.drops);
     message.sum !== undefined && (obj.sum = message.sum);
     message.active !== undefined && (obj.active = message.active);
+    if (message.rate1) {
+      obj.rate1 = message.rate1.map((e) => e);
+    } else {
+      obj.rate1 = [];
+    }
+    message.prev1 !== undefined && (obj.prev1 = message.prev1);
+    message.next1 !== undefined && (obj.next1 = message.next1);
+    if (message.rate2) {
+      obj.rate2 = message.rate2.map((e) => e);
+    } else {
+      obj.rate2 = [];
+    }
+    message.prev2 !== undefined && (obj.prev2 = message.prev2);
+    message.next2 !== undefined && (obj.next2 = message.next2);
     return obj;
   },
 
   fromPartial(object: DeepPartial<Drop>): Drop {
     const message = { ...baseDrop } as Drop;
+    message.rate1 = [];
+    message.rate2 = [];
     if (object.uid !== undefined && object.uid !== null) {
       message.uid = object.uid;
     } else {
@@ -155,6 +253,36 @@ export const Drop = {
       message.active = object.active;
     } else {
       message.active = false;
+    }
+    if (object.rate1 !== undefined && object.rate1 !== null) {
+      for (const e of object.rate1) {
+        message.rate1.push(e);
+      }
+    }
+    if (object.prev1 !== undefined && object.prev1 !== null) {
+      message.prev1 = object.prev1;
+    } else {
+      message.prev1 = 0;
+    }
+    if (object.next1 !== undefined && object.next1 !== null) {
+      message.next1 = object.next1;
+    } else {
+      message.next1 = 0;
+    }
+    if (object.rate2 !== undefined && object.rate2 !== null) {
+      for (const e of object.rate2) {
+        message.rate2.push(e);
+      }
+    }
+    if (object.prev2 !== undefined && object.prev2 !== null) {
+      message.prev2 = object.prev2;
+    } else {
+      message.prev2 = 0;
+    }
+    if (object.next2 !== undefined && object.next2 !== null) {
+      message.next2 = object.next2;
+    } else {
+      message.next2 = 0;
     }
     return message;
   },

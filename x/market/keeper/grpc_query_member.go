@@ -47,7 +47,6 @@ func (k Keeper) Member(c context.Context, req *types.QueryGetMemberRequest) (*ty
 
 	val, found := k.GetMember(
 		ctx,
-		req.Pair,
 		req.DenomA,
 		req.DenomB,
 	)

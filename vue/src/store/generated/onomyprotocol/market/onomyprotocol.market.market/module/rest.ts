@@ -9,6 +9,20 @@
  * ---------------------------------------------------------------
  */
 
+export interface MarketAsset {
+  active?: boolean;
+  owner?: string;
+  assetType?: string;
+
+  /** @format uint64 */
+  uid?: string;
+}
+
+export interface MarketBurnings {
+  denom?: string;
+  amount?: string;
+}
+
 export interface MarketDrop {
   /** @format uint64 */
   uid?: string;
@@ -17,6 +31,20 @@ export interface MarketDrop {
   drops?: string;
   sum?: string;
   active?: boolean;
+  rate1?: string[];
+
+  /** @format uint64 */
+  prev1?: string;
+
+  /** @format uint64 */
+  next1?: string;
+  rate2?: string[];
+
+  /** @format uint64 */
+  prev2?: string;
+
+  /** @format uint64 */
+  next2?: string;
 }
 
 export interface MarketMember {
@@ -24,20 +52,73 @@ export interface MarketMember {
   denomA?: string;
   denomB?: string;
   balance?: string;
+  previous?: string;
 
   /** @format uint64 */
   limit?: string;
 
   /** @format uint64 */
   stop?: string;
+
+  /** @format uint64 */
+  protect?: string;
 }
 
+export type MarketMsgCancelOrderResponse = object;
+
+export type MarketMsgCreateDropResponse = object;
+
+export type MarketMsgCreateOrderResponse = object;
+
 export type MarketMsgCreatePoolResponse = object;
+
+export type MarketMsgMarketOrderResponse = object;
+
+export type MarketMsgRedeemDropResponse = object;
+
+export interface MarketOrder {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  active?: boolean;
+  orderType?: string;
+  denomAsk?: string;
+  denomBid?: string;
+  amount?: string;
+  rate?: string[];
+
+  /** @format uint64 */
+  prev?: string;
+
+  /** @format uint64 */
+  next?: string;
+}
+
+export interface MarketOrderResponse {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  active?: boolean;
+  orderType?: string;
+  denomAsk?: string;
+  denomBid?: string;
+  amount?: string;
+  rate?: string[];
+
+  /** @format uint64 */
+  prev?: string;
+
+  /** @format uint64 */
+  next?: string;
+}
 
 /**
  * Params defines the parameters for the module.
  */
-export type MarketParams = object;
+export interface MarketParams {
+  earn_rate?: string[];
+  burn_rate?: string[];
+}
 
 export interface MarketPool {
   pair?: string;
@@ -45,8 +126,36 @@ export interface MarketPool {
   denom2?: string;
   leader?: string;
   drops?: string;
-  earnings?: string;
-  burnings?: string;
+}
+
+export interface MarketQueryAllAssetResponse {
+  asset?: MarketAsset[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryAllBurningsResponse {
+  burnings?: MarketBurnings[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 export interface MarketQueryAllDropResponse {
@@ -79,6 +188,21 @@ export interface MarketQueryAllMemberResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryAllOrderResponse {
+  order?: MarketOrder[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryAllPoolResponse {
   pool?: MarketPool[];
 
@@ -94,12 +218,28 @@ export interface MarketQueryAllPoolResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryGetAssetResponse {
+  asset?: MarketAsset;
+}
+
+export interface MarketQueryGetBookResponse {
+  book?: MarketOrderResponse[];
+}
+
+export interface MarketQueryGetBurningsResponse {
+  burnings?: MarketBurnings;
+}
+
 export interface MarketQueryGetDropResponse {
   drop?: MarketDrop;
 }
 
 export interface MarketQueryGetMemberResponse {
   member?: MarketMember;
+}
+
+export interface MarketQueryGetOrderResponse {
+  order?: MarketOrder;
 }
 
 export interface MarketQueryGetPoolResponse {
@@ -380,10 +520,94 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title market/drop.proto
+ * @title market/asset.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAssetAll
+   * @summary Queries a list of Asset items.
+   * @request GET:/onomyprotocol/market/market/asset
+   */
+  queryAssetAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllAssetResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/asset`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAsset
+   * @summary Queries a Asset by index.
+   * @request GET:/onomyprotocol/market/market/asset/{active}/{owner}/{assetType}
+   */
+  queryAsset = (active: boolean, owner: string, assetType: string, params: RequestParams = {}) =>
+    this.request<MarketQueryGetAssetResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/asset/${active}/${owner}/${assetType}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBurningsAll
+   * @summary Queries a list of Burnings items.
+   * @request GET:/onomyprotocol/market/market/burnings
+   */
+  queryBurningsAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllBurningsResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/burnings`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBurnings
+   * @summary Queries a Burnings by index.
+   * @request GET:/onomyprotocol/market/market/burnings/{denom}
+   */
+  queryBurnings = (denom: string, params: RequestParams = {}) =>
+    this.request<MarketQueryGetBurningsResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/burnings/${denom}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
@@ -430,6 +654,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryBook
+   * @summary Queries a list of GetBook items.
+   * @request GET:/onomyprotocol/market/market/get_book/{denomA}/{denomB}/{orderType}
+   */
+  queryBook = (
+    denomA: string,
+    denomB: string,
+    orderType: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryGetBookResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/get_book/${denomA}/${denomB}/${orderType}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryMemberAll
    * @summary Queries a list of Member items.
    * @request GET:/onomyprotocol/market/market/member
@@ -464,6 +717,53 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<MarketQueryGetMemberResponse, RpcStatus>({
       path: `/onomyprotocol/market/market/member/${pair}/${denomA}/${denomB}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrderAll
+   * @summary Queries a list of Order items.
+   * @request GET:/onomyprotocol/market/market/order
+   */
+  queryOrderAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllOrderResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/order`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrder
+   * @summary Queries a Order by index.
+   * @request GET:/onomyprotocol/market/market/order/{uid}
+   */
+  queryOrder = (
+    uid: string,
+    query?: { owner?: string; active?: boolean; orderType?: string; denomAsk?: string; denomBid?: string },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryGetOrderResponse, RpcStatus>({
+      path: `/onomyprotocol/market/market/order/${uid}`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

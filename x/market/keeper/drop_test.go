@@ -33,8 +33,6 @@ func TestDropGet(t *testing.T) {
 	for _, item := range items {
 		rst, found := keeper.GetDrop(ctx,
 			item.Uid,
-			item.Owner,
-			item.Pair,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -49,13 +47,9 @@ func TestDropRemove(t *testing.T) {
 	for _, item := range items {
 		keeper.RemoveDrop(ctx,
 			item.Uid,
-			item.Owner,
-			item.Pair,
 		)
 		_, found := keeper.GetDrop(ctx,
 			item.Uid,
-			item.Owner,
-			item.Pair,
 		)
 		require.False(t, found)
 	}

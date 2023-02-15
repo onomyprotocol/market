@@ -9,8 +9,21 @@ const (
 	PoolKeyPrefix = "Pool/value/"
 )
 
-// PoolKey returns the store key to retrieve a Pool from the index fields
+// PoolKey returns the store key to retrieve a Pool
 func PoolKey(
+	pair string,
+) []byte {
+	var key []byte
+
+	pairBytes := []byte(pair)
+	key = append(key, pairBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
+}
+
+// PoolSetKey returns the store key to set a Pool with the index fields
+func PoolSetKey(
 	pair string,
 	denom1 string,
 	denom2 string,

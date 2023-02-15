@@ -28,6 +28,26 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreatePool int = 100
 
+	opWeightMsgCreateDrop = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateDrop int = 100
+
+	opWeightMsgRedeemDrop = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRedeemDrop int = 100
+
+	opWeightMsgCreateOrder = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateOrder int = 100
+
+	opWeightMsgCancelOrder = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCancelOrder int = 100
+
+	opWeightMsgMarketOrder = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgMarketOrder int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -70,6 +90,61 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgCreatePool,
 		marketsimulation.SimulateMsgCreatePool(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgCreateDrop int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateDrop, &weightMsgCreateDrop, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateDrop = defaultWeightMsgCreateDrop
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateDrop,
+		marketsimulation.SimulateMsgCreateDrop(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgRedeemDrop int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRedeemDrop, &weightMsgRedeemDrop, nil,
+		func(_ *rand.Rand) {
+			weightMsgRedeemDrop = defaultWeightMsgRedeemDrop
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRedeemDrop,
+		marketsimulation.SimulateMsgRedeemDrop(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgCreateOrder int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateOrder, &weightMsgCreateOrder, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateOrder = defaultWeightMsgCreateOrder
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateOrder,
+		marketsimulation.SimulateMsgCreateOrder(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgCancelOrder int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCancelOrder, &weightMsgCancelOrder, nil,
+		func(_ *rand.Rand) {
+			weightMsgCancelOrder = defaultWeightMsgCancelOrder
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCancelOrder,
+		marketsimulation.SimulateMsgCancelOrder(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgMarketOrder int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgMarketOrder, &weightMsgMarketOrder, nil,
+		func(_ *rand.Rand) {
+			weightMsgMarketOrder = defaultWeightMsgMarketOrder
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgMarketOrder,
+		marketsimulation.SimulateMsgMarketOrder(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
