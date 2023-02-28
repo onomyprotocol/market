@@ -1,4 +1,4 @@
-module github.com/onomyprotocol/market
+module github.com/pendulum-labs/market
 
 go 1.16
 
