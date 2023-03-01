@@ -10,7 +10,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

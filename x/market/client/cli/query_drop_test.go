@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/onomyprotocol/market/testutil/network"
-	"github.com/onomyprotocol/market/testutil/nullify"
-	"github.com/onomyprotocol/market/x/market/client/cli"
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/testutil/network"
+	"github.com/pendulum-labs/market/testutil/nullify"
+	"github.com/pendulum-labs/market/x/market/client/cli"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 // Prevent strconv unused error

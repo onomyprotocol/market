@@ -13,7 +13,7 @@ import { Burnings } from "../market/burnings";
 import { Order, OrderResponse } from "../market/order";
 import { Asset } from "../market/asset";
 
-export const protobufPackage = "onomyprotocol.market.market";
+export const protobufPackage = "pendulum-labs.market.market";
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
 export interface QueryParamsRequest {}
@@ -2383,7 +2383,7 @@ export class QueryClientImpl implements Query {
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Params",
       data
     );
@@ -2393,7 +2393,7 @@ export class QueryClientImpl implements Query {
   Pool(request: QueryGetPoolRequest): Promise<QueryGetPoolResponse> {
     const data = QueryGetPoolRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Pool",
       data
     );
@@ -2405,7 +2405,7 @@ export class QueryClientImpl implements Query {
   PoolAll(request: QueryAllPoolRequest): Promise<QueryAllPoolResponse> {
     const data = QueryAllPoolRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "PoolAll",
       data
     );
@@ -2417,7 +2417,7 @@ export class QueryClientImpl implements Query {
   Drop(request: QueryGetDropRequest): Promise<QueryGetDropResponse> {
     const data = QueryGetDropRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Drop",
       data
     );
@@ -2429,7 +2429,7 @@ export class QueryClientImpl implements Query {
   DropAll(request: QueryAllDropRequest): Promise<QueryAllDropResponse> {
     const data = QueryAllDropRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "DropAll",
       data
     );
@@ -2441,7 +2441,7 @@ export class QueryClientImpl implements Query {
   Member(request: QueryGetMemberRequest): Promise<QueryGetMemberResponse> {
     const data = QueryGetMemberRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Member",
       data
     );
@@ -2453,7 +2453,7 @@ export class QueryClientImpl implements Query {
   MemberAll(request: QueryAllMemberRequest): Promise<QueryAllMemberResponse> {
     const data = QueryAllMemberRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "MemberAll",
       data
     );
@@ -2467,7 +2467,7 @@ export class QueryClientImpl implements Query {
   ): Promise<QueryGetBurningsResponse> {
     const data = QueryGetBurningsRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Burnings",
       data
     );
@@ -2481,7 +2481,7 @@ export class QueryClientImpl implements Query {
   ): Promise<QueryAllBurningsResponse> {
     const data = QueryAllBurningsRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "BurningsAll",
       data
     );
@@ -2493,7 +2493,7 @@ export class QueryClientImpl implements Query {
   Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse> {
     const data = QueryGetOrderRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Order",
       data
     );
@@ -2505,7 +2505,7 @@ export class QueryClientImpl implements Query {
   OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse> {
     const data = QueryAllOrderRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "OrderAll",
       data
     );
@@ -2517,7 +2517,7 @@ export class QueryClientImpl implements Query {
   Asset(request: QueryGetAssetRequest): Promise<QueryGetAssetResponse> {
     const data = QueryGetAssetRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Asset",
       data
     );
@@ -2529,7 +2529,7 @@ export class QueryClientImpl implements Query {
   AssetAll(request: QueryAllAssetRequest): Promise<QueryAllAssetResponse> {
     const data = QueryAllAssetRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "AssetAll",
       data
     );
@@ -2541,7 +2541,7 @@ export class QueryClientImpl implements Query {
   Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse> {
     const data = QueryGetBookRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Query",
+      "pendulum-labs.market.market.Query",
       "Book",
       data
     );

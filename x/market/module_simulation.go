@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/onomyprotocol/market/testutil/sample"
-	marketsimulation "github.com/onomyprotocol/market/x/market/simulation"
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/testutil/sample"
+	marketsimulation "github.com/pendulum-labs/market/x/market/simulation"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 // avoid unused import issue

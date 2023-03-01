@@ -1,7 +1,7 @@
 syntax = "proto3";
-package onomyprotocol.market.market;
+package pendulumlabs.market.market;
 
-option go_package = "github.com/onomyprotocol/market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 message Asset {
   bool active = 1; 

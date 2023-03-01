@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
 )
 

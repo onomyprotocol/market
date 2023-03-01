@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/onomyprotocol/market/x/market/keeper"
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/x/market/keeper"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 // NewHandler ...

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Reader, Writer } from "protobufjs/minimal";
 
-export const protobufPackage = "onomyprotocol.market.market";
+export const protobufPackage = "pendulum-labs.market.market";
 
 export interface MsgCreatePool {
   creator: string;
@@ -1151,7 +1151,7 @@ export class MsgClientImpl implements Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse> {
     const data = MsgCreatePool.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Msg",
+      "pendulum-labs.market.market.Msg",
       "CreatePool",
       data
     );
@@ -1163,7 +1163,7 @@ export class MsgClientImpl implements Msg {
   CreateDrop(request: MsgCreateDrop): Promise<MsgCreateDropResponse> {
     const data = MsgCreateDrop.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Msg",
+      "pendulum-labs.market.market.Msg",
       "CreateDrop",
       data
     );
@@ -1175,7 +1175,7 @@ export class MsgClientImpl implements Msg {
   RedeemDrop(request: MsgRedeemDrop): Promise<MsgRedeemDropResponse> {
     const data = MsgRedeemDrop.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Msg",
+      "pendulum-labs.market.market.Msg",
       "RedeemDrop",
       data
     );
@@ -1187,7 +1187,7 @@ export class MsgClientImpl implements Msg {
   CreateOrder(request: MsgCreateOrder): Promise<MsgCreateOrderResponse> {
     const data = MsgCreateOrder.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Msg",
+      "pendulum-labs.market.market.Msg",
       "CreateOrder",
       data
     );
@@ -1199,7 +1199,7 @@ export class MsgClientImpl implements Msg {
   CancelOrder(request: MsgCancelOrder): Promise<MsgCancelOrderResponse> {
     const data = MsgCancelOrder.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Msg",
+      "pendulum-labs.market.market.Msg",
       "CancelOrder",
       data
     );
@@ -1211,7 +1211,7 @@ export class MsgClientImpl implements Msg {
   MarketOrder(request: MsgMarketOrder): Promise<MsgMarketOrderResponse> {
     const data = MsgMarketOrder.encode(request).finish();
     const promise = this.rpc.request(
-      "onomyprotocol.market.market.Msg",
+      "pendulum-labs.market.market.Msg",
       "MarketOrder",
       data
     );

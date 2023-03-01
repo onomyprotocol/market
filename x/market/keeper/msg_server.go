@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 type msgServer struct {

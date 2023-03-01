@@ -13,12 +13,12 @@ import { MsgCreateDrop } from "./types/market/tx";
 
 
 const types = [
-  ["/onomyprotocol.market.market.MsgMarketOrder", MsgMarketOrder],
-  ["/onomyprotocol.market.market.MsgCreateOrder", MsgCreateOrder],
-  ["/onomyprotocol.market.market.MsgRedeemDrop", MsgRedeemDrop],
-  ["/onomyprotocol.market.market.MsgCancelOrder", MsgCancelOrder],
-  ["/onomyprotocol.market.market.MsgCreatePool", MsgCreatePool],
-  ["/onomyprotocol.market.market.MsgCreateDrop", MsgCreateDrop],
+  ["/pendulum-labs.market.market.MsgMarketOrder", MsgMarketOrder],
+  ["/pendulum-labs.market.market.MsgCreateOrder", MsgCreateOrder],
+  ["/pendulum-labs.market.market.MsgRedeemDrop", MsgRedeemDrop],
+  ["/pendulum-labs.market.market.MsgCancelOrder", MsgCancelOrder],
+  ["/pendulum-labs.market.market.MsgCreatePool", MsgCreatePool],
+  ["/pendulum-labs.market.market.MsgCreateDrop", MsgCreateDrop],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -51,12 +51,12 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
-    msgMarketOrder: (data: MsgMarketOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgMarketOrder", value: MsgMarketOrder.fromPartial( data ) }),
-    msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
-    msgRedeemDrop: (data: MsgRedeemDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgRedeemDrop", value: MsgRedeemDrop.fromPartial( data ) }),
-    msgCancelOrder: (data: MsgCancelOrder): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCancelOrder", value: MsgCancelOrder.fromPartial( data ) }),
-    msgCreatePool: (data: MsgCreatePool): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreatePool", value: MsgCreatePool.fromPartial( data ) }),
-    msgCreateDrop: (data: MsgCreateDrop): EncodeObject => ({ typeUrl: "/onomyprotocol.market.market.MsgCreateDrop", value: MsgCreateDrop.fromPartial( data ) }),
+    msgMarketOrder: (data: MsgMarketOrder): EncodeObject => ({ typeUrl: "/pendulum-labs.market.market.MsgMarketOrder", value: MsgMarketOrder.fromPartial( data ) }),
+    msgCreateOrder: (data: MsgCreateOrder): EncodeObject => ({ typeUrl: "/pendulum-labs.market.market.MsgCreateOrder", value: MsgCreateOrder.fromPartial( data ) }),
+    msgRedeemDrop: (data: MsgRedeemDrop): EncodeObject => ({ typeUrl: "/pendulum-labs.market.market.MsgRedeemDrop", value: MsgRedeemDrop.fromPartial( data ) }),
+    msgCancelOrder: (data: MsgCancelOrder): EncodeObject => ({ typeUrl: "/pendulum-labs.market.market.MsgCancelOrder", value: MsgCancelOrder.fromPartial( data ) }),
+    msgCreatePool: (data: MsgCreatePool): EncodeObject => ({ typeUrl: "/pendulum-labs.market.market.MsgCreatePool", value: MsgCreatePool.fromPartial( data ) }),
+    msgCreateDrop: (data: MsgCreateDrop): EncodeObject => ({ typeUrl: "/pendulum-labs.market.market.MsgCreateDrop", value: MsgCreateDrop.fromPartial( data ) }),
     
   };
 };

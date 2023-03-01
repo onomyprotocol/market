@@ -1576,33 +1576,33 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Pool_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"onomyprotocol", "market", "pool", "pair", "denom1", "denom2", "leader"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Pool_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"pendulum-labs", "market", "pool", "pair", "denom1", "denom2", "leader"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PoolAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "pool"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PoolAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "pool"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Drop_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"onomyprotocol", "market", "drop", "uid", "owner", "pair"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Drop_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "drop", "uid", "owner", "pair"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DropAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "drop"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DropAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "drop"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Member_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"onomyprotocol", "market", "member", "pair", "denomA", "denomB"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Member_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "member", "pair", "denomA", "denomB"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_MemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "member"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_MemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "member"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Burnings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"onomyprotocol", "market", "burnings", "denom"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Burnings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"pendulum-labs", "market", "burnings", "denom"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_BurningsAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "burnings"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_BurningsAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "burnings"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Order_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"onomyprotocol", "market", "order", "uid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Order_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"pendulum-labs", "market", "order", "uid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_OrderAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "order"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_OrderAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "order"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Asset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"onomyprotocol", "market", "asset", "active", "owner", "assetType"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Asset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "asset", "active", "owner", "assetType"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_AssetAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"onomyprotocol", "market", "asset"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_AssetAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "asset"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Book_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"onomyprotocol", "market", "get_book", "denomA", "denomB", "orderType"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Book_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "get_book", "denomA", "denomB", "orderType"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

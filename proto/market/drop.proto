@@ -1,9 +1,9 @@
 syntax = "proto3";
-package onomyprotocol.market.market;
+package pendulumlabs.market.market;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/onomyprotocol/market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 option (gogoproto.goproto_stringer_all) = true;
 option (gogoproto.goproto_getters_all) = false;
 

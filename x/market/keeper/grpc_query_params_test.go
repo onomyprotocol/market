@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	testkeeper "github.com/onomyprotocol/market/testutil/keeper"
-	"github.com/onomyprotocol/market/x/market/types"
+	testkeeper "github.com/pendulum-labs/market/testutil/keeper"
+	"github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
 )
 

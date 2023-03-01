@@ -90,10 +90,10 @@ import (
 	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
 	"github.com/tendermint/starport/starport/pkg/openapiconsole"
 
-	"github.com/onomyprotocol/market/docs"
-	marketmodule "github.com/onomyprotocol/market/x/market"
-	marketmodulekeeper "github.com/onomyprotocol/market/x/market/keeper"
-	marketmoduletypes "github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/docs"
+	marketmodule "github.com/pendulum-labs/market/x/market"
+	marketmodulekeeper "github.com/pendulum-labs/market/x/market/keeper"
+	marketmoduletypes "github.com/pendulum-labs/market/x/market/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 

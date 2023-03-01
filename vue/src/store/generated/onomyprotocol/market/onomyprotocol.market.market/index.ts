@@ -194,7 +194,7 @@ export default {
 	},
 	actions: {
 		init({ dispatch, rootGetters }) {
-			console.log('Vuex module: onomyprotocol.market.market initialized!')
+			console.log('Vuex module: pendulum-labs.market.market initialized!')
 			if (rootGetters['common/env/client']) {
 				rootGetters['common/env/client'].on('newblock', () => {
 					dispatch('StoreUpdate')

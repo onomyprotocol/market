@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "github.com/onomyprotocol/market/testutil/keeper"
-	"github.com/onomyprotocol/market/x/market/keeper"
-	"github.com/onomyprotocol/market/x/market/types"
+	keepertest "github.com/pendulum-labs/market/testutil/keeper"
+	"github.com/pendulum-labs/market/x/market/keeper"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {

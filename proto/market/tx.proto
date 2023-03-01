@@ -1,9 +1,9 @@
 syntax = "proto3";
-package onomyprotocol.market.market;
+package pendulumlabs.market.market;
 
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "github.com/onomyprotocol/market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Msg defines the Msg service.
 service Msg {

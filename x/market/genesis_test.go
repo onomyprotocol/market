@@ -3,10 +3,10 @@ package market_test
 import (
 	"testing"
 
-	keepertest "github.com/onomyprotocol/market/testutil/keeper"
-	"github.com/onomyprotocol/market/testutil/nullify"
-	"github.com/onomyprotocol/market/x/market"
-	"github.com/onomyprotocol/market/x/market/types"
+	keepertest "github.com/pendulum-labs/market/testutil/keeper"
+	"github.com/pendulum-labs/market/testutil/nullify"
+	"github.com/pendulum-labs/market/x/market"
+	"github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
 )
 

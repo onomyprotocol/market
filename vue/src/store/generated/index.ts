@@ -21,6 +21,7 @@ import CosmosIbcGoIbcCoreClientV1 from './cosmos/ibc-go/ibc.core.client.v1'
 import CosmosIbcGoIbcCoreConnectionV1 from './cosmos/ibc-go/ibc.core.connection.v1'
 import CosmosIbcGoIbcCorePortV1 from './cosmos/ibc-go/ibc.core.port.v1'
 import OnomyprotocolMarketOnomyprotocolMarketMarket from './onomyprotocol/market/onomyprotocol.market.market'
+import PendulumLabsMarketPendulumlabsMarketMarket from './pendulum-labs/market/pendulumlabs.market.market'
 
 
 export default { 
@@ -45,6 +46,7 @@ export default {
   CosmosIbcGoIbcCoreConnectionV1: load(CosmosIbcGoIbcCoreConnectionV1, 'ibc.core.connection.v1'),
   CosmosIbcGoIbcCorePortV1: load(CosmosIbcGoIbcCorePortV1, 'ibc.core.port.v1'),
   OnomyprotocolMarketOnomyprotocolMarketMarket: load(OnomyprotocolMarketOnomyprotocolMarketMarket, 'onomyprotocol.market.market'),
+  PendulumLabsMarketPendulumlabsMarketMarket: load(PendulumLabsMarketPendulumlabsMarketMarket, 'pendulumlabs.market.market'),
   
 }
 

@@ -8,7 +8,7 @@ import { Order } from "../market/order";
 import { Asset } from "../market/asset";
 import { Writer, Reader } from "protobufjs/minimal";
 
-export const protobufPackage = "onomyprotocol.market.market";
+export const protobufPackage = "pendulum-labs.market.market";
 
 /** GenesisState defines the market module's genesis state. */
 export interface GenesisState {

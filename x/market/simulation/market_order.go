@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/onomyprotocol/market/x/market/keeper"
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/x/market/keeper"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 func SimulateMsgMarketOrder(

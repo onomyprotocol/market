@@ -16,9 +16,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/onomyprotocol/market/x/market/client/cli"
-	"github.com/onomyprotocol/market/x/market/keeper"
-	"github.com/onomyprotocol/market/x/market/types"
+	"github.com/pendulum-labs/market/x/market/client/cli"
+	"github.com/pendulum-labs/market/x/market/keeper"
+	"github.com/pendulum-labs/market/x/market/types"
 )
 
 var (

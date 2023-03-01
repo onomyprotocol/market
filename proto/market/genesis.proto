@@ -1,5 +1,5 @@
 syntax = "proto3";
-package onomyprotocol.market.market;
+package pendulumlabs.market.market;
 
 import "gogoproto/gogo.proto";
 import "market/params.proto";
@@ -11,7 +11,7 @@ import "market/order.proto";
 import "market/asset.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/onomyprotocol/market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // GenesisState defines the market module's genesis state.
 message GenesisState {
