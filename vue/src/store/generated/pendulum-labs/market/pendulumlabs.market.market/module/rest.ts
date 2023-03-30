@@ -118,6 +118,7 @@ export interface MarketOrderResponse {
 export interface MarketParams {
   earn_rate?: string[];
   burn_rate?: string[];
+  burn_coin?: string;
 }
 
 export interface MarketPool {
