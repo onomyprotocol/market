@@ -28,7 +28,7 @@ func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Asset {
 }
 
 func TestAssetGet(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNAsset(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.MarketKeeper.GetAsset(ctx,
@@ -44,7 +44,7 @@ func TestAssetGet(t *testing.T) {
 	}
 }
 func TestAssetRemove(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNAsset(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		keeper.MarketKeeper.RemoveAsset(ctx,
@@ -62,7 +62,7 @@ func TestAssetRemove(t *testing.T) {
 }
 
 func TestAssetGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNAsset(keeper.MarketKeeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

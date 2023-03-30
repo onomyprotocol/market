@@ -11,6 +11,6 @@ import (
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
-	k, ctx := keepertest.MarketKeeper(t)
+	k, ctx := keepertest.CreateTestEnvironment(t)
 	return keeper.NewMsgServerImpl(*k.MarketKeeper), sdk.WrapSDKContext(ctx)
 }

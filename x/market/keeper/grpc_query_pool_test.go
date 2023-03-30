@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestPoolQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNPool(keeper.MarketKeeper, ctx, 2)
 	for _, tc := range []struct {
@@ -79,7 +79,7 @@ func TestPoolQuerySingle(t *testing.T) {
 }
 
 func TestPoolQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNPool(keeper.MarketKeeper, ctx, 5)
 

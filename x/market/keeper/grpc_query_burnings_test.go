@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestBurningsQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBurnings(keeper.MarketKeeper, ctx, 2)
 	for _, tc := range []struct {
@@ -70,7 +70,7 @@ func TestBurningsQuerySingle(t *testing.T) {
 }
 
 func TestBurningsQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBurnings(keeper.MarketKeeper, ctx, 5)
 

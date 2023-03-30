@@ -28,7 +28,7 @@ func createNDrop(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Drop {
 }
 
 func TestDropGet(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNDrop(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.MarketKeeper.GetDrop(ctx,
@@ -42,7 +42,7 @@ func TestDropGet(t *testing.T) {
 	}
 }
 func TestDropRemove(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNDrop(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		keeper.MarketKeeper.RemoveDrop(ctx,
@@ -56,7 +56,7 @@ func TestDropRemove(t *testing.T) {
 }
 
 func TestDropGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNDrop(keeper.MarketKeeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

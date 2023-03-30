@@ -28,7 +28,7 @@ func createNMember(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Member
 }
 
 func TestMemberGet(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNMember(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.MarketKeeper.GetMember(ctx,
@@ -43,7 +43,7 @@ func TestMemberGet(t *testing.T) {
 	}
 }
 func TestMemberRemove(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNMember(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		keeper.MarketKeeper.RemoveMember(ctx,
@@ -59,7 +59,7 @@ func TestMemberRemove(t *testing.T) {
 }
 
 func TestMemberGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNMember(keeper.MarketKeeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

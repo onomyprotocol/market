@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestDropQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNDrop(keeper.MarketKeeper, ctx, 2)
 	for _, tc := range []struct {
@@ -76,7 +76,7 @@ func TestDropQuerySingle(t *testing.T) {
 }
 
 func TestDropQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNDrop(keeper.MarketKeeper, ctx, 5)
 

@@ -33,7 +33,7 @@ func createNOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Order {
 }
 
 func TestOrderGet(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNOrder(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.MarketKeeper.GetOrder(ctx,
@@ -47,7 +47,7 @@ func TestOrderGet(t *testing.T) {
 	}
 }
 func TestOrderRemove(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNOrder(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
 		keeper.MarketKeeper.RemoveOrder(ctx,
@@ -61,7 +61,7 @@ func TestOrderRemove(t *testing.T) {
 }
 
 func TestOrderGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
+	keeper, ctx := keepertest.CreateTestEnvironment(t)
 	items := createNOrder(keeper.MarketKeeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
