@@ -21,7 +21,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	"github.com/pendulum-labs/market/x/market/keeper"
 	markettypes "github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
@@ -44,13 +44,12 @@ var (
 type TestInput struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.BaseKeeper
-	//Context       sdk.Context
-	Marshaler    codec.Codec
-	MarketKeeper *keeper.Keeper
-	LegacyAmino  *codec.LegacyAmino
+	Marshaler     codec.Codec
+	MarketKeeper  *keeper.Keeper
+	LegacyAmino   *codec.LegacyAmino
 }
 
-// MakeTestMarshaler creates a legacy codec for use in testing
+// MakeTestLegacyCodec creates a legacy codec for use in testing
 func MakeTestLegacyCodec() *codec.LegacyAmino {
 	var cdc = codec.NewLegacyAmino()
 	auth.AppModuleBasic{}.RegisterLegacyAminoCodec(cdc)
@@ -94,7 +93,6 @@ func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
-	//registry := codectypes.NewInterfaceRegistry()
 	cdc := MakeTestCodec()
 	legacyCodec := MakeTestLegacyCodec()
 
@@ -103,7 +101,7 @@ func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(markettypes.ModuleName)
 
-	paramsSubspace := typesparams.NewSubspace(cdc,
+	paramsSubspace := paramstypes.NewSubspace(cdc,
 		markettypes.Amino,
 		storeKey,
 		memStoreKey,

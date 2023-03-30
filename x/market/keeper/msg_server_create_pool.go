@@ -27,7 +27,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	// NewCoins sorts denoms
 	denom1 := coinPair.GetDenomByIndex(0)
-	denom2 := coinPair.GetDenomByIndex(1) // kartheek made test to work, Need to check with Charles tomorrow
+	denom2 := coinPair.GetDenomByIndex(1)
 
 	numeratorA, _ := sdk.NewIntFromString(msg.RateA[0])
 	denominatorA, _ := sdk.NewIntFromString(msg.RateA[1])
