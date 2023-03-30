@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	ccodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +23,7 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/pendulum-labs/market/x/market/keeper"
-	"github.com/pendulum-labs/market/x/market/types"
+	markettypes "github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -43,13 +44,14 @@ var (
 type TestInput struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.BaseKeeper
-	Context       sdk.Context
-	Marshaler     codec.Codec
-	MarketKeeper  *keeper.Keeper
-	LegacyAmino   *codec.LegacyAmino
+	//Context       sdk.Context
+	Marshaler    codec.Codec
+	MarketKeeper *keeper.Keeper
+	LegacyAmino  *codec.LegacyAmino
 }
 
-func MakeTestCodec() *codec.LegacyAmino {
+// MakeTestMarshaler creates a legacy codec for use in testing
+func MakeTestLegacyCodec() *codec.LegacyAmino {
 	var cdc = codec.NewLegacyAmino()
 	auth.AppModuleBasic{}.RegisterLegacyAminoCodec(cdc)
 	bank.AppModuleBasic{}.RegisterLegacyAminoCodec(cdc)
@@ -57,16 +59,26 @@ func MakeTestCodec() *codec.LegacyAmino {
 	sdk.RegisterLegacyAminoCodec(cdc)
 	ccodec.RegisterCrypto(cdc)
 	params.AppModuleBasic{}.RegisterLegacyAminoCodec(cdc)
-	types.RegisterCodec(cdc)
+	markettypes.RegisterCodec(cdc)
 	return cdc
 }
 
-func MarketKeeper(t testing.TB) (TestInput, sdk.Context) {
-	storeKey := sdk.NewKVStoreKey(types.StoreKey)
+// MakeTestCodec creates a proto codec for use in testing
+func MakeTestCodec() codec.Codec {
+	interfaceRegistry := codectypes.NewInterfaceRegistry()
+	std.RegisterInterfaces(interfaceRegistry)
+	ModuleBasics.RegisterInterfaces(interfaceRegistry)
+	markettypes.RegisterInterfaces(interfaceRegistry)
+	return codec.NewProtoCodec(interfaceRegistry)
+}
+
+func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
+
+	storeKey := sdk.NewKVStoreKey(markettypes.StoreKey)
 	keyAuth := sdk.NewKVStoreKey(authtypes.StoreKey)
 	keyBank := sdk.NewKVStoreKey(banktypes.StoreKey)
 	keyParams := sdk.NewKVStoreKey(paramstypes.StoreKey)
-	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
+	memStoreKey := storetypes.NewMemoryStoreKey(markettypes.MemStoreKey)
 	tkeyParams := sdk.NewTransientStoreKey(paramstypes.TStoreKey)
 
 	db := tmdb.NewMemDB()
@@ -82,32 +94,27 @@ func MarketKeeper(t testing.TB) (TestInput, sdk.Context) {
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
-	registry := codectypes.NewInterfaceRegistry()
-	cdc := codec.NewProtoCodec(registry)
-	legacyCodec := MakeTestCodec()
+	//registry := codectypes.NewInterfaceRegistry()
+	cdc := MakeTestCodec()
+	legacyCodec := MakeTestLegacyCodec()
 
 	paramsKeeper := paramskeeper.NewKeeper(cdc, legacyCodec, keyParams, tkeyParams)
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
+	paramsKeeper.Subspace(markettypes.ModuleName)
 
 	paramsSubspace := typesparams.NewSubspace(cdc,
-		types.Amino,
+		markettypes.Amino,
 		storeKey,
 		memStoreKey,
 		"MarketParams",
 	)
 	// this is also used to initialize module accounts for all the map keys
 	maccPerms := map[string][]string{
+		markettypes.ModuleName:     {authtypes.Minter},
 		authtypes.FeeCollectorName: nil,
 	}
-	k := keeper.NewKeeper(
-		cdc,
-		storeKey,
-		memStoreKey,
-		paramsSubspace,
-		nil,
-		nil,
-	)
+
 	accountKeeper := authkeeper.NewAccountKeeper(
 		cdc,
 		keyAuth, // target store
@@ -131,15 +138,23 @@ func MarketKeeper(t testing.TB) (TestInput, sdk.Context) {
 		SendEnabled:        []*banktypes.SendEnabled{},
 		DefaultSendEnabled: true,
 	})
-
+	marketKeeper := keeper.NewKeeper(
+		cdc,
+		storeKey,
+		memStoreKey,
+		paramsSubspace,
+		bankKeeper,
+		nil, // FIXME
+	)
 	// Initialize params
-	k.SetParams(ctx, types.DefaultParams())
+	marketKeeper.SetParams(ctx, markettypes.DefaultParams())
 
 	return TestInput{
 		AccountKeeper: accountKeeper,
 		BankKeeper:    bankKeeper,
 		Marshaler:     cdc,
 		LegacyAmino:   legacyCodec,
+		MarketKeeper:  marketKeeper,
 	}, ctx
 }
 
