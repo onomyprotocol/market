@@ -13,6 +13,8 @@ var (
 	KeyEarnRate = []byte("EarnRate") //nolint:gochecknoglobals // cosmos-sdk style
 	// KeyBurnRate is byte key for BurnRate param.
 	KeyBurnRate = []byte("BurnRate") //nolint:gochecknoglobals // cosmos-sdk style
+	// KeyBurnCoin is byte key for BurnCoin param.
+	KeyBurnCoin = []byte("BurnCoin") //nolint:gochecknoglobals // cosmos-sdk style
 )
 
 var (
@@ -20,6 +22,8 @@ var (
 	DefaultEarnRate = []sdk.Int{sdk.NewInt(1), sdk.NewInt(10)} //nolint:gomnd,gochecknoglobals // cosmos-sdk style
 	// DefaultBurnRate is default value for the DefaultBurnRate param.
 	DefaultBurnRate = []sdk.Int{sdk.NewInt(1), sdk.NewInt(10)} //nolint:gomnd,gochecknoglobals // cosmos-sdk style
+	// DefaultBurnCoin is default value for the DefaultBurnCoin param.
+	DefaultBurnCoin = "stake" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -33,16 +37,18 @@ func ParamKeyTable() paramtypes.KeyTable {
 func NewParams(
 	earnRate []sdk.Int,
 	burnRate []sdk.Int,
+	burnCoin string,
 ) Params {
 	return Params{
 		EarnRate: earnRate,
 		BurnRate: burnRate,
+		BurnCoin: burnCoin,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams(DefaultEarnRate, DefaultBurnRate)
+	return NewParams(DefaultEarnRate, DefaultBurnRate, DefaultBurnCoin)
 }
 
 // ParamSetPairs get the params.ParamSet
@@ -50,6 +56,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyEarnRate, &p.EarnRate, validateEarnRate),
 		paramtypes.NewParamSetPair(KeyBurnRate, &p.BurnRate, validateBurnRate),
+		paramtypes.NewParamSetPair(KeyBurnCoin, &p.BurnCoin, validateBurnCoin),
 	}
 }
 
@@ -59,6 +66,9 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateBurnRate(p.BurnRate); err != nil {
+		return err
+	}
+	if err := validateBurnCoin(p.BurnCoin); err != nil {
 		return err
 	}
 
@@ -108,6 +118,15 @@ func validateBurnRate(i interface{}) error {
 
 	if v[1].LTE(v[0]) {
 		return fmt.Errorf("burn rate denominator must be greater than numerator: %d", v)
+	}
+
+	return nil
+}
+
+func validateBurnCoin(i interface{}) error {
+	_, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	return nil

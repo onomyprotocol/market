@@ -9,9 +9,11 @@ export interface Params {
   earn_rate: string[];
   /** pool burning rate */
   burn_rate: string[];
+  /** burn coin */
+  burn_coin: string;
 }
 
-const baseParams: object = { earn_rate: "", burn_rate: "" };
+const baseParams: object = { earn_rate: "", burn_rate: "", burn_coin: "" };
 
 export const Params = {
   encode(message: Params, writer: Writer = Writer.create()): Writer {
@@ -20,6 +22,9 @@ export const Params = {
     }
     for (const v of message.burn_rate) {
       writer.uint32(18).string(v!);
+    }
+    if (message.burn_coin !== "") {
+      writer.uint32(26).string(message.burn_coin);
     }
     return writer;
   },
@@ -38,6 +43,9 @@ export const Params = {
           break;
         case 2:
           message.burn_rate.push(reader.string());
+          break;
+        case 3:
+          message.burn_coin = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -61,6 +69,11 @@ export const Params = {
         message.burn_rate.push(String(e));
       }
     }
+    if (object.burn_coin !== undefined && object.burn_coin !== null) {
+      message.burn_coin = String(object.burn_coin);
+    } else {
+      message.burn_coin = "";
+    }
     return message;
   },
 
@@ -76,6 +89,7 @@ export const Params = {
     } else {
       obj.burn_rate = [];
     }
+    message.burn_coin !== undefined && (obj.burn_coin = message.burn_coin);
     return obj;
   },
 
@@ -92,6 +106,11 @@ export const Params = {
       for (const e of object.burn_rate) {
         message.burn_rate.push(e);
       }
+    }
+    if (object.burn_coin !== undefined && object.burn_coin !== null) {
+      message.burn_coin = object.burn_coin;
+    } else {
+      message.burn_coin = "";
     }
     return message;
   },

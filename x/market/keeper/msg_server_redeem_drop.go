@@ -180,15 +180,15 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 
 	amountBid := burnings.Amount
 
-	// The staking coin will be burned
-	denomStake := k.stakingKeeper.BondDenom(ctx)
+	// Coin that will be burned
+	burnCoin := k.BurnCoin(ctx)
 
-	memberAsk, found := k.GetMember(ctx, burnings.Denom, denomStake)
+	memberAsk, found := k.GetMember(ctx, burnings.Denom, burnCoin)
 	if !found {
 		return burnings, nil
 	}
 
-	memberBid, found := k.GetMember(ctx, denomStake, burnings.Denom)
+	memberBid, found := k.GetMember(ctx, burnCoin, burnings.Denom)
 	if !found {
 		return burnings, nil
 	}
@@ -214,7 +214,7 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 	// amountAsk = amountBid * Exch(f) = [amountBid * (A(i) - amountBid)] / (B(i) + amountBid)
 	amountAsk := (amountBid.Mul(memberAsk.Balance.Sub(amountBid))).Quo(memberBid.Balance.Add(amountBid))
 
-	coinAsk := sdk.NewCoin(denomStake, amountAsk)
+	coinAsk := sdk.NewCoin(burnCoin, amountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)
 
 	// Burn Ask Amount of Stake Coin

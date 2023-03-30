@@ -27874,6 +27874,9 @@ paths:
                     items:
                       type: string
                     title: pool burning rate
+                  burn_coin:
+                    type: string
+                    title: burn coin
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -46060,6 +46063,9 @@ definitions:
         items:
           type: string
         title: pool burning rate
+      burn_coin:
+        type: string
+        title: burn coin
     description: Params defines the parameters for the module.
   pendulumlabs.market.market.Pool:
     type: object
@@ -46558,4 +46564,7 @@ definitions:
             items:
               type: string
             title: pool burning rate
+          burn_coin:
+            type: string
+            title: burn coin
     description: QueryParamsResponse is response type for the Query/Params RPC method.
