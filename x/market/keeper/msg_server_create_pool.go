@@ -53,7 +53,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		}
 	}
 
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
+	//moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
 

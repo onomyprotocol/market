@@ -21,7 +21,7 @@ var _ = strconv.IntSize
 func TestAssetQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.MarketKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNAsset(keeper, ctx, 2)
+	msgs := createNAsset(keeper.MarketKeeper, ctx, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetAssetRequest
@@ -61,7 +61,7 @@ func TestAssetQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Asset(wctx, tc.request)
+			response, err := keeper.MarketKeeper.Asset(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -78,7 +78,7 @@ func TestAssetQuerySingle(t *testing.T) {
 func TestAssetQueryPaginated(t *testing.T) {
 	keeper, ctx := keepertest.MarketKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNAsset(keeper, ctx, 5)
+	msgs := createNAsset(keeper.MarketKeeper, ctx, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllAssetRequest {
 		return &types.QueryAllAssetRequest{
@@ -93,7 +93,7 @@ func TestAssetQueryPaginated(t *testing.T) {
 	t.Run("ByOffset", func(t *testing.T) {
 		step := 2
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.AssetAll(wctx, request(nil, uint64(i), uint64(step), false))
+			resp, err := keeper.MarketKeeper.AssetAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Asset), step)
 			require.Subset(t,
@@ -106,7 +106,7 @@ func TestAssetQueryPaginated(t *testing.T) {
 		step := 2
 		var next []byte
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.AssetAll(wctx, request(next, 0, uint64(step), false))
+			resp, err := keeper.MarketKeeper.AssetAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Asset), step)
 			require.Subset(t,
@@ -117,7 +117,7 @@ func TestAssetQueryPaginated(t *testing.T) {
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
-		resp, err := keeper.AssetAll(wctx, request(nil, 0, 0, true))
+		resp, err := keeper.MarketKeeper.AssetAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
@@ -126,7 +126,7 @@ func TestAssetQueryPaginated(t *testing.T) {
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
-		_, err := keeper.AssetAll(wctx, nil)
+		_, err := keeper.MarketKeeper.AssetAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }

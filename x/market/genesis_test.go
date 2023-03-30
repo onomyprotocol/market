@@ -94,8 +94,8 @@ func TestGenesis(t *testing.T) {
 	}
 
 	k, ctx := keepertest.MarketKeeper(t)
-	market.InitGenesis(ctx, *k, genesisState)
-	got := market.ExportGenesis(ctx, *k)
+	market.InitGenesis(ctx, *k.MarketKeeper, genesisState)
+	got := market.ExportGenesis(ctx, *k.MarketKeeper)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)

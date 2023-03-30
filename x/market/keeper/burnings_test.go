@@ -27,9 +27,9 @@ func createNBurnings(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Burn
 
 func TestBurningsGet(t *testing.T) {
 	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNBurnings(keeper, ctx, 10)
+	items := createNBurnings(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetBurnings(ctx,
+		rst, found := keeper.MarketKeeper.GetBurnings(ctx,
 			item.Denom,
 		)
 		require.True(t, found)
@@ -41,12 +41,12 @@ func TestBurningsGet(t *testing.T) {
 }
 func TestBurningsRemove(t *testing.T) {
 	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNBurnings(keeper, ctx, 10)
+	items := createNBurnings(keeper.MarketKeeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveBurnings(ctx,
+		keeper.MarketKeeper.RemoveBurnings(ctx,
 			item.Denom,
 		)
-		_, found := keeper.GetBurnings(ctx,
+		_, found := keeper.MarketKeeper.GetBurnings(ctx,
 			item.Denom,
 		)
 		require.False(t, found)
@@ -55,9 +55,9 @@ func TestBurningsRemove(t *testing.T) {
 
 func TestBurningsGetAll(t *testing.T) {
 	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNBurnings(keeper, ctx, 10)
+	items := createNBurnings(keeper.MarketKeeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllBurnings(ctx)),
+		nullify.Fill(keeper.MarketKeeper.GetAllBurnings(ctx)),
 	)
 }
