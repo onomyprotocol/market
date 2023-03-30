@@ -142,7 +142,6 @@ func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
 		memStoreKey,
 		paramsSubspace,
 		bankKeeper,
-		nil, // FIXME
 	)
 	// Initialize params
 	marketKeeper.SetParams(ctx, markettypes.DefaultParams())

@@ -8,7 +8,6 @@ import (
 	keepertest "github.com/pendulum-labs/market/testutil/keeper"
 	"github.com/pendulum-labs/market/testutil/sample"
 
-	//"github.com/pendulum-labs/market/testutil/nullify"
 	"github.com/pendulum-labs/market/x/market/keeper"
 	"github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
