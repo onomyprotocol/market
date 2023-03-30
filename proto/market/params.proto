@@ -22,5 +22,8 @@ message Params {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
+
+  // burn coin
+  string burn_coin = 3;
   
 }

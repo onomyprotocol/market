@@ -26,8 +26,14 @@ func (k Keeper) EarnRate(ctx sdk.Context) (res []sdk.Int) {
 	return
 }
 
-// BurnRate - the burning rate of nom
+// BurnRate - the burning rate of the burn coin
 func (k Keeper) BurnRate(ctx sdk.Context) (res []sdk.Int) {
 	k.paramstore.Get(ctx, types.KeyBurnRate, &res)
+	return
+}
+
+// BurnCoin - the burn coin
+func (k Keeper) BurnCoin(ctx sdk.Context) (res string) {
+	k.paramstore.Get(ctx, types.KeyBurnCoin, &res)
 	return
 }
