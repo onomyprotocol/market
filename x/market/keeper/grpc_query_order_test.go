@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestOrderQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNOrder(keeper.MarketKeeper, ctx, 2)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNOrder(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetOrderRequest
@@ -85,9 +85,9 @@ func TestOrderQuerySingle(t *testing.T) {
 }
 
 func TestOrderQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNOrder(keeper.MarketKeeper, ctx, 5)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNOrder(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllOrderRequest {
 		return &types.QueryAllOrderRequest{

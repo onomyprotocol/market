@@ -10,10 +10,10 @@ import (
 )
 
 func TestParamsQuery(t *testing.T) {
-	keeper, ctx := testkeeper.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
+	keeper := testkeeper.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
 	params := types.DefaultParams()
-	keeper.MarketKeeper.SetParams(ctx, params)
+	keeper.MarketKeeper.SetParams(keeper.Context, params)
 
 	response, err := keeper.MarketKeeper.Params(wctx, &types.QueryParamsRequest{})
 	require.NoError(t, err)

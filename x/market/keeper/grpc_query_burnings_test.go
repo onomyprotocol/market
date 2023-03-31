@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestBurningsQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNBurnings(keeper.MarketKeeper, ctx, 2)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNBurnings(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetBurningsRequest
@@ -70,9 +70,9 @@ func TestBurningsQuerySingle(t *testing.T) {
 }
 
 func TestBurningsQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNBurnings(keeper.MarketKeeper, ctx, 5)
+	keeper:= keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNBurnings(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllBurningsRequest {
 		return &types.QueryAllBurningsRequest{

@@ -143,6 +143,11 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	)
 
 	// Update drop uid count
+	k.SetDropUidCount(
+		ctx,
+		drop,
+		count+1,
+	)
 	k.SetUidCount(ctx, count+1)
 
 	return &types.MsgCreatePoolResponse{}, nil

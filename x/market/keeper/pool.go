@@ -12,9 +12,6 @@ func (k Keeper) SetPool(ctx sdk.Context, pool types.Pool) {
 	b := k.cdc.MustMarshal(&pool)
 	store.Set(types.PoolSetKey(
 		pool.Pair,
-		pool.Denom1,
-		pool.Denom2,
-		pool.Leader,
 	), b)
 }
 

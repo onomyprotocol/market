@@ -38,6 +38,28 @@ func (k Keeper) GetMember(
 	return val, true
 }
 
+func (k Keeper) GetMemberWithPair(
+	ctx sdk.Context,
+	pair string,
+	denomA string,
+	denomB string,
+
+) (val types.Member, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
+
+	b := store.Get(types.MemberKeyPair(
+		pair,
+		denomA,
+		denomB,
+	))
+	if b == nil {
+		return val, false
+	}
+
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
+}
+
 // RemoveMember removes a member from the store
 func (k Keeper) RemoveMember(
 	ctx sdk.Context,

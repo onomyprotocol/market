@@ -12,8 +12,14 @@ func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
 	b := k.cdc.MustMarshal(&drop)
 	store.Set(types.DropSetKey(
 		drop.Uid,
-		drop.Owner,
-		drop.Pair,
+	), b)
+}
+
+func (k Keeper) SetDropUidCount(ctx sdk.Context, drop types.Drop, count uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+	b := k.cdc.MustMarshal(&drop)
+	store.Set(types.DropSetKey(
+		drop.Uid+count,
 	), b)
 }
 

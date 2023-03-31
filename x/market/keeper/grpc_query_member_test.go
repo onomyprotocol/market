@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestMemberQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNMember(keeper.MarketKeeper, ctx, 2)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNMember(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetMemberRequest
@@ -76,9 +76,9 @@ func TestMemberQuerySingle(t *testing.T) {
 }
 
 func TestMemberQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNMember(keeper.MarketKeeper, ctx, 5)
+	keeper:= keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNMember(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllMemberRequest {
 		return &types.QueryAllMemberRequest{

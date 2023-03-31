@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"testing"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -27,6 +28,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
 	tmdb "github.com/tendermint/tm-db"
 )
 
@@ -44,6 +46,7 @@ var (
 type TestInput struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.BaseKeeper
+	Context       sdk.Context
 	Marshaler     codec.Codec
 	MarketKeeper  *keeper.Keeper
 	LegacyAmino   *codec.LegacyAmino
@@ -71,8 +74,8 @@ func MakeTestCodec() codec.Codec {
 	return codec.NewProtoCodec(interfaceRegistry)
 }
 
-func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
-
+func CreateTestEnvironment(t testing.TB) TestInput {
+	//poolKey := sdk.NewKVStoreKey(markettypes.PoolKeyPrefix)
 	storeKey := sdk.NewKVStoreKey(markettypes.StoreKey)
 	keyAuth := sdk.NewKVStoreKey(authtypes.StoreKey)
 	keyBank := sdk.NewKVStoreKey(banktypes.StoreKey)
@@ -83,6 +86,8 @@ func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
 	db := tmdb.NewMemDB()
 
 	stateStore := store.NewCommitMultiStore(db)
+
+	//stateStore.MountStoreWithDB(poolKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(keyAuth, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(keyBank, sdk.StoreTypeIAVL, db)
@@ -91,7 +96,32 @@ func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
 	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+	//ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(stateStore, tmproto.Header{
+		Version: tmversion.Consensus{
+			Block: 0,
+			App:   0,
+		},
+		ChainID: "",
+		Height:  1234567,
+		Time:    time.Date(2020, time.April, 22, 12, 0, 0, 0, time.UTC),
+		LastBlockId: tmproto.BlockID{
+			Hash: []byte{},
+			PartSetHeader: tmproto.PartSetHeader{
+				Total: 0,
+				Hash:  []byte{},
+			},
+		},
+		LastCommitHash:     []byte{},
+		DataHash:           []byte{},
+		ValidatorsHash:     []byte{},
+		NextValidatorsHash: []byte{},
+		ConsensusHash:      []byte{},
+		AppHash:            []byte{},
+		LastResultsHash:    []byte{},
+		EvidenceHash:       []byte{},
+		ProposerAddress:    []byte{},
+	}, false, log.TestingLogger())
 
 	cdc := MakeTestCodec()
 	legacyCodec := MakeTestLegacyCodec()
@@ -144,15 +174,17 @@ func CreateTestEnvironment(t testing.TB) (TestInput, sdk.Context) {
 		bankKeeper,
 	)
 	// Initialize params
+	//marketKeeper.setID
 	marketKeeper.SetParams(ctx, markettypes.DefaultParams())
 
 	return TestInput{
 		AccountKeeper: accountKeeper,
 		BankKeeper:    bankKeeper,
+		Context:       ctx,
 		Marshaler:     cdc,
 		LegacyAmino:   legacyCodec,
 		MarketKeeper:  marketKeeper,
-	}, ctx
+	}
 }
 
 // getSubspace returns a param subspace for a given module name.

@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestAssetQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNAsset(keeper.MarketKeeper, ctx, 2)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNAsset(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetAssetRequest
@@ -76,9 +76,9 @@ func TestAssetQuerySingle(t *testing.T) {
 }
 
 func TestAssetQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNAsset(keeper.MarketKeeper, ctx, 5)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNAsset(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllAssetRequest {
 		return &types.QueryAllAssetRequest{

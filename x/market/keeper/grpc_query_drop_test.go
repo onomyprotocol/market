@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestDropQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNDrop(keeper.MarketKeeper, ctx, 2)
+	keeper:= keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNDrop(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetDropRequest
@@ -76,9 +76,9 @@ func TestDropQuerySingle(t *testing.T) {
 }
 
 func TestDropQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.CreateTestEnvironment(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNDrop(keeper.MarketKeeper, ctx, 5)
+	keeper:= keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNDrop(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllDropRequest {
 		return &types.QueryAllDropRequest{
