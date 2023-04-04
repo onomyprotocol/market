@@ -64,8 +64,15 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	}
 
 	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
+	pool = types.Pool{
+		Pair:   pair,
+		Leader: msg.Creator,
+		Denom1: coinPair.GetDenomByIndex(0),
+		Denom2: coinPair.GetDenomByIndex(1),
+		Drops:  drops,
+	}
 
-	if found {
+	/*if found {
 		pool = types.Pool{
 			Pair:   pair,
 			Leader: msg.Creator,
@@ -82,7 +89,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			Denom2: coinPair.GetDenomByIndex(1),
 			Drops:  drops,
 		}
-	}
+	}*/
 
 	// Create the uid
 	count := k.GetUidCount(ctx)
@@ -143,12 +150,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	)
 
 	// Update drop uid count
-	k.SetDropUidCount(
-		ctx,
-		drop,
-		count+1,
-	)
 	k.SetUidCount(ctx, count+1)
 
-	return &types.MsgCreatePoolResponse{}, nil
+	return &types.MsgCreatePoolResponse{}, err
 }

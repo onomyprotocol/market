@@ -11,9 +11,13 @@ func (k Keeper) SetMember(ctx sdk.Context, member types.Member) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 	b := k.cdc.MustMarshal(&member)
 	store.Set(types.MemberSetKey(
-		member.Pair,
 		member.DenomA,
 		member.DenomB,
+		//member.Balance,
+		//member.Previous,
+		//member.Limit,
+		//member.Stop,
+		//member.Protect,
 	), b)
 }
 

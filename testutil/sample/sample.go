@@ -13,19 +13,19 @@ func AccAddress() string {
 }
 
 // SampleCoins returns the required NewCoins
-func SampleCoins(coina string, coinb string) sdk.Coins {
+func SampleCoins(coina string, coinb string) (Coins sdk.Coins, err error) {
 
 	coinA, err := sdk.ParseCoinNormalized(coina)
 	if err != nil {
-		panic(err)
+		return sdk.Coins{}, err
 	}
 
 	coinB, err := sdk.ParseCoinNormalized(coinb)
 	if err != nil {
-		panic(err)
+		return sdk.Coins{}, err
 	}
 
-	return sdk.NewCoins(coinA, coinB)
+	return sdk.NewCoins(coinA, coinB), nil
 }
 
 // SampleDenoms returns the required denoms values
