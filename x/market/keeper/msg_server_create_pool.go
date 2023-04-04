@@ -152,5 +152,5 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	// Update drop uid count
 	k.SetUidCount(ctx, count+1)
 
-	return &types.MsgCreatePoolResponse{}, err
+	return &types.MsgCreatePoolResponse{}, nil
 }
