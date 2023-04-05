@@ -26,8 +26,8 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	coinPair := sdk.NewCoins(coinA, coinB)
 
 	// NewCoins sorts denoms
-	denom1 := coinPair.GetDenomByIndex(1)
-	denom2 := coinPair.GetDenomByIndex(2)
+	denom1 := coinPair.GetDenomByIndex(0)
+	denom2 := coinPair.GetDenomByIndex(1)
 
 	numeratorA, _ := sdk.NewIntFromString(msg.RateA[0])
 	denominatorA, _ := sdk.NewIntFromString(msg.RateA[1])
@@ -53,7 +53,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		}
 	}
 
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
+	//moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
 
@@ -64,13 +64,20 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	}
 
 	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
+	pool = types.Pool{
+		Pair:   pair,
+		Leader: msg.Creator,
+		Denom1: coinPair.GetDenomByIndex(0),
+		Denom2: coinPair.GetDenomByIndex(1),
+		Drops:  drops,
+	}
 
-	if found {
+	/*if found {
 		pool = types.Pool{
 			Pair:   pair,
 			Leader: msg.Creator,
-			Denom1: coinPair.GetDenomByIndex(1),
-			Denom2: coinPair.GetDenomByIndex(2),
+			Denom1: coinPair.GetDenomByIndex(0),
+			Denom2: coinPair.GetDenomByIndex(1),
 			Drops:  drops,
 		}
 	} else {
@@ -78,11 +85,11 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		pool = types.Pool{
 			Pair:   pair,
 			Leader: msg.Creator,
-			Denom1: coinPair.GetDenomByIndex(1),
-			Denom2: coinPair.GetDenomByIndex(2),
+			Denom1: coinPair.GetDenomByIndex(0),
+			Denom2: coinPair.GetDenomByIndex(1),
 			Drops:  drops,
 		}
-	}
+	}*/
 
 	// Create the uid
 	count := k.GetUidCount(ctx)

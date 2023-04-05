@@ -29,10 +29,10 @@ func createNPool(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Pool {
 }
 
 func TestPoolGet(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNPool(keeper, ctx, 10)
+	keeper := keepertest.CreateTestEnvironment(t)
+	items := createNPool(keeper.MarketKeeper, keeper.Context, 10)
 	for _, item := range items {
-		rst, found := keeper.GetPool(ctx,
+		rst, found := keeper.MarketKeeper.GetPool(keeper.Context,
 			item.Pair,
 		)
 		require.True(t, found)
@@ -43,13 +43,13 @@ func TestPoolGet(t *testing.T) {
 	}
 }
 func TestPoolRemove(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNPool(keeper, ctx, 10)
+	keeper := keepertest.CreateTestEnvironment(t)
+	items := createNPool(keeper.MarketKeeper, keeper.Context, 10)
 	for _, item := range items {
-		keeper.RemovePool(ctx,
+		keeper.MarketKeeper.RemovePool(keeper.Context,
 			item.Pair,
 		)
-		_, found := keeper.GetPool(ctx,
+		_, found := keeper.MarketKeeper.GetPool(keeper.Context,
 			item.Pair,
 		)
 		require.False(t, found)
@@ -57,10 +57,10 @@ func TestPoolRemove(t *testing.T) {
 }
 
 func TestPoolGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNPool(keeper, ctx, 10)
+	keeper := keepertest.CreateTestEnvironment(t)
+	items := createNPool(keeper.MarketKeeper, keeper.Context, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllPool(ctx)),
+		nullify.Fill(keeper.MarketKeeper.GetAllPool(keeper.Context)),
 	)
 }

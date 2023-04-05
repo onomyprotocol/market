@@ -93,9 +93,9 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.MarketKeeper(t)
-	market.InitGenesis(ctx, *k, genesisState)
-	got := market.ExportGenesis(ctx, *k)
+	k := keepertest.CreateTestEnvironment(t)
+	market.InitGenesis(k.Context, *k.MarketKeeper, genesisState)
+	got := market.ExportGenesis(k.Context, *k.MarketKeeper)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)

@@ -9,10 +9,10 @@ import (
 )
 
 func TestGetParams(t *testing.T) {
-	k, ctx := testkeeper.MarketKeeper(t)
+	k := testkeeper.CreateTestEnvironment(t)
 	params := types.DefaultParams()
 
-	k.SetParams(ctx, params)
+	k.MarketKeeper.SetParams(k.Context, params)
 
-	require.EqualValues(t, params, k.GetParams(ctx))
+	require.EqualValues(t, params, k.MarketKeeper.GetParams(k.Context))
 }

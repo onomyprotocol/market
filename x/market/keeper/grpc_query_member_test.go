@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestMemberQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNMember(keeper, ctx, 2)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNMember(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetMemberRequest
@@ -61,7 +61,7 @@ func TestMemberQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Member(wctx, tc.request)
+			response, err := keeper.MarketKeeper.Member(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -76,9 +76,9 @@ func TestMemberQuerySingle(t *testing.T) {
 }
 
 func TestMemberQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNMember(keeper, ctx, 5)
+	keeper:= keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNMember(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllMemberRequest {
 		return &types.QueryAllMemberRequest{
@@ -93,7 +93,7 @@ func TestMemberQueryPaginated(t *testing.T) {
 	t.Run("ByOffset", func(t *testing.T) {
 		step := 2
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.MemberAll(wctx, request(nil, uint64(i), uint64(step), false))
+			resp, err := keeper.MarketKeeper.MemberAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Member), step)
 			require.Subset(t,
@@ -106,7 +106,7 @@ func TestMemberQueryPaginated(t *testing.T) {
 		step := 2
 		var next []byte
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.MemberAll(wctx, request(next, 0, uint64(step), false))
+			resp, err := keeper.MarketKeeper.MemberAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Member), step)
 			require.Subset(t,
@@ -117,7 +117,7 @@ func TestMemberQueryPaginated(t *testing.T) {
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
-		resp, err := keeper.MemberAll(wctx, request(nil, 0, 0, true))
+		resp, err := keeper.MarketKeeper.MemberAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
@@ -126,7 +126,7 @@ func TestMemberQueryPaginated(t *testing.T) {
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
-		_, err := keeper.MemberAll(wctx, nil)
+		_, err := keeper.MarketKeeper.MemberAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }

@@ -28,10 +28,10 @@ func createNMember(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Member
 }
 
 func TestMemberGet(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNMember(keeper, ctx, 10)
+	keeper := keepertest.CreateTestEnvironment(t)
+	items := createNMember(keeper.MarketKeeper, keeper.Context, 10)
 	for _, item := range items {
-		rst, found := keeper.GetMember(ctx,
+		rst, found := keeper.MarketKeeper.GetMember(keeper.Context,
 			item.DenomA,
 			item.DenomB,
 		)
@@ -43,14 +43,14 @@ func TestMemberGet(t *testing.T) {
 	}
 }
 func TestMemberRemove(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNMember(keeper, ctx, 10)
+	keeper := keepertest.CreateTestEnvironment(t)
+	items := createNMember(keeper.MarketKeeper, keeper.Context, 10)
 	for _, item := range items {
-		keeper.RemoveMember(ctx,
+		keeper.MarketKeeper.RemoveMember(keeper.Context,
 			item.DenomA,
 			item.DenomB,
 		)
-		_, found := keeper.GetMember(ctx,
+		_, found := keeper.MarketKeeper.GetMember(keeper.Context,
 			item.DenomA,
 			item.DenomB,
 		)
@@ -59,10 +59,10 @@ func TestMemberRemove(t *testing.T) {
 }
 
 func TestMemberGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	items := createNMember(keeper, ctx, 10)
+	keeper := keepertest.CreateTestEnvironment(t)
+	items := createNMember(keeper.MarketKeeper, keeper.Context, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllMember(ctx)),
+		nullify.Fill(keeper.MarketKeeper.GetAllMember(keeper.Context)),
 	)
 }

@@ -12,8 +12,6 @@ func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
 	b := k.cdc.MustMarshal(&drop)
 	store.Set(types.DropSetKey(
 		drop.Uid,
-		drop.Owner,
-		drop.Pair,
 	), b)
 }
 

@@ -11,9 +11,13 @@ func (k Keeper) SetMember(ctx sdk.Context, member types.Member) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 	b := k.cdc.MustMarshal(&member)
 	store.Set(types.MemberSetKey(
-		member.Pair,
 		member.DenomA,
 		member.DenomB,
+		//member.Balance,
+		//member.Previous,
+		//member.Limit,
+		//member.Stop,
+		//member.Protect,
 	), b)
 }
 
@@ -27,6 +31,28 @@ func (k Keeper) GetMember(
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 
 	b := store.Get(types.MemberKey(
+		denomA,
+		denomB,
+	))
+	if b == nil {
+		return val, false
+	}
+
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
+}
+
+func (k Keeper) GetMemberWithPair(
+	ctx sdk.Context,
+	pair string,
+	denomA string,
+	denomB string,
+
+) (val types.Member, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
+
+	b := store.Get(types.MemberKeyPair(
+		pair,
 		denomA,
 		denomB,
 	))

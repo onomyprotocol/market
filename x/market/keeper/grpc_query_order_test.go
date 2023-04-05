@@ -19,9 +19,9 @@ import (
 var _ = strconv.IntSize
 
 func TestOrderQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNOrder(keeper, ctx, 2)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNOrder(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetOrderRequest
@@ -70,7 +70,7 @@ func TestOrderQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Order(wctx, tc.request)
+			response, err := keeper.MarketKeeper.Order(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -85,9 +85,9 @@ func TestOrderQuerySingle(t *testing.T) {
 }
 
 func TestOrderQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.MarketKeeper(t)
-	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNOrder(keeper, ctx, 5)
+	keeper := keepertest.CreateTestEnvironment(t)
+	wctx := sdk.WrapSDKContext(keeper.Context)
+	msgs := createNOrder(keeper.MarketKeeper, keeper.Context, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllOrderRequest {
 		return &types.QueryAllOrderRequest{
@@ -102,7 +102,7 @@ func TestOrderQueryPaginated(t *testing.T) {
 	t.Run("ByOffset", func(t *testing.T) {
 		step := 2
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.OrderAll(wctx, request(nil, uint64(i), uint64(step), false))
+			resp, err := keeper.MarketKeeper.OrderAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Order), step)
 			require.Subset(t,
@@ -115,7 +115,7 @@ func TestOrderQueryPaginated(t *testing.T) {
 		step := 2
 		var next []byte
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.OrderAll(wctx, request(next, 0, uint64(step), false))
+			resp, err := keeper.MarketKeeper.OrderAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Order), step)
 			require.Subset(t,
@@ -126,7 +126,7 @@ func TestOrderQueryPaginated(t *testing.T) {
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
-		resp, err := keeper.OrderAll(wctx, request(nil, 0, 0, true))
+		resp, err := keeper.MarketKeeper.OrderAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
@@ -135,7 +135,7 @@ func TestOrderQueryPaginated(t *testing.T) {
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
-		_, err := keeper.OrderAll(wctx, nil)
+		_, err := keeper.MarketKeeper.OrderAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
