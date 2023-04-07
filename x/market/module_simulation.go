@@ -24,27 +24,27 @@ var (
 )
 
 const (
-	opWeightMsgCreatePool = "op_weight_msg_create_chain"
+	opWeightMsgCreatePool = "op_weight_msg_create_pool"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreatePool int = 100
 
-	opWeightMsgCreateDrop = "op_weight_msg_create_chain"
+	opWeightMsgCreateDrop = "op_weight_msg_create_drop"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreateDrop int = 100
 
-	opWeightMsgRedeemDrop = "op_weight_msg_create_chain"
+	opWeightMsgRedeemDrop = "op_weight_msg_redeem_drop"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgRedeemDrop int = 100
 
-	opWeightMsgCreateOrder = "op_weight_msg_create_chain"
+	opWeightMsgCreateOrder = "op_weight_msg_create_order"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreateOrder int = 100
 
-	opWeightMsgCancelOrder = "op_weight_msg_create_chain"
+	opWeightMsgCancelOrder = "op_weight_msg_cancel_order"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCancelOrder int = 100
 
-	opWeightMsgMarketOrder = "op_weight_msg_create_chain"
+	opWeightMsgMarketOrder = "op_weight_msg_market_order"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgMarketOrder int = 100
 
