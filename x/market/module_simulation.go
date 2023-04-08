@@ -24,29 +24,29 @@ var (
 )
 
 const (
-	opWeightMsgCreatePool = "op_weight_msg_create_pool"
+	opWeightMsgCreatePool = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreatePool int = 100
+	defaultWeightMsgCreatePool int = 90
 
-	opWeightMsgCreateDrop = "op_weight_msg_create_drop"
+	opWeightMsgCreateDrop = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreateDrop int = 100
+	defaultWeightMsgCreateDrop int = 90
 
-	opWeightMsgRedeemDrop = "op_weight_msg_redeem_drop"
+	opWeightMsgRedeemDrop = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgRedeemDrop int = 100
+	defaultWeightMsgRedeemDrop int = 20
 
-	opWeightMsgCreateOrder = "op_weight_msg_create_order"
+	opWeightMsgCreateOrder = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreateOrder int = 100
+	defaultWeightMsgCreateOrder int = 90
 
-	opWeightMsgCancelOrder = "op_weight_msg_cancel_order"
+	opWeightMsgCancelOrder = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCancelOrder int = 100
+	defaultWeightMsgCancelOrder int = 20
 
-	opWeightMsgMarketOrder = "op_weight_msg_market_order"
+	opWeightMsgMarketOrder = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgMarketOrder int = 100
+	defaultWeightMsgMarketOrder int = 90
 
 	// this line is used by starport scaffolding # simapp/module/const
 )
