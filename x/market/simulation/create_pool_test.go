@@ -31,12 +31,14 @@ type SimTestSuite struct {
 }
 
 func (suite *SimTestSuite) SetupTest() {
+	//TestInput := keepertest.CreateTestEnvironment(suite.T())
+
 	simapp.FlagEnabledValue = true
 	simapp.FlagCommitValue = true
 	encoding := cosmoscmd.MakeEncodingConfig(SimApp.ModuleBasics)
 	config, db, _, logger, _, _ := simapp.SetupSimulation("goleveldb-app-sim", "Simulation")
 
-	//checkTx := false
+	checkTx := false
 	app := SimApp.New(
 		logger,
 		db,
@@ -50,7 +52,7 @@ func (suite *SimTestSuite) SetupTest() {
 	)
 	simApp, _ := app.(*SimApp.App)
 	suite.app = simApp
-	//suite.ctx = simApp.BaseApp.NewContext(checkTx, tmproto.Header{})
+	suite.ctx = simApp.BaseApp.NewContext(checkTx, tmproto.Header{})
 	_, simParams, _ := simulation.SimulateFromSeed(
 		suite.T(),
 		os.Stdout,
@@ -63,6 +65,7 @@ func (suite *SimTestSuite) SetupTest() {
 		simApp.AppCodec(),
 	)
 	simapp.CheckExportSimulation(simApp, config, simParams)
+
 }
 
 func (suite *SimTestSuite) TestSimulateMsgCreatePool() {

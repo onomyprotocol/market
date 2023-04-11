@@ -28,15 +28,15 @@ func SimulateMsgCreatePool(
 			Creator: creatorAccount.Address.String(),
 			CoinA:   sdk.NewCoin("CoinA", sdk.NewInt(150)).String(),
 			CoinB:   sdk.NewCoin("CoinB", sdk.NewInt(150)).String(),
-			RateA:   []string{},
-			RateB:   []string{},
+			RateA:   []string{sdk.NewInt(150).String(), sdk.NewInt(150).String()},
+			RateB:   []string{sdk.NewInt(150).String(), sdk.NewInt(150).String()},
 		}
 		err := sendMsgSend(r, app, bk, ak, msg, ctx, chainID, []cryptotypes.PrivKey{creatorAccount.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "invalid transfers"), nil, err
 		}
 
-		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "CreatePool simulation not implemented"), nil, nil
+		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "CreatePool simulation"), nil, nil
 	}
 }
 

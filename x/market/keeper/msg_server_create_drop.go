@@ -17,8 +17,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	pairMsg := strings.Split(msg.Pair, ",")
 	sort.Strings(pairMsg)
 
-	denom1 := pairMsg[1]
-	denom2 := pairMsg[2]
+	denom1 := pairMsg[0]
+	denom2 := pairMsg[1]
 
 	pair := strings.Join(pairMsg, ",")
 
@@ -50,8 +50,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	prev2, _ := strconv.ParseUint(msg.Prev2, 10, 64)
 	next2, _ := strconv.ParseUint(msg.Next2, 10, 64)
 
-	numerator2, _ := sdk.NewIntFromString(msg.Rate1[0])
-	denominator2, _ := sdk.NewIntFromString(msg.Rate1[1])
+	numerator2, _ := sdk.NewIntFromString(msg.Rate2[0])
+	denominator2, _ := sdk.NewIntFromString(msg.Rate2[1])
 	rate2 := []sdk.Int{numerator2, denominator2}
 
 	// Case 1
