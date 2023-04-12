@@ -166,7 +166,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not currently tail of book")
 		}
 
-		if types.GT(rate1, prevDrop2.Rate2) {
+		if types.GT(rate2, prevDrop2.Rate2) {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop rate2 greater than Prev2 rate2")
 		}
 
@@ -222,7 +222,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
 		}
 
-		if !(nextDrop2.Prev2 == prevDrop2.Uid && prevDrop2.Next1 == nextDrop2.Uid) {
+		if !(nextDrop2.Prev2 == prevDrop2.Uid && prevDrop2.Next2 == nextDrop2.Uid) {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 and Next2 are not adjacent")
 		}
 
@@ -307,6 +307,10 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		Drops:  drops,
 		Sum:    dropSum,
 		Active: true,
+		Prev1:  prev1,
+		Prev2:  prev2,
+		Next1:  next1,
+		Next2:  next2,
 	}
 
 	// Add the drop to the keeper
