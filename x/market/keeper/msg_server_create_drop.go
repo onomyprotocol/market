@@ -29,12 +29,12 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	member1, found := k.GetMember(ctx, denom2, denom1)
 	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "%s", pair)
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", pair)
 	}
 
 	member2, found := k.GetMember(ctx, denom1, denom2)
 	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "%s", pair)
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", pair)
 	}
 
 	// Create the uid
@@ -107,12 +107,12 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		if !nextDrop2.Active {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
 		}
-		if nextDrop2.Prev1 != 0 {
+		if nextDrop2.Prev2 != 0 {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not currently head of book")
 		}
 
 		if types.LTE(rate2, nextDrop2.Rate2) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate2 less than or equal Next1")
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate2 less than or equal Next2")
 		}
 
 		// Set drop as new head of Member1 Protect
