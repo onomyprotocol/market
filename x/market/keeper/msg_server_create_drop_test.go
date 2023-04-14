@@ -1089,3 +1089,84 @@ func TestCreateDrop_Case4_Side2_Negative(t *testing.T) {
 	require.ErrorContains(t, err1, "Prev2 and Next2 are not adjacent")
 
 }
+
+func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
+	testInput := keepertest.CreateTestEnvironment(t)
+	//TestData
+	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"30", "40"}, RateBstrArray: []string{"50", "60"}}
+	coinPair, _ := sample.SampleCoins("35CoinA", "45CoinB")
+	denomA, denomB := sample.SampleDenoms(coinPair)
+	pair := strings.Join([]string{denomA, denomB}, ",")
+
+	//MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+	//SendCoinsFromModuleToAccount
+	requestAddress, err := sdk.AccAddressFromBech32(addr)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+	// GetUidCount before CreatePool
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	//Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	//validate CreatePool
+	require.NoError(t, err)
+	require.Contains(t, p.GetCreator(), response.String())
+	require.Contains(t, p.GetCoinA(), response.String())
+	require.Contains(t, p.GetCoinB(), response.String())
+	//validate SetUidCount function.
+	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	//validate GetDrop
+	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+	//validate CreateDrop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "20", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.Error(t, err)
+	require.ErrorContains(t, err, "insufficient balance")
+
+}
+
+/*
+func TestCreateDrop_InvalidDrop(t *testing.T) {
+	testInput := keepertest.CreateTestEnvironment(t)
+	//TestData
+	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"30", "40"}, RateBstrArray: []string{"50", "60"}}
+	coinPair, _ := sample.SampleCoins("35CoinA", "45CoinB")
+	denomA, denomB := sample.SampleDenoms(coinPair)
+	pair := strings.Join([]string{denomA, denomB}, ",")
+
+	//MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+	//SendCoinsFromModuleToAccount
+	requestAddress, err := sdk.AccAddressFromBech32(addr)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+	// GetUidCount before CreatePool
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	//Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	//validate CreatePool
+	require.NoError(t, err)
+	require.Contains(t, p.GetCreator(), response.String())
+	require.Contains(t, p.GetCoinA(), response.String())
+	require.Contains(t, p.GetCoinB(), response.String())
+	//validate SetUidCount function.
+	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	//validate GetDrop
+	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+	//validate CreateDrop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "-1", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.Error(t, err)
+	//require.ErrorContains(t, err, "insufficient balance")
+
+}*/
