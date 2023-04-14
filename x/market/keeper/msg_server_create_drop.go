@@ -311,6 +311,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		Prev2:  prev2,
 		Next1:  next1,
 		Next2:  next2,
+		Rate1:  rate1,
+		Rate2:  rate2,
 	}
 
 	// Add the drop to the keeper
