@@ -21,11 +21,13 @@ func SimulateMsgCreatePool(
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		addr := sample.AccAddress()
-		requestAddress, _ := sdk.AccAddressFromBech32(addr)
+		//addr := sample.AccAddress()
+		simAccount, _ := simtypes.RandomAcc(r, accs)
+		addr := simAccount.Address
+		//requestAddress, _ := sdk.AccAddressFromBech32(addr)
 
 		msg := &types.MsgCreatePool{
-			Creator: addr,
+			Creator: addr.String(),
 			CoinA:   sdk.NewCoin("CoinA", sdk.NewInt(160)).String(),
 			CoinB:   sdk.NewCoin("CoinB", sdk.NewInt(170)).String(),
 			RateA:   []string{sdk.NewInt(175).String(), sdk.NewInt(185).String()},
@@ -35,9 +37,10 @@ func SimulateMsgCreatePool(
 
 		bk.MintCoins(ctx, types.ModuleName, coins)
 
-		bk.SendCoinsFromModuleToAccount(ctx, types.ModuleName, requestAddress, coins)
+		bk.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, coins)
 
 		_, err := keeper.NewMsgServerImpl(k).CreatePool(sdk.WrapSDKContext(ctx), msg)
+
 		//simtypes.
 		//err := sendMsgSend(r, app, bk, ak, k, *msg, ctx, chainID, []cryptotypes.PrivKey{creatorAccount.PrivKey})
 		if err != nil {
