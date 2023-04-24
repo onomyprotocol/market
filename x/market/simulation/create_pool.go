@@ -27,8 +27,8 @@ func SimulateMsgCreatePool(
 		addr := simAccount.Address
 
 		//requestAddress, _ := sdk.AccAddressFromBech32(addr)
-		coinA := sdk.NewCoin("Coin"+sample.RandomString(1), sdk.NewInt(int64(r.Intn(200)))).String()
-		coinB := sdk.NewCoin("Coin"+sample.RandomString(1), sdk.NewInt(int64(r.Intn(200)))).String()
+		coinA := sdk.NewCoin(sample.RandomString(5), sdk.NewInt(int64(r.Intn(200)))).String()
+		coinB := sdk.NewCoin(sample.RandomString(5), sdk.NewInt(int64(r.Intn(200)))).String()
 		msg := &types.MsgCreatePool{
 			Creator: addr.String(),
 			CoinA:   coinA,
