@@ -1,6 +1,8 @@
 package sample
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -33,4 +35,14 @@ func SampleDenoms(coins sdk.Coins) (denomA string, denomB string) {
 	denom1 := coins.GetDenomByIndex(0)
 	denom2 := coins.GetDenomByIndex(1)
 	return denom1, denom2
+}
+
+func RandomString(n int) string {
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	s := make([]rune, n)
+	for i := range s {
+		s[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(s)
 }
