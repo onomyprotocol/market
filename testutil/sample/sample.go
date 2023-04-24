@@ -38,7 +38,7 @@ func SampleDenoms(coins sdk.Coins) (denomA string, denomB string) {
 }
 
 func RandomString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	var letters = []rune("abcdefghijklmnopqrtuvwxyzABCDEFGHIJKLMNOPQRTUVWXYZ")
 
 	s := make([]rune, n)
 	for i := range s {

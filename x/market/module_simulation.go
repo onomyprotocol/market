@@ -26,7 +26,7 @@ var (
 const (
 	opWeightMsgCreatePool = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreatePool int = 3
+	defaultWeightMsgCreatePool int = 30
 
 	opWeightMsgCreateDrop = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
