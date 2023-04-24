@@ -4,3 +4,5 @@ release/
 .idea/
 .vscode/
 .DS_Store
+app/state.json
+app/stats.json

@@ -26,27 +26,27 @@ var (
 const (
 	opWeightMsgCreatePool = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreatePool int = 100
+	defaultWeightMsgCreatePool int = 1
 
 	opWeightMsgCreateDrop = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreateDrop int = 100
+	defaultWeightMsgCreateDrop int = 0
 
 	opWeightMsgRedeemDrop = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgRedeemDrop int = 100
+	defaultWeightMsgRedeemDrop int = 0
 
 	opWeightMsgCreateOrder = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreateOrder int = 100
+	defaultWeightMsgCreateOrder int = 0
 
 	opWeightMsgCancelOrder = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgCancelOrder int = 100
+	defaultWeightMsgCancelOrder int = 0
 
 	opWeightMsgMarketOrder = "op_weight_msg_create_chain"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgMarketOrder int = 100
+	defaultWeightMsgMarketOrder int = 0
 
 	// this line is used by starport scaffolding # simapp/module/const
 )
@@ -57,10 +57,8 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	for i, acc := range simState.Accounts {
 		accs[i] = acc.Address.String()
 	}
-	marketGenesis := types.GenesisState{
-		// this line is used by starport scaffolding # simapp/module/genesisState
-	}
-	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&marketGenesis)
+	marketGenesis := types.DefaultGenesis()
+	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(marketGenesis)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals

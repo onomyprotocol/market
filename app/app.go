@@ -179,9 +179,9 @@ func init() {
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 
 	// change default power reduction to 18 digits, since the onomy anom is 18 digits based.
-	sdk.DefaultPowerReduction = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
+	// sdk.DefaultPowerReduction = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
 	// change default min deposit token to 18 digits.
-	govtypes.DefaultMinDepositTokens = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
+	// govtypes.DefaultMinDepositTokens = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
 
 }
 
