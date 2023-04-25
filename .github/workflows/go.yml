@@ -25,4 +25,4 @@ jobs:
         run: go build -v ./...
 
       - name: Test
-        run: go test packageName -run keeper_test
+        run: go test -v ./...keeper_test -run Test
