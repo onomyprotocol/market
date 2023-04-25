@@ -26,8 +26,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	pair := strings.Split(drop.Pair, ",")
 
-	denom1 := pair[1]
-	denom2 := pair[2]
+	denom1 := pair[0]
+	denom2 := pair[1]
 
 	pool, found := k.GetPool(ctx, drop.Pair)
 	if !found {
