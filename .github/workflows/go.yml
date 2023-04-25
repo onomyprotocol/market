@@ -25,6 +25,4 @@ jobs:
         run: go build -v ./...
 
       - name: Test
-        run: ls
-        run: cd x/market/keeper
-        run: go test -v 
+        run: go test -v ./... 
