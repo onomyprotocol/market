@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"google.golang.org/grpc/codes"
@@ -32,6 +33,8 @@ func networkWithDropObjects(t *testing.T, n int) (*network.Network, []types.Drop
 			Uid:   uint64(i),
 			Owner: strconv.Itoa(i),
 			Pair:  strconv.Itoa(i),
+			Drops: sdk.NewIntFromUint64(uint64(i)),
+			Sum:   sdk.NewIntFromUint64(uint64(i)),
 		}
 		nullify.Fill(&drop)
 		state.DropList = append(state.DropList, drop)

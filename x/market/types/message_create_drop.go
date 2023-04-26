@@ -56,16 +56,16 @@ func (msg *MsgCreateDrop) ValidateBasic() error {
 	pairMsg := strings.Split(msg.Pair, ",")
 	sort.Strings(pairMsg)
 
-	denom1 := pairMsg[1]
+	denom1 := pairMsg[0]
 
-	coin1, _ := sdk.ParseCoinNormalized(`{1}{` + denom1 + `}`)
+	coin1, _ := sdk.ParseCoinNormalized(denom1)
 	if !coin1.IsValid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pair not a valid denom pair")
 	}
 
-	denom2 := pairMsg[2]
+	denom2 := pairMsg[1]
 
-	coin2, _ := sdk.ParseCoinNormalized(`{1}{` + denom2 + `}`)
+	coin2, _ := sdk.ParseCoinNormalized(denom2)
 	if !coin2.IsValid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pair not a valid denom pair")
 	}

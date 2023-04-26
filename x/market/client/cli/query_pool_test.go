@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"google.golang.org/grpc/codes"
@@ -33,6 +34,7 @@ func networkWithPoolObjects(t *testing.T, n int) (*network.Network, []types.Pool
 			Denom1: strconv.Itoa(i),
 			Denom2: strconv.Itoa(i),
 			Leader: strconv.Itoa(i),
+			Drops:  sdk.NewIntFromUint64(uint64(i)),
 		}
 		nullify.Fill(&pool)
 		state.PoolList = append(state.PoolList, pool)
@@ -56,10 +58,10 @@ func TestShowPool(t *testing.T) {
 		idDenom1 string
 		idDenom2 string
 		idLeader string
-
-		args []string
-		err  error
-		obj  types.Pool
+		idDrops  sdk.Int
+		args     []string
+		err      error
+		obj      types.Pool
 	}{
 		{
 			desc:     "found",
@@ -67,9 +69,9 @@ func TestShowPool(t *testing.T) {
 			idDenom1: objs[0].Denom1,
 			idDenom2: objs[0].Denom2,
 			idLeader: objs[0].Leader,
-
-			args: common,
-			obj:  objs[0],
+			idDrops:  objs[0].Drops,
+			args:     common,
+			obj:      objs[0],
 		},
 		{
 			desc:     "not found",

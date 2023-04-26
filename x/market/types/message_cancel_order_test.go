@@ -18,12 +18,14 @@ func TestMsgCancelOrder_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgCancelOrder{
 				Creator: "invalid_address",
+				Uid:     "2",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgCancelOrder{
 				Creator: sample.AccAddress(),
+				Uid:     "0",
 			},
 		},
 	}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"google.golang.org/grpc/codes"
@@ -29,9 +30,11 @@ func networkWithMemberObjects(t *testing.T, n int) (*network.Network, []types.Me
 
 	for i := 0; i < n; i++ {
 		member := types.Member{
-			Pair:   strconv.Itoa(i),
-			DenomA: strconv.Itoa(i),
-			DenomB: strconv.Itoa(i),
+			Pair:     strconv.Itoa(i),
+			DenomA:   strconv.Itoa(i),
+			DenomB:   strconv.Itoa(i),
+			Balance:  sdk.NewIntFromUint64(uint64(i)),
+			Previous: sdk.NewIntFromUint64(uint64(i)),
 		}
 		nullify.Fill(&member)
 		state.MemberList = append(state.MemberList, member)

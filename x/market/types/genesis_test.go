@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pendulum-labs/market/x/market/types"
 	"github.com/stretchr/testify/require"
 )
@@ -21,51 +22,83 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-
+				Params: types.DefaultParams(),
 				PoolList: []types.Pool{
 					{
 						Pair:   "0",
 						Denom1: "0",
 						Denom2: "0",
 						Leader: "0",
+						Drops:  sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
 						Pair:   "1",
 						Denom1: "1",
 						Denom2: "1",
 						Leader: "1",
+						Drops:  sdk.NewIntFromUint64(uint64(1)),
 					},
 				},
 				DropList: []types.Drop{
 					{
-						Uid:   0,
-						Owner: "0",
-						Pair:  "0",
+						Uid:    0,
+						Owner:  "0",
+						Pair:   "0",
+						Drops:  sdk.NewIntFromUint64(uint64(0)),
+						Sum:    sdk.NewIntFromUint64(uint64(0)),
+						Active: true,
+						Rate1:  []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
+						Prev1:  uint64(0),
+						Next1:  uint64(0),
+						Rate2:  []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
+						Prev2:  uint64(0),
+						Next2:  uint64(0),
 					},
 					{
-						Uid:   1,
-						Owner: "1",
-						Pair:  "1",
+						Uid:    1,
+						Owner:  "1",
+						Pair:   "1",
+						Drops:  sdk.NewIntFromUint64(uint64(1)),
+						Sum:    sdk.NewIntFromUint64(uint64(0)),
+						Active: true,
+						Rate1:  []sdk.Int{sdk.NewInt(int64(1)), sdk.NewInt(int64(1))},
+						Prev1:  uint64(1),
+						Next1:  uint64(1),
+						Rate2:  []sdk.Int{sdk.NewInt(int64(1)), sdk.NewInt(int64(1))},
+						Prev2:  uint64(1),
+						Next2:  uint64(1),
 					},
 				},
 				MemberList: []types.Member{
 					{
-						Pair:   "0",
-						DenomA: "0",
-						DenomB: "0",
+						Pair:     "0",
+						DenomA:   "0",
+						DenomB:   "0",
+						Balance:  sdk.NewIntFromUint64(uint64(0)),
+						Previous: sdk.NewIntFromUint64(uint64(0)),
+						Limit:    uint64(0),
+						Stop:     uint64(0),
+						Protect:  uint64(0),
 					},
 					{
-						Pair:   "1",
-						DenomA: "1",
-						DenomB: "1",
+						Pair:     "1",
+						DenomA:   "1",
+						DenomB:   "1",
+						Balance:  sdk.NewIntFromUint64(uint64(1)),
+						Previous: sdk.NewIntFromUint64(uint64(1)),
+						Limit:    uint64(1),
+						Stop:     uint64(1),
+						Protect:  uint64(1),
 					},
 				},
 				BurningsList: []types.Burnings{
 					{
-						Denom: "0",
+						Denom:  "0",
+						Amount: sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
-						Denom: "1",
+						Denom:  "1",
+						Amount: sdk.NewIntFromUint64(uint64(1)),
 					},
 				},
 				OrderList: []types.Order{
@@ -73,17 +106,25 @@ func TestGenesisState_Validate(t *testing.T) {
 						Uid:       0,
 						Owner:     "0",
 						Active:    true,
-						OrderType: "0",
+						OrderType: "stop",
 						DenomAsk:  "0",
 						DenomBid:  "0",
+						Amount:    sdk.NewIntFromUint64(uint64(0)),
+						Rate:      []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
+						Prev:      uint64(0),
+						Next:      uint64(0),
 					},
 					{
 						Uid:       1,
 						Owner:     "1",
 						Active:    false,
-						OrderType: "1",
+						OrderType: "limit",
 						DenomAsk:  "1",
 						DenomBid:  "1",
+						Amount:    sdk.NewIntFromUint64(uint64(1)),
+						Rate:      []sdk.Int{sdk.NewInt(int64(1)), sdk.NewInt(int64(1))},
+						Prev:      uint64(1),
+						Next:      uint64(1),
 					},
 				},
 				AssetList: []types.Asset{
@@ -91,11 +132,13 @@ func TestGenesisState_Validate(t *testing.T) {
 						Active:    true,
 						Owner:     "0",
 						AssetType: "0",
+						Uid:       uint64(0),
 					},
 					{
 						Active:    false,
 						Owner:     "1",
 						AssetType: "1",
+						Uid:       uint64(1),
 					},
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
@@ -111,12 +154,14 @@ func TestGenesisState_Validate(t *testing.T) {
 						Denom1: "0",
 						Denom2: "0",
 						Leader: "0",
+						Drops:  sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
 						Pair:   "0",
 						Denom1: "0",
 						Denom2: "0",
 						Leader: "0",
+						Drops:  sdk.NewIntFromUint64(uint64(0)),
 					},
 				},
 			},
@@ -130,11 +175,13 @@ func TestGenesisState_Validate(t *testing.T) {
 						Uid:   0,
 						Owner: "0",
 						Pair:  "0",
+						Drops: sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
 						Uid:   0,
 						Owner: "0",
 						Pair:  "0",
+						Drops: sdk.NewIntFromUint64(uint64(0)),
 					},
 				},
 			},
@@ -145,14 +192,16 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				MemberList: []types.Member{
 					{
-						Pair:   "0",
-						DenomA: "0",
-						DenomB: "0",
+						Pair:    "0",
+						DenomA:  "0",
+						DenomB:  "0",
+						Balance: sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
-						Pair:   "0",
-						DenomA: "0",
-						DenomB: "0",
+						Pair:    "0",
+						DenomA:  "0",
+						DenomB:  "0",
+						Balance: sdk.NewIntFromUint64(uint64(0)),
 					},
 				},
 			},
@@ -163,10 +212,12 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				BurningsList: []types.Burnings{
 					{
-						Denom: "0",
+						Denom:  "0",
+						Amount: sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
-						Denom: "0",
+						Denom:  "0",
+						Amount: sdk.NewIntFromUint64(uint64(0)),
 					},
 				},
 			},
@@ -183,6 +234,10 @@ func TestGenesisState_Validate(t *testing.T) {
 						OrderType: "0",
 						DenomAsk:  "0",
 						DenomBid:  "0",
+						Amount:    sdk.NewIntFromUint64(uint64(0)),
+						Rate:      []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
+						Prev:      uint64(0),
+						Next:      uint64(0),
 					},
 					{
 						Uid:       0,
@@ -191,6 +246,10 @@ func TestGenesisState_Validate(t *testing.T) {
 						OrderType: "0",
 						DenomAsk:  "0",
 						DenomBid:  "0",
+						Amount:    sdk.NewIntFromUint64(uint64(0)),
+						Rate:      []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
+						Prev:      uint64(0),
+						Next:      uint64(0),
 					},
 				},
 			},
@@ -204,11 +263,13 @@ func TestGenesisState_Validate(t *testing.T) {
 						Active:    true,
 						Owner:     "0",
 						AssetType: "0",
+						Uid:       uint64(0),
 					},
 					{
 						Active:    true,
 						Owner:     "0",
 						AssetType: "0",
+						Uid:       uint64(0),
 					},
 				},
 			},
