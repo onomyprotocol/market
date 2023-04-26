@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"google.golang.org/grpc/codes"
@@ -29,7 +30,8 @@ func networkWithBurningsObjects(t *testing.T, n int) (*network.Network, []types.
 
 	for i := 0; i < n; i++ {
 		burnings := types.Burnings{
-			Denom: strconv.Itoa(i),
+			Denom:  strconv.Itoa(i),
+			Amount: sdk.NewIntFromUint64(uint64(i)),
 		}
 		nullify.Fill(&burnings)
 		state.BurningsList = append(state.BurningsList, burnings)
@@ -50,6 +52,7 @@ func TestShowBurnings(t *testing.T) {
 	for _, tc := range []struct {
 		desc    string
 		idDenom string
+		amount  sdk.Int
 
 		args []string
 		err  error
@@ -58,9 +61,9 @@ func TestShowBurnings(t *testing.T) {
 		{
 			desc:    "found",
 			idDenom: objs[0].Denom,
-
-			args: common,
-			obj:  objs[0],
+			amount:  objs[0].Amount,
+			args:    common,
+			obj:     objs[0],
 		},
 		{
 			desc:    "not found",
