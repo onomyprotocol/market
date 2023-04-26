@@ -24,6 +24,7 @@ func TestMsgRedeemDrop_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgRedeemDrop{
 				Creator: sample.AccAddress(),
+				Uid:     "0",
 			},
 		},
 	}

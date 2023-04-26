@@ -19,7 +19,7 @@ func createNBurnings(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Burn
 	items := make([]types.Burnings, n)
 	for i := range items {
 		items[i].Denom = strconv.Itoa(i)
-
+		items[i].Amount = sdk.NewIntFromUint64(uint64(0))
 		keeper.SetBurnings(ctx, items[i])
 	}
 	return items

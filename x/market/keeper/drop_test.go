@@ -21,6 +21,8 @@ func createNDrop(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Drop {
 		items[i].Uid = uint64(i)
 		items[i].Owner = strconv.Itoa(i)
 		items[i].Pair = strconv.Itoa(i)
+		items[i].Drops = sdk.NewIntFromUint64(uint64(0))
+		items[i].Sum = sdk.NewIntFromUint64(uint64(0))
 
 		keeper.SetDrop(ctx, items[i])
 	}

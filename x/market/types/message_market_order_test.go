@@ -23,7 +23,12 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid address",
 			msg: MsgMarketOrder{
-				Creator: sample.AccAddress(),
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "40",
+				QuoteAsk:  "20",
+				Slippage:  "20",
 			},
 		},
 	}

@@ -51,12 +51,12 @@ func (msg *MsgCreateOrder) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	coinAsk, _ := sdk.ParseCoinNormalized(`{1}{` + msg.DenomAsk + `}`)
+	coinAsk, _ := sdk.ParseCoinNormalized(msg.DenomAsk)
 	if !coinAsk.IsValid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid ask denom")
 	}
 
-	coinBid, _ := sdk.ParseCoinNormalized(`{1}{` + msg.DenomBid + `}`)
+	coinBid, _ := sdk.ParseCoinNormalized(msg.DenomBid)
 	if !coinBid.IsValid() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bid denom")
 	}

@@ -21,6 +21,8 @@ func createNMember(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Member
 		items[i].Pair = strconv.Itoa(i)
 		items[i].DenomA = strconv.Itoa(i)
 		items[i].DenomB = strconv.Itoa(i)
+		items[i].Balance = sdk.NewIntFromUint64(uint64(0))
+		items[i].Previous = sdk.NewIntFromUint64(uint64(0))
 
 		keeper.SetMember(ctx, items[i])
 	}
