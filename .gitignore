@@ -6,3 +6,4 @@ release/
 .DS_Store
 app/state.json
 app/stats.json
+/vendor
