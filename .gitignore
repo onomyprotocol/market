@@ -7,3 +7,4 @@ release/
 app/state.json
 app/stats.json
 /vendor
+marketd
