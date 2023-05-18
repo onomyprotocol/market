@@ -89,7 +89,7 @@ import (
 
 const (
 	AppName              = "market"
-	upgradeName          = "v0.0.1"
+	upgradeName          = "v0.1.0"
 	AccountAddressPrefix = "onomy"
 )
 
