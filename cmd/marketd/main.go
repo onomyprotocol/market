@@ -4,16 +4,16 @@ import (
 	"os"
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/pendulum-labs/market/app"
-	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
+	app "github.com/pendulum-labs/market/app/consumer"
+	"github.com/tendermint/spm/cosmoscmd"
 )
 
 func main() {
 	rootCmd, _ := cosmoscmd.NewRootCmd(
-		app.Name,
+		app.AppName,
 		app.AccountAddressPrefix,
 		app.DefaultNodeHome,
-		app.Name,
+		app.AppName,
 		app.ModuleBasics,
 		app.New,
 		// this line is used by starport scaffolding # root/arguments
