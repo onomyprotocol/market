@@ -85,6 +85,10 @@ import (
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
+
+	marketmodule "github.com/pendulum-labs/market/x/market"
+	marketmodulekeeper "github.com/pendulum-labs/market/x/market/keeper"
+	marketmoduletypes "github.com/pendulum-labs/market/x/market/types"
 )
 
 const (
@@ -116,6 +120,7 @@ var (
 		vesting.AppModuleBasic{},
 		//router.AppModuleBasic{},
 		ibcconsumer.AppModuleBasic{},
+		marketmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -124,6 +129,7 @@ var (
 		ibcconsumertypes.ConsumerRedistributeName:     nil,
 		ibcconsumertypes.ConsumerToSendToProviderName: nil,
 		ibctransfertypes.ModuleName:                   {authtypes.Minter, authtypes.Burner},
+		marketmoduletypes.ModuleName:                  {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 	}
 )
 
@@ -174,6 +180,8 @@ type App struct { // nolint: golint
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper    capabilitykeeper.ScopedKeeper
 	ScopedIBCConsumerKeeper capabilitykeeper.ScopedKeeper
+
+	MarketKeeper marketmodulekeeper.Keeper
 
 	// the module manager
 	MM *module.Manager
@@ -228,6 +236,7 @@ func New(
 		feegrant.StoreKey,
 		authzkeeper.StoreKey,
 		ibcconsumertypes.StoreKey,
+		marketmoduletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -383,6 +392,16 @@ func New(
 
 	app.EvidenceKeeper = *evidenceKeeper
 
+	app.MarketKeeper = *marketmodulekeeper.NewKeeper(
+		appCodec,
+		keys[marketmoduletypes.StoreKey],
+		keys[marketmoduletypes.MemStoreKey],
+		app.GetSubspace(marketmoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	marketModule := marketmodule.NewAppModule(appCodec, app.MarketKeeper, app.AccountKeeper, app.BankKeeper)
+
 	skipGenesisInvariants := cast.ToBool(appOpts.Get(crisis.FlagSkipGenesisInvariants))
 
 	// NOTE: Any module instantiated in the module manager that is later modified
@@ -402,6 +421,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		consumerModule,
+		marketModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -425,6 +445,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		ibcconsumertypes.ModuleName,
+		marketmoduletypes.ModuleName,
 	)
 	app.MM.SetOrderEndBlockers(
 		upgradetypes.ModuleName,
@@ -441,6 +462,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		ibcconsumertypes.ModuleName,
+		marketmoduletypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -465,6 +487,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		ibcconsumertypes.ModuleName,
+		marketmoduletypes.ModuleName,
 	)
 
 	app.MM.RegisterInvariants(&app.CrisisKeeper)
@@ -486,6 +509,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper), ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+		marketModule,
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -770,6 +794,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(ibcconsumertypes.ModuleName)
+	paramsKeeper.Subspace(marketmoduletypes.ModuleName)
 
 	return paramsKeeper
 }
