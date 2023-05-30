@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	app "github.com/pendulum-labs/market/app/standalone"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
+	"github.com/tendermint/spm/cosmoscmd"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtypes "github.com/tendermint/tendermint/types"
