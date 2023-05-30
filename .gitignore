@@ -8,3 +8,4 @@ app/state.json
 app/stats.json
 /vendor
 marketd
+market_standaloned

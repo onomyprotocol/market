@@ -99,7 +99,7 @@ import (
 
 const (
 	AccountAddressPrefix = "cosmos"
-	Name                 = "market"
+	Name                 = "market_standalone"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
