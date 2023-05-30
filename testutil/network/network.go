@@ -18,7 +18,7 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmdb "github.com/tendermint/tm-db"
 
-	app "github.com/pendulum-labs/market/app/consumer"
+	app "github.com/pendulum-labs/market/app/standalone"
 )
 
 type (
