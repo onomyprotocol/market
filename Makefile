@@ -8,6 +8,10 @@ SCAN_FILES := $(shell find . -type f -name '*.go' -not -name '*mock.go' -not -na
 build: go.sum
 		go build ./cmd/marketd
 
+.PHONY: build_standalone
+build_standalone: go.sum
+		go build ./cmd/market_standaloned
+
 .PHONY: test
 test:
 	@go test -mod=readonly $(PACKAGES)
