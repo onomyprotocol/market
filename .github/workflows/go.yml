@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build and upload release assets
+    name: Tests
     runs-on: ubuntu-latest
 
     steps:
