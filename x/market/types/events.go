@@ -46,4 +46,5 @@ const (
 	AttributeKeyRate1    = "rate1"
 	AttributeKeyRate2    = "rate2"
 	AttributeKeyStop     = "stop"
+	AttributeKeyUid      = "uid"
 )
