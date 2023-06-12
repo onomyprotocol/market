@@ -5,7 +5,8 @@ go 1.19
 require (
 	github.com/cosmos/cosmos-sdk v0.45.16-ics
 	github.com/cosmos/ibc-go/v4 v4.4.2
-	github.com/cosmos/interchain-security v1.1.0-multiden
+	// NOTE: the canonical consumer version can be different from the producer, check the ICS repo
+	github.com/cosmos/interchain-security v1.2.0-multiden
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
