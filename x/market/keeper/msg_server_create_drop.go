@@ -98,6 +98,16 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			ctx,
 			nextDrop1,
 		)
+
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop1.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyPrev1, strconv.FormatUint(nextDrop1.Prev1, 10)),
+			),
+		)
+
 	}
 
 	// Case 2 Side 2
@@ -125,6 +135,16 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			ctx,
 			nextDrop2,
 		)
+
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop2.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyPrev2, strconv.FormatUint(nextDrop2.Prev2, 10)),
+			),
+		)
+
 	}
 
 	// Case 3 Side 1
@@ -150,6 +170,15 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		k.SetDrop(
 			ctx,
 			prevDrop1,
+		)
+
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop1.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyNext1, strconv.FormatUint(prevDrop1.Next1, 10)),
+			),
 		)
 	}
 
@@ -177,6 +206,15 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			ctx,
 			prevDrop2,
 		)
+
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop2.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyNext2, strconv.FormatUint(prevDrop2.Next2, 10)),
+			),
+		)
 	}
 
 	// Case 4 Side 1
@@ -189,6 +227,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		if !prevDrop1.Active {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not active")
 		}
+
 		if !nextDrop1.Active {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not active")
 		}
@@ -197,14 +236,44 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 and Next1 are not adjacent")
 		}
 
+		if types.GT(rate1, prevDrop1.Rate1) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
+		}
+
+		if types.LTE(rate1, nextDrop1.Rate1) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate1 less than or equal Next1")
+		}
+
+		prevDrop1.Next1 = uid
+
 		k.SetDrop(
 			ctx,
 			prevDrop1,
 		)
 
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop1.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyNext1, strconv.FormatUint(uid, 10)),
+			),
+		)
+
+		nextDrop1.Prev1 = uid
+
 		k.SetDrop(
 			ctx,
 			nextDrop1,
+		)
+
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop1.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyPrev1, strconv.FormatUint(uid, 10)),
+			),
 		)
 	}
 
@@ -226,14 +295,44 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 and Next2 are not adjacent")
 		}
 
+		if types.LTE(rate2, nextDrop2.Rate2) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate2 less than or equal Next2")
+		}
+
+		if types.GT(rate2, prevDrop2.Rate2) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop rate2 greater than Prev2 rate2")
+		}
+
+		prevDrop2.Next2 = uid
+
 		k.SetDrop(
 			ctx,
 			prevDrop2,
 		)
 
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop2.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyNext2, strconv.FormatUint(uid, 10)),
+			),
+		)
+
+		nextDrop2.Prev2 = uid
+
 		k.SetDrop(
 			ctx,
 			nextDrop2,
+		)
+
+		// update drop event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeUpdateDrop,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop2.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyPrev2, strconv.FormatUint(uid, 10)),
+			),
 		)
 	}
 

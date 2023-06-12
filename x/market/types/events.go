@@ -13,6 +13,7 @@ const (
 	EventTypeUpdateMember = "update_member"
 
 	EventTypeCreateDrop = "create_drop"
+	EventTypeUpdateDrop = "update_drop"
 	EventTypeRedeemDrop = "redeem_drop"
 
 	EventTypeCreateOrder  = "create_order"
