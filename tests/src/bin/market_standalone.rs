@@ -6,9 +6,8 @@ use onomy_test_lib::{
         sh,
         stacked_errors::{MapAddError, Result},
     },
-    Args, TIMEOUT,
+    Args,
 };
-use tokio::time::sleep;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -20,7 +19,7 @@ async fn main() -> Result<()> {
             _ => format!("entry_name \"{s}\" is not recognized").map_add_err(|| ()),
         }
     } else {
-        sh("make build", &[]).await?;
+        sh("make build_standalone", &[]).await?;
         // copy to dockerfile resources (docker cannot use files from outside cwd)
         sh(
             "cp ./market_standaloned ./tests/dockerfiles/dockerfile_resources/market_standaloned",
