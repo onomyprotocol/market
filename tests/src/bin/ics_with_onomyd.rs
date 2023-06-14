@@ -179,7 +179,7 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
     // finish
     nm_consumer.send::<()>(&()).await?;
 
-    cosmovisor_runner.terminate().await?;
+    cosmovisor_runner.terminate(TIMEOUT).await?;
     Ok(())
 }
 
@@ -213,6 +213,6 @@ async fn marketd_runner(args: &Args) -> Result<()> {
     // wait for finish
     nm_onomyd.recv::<()>().await?;
 
-    cosmovisor_runner.terminate().await?;
+    cosmovisor_runner.terminate(TIMEOUT).await?;
     Ok(())
 }
