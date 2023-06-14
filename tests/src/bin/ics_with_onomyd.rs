@@ -132,6 +132,8 @@ async fn hermes_runner() -> Result<()> {
     // tell that chains have been connected
     nm_onomyd.send::<()>(&()).await?;
 
+    // termination signal
+    nm_onomyd.recv::<()>().await?;
     hermes_runner.terminate().await?;
     Ok(())
 }
@@ -176,9 +178,10 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
     nm_hermes.send::<()>(&()).await?;
     // when hermes is done
     nm_hermes.recv::<()>().await?;
-    // finish
-    nm_consumer.send::<()>(&()).await?;
 
+    // signal to collectively terminate
+    nm_hermes.send::<()>(&()).await?;
+    nm_consumer.send::<()>(&()).await?;
     cosmovisor_runner.terminate(TIMEOUT).await?;
 
     FileOptions::write_str(
@@ -217,9 +220,8 @@ async fn marketd_runner(args: &Args) -> Result<()> {
     // signal that we have started
     nm_onomyd.send::<()>(&()).await?;
 
-    // wait for finish
+    // termination signal
     nm_onomyd.recv::<()>().await?;
-
     cosmovisor_runner.terminate(TIMEOUT).await?;
 
     FileOptions::write_str(
