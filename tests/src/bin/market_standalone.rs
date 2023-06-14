@@ -6,7 +6,7 @@ use onomy_test_lib::{
         sh,
         stacked_errors::{MapAddError, Result},
     },
-    Args,
+    Args, TIMEOUT,
 };
 
 #[tokio::main]
@@ -58,6 +58,6 @@ async fn market_standaloned_runner(args: &Args) -> Result<()> {
     // [amount] [rate] [prev] [next]").await?; cosmovisor("tx market
     // cancel-order [uid]").await?;
 
-    cosmovisor_runner.terminate().await?;
+    cosmovisor_runner.terminate(TIMEOUT).await?;
     Ok(())
 }
