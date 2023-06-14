@@ -36,6 +36,7 @@ jobs:
           go build ./...
           go test ./...
           cargo r --bin market_standalone
+          cargo r --bin ics_with_onomyd
           cargo r --bin clean
 
   rustfmt:
