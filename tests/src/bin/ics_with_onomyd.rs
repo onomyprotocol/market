@@ -1,7 +1,13 @@
+use std::time::Duration;
+
+use log::info;
 use onomy_test_lib::{
-    cosmovisor::{cosmovisor_start, onomyd_setup, sh_cosmovisor_no_dbg},
+    cosmovisor::{
+        cosmovisor_get_addr, cosmovisor_get_balances, cosmovisor_start, onomyd_setup,
+        sh_cosmovisor_no_dbg, wait_for_num_blocks,
+    },
     cosmovisor_ics::{cosmovisor_add_consumer, marketd_setup},
-    hermes::{hermes_start, onomy_setup_pair, sh_hermes},
+    hermes::{hermes_start, sh_hermes, IbcPair},
     onomy_std_init,
     super_orchestrator::{
         docker::{Container, ContainerNetwork},
@@ -12,6 +18,7 @@ use onomy_test_lib::{
     },
     Args, TIMEOUT,
 };
+use tokio::time::sleep;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -125,12 +132,12 @@ async fn hermes_runner() -> Result<()> {
     // wait for setup
     nm_onomyd.recv::<()>().await?;
 
-    let ibc_pair = onomy_setup_pair("market", "onomy").await?;
+    let ibc_pair = IbcPair::hermes_setup_pair("market", "onomy").await?;
     let mut hermes_runner = hermes_start().await?;
-    ibc_pair.check_acks().await?;
+    ibc_pair.hermes_check_acks().await?;
 
     // tell that chains have been connected
-    nm_onomyd.send::<()>(&()).await?;
+    nm_onomyd.send::<IbcPair>(&ibc_pair).await?;
 
     // termination signal
     nm_onomyd.recv::<()>().await?;
@@ -151,6 +158,11 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
     let mnemonic = onomyd_setup(daemon_home, false).await?;
     // send mnemonic to hermes
     nm_hermes.send::<String>(&mnemonic).await?;
+
+    // keep these here for local testing purposes
+    let addr = cosmovisor_get_addr("validator").await?;
+    info!("\n\nValidator address: {addr}\n\n");
+    sleep(Duration::ZERO).await;
 
     let mut cosmovisor_runner = cosmovisor_start("onomyd_runner.log", None).await?;
 
@@ -177,7 +189,38 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
     // notify hermes to connect the chains
     nm_hermes.send::<()>(&()).await?;
     // when hermes is done
-    nm_hermes.recv::<()>().await?;
+    let ibc_pair = nm_hermes.recv::<IbcPair>().await?;
+    info!("IbcPair: {ibc_pair:?}");
+
+    // send anom to market
+    let flags = [
+        "--gas",
+        "auto",
+        "--gas-adjustment",
+        "1.3",
+        "-y",
+        "-b",
+        "block",
+        "--from",
+        "validator",
+    ]
+    .as_slice();
+    ibc_pair
+        .b
+        .cosmovisor_transfer(&addr, "1337000000anom", flags)
+        .await?;
+    // it takes time for the relayer to complete relaying
+    wait_for_num_blocks(2).await?;
+    // notify consumer that we have sent NOM
+    nm_consumer.send::<IbcPair>(&ibc_pair).await?;
+
+    // recieve round trip signal
+    nm_consumer.recv::<()>().await?;
+    // check that the IBC NOM converted back to regular NOM
+    let balances = cosmovisor_get_balances("onomy1gk7lg5kd73mcr8xuyw727ys22t7mtz9gh07ul3").await?;
+    assert!(balances.contains_key("anom"));
+
+    //sleep(TIMEOUT).await;
 
     // signal to collectively terminate
     nm_hermes.send::<()>(&()).await?;
@@ -219,6 +262,41 @@ async fn marketd_runner(args: &Args) -> Result<()> {
 
     // signal that we have started
     nm_onomyd.send::<()>(&()).await?;
+
+    // wait for producer to send us stuff
+    let ibc_pair = nm_onomyd.recv::<IbcPair>().await?;
+    // get the name of the IBC NOM
+    let ibc_nom = ibc_pair.b.get_ibc_denom("anom").await?;
+    info!("IBC NOM: {ibc_nom}");
+    let addr = cosmovisor_get_addr("validator").await?;
+    let balances = cosmovisor_get_balances(&addr).await?;
+    assert!(balances.contains_key(&ibc_nom));
+
+    // send some back using it as gas
+    let flags = [
+        "--gas",
+        "auto",
+        "--gas-adjustment",
+        "1.3",
+        "-y",
+        "-b",
+        "block",
+        "--from",
+        "validator",
+    ]
+    .as_slice();
+    ibc_pair
+        .b
+        .cosmovisor_transfer(
+            "onomy1gk7lg5kd73mcr8xuyw727ys22t7mtz9gh07ul3",
+            &format!("1337{ibc_nom}"),
+            flags,
+        )
+        .await?;
+    wait_for_num_blocks(2).await?;
+
+    // round trip signal
+    nm_onomyd.recv::<()>().await?;
 
     // termination signal
     nm_onomyd.recv::<()>().await?;
