@@ -7,7 +7,7 @@ option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc CreateDrop(MsgCreateDrop) returns (MsgCreateDropResponse);
   rpc RedeemDrop(MsgRedeemDrop) returns (MsgRedeemDropResponse);
   rpc CreateOrder(MsgCreateOrder) returns (MsgCreateOrderResponse);
