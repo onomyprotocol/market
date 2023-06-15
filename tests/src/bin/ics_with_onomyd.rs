@@ -4,7 +4,7 @@ use log::info;
 use onomy_test_lib::{
     cosmovisor::{
         cosmovisor_get_addr, cosmovisor_get_balances, cosmovisor_start, onomyd_setup,
-        sh_cosmovisor_no_dbg, wait_for_num_blocks,
+        sh_cosmovisor, sh_cosmovisor_no_dbg, wait_for_num_blocks,
     },
     cosmovisor_ics::{cosmovisor_add_consumer, marketd_setup},
     hermes::{hermes_start, sh_hermes, IbcPair},
@@ -217,10 +217,10 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
     // recieve round trip signal
     nm_consumer.recv::<()>().await?;
     // check that the IBC NOM converted back to regular NOM
-    let balances = cosmovisor_get_balances("onomy1gk7lg5kd73mcr8xuyw727ys22t7mtz9gh07ul3").await?;
-    assert!(balances.contains_key("anom"));
-
-    //sleep(TIMEOUT).await;
+    assert_eq!(
+        cosmovisor_get_balances("onomy1gk7lg5kd73mcr8xuyw727ys22t7mtz9gh07ul3").await?["anom"],
+        "5000"
+    );
 
     // signal to collectively terminate
     nm_hermes.send::<()>(&()).await?;
@@ -272,31 +272,44 @@ async fn marketd_runner(args: &Args) -> Result<()> {
     let balances = cosmovisor_get_balances(&addr).await?;
     assert!(balances.contains_key(&ibc_nom));
 
+    let fee = format!("50000{ibc_nom}");
+    let coins_to_send = format!("5000{ibc_nom}");
+
     // send some back using it as gas
-    let flags = [
-        "--gas",
-        "auto",
-        "--gas-adjustment",
-        "1.3",
+    let flags = ["-y", "-b", "block", "--from", "validator", "--fees", &fee];
+    ibc_pair
+        .b
+        .cosmovisor_transfer(
+            "onomy1gk7lg5kd73mcr8xuyw727ys22t7mtz9gh07ul3",
+            &coins_to_send,
+            &flags,
+        )
+        .await?;
+    wait_for_num_blocks(2).await?;
+
+    // use as gas in normal transfer
+    sh_cosmovisor("tx bank send", &[
+        &addr,
+        "onomy1a69w3hfjqere4crkgyee79x2mxq0w2pfj9tu2m",
+        &coins_to_send,
         "-y",
         "-b",
         "block",
         "--from",
         "validator",
-    ]
-    .as_slice();
-    ibc_pair
-        .b
-        .cosmovisor_transfer(
-            "onomy1gk7lg5kd73mcr8xuyw727ys22t7mtz9gh07ul3",
-            &format!("1337{ibc_nom}"),
-            flags,
-        )
-        .await?;
-    wait_for_num_blocks(2).await?;
+        "--fees",
+        &fee,
+    ])
+    .await?;
+    assert_eq!(
+        cosmovisor_get_balances("onomy1a69w3hfjqere4crkgyee79x2mxq0w2pfj9tu2m").await?[&ibc_nom],
+        "5000"
+    );
+
+    //sleep(TIMEOUT).await;
 
     // round trip signal
-    nm_onomyd.recv::<()>().await?;
+    nm_onomyd.send::<()>(&()).await?;
 
     // termination signal
     nm_onomyd.recv::<()>().await?;
