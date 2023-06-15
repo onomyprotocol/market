@@ -7,7 +7,7 @@ use onomy_test_lib::{
         onomyd_setup, set_minimum_gas_price, sh_cosmovisor_no_dbg, wait_for_num_blocks,
     },
     cosmovisor_ics::{cosmovisor_add_consumer, marketd_setup},
-    hermes::{hermes_set_gas_price_base, hermes_start, sh_hermes, IbcPair},
+    hermes::{hermes_set_gas_price_denom, hermes_start, sh_hermes, IbcPair},
     onomy_std_init,
     super_orchestrator::{
         docker::{Container, ContainerNetwork},
@@ -141,9 +141,9 @@ async fn hermes_runner(args: &Args) -> Result<()> {
     nm_onomyd.send::<IbcPair>(&ibc_pair).await?;
 
     // signal to update gas denom
-    let gas_price_base = nm_onomyd.recv::<String>().await?;
+    let ibc_nom = nm_onomyd.recv::<String>().await?;
     hermes_runner.terminate(TIMEOUT).await?;
-    hermes_set_gas_price_base(hermes_home, "market", &gas_price_base).await?;
+    hermes_set_gas_price_denom(hermes_home, "market", &ibc_nom).await?;
 
     // restart
     let mut hermes_runner = hermes_start().await?;
@@ -202,26 +202,10 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
     info!("IbcPair: {ibc_pair:?}");
 
     // send anom to market
-    let flags = [
-        "--gas",
-        "auto",
-        "--gas-adjustment",
-        "1.3",
-        "-y",
-        "-b",
-        "block",
-        "--from",
-        "validator",
-    ]
-    .as_slice();
     ibc_pair
         .b
-        .cosmovisor_ibc_transfer_with_flags(&addr, "1337000000anom", flags)
+        .cosmovisor_ibc_transfer("validator", &addr, "1337000000", "anom")
         .await?;
-    /*ibc_pair
-    .b
-    .cosmovisor_ibc_transfer("validator", &addr, "1337000000", "anom")
-    .await?;*/
     // it takes time for the relayer to complete relaying
     wait_for_num_blocks(2).await?;
     // notify consumer that we have sent NOM
@@ -229,7 +213,7 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
 
     // tell hermes to restart with updated gas denom on its side
     let ibc_nom = nm_consumer.recv::<String>().await?;
-    nm_hermes.send::<String>(&format!("1{ibc_nom}")).await?;
+    nm_hermes.send::<String>(&ibc_nom).await?;
     nm_hermes.recv::<()>().await?;
     nm_consumer.send::<()>(&()).await?;
 
