@@ -30,19 +30,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	denom1 := coinPair.GetDenomByIndex(0)
 	denom2 := coinPair.GetDenomByIndex(1)
 
-	numeratorA, _ := sdk.NewIntFromString(msg.RateA[0])
-	denominatorA, _ := sdk.NewIntFromString(msg.RateA[1])
-	rate1 := []sdk.Int{numeratorA, denominatorA}
-
-	numeratorB, _ := sdk.NewIntFromString(msg.RateB[0])
-	denominatorB, _ := sdk.NewIntFromString(msg.RateB[1])
-	rate2 := []sdk.Int{numeratorB, denominatorB}
-
-	if denom1 != coinA.Denom {
-		rate1 = rate2
-		rate2 = []sdk.Int{numeratorA, denominatorA}
-	}
-
 	pair := strings.Join([]string{denom1, denom2}, ",")
 
 	// Test if pool either exists and active or exists and inactive
@@ -73,25 +60,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Drops:  drops,
 	}
 
-	/*if found {
-		pool = types.Pool{
-			Pair:   pair,
-			Leader: msg.Creator,
-			Denom1: coinPair.GetDenomByIndex(0),
-			Denom2: coinPair.GetDenomByIndex(1),
-			Drops:  drops,
-		}
-	} else {
-		// Create a new Pool with the following user input
-		pool = types.Pool{
-			Pair:   pair,
-			Leader: msg.Creator,
-			Denom1: coinPair.GetDenomByIndex(0),
-			Denom2: coinPair.GetDenomByIndex(1),
-			Drops:  drops,
-		}
-	}*/
-
 	// Create the uid
 	count := k.GetUidCount(ctx)
 
@@ -102,8 +70,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Drops:  drops,
 		Sum:    drops,
 		Active: true,
-		Rate1:  rate1,
-		Rate2:  rate2,
 	}
 
 	var member1 = types.Member{
@@ -113,8 +79,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Balance: coinPair.AmountOf(denom1),
 		Limit:   0,
 		Stop:    0,
-		// Add drop to head of protect book on member
-		Protect: count,
 	}
 
 	var member2 = types.Member{
@@ -124,8 +88,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Balance: coinPair.AmountOf(denom2),
 		Limit:   0,
 		Stop:    0,
-		// Add drop to head of protect book on member
-		Protect: count,
 	}
 
 	k.SetPool(
@@ -152,7 +114,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeCreateMember,
-			sdk.NewAttribute(types.AttributeKeyPair, pair),
 			sdk.NewAttribute(types.AttributeKeyDenomA, denom2),
 			sdk.NewAttribute(types.AttributeKeyDenomB, denom1),
 			sdk.NewAttribute(types.AttributeKeyBalance, coinPair.AmountOf(denom1).String()),
@@ -168,7 +129,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeCreateMember,
-			sdk.NewAttribute(types.AttributeKeyPair, pair),
 			sdk.NewAttribute(types.AttributeKeyDenomA, denom1),
 			sdk.NewAttribute(types.AttributeKeyDenomB, denom2),
 			sdk.NewAttribute(types.AttributeKeyBalance, coinPair.AmountOf(denom2).String()),
@@ -187,9 +147,9 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			types.EventTypeCreateDrop,
 			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(count, 10)),
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyDenomA, denom1),
-			sdk.NewAttribute(types.AttributeKeyDenomB, denom2),
-			sdk.NewAttribute(types.AttributeKeyBalance, coinPair.AmountOf(denom2).String()),
+			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
+			sdk.NewAttribute(types.AttributeKeySum, drops.String()),
 		),
 	)
 

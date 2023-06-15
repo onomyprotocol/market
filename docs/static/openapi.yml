@@ -27086,26 +27086,6 @@ paths:
                       type: string
                     active:
                       type: boolean
-                    rate1:
-                      type: array
-                      items:
-                        type: string
-                    prev1:
-                      type: string
-                      format: uint64
-                    next1:
-                      type: string
-                      format: uint64
-                    rate2:
-                      type: array
-                      items:
-                        type: string
-                    prev2:
-                      type: string
-                      format: uint64
-                    next2:
-                      type: string
-                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -27236,26 +27216,6 @@ paths:
                     type: string
                   active:
                     type: boolean
-                  rate1:
-                    type: array
-                    items:
-                      type: string
-                  prev1:
-                    type: string
-                    format: uint64
-                  next1:
-                    type: string
-                    format: uint64
-                  rate2:
-                    type: array
-                    items:
-                      type: string
-                  prev2:
-                    type: string
-                    format: uint64
-                  next2:
-                    type: string
-                    format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -27450,9 +27410,6 @@ paths:
                     stop:
                       type: string
                       format: uint64
-                    protect:
-                      type: string
-                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -27584,9 +27541,6 @@ paths:
                     type: string
                     format: uint64
                   stop:
-                    type: string
-                    format: uint64
-                  protect:
                     type: string
                     format: uint64
         default:
@@ -45940,26 +45894,6 @@ definitions:
         type: string
       active:
         type: boolean
-      rate1:
-        type: array
-        items:
-          type: string
-      prev1:
-        type: string
-        format: uint64
-      next1:
-        type: string
-        format: uint64
-      rate2:
-        type: array
-        items:
-          type: string
-      prev2:
-        type: string
-        format: uint64
-      next2:
-        type: string
-        format: uint64
   pendulumlabs.market.market.Member:
     type: object
     properties:
@@ -45977,9 +45911,6 @@ definitions:
         type: string
         format: uint64
       stop:
-        type: string
-        format: uint64
-      protect:
         type: string
         format: uint64
   pendulumlabs.market.market.MsgCancelOrderResponse:
@@ -46180,26 +46111,6 @@ definitions:
               type: string
             active:
               type: boolean
-            rate1:
-              type: array
-              items:
-                type: string
-            prev1:
-              type: string
-              format: uint64
-            next1:
-              type: string
-              format: uint64
-            rate2:
-              type: array
-              items:
-                type: string
-            prev2:
-              type: string
-              format: uint64
-            next2:
-              type: string
-              format: uint64
       pagination:
         type: object
         properties:
@@ -46247,9 +46158,6 @@ definitions:
               type: string
               format: uint64
             stop:
-              type: string
-              format: uint64
-            protect:
               type: string
               format: uint64
       pagination:
@@ -46455,26 +46363,6 @@ definitions:
             type: string
           active:
             type: boolean
-          rate1:
-            type: array
-            items:
-              type: string
-          prev1:
-            type: string
-            format: uint64
-          next1:
-            type: string
-            format: uint64
-          rate2:
-            type: array
-            items:
-              type: string
-          prev2:
-            type: string
-            format: uint64
-          next2:
-            type: string
-            format: uint64
   pendulumlabs.market.market.QueryGetMemberResponse:
     type: object
     properties:
@@ -46495,9 +46383,6 @@ definitions:
             type: string
             format: uint64
           stop:
-            type: string
-            format: uint64
-          protect:
             type: string
             format: uint64
   pendulumlabs.market.market.QueryGetOrderResponse:

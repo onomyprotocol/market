@@ -57,12 +57,10 @@ func TestCancelOrder_case1_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -96,7 +94,6 @@ func TestCancelOrder_case1_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.Equal(t, members.Stop, uint64(0))
 
 	//Cancel Order
@@ -111,7 +108,6 @@ func TestCancelOrder_case1_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.Equal(t, members.Stop, uint64(0))
 
 	//Validate Order
@@ -169,12 +165,10 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	//require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -207,7 +201,6 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	require.Equal(t, members1.Stop, uint64(0))
 
 	members1.Stop = orders.Uid
@@ -224,7 +217,6 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	require.Equal(t, members1.Stop, uint64(orders.Uid))
 
 	//Validate Order
@@ -282,12 +274,10 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -321,7 +311,6 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.Equal(t, members.Stop, uint64(0))
 
 	//SetOrder to Next value as 1
@@ -353,7 +342,6 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	require.Equal(t, members1.Stop, beforecount)
 
 	//Validate Order
@@ -410,12 +398,10 @@ func TestCancelOrder_case2_limit(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	//require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -449,7 +435,6 @@ func TestCancelOrder_case2_limit(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.Equal(t, members.Stop, uint64(0))
 	require.Equal(t, members.Limit, uint64(0))
 
@@ -487,7 +472,6 @@ func TestCancelOrder_case2_limit(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 	require.Equal(t, members1.Stop, orders.Uid)
 	require.Equal(t, members1.Limit, beforecount)
 
@@ -546,12 +530,11 @@ func TestCancelOrder_case3_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -585,7 +568,7 @@ func TestCancelOrder_case3_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.Equal(t, members.Stop, uint64(0))
 
 	//SetOrder to Next value as 1
@@ -617,7 +600,7 @@ func TestCancelOrder_case3_stop(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	require.Equal(t, members1.Stop, beforecount)
 
 	//Validate Order
@@ -674,12 +657,12 @@ func TestCancelOrder_case3_limit(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -713,7 +696,7 @@ func TestCancelOrder_case3_limit(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.Equal(t, members.Stop, uint64(0))
 
 	//SetOrder to Next value as 1
@@ -750,7 +733,7 @@ func TestCancelOrder_case3_limit(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	require.Equal(t, members1.Stop, uint64(0))
 	require.Equal(t, members1.Limit, uint64(0))
 
@@ -809,12 +792,12 @@ func TestCancelOrder_case4_stop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -909,7 +892,7 @@ func TestCancelOrder_case4_stop(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	require.Equal(t, members1.Stop, beforecount+1)
 	//next order validation
 	orders, orderfound = testInput.MarketKeeper.GetOrder(testInput.Context, orders1.Uid)
@@ -988,12 +971,12 @@ func TestCancelOrder_case4_limit(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -1091,7 +1074,6 @@ func TestCancelOrder_case4_limit(t *testing.T) {
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
 
 	//next order validation
 	orders, orderfound = testInput.MarketKeeper.GetOrder(testInput.Context, orders1.Uid)
@@ -1172,12 +1154,12 @@ func TestCancelOrder_case1_stop_negative(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -1211,7 +1193,7 @@ func TestCancelOrder_case1_stop_negative(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.Equal(t, members.Stop, uint64(0))
 
 	//Create Order
@@ -1267,12 +1249,12 @@ func TestCancelOrder_case1_limit_invalid_Order(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	//require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -1306,7 +1288,7 @@ func TestCancelOrder_case1_limit_invalid_Order(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.Equal(t, members.Stop, uint64(0))
 	require.Equal(t, members.Limit, uint64(0))
 
@@ -1363,12 +1345,12 @@ func TestCancelOrder_case2_invalid_order(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	//require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -1402,7 +1384,7 @@ func TestCancelOrder_case2_invalid_order(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.Equal(t, members.Stop, uint64(0))
 	require.Equal(t, members.Limit, uint64(0))
 
@@ -1479,12 +1461,12 @@ func TestCancelOrder_case3_order_not_found(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -1518,7 +1500,7 @@ func TestCancelOrder_case3_order_not_found(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.Equal(t, members.Stop, uint64(0))
 
 	//SetOrder to Next value as 1
@@ -1597,12 +1579,12 @@ func TestCancelOrder_case4_order_not_found(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Protect, uint64(1))
+
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Protect, uint64(1))
+
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)

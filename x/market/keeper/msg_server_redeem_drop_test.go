@@ -57,12 +57,10 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "35")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "45")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -99,12 +97,10 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "30")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "40")
-	require.Equal(t, members1.Protect, uint64(1))
 
 }
 
@@ -468,7 +464,7 @@ func TestRedeemDrop_create_drop_negative(t *testing.T) {
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
 	//Validate Pool not found by GetDrop and GetPool method
 	Uid := strconv.FormatUint(drops1.Uid, 10)
-	var rd = types.MsgRedeemDrop{Creator: addr, Uid: "2"}
+	var rd = types.MsgRedeemDrop{Creator: addr, Uid: "3"}
 	createRedeemDropResponse, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
 	require.Error(t, redeemdropErr)
 	require.ErrorContains(t, redeemdropErr, "the pool not found")

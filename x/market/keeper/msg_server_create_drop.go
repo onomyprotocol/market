@@ -40,304 +40,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// Create the uid
 	uid := k.GetUidCount(ctx)
 
-	prev1, _ := strconv.ParseUint(msg.Prev1, 10, 64)
-	next1, _ := strconv.ParseUint(msg.Next1, 10, 64)
-
-	numerator1, _ := sdk.NewIntFromString(msg.Rate1[0])
-	denominator1, _ := sdk.NewIntFromString(msg.Rate1[1])
-	rate1 := []sdk.Int{numerator1, denominator1}
-
-	prev2, _ := strconv.ParseUint(msg.Prev2, 10, 64)
-	next2, _ := strconv.ParseUint(msg.Next2, 10, 64)
-
-	numerator2, _ := sdk.NewIntFromString(msg.Rate2[0])
-	denominator2, _ := sdk.NewIntFromString(msg.Rate2[1])
-	rate2 := []sdk.Int{numerator2, denominator2}
-
-	// Case 1
-	// Only drop in pool
-	if prev1 == 0 && next1 == 0 && prev2 == 0 && next2 == 0 {
-		if member1.Protect != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Member 1 protect field not 0")
-		}
-
-		if member2.Protect != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Member 2 protect field not 0")
-		}
-
-		member1.Protect = uid
-		member2.Protect = uid
-
-	}
-
-	// Drop Protection Book modelled as a Stop - Decreasing exchange rates
-	// Justification: Exchange rate decreases while trades are executed
-
-	// Case 2 Side 1
-	// New head of the book
-	if prev1 == 0 && next1 > 0 {
-		nextDrop1, _ := k.GetDrop(ctx, next1)
-		if !nextDrop1.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not active")
-		}
-		if nextDrop1.Prev1 != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not currently head of book")
-		}
-
-		if types.LTE(rate1, nextDrop1.Rate1) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate1 less than or equal Next1")
-		}
-
-		// Set drop as new head of Member1 Protect
-		member1.Protect = uid
-
-		// Set nextOrder prev field to order
-		nextDrop1.Prev1 = uid
-
-		k.SetDrop(
-			ctx,
-			nextDrop1,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop1.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyPrev1, strconv.FormatUint(nextDrop1.Prev1, 10)),
-			),
-		)
-
-	}
-
-	// Case 2 Side 2
-	// New head of the book
-	if prev2 == 0 && next2 > 0 {
-		nextDrop2, _ := k.GetDrop(ctx, next2)
-		if !nextDrop2.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
-		}
-		if nextDrop2.Prev2 != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not currently head of book")
-		}
-
-		if types.LTE(rate2, nextDrop2.Rate2) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate2 less than or equal Next2")
-		}
-
-		// Set drop as new head of Member1 Protect
-		member2.Protect = uid
-
-		// Set nextOrder prev field to order
-		nextDrop2.Prev2 = uid
-
-		k.SetDrop(
-			ctx,
-			nextDrop2,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop2.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyPrev2, strconv.FormatUint(nextDrop2.Prev2, 10)),
-			),
-		)
-
-	}
-
-	// Case 3 Side 1
-	// New tail of book
-	if prev1 > 0 && next1 == 0 {
-
-		prevDrop1, _ := k.GetDrop(ctx, prev1)
-
-		if !prevDrop1.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not active")
-		}
-		if prevDrop1.Next1 != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not currently tail of book")
-		}
-
-		if types.GT(rate1, prevDrop1.Rate1) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
-		}
-
-		// Set nextDrop1 Next1 field to Drop UID
-		prevDrop1.Next1 = uid
-
-		k.SetDrop(
-			ctx,
-			prevDrop1,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop1.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyNext1, strconv.FormatUint(prevDrop1.Next1, 10)),
-			),
-		)
-	}
-
-	// Case 3 Side 2
-	// New tail of book
-	if prev2 > 0 && next2 == 0 {
-
-		prevDrop2, _ := k.GetDrop(ctx, prev2)
-
-		if !prevDrop2.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not active")
-		}
-		if prevDrop2.Next2 != 0 {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not currently tail of book")
-		}
-
-		if types.GT(rate2, prevDrop2.Rate2) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop rate2 greater than Prev2 rate2")
-		}
-
-		// Set nextDrop1 Next1 field to Drop UID
-		prevDrop2.Next2 = uid
-
-		k.SetDrop(
-			ctx,
-			prevDrop2,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop2.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyNext2, strconv.FormatUint(prevDrop2.Next2, 10)),
-			),
-		)
-	}
-
-	// Case 4 Side 1
-	// IF next position and prev position are stated
-	if prev1 > 0 && next1 > 0 {
-
-		prevDrop1, _ := k.GetDrop(ctx, prev1)
-		nextDrop1, _ := k.GetDrop(ctx, next1)
-
-		if !prevDrop1.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 drop not active")
-		}
-
-		if !nextDrop1.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next1 drop not active")
-		}
-
-		if !(nextDrop1.Prev1 == prevDrop1.Uid && prevDrop1.Next1 == nextDrop1.Uid) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev1 and Next1 are not adjacent")
-		}
-
-		if types.GT(rate1, prevDrop1.Rate1) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
-		}
-
-		if types.LTE(rate1, nextDrop1.Rate1) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate1 less than or equal Next1")
-		}
-
-		prevDrop1.Next1 = uid
-
-		k.SetDrop(
-			ctx,
-			prevDrop1,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop1.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyNext1, strconv.FormatUint(uid, 10)),
-			),
-		)
-
-		nextDrop1.Prev1 = uid
-
-		k.SetDrop(
-			ctx,
-			nextDrop1,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop1.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyPrev1, strconv.FormatUint(uid, 10)),
-			),
-		)
-	}
-
-	// Case 4 Side 2
-	// IF next position and prev position are stated
-	if prev2 > 0 && next2 > 0 {
-
-		prevDrop2, _ := k.GetDrop(ctx, prev2)
-		nextDrop2, _ := k.GetDrop(ctx, next2)
-
-		if !prevDrop2.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 drop not active")
-		}
-		if !nextDrop2.Active {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next2 drop not active")
-		}
-
-		if !(nextDrop2.Prev2 == prevDrop2.Uid && prevDrop2.Next2 == nextDrop2.Uid) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev2 and Next2 are not adjacent")
-		}
-
-		if types.LTE(rate2, nextDrop2.Rate2) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop Rate2 less than or equal Next2")
-		}
-
-		if types.GT(rate2, prevDrop2.Rate2) {
-			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Drop rate2 greater than Prev2 rate2")
-		}
-
-		prevDrop2.Next2 = uid
-
-		k.SetDrop(
-			ctx,
-			prevDrop2,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(prevDrop2.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyNext2, strconv.FormatUint(uid, 10)),
-			),
-		)
-
-		nextDrop2.Prev2 = uid
-
-		k.SetDrop(
-			ctx,
-			nextDrop2,
-		)
-
-		// update drop event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeUpdateDrop,
-				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(nextDrop2.Uid, 10)),
-				sdk.NewAttribute(types.AttributeKeyPrev2, strconv.FormatUint(uid, 10)),
-			),
-		)
-	}
-
-	// The Pool Sum current is defined as:
-	// poolSum == AMM A Coin Balance + AMM B Coin Balance
+	// The Pool Sum is defined as:
+	// poolSum == AMM Coin A Balance + AMM Coin B Balance
 	poolSum := member1.Balance.Add(member2.Balance)
 
 	drops, _ := sdk.NewIntFromString(msg.Drops)
@@ -383,6 +87,16 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member1.Balance = member1.Balance.Add(amount1)
 	k.SetMember(ctx, member1)
 
+	// update member1 event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeUpdateMember,
+			sdk.NewAttribute(types.AttributeKeyDenomA, denom2),
+			sdk.NewAttribute(types.AttributeKeyDenomB, denom1),
+			sdk.NewAttribute(types.AttributeKeyBalance, member1.Balance.String()),
+		),
+	)
+
 	member2.Balance = member2.Balance.Add(amount2)
 	k.SetMember(ctx, member2)
 
@@ -397,7 +111,18 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	}
 
 	pool.Drops = pool.Drops.Add(drops)
+
 	k.SetPool(ctx, pool)
+
+	// update pool event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreatePool,
+			sdk.NewAttribute(types.AttributeKeyPair, pair),
+			sdk.NewAttribute(types.AttributeKeyLeader, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
+		),
+	)
 
 	var drop = types.Drop{
 		Uid:    uid,
@@ -406,18 +131,24 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		Drops:  drops,
 		Sum:    dropSum,
 		Active: true,
-		Prev1:  prev1,
-		Prev2:  prev2,
-		Next1:  next1,
-		Next2:  next2,
-		Rate1:  rate1,
-		Rate2:  rate2,
 	}
 
 	// Add the drop to the keeper
 	k.SetDrop(
 		ctx,
 		drop,
+	)
+
+	// create drop event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreateDrop,
+			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(uid, 10)),
+			sdk.NewAttribute(types.AttributeKeyPair, pair),
+			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
+			sdk.NewAttribute(types.AttributeKeySum, dropSum.String()),
+		),
 	)
 
 	// Update drop uid count

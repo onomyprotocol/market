@@ -31,20 +31,6 @@ export interface MarketDrop {
   drops?: string;
   sum?: string;
   active?: boolean;
-  rate1?: string[];
-
-  /** @format uint64 */
-  prev1?: string;
-
-  /** @format uint64 */
-  next1?: string;
-  rate2?: string[];
-
-  /** @format uint64 */
-  prev2?: string;
-
-  /** @format uint64 */
-  next2?: string;
 }
 
 export interface MarketMember {
@@ -59,9 +45,6 @@ export interface MarketMember {
 
   /** @format uint64 */
   stop?: string;
-
-  /** @format uint64 */
-  protect?: string;
 }
 
 export type MarketMsgCancelOrderResponse = object;
