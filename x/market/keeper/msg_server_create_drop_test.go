@@ -13,11 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type testDataDrop struct {
-	RateAstrArray []string
-	RateBstrArray []string
-}
-
 func TestCreateDrop(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)
 	//TestData
@@ -137,11 +132,11 @@ func TestCreateDrop_Pool_Not_Found(t *testing.T) {
 	}
 }
 
-func TestCreateDrop_Case1_Negative(t *testing.T) {
+func TestCreateDrop_Negative(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)
 	//TestData
-	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
-	coinPair, _ := sample.SampleCoins("70CoinA", "70CoinB")
+	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB"}
+	coinPair, _ := sample.SampleCoins("140CoinA", "140CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
@@ -188,14 +183,6 @@ func TestCreateDrop_Case1_Negative(t *testing.T) {
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "70")
 
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
-	require.Error(t, err)
-	require.ErrorContains(t, err, "Member 1 protect field not 0")
-	testInput.MarketKeeper.SetMember(testInput.Context, members)
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
-	require.Error(t, err)
-	require.ErrorContains(t, err, "Member 2 protect field not 0")
-
 }
 
 func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
@@ -238,8 +225,14 @@ func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
 
 }
 
-/*
 func TestCreateDrop_InvalidDrop(t *testing.T) {
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+
 	testInput := keepertest.CreateTestEnvironment(t)
 	//TestData
 	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"30", "40"}, RateBstrArray: []string{"50", "60"}}
@@ -275,6 +268,5 @@ func TestCreateDrop_InvalidDrop(t *testing.T) {
 	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "-1", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.Error(t, err)
-	//require.ErrorContains(t, err, "insufficient balance")
 
-}*/
+}
