@@ -41,6 +41,9 @@ func (msg *MsgMarketOrder) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
+// TODO(aaron) These `ValidateBasic`s are only used for the CLI commands, we need to be calling
+// these wherever arbitrarily crafted messages could be used as parameters
+
 func (msg *MsgMarketOrder) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
@@ -57,6 +60,7 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bid denom")
 	}
 
+	// TODO(aaron) should we be using `NewUintFromString`? Also, check all cases of `ParseInt` and `ParseUint`
 	_, ok := sdk.NewIntFromString(msg.AmountBid)
 	if !ok {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")

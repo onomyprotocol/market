@@ -6,6 +6,9 @@ import (
 	"github.com/pendulum-labs/market/x/market/types"
 )
 
+// TODO(aaron) show Charles all places where `SetMember` and `GetMember` are called, it seems like
+// they should come in pairs but sometimes aren't
+
 // SetMember set a specific member in the store from its index
 func (k Keeper) SetMember(ctx sdk.Context, member types.Member) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
@@ -13,6 +16,7 @@ func (k Keeper) SetMember(ctx sdk.Context, member types.Member) {
 	store.Set(types.MemberSetKey(
 		member.DenomA,
 		member.DenomB,
+		// TODO(aaron) what about this?
 		//member.Balance,
 		//member.Previous,
 		//member.Limit,
@@ -35,6 +39,7 @@ func (k Keeper) GetMember(
 		denomB,
 	))
 	if b == nil {
+		// TODO(aaron) `val` is not initialized here, should use some invalid or empty constant?
 		return val, false
 	}
 

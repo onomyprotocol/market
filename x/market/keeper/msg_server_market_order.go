@@ -21,7 +21,6 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	amountBid, _ := sdk.NewIntFromString(msg.AmountBid)
 
 	coinBid := sdk.NewCoin(msg.DenomBid, amountBid)
-
 	coinsBid := sdk.NewCoins(coinBid)
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
@@ -43,6 +42,11 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
+	// TODO(aaron) we need to check for potential divisions by zero at every `Quo`
+
+	// TODO(aaron) the following two lines reduce to
+	//maxMemberBidAmount := memberAsk.Balance.Quo(sdk.NewInt(2)) // maximum ask is half of the balance
+	// and maxMemberBidBal is not used
 	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
 	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
 
@@ -69,6 +73,8 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	// If quote of ask coin is greater than strike ask amount then check slippage
 	// Market order without slippage has quoteAsk set to zero
 	if quoteAsk.GT(amountAsk) {
+		// TODO(aaron) I saw this constant and a 9999 constant elswhere, this should be a common
+		// constant
 		strikeSlippage := ((quoteAsk.Sub(amountAsk)).Mul(sdk.NewInt(10000))).Quo(quoteAsk)
 		slippage, _ := sdk.NewIntFromString(msg.Slippage)
 		if strikeSlippage.GT(slippage) {
@@ -81,6 +87,9 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	if sdkError != nil {
 		return nil, sdkError
 	}
+
+	// TODO(aaron) what happens if first call succeeds but second call fails?
+	// should the memberBid.Balance assignment be hoisted here?
 
 	coinAsk := sdk.NewCoin(msg.DenomAsk, amountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)

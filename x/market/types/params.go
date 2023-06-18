@@ -91,6 +91,7 @@ func validateEarnRate(i interface{}) error {
 		return fmt.Errorf("earn rate must have 2 elements: %d", v)
 	}
 
+	// TODO(aaron) we should use `IsNegative` here and in other places
 	if v[0].LTE(sdk.NewInt(0)) {
 		return fmt.Errorf("earn rate numerator must be positive and greater than zero: %d", v)
 	}

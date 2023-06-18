@@ -13,6 +13,7 @@ import (
 func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (*types.MsgRedeemDropResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// TODO(aaron) the error here is not being checked
 	uid, _ := strconv.ParseUint(msg.Uid, 10, 64)
 
 	drop, found := k.GetDrop(ctx, uid)
@@ -52,15 +53,38 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
 	// Profit = dropSum(end) - dropSum(begin)
 	dropSumEnd := (poolSum.Mul(drop.Drops)).Quo(pool.Drops)
+	// TODO(aaron) it looks like this should be simplified to
+	// (dropSumEnd * const) / ((poolSum * const) / member2.Balance)
+	// dropSumEnd / (poolSum / member2.Balance)
+	// (dropSumEnd * member2.Balance) / poolSum
+	//
+	//total2 := (dropSumEnd.Mul(member2.Balance)).Quo(poolSum)
+	// then by substitution
+	// ((poolSum * drop.Drops / pool.Drops) * member2.Balance) / poolSum
+	// (drop.Drops / pool.Drops) * member2.Balance
+	// (drop.Drops * member2.Balance) / pool.Drops
+	//total2 := (drop.Drops.Mul(member2.Balance)).Quo(pool.Drops)
 	total2 := (dropSumEnd.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
+	// ((poolSum * drop.Drops) / pool.Drops) - ((drop.Drops * member2.Balance) / pool.Drops))
+	// (drop.Drops * (poolSum - member2.Balance)) / pool.Drops
+	// (drop.Drops * member1.Balance) / pool.Drops
+	//total1 := (drop.Drops.Mul(member1.Balance)).Quo(pool.Drops)
+	// the error should be made symmetrical instead of dependent on order of the members
 	total1 := dropSumEnd.Sub(total2)
 
+	// ((drop.Drops * poolSum) / pool.Drops) - drop.Sum
+	// I'm thinking the correct way to calculate dropSumEnd is total1 + total2 in order to account
+	// for their errors as used later, so this becomes
+	// total1 + total2 - drop.Sum
+	//dropProfit := (total1.Add(total2)).Sub(drop.Sum)
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
 	earnRate := k.EarnRate(ctx)
 	burnRate := k.BurnRate(ctx)
 
 	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
+	// TODO(aaron)
+	// (dropProfit * member2.balance) / poolSum
 	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
 	earn2 := (profit2.Mul(earnRate[0])).Quo(earnRate[1])
 	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
@@ -68,6 +92,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Redemption value in coin 2
 	Drops2 := total2.Sub(earn2.Add(burn2))
 
+	// TODO(aaron)
+	// rewrite to be symmetric
 	profit1 := dropProfit.Sub(profit2)
 	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
 	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
@@ -123,6 +149,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	member1.Balance = member1.Balance.Sub(total1)
 	member2.Balance = member2.Balance.Sub(total2)
 
+	// TODO(aaron) what about dropped error here?
+
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
@@ -136,6 +164,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	if sdkError != nil {
 		return nil, sdkError
 	}
+
+	// TODO(aaron) what about the second failing?
 
 	coinLeader1 := sdk.NewCoin(denom1, earn1)
 	coinLeader2 := sdk.NewCoin(denom2, earn2)
