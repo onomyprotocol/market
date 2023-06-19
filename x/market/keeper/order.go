@@ -8,11 +8,34 @@ import (
 
 // SetOrder set a specific order in the store from its index
 func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
-	orderStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
 	b := k.cdc.MustMarshal(&order)
-	orderStore.Set(types.OrderKey(
+	store1.Set(types.OrderKey(
 		order.Uid,
 	), b)
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+
+	c := store2.Get(types.DropsKey(
+		order.Owner,
+	))
+
+	var orders types.Orders
+
+	if c == nil {
+		orders = types.Orders{
+			Uids: []uint64{order.Uid},
+		}
+	} else {
+		k.cdc.MustUnmarshal(c, &orders)
+		orders.Uids = append(orders.Uids, order.Uid)
+	}
+
+	d := k.cdc.MustMarshal(&orders)
+	store2.Set(types.OrdersKey(
+		order.Owner,
+	), d)
 }
 
 // GetOrder returns a order from its index
@@ -106,4 +129,14 @@ func (k Keeper) GetBook(
 	}
 
 	return
+}
+
+// GetOrder returns a order from its index
+func (k Keeper) GetBookEnds(
+	ctx sdk.Context,
+	denomA string,
+	denomB string,
+	orderType string,
+) (ends []types.OrderResponse) {
+	return nil
 }

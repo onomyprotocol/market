@@ -22,3 +22,16 @@ func OrderKey(
 
 	return key
 }
+
+// OrdersKey returns the store key to retrieve and Owner's Active Orders
+func OrdersKey(
+	owner string,
+) []byte {
+	var key []byte
+
+	ownerBytes := []byte(owner)
+	key = append(key, ownerBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
+}

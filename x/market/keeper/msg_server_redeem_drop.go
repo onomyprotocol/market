@@ -21,7 +21,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	}
 
 	if drop.Owner != msg.Creator {
-		return nil, sdkerrors.Wrapf(types.ErrNotDropOwner, "%s", msg.Uid)
+		return nil, sdkerrors.Wrapf(types.ErrNotDrops, "%s", msg.Uid)
 	}
 
 	pair := strings.Split(drop.Pair, ",")
@@ -66,7 +66,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
 
 	// Redemption value in coin 2
-	dropOwner2 := total2.Sub(earn2.Add(burn2))
+	Drops2 := total2.Sub(earn2.Add(burn2))
 
 	profit1 := dropProfit.Sub(profit2)
 	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
@@ -114,7 +114,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	k.SetBurnings(ctx, burnings2)
 
 	// Redemption value in coin 1
-	dropOwner1 := total1.Sub(earn1.Add(burn1))
+	Drops1 := total1.Sub(earn1.Add(burn1))
 
 	// Update Pool Total Drops
 	pool.Drops = pool.Drops.Sub(drop.Drops)
@@ -127,8 +127,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	coinOwner1 := sdk.NewCoin(denom1, dropOwner1)
-	coinOwner2 := sdk.NewCoin(denom2, dropOwner2)
+	coinOwner1 := sdk.NewCoin(denom1, Drops1)
+	coinOwner2 := sdk.NewCoin(denom2, Drops2)
 	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
 	// Payout Owner

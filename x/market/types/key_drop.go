@@ -7,8 +7,8 @@ var _ binary.ByteOrder
 const (
 	// DropKeyPrefix is the prefix to retrieve all Drop
 	DropKeyPrefix = "Drop/value/"
-	// DropOwnerKeyPrefix is the prefix to retrieve all Owner of Drops
-	DropOwnerKeyPrefix = "Drop/Owner/"
+	// DropsKeyPrefix is the prefix to retrieve all Owner of Drops
+	DropsKeyPrefix = "Drop/Owner/"
 )
 
 // DropKey returns the store key to retrieve a Drop from the index fields
@@ -40,7 +40,7 @@ func DropSetKey(
 }
 
 // DropKey returns the store key to retrieve a Drop from the index fields
-func DropOwnerKey(
+func DropsKey(
 	owner string,
 ) []byte {
 	var key []byte

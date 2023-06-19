@@ -114,8 +114,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	// Get Drop Creator and Pool Leader total drops from all drops owned
 	// TODO: Need to double check that database is configured properly
-	sumDropsCreator := k.GetOwnerDropsInt(ctx, msg.Creator).Add(drops)
-	sumDropsLeader := k.GetOwnerDropsInt(ctx, pool.Leader)
+	sumDropsCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
+	sumDropsLeader := k.GetDropsSum(ctx, pool.Leader)
 
 	// If Creator totaled owned drops is greater than Leader then
 	// Creator is new leader
