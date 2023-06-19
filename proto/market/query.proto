@@ -10,7 +10,6 @@ import "market/drop.proto";
 import "market/member.proto";
 import "market/burnings.proto";
 import "market/order.proto";
-import "market/asset.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/pendulum-labs/market/x/market/types";
@@ -69,16 +68,6 @@ service Query {
 	// Queries a list of Order items.
 	rpc OrderAll(QueryAllOrderRequest) returns (QueryAllOrderResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/order";
-	}
-
-// Queries a Asset by index.
-	rpc Asset(QueryGetAssetRequest) returns (QueryGetAssetResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/asset/{active}/{owner}/{assetType}";
-	}
-
-	// Queries a list of Asset items.
-	rpc AssetAll(QueryAllAssetRequest) returns (QueryAllAssetResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/asset";
 	}
 
 // Queries a list of GetBook items.
@@ -196,26 +185,6 @@ message QueryAllOrderRequest {
 
 message QueryAllOrderResponse {
 	repeated Order order = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetAssetRequest {
-	  bool active = 1;
-  string owner = 2;
-  string assetType = 3;
-
-}
-
-message QueryGetAssetResponse {
-	Asset asset = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllAssetRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllAssetResponse {
-	repeated Asset asset = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

@@ -13,21 +13,6 @@ func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
 	orderStore.Set(types.OrderKey(
 		order.Uid,
 	), b)
-
-	assetStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKeyPrefix))
-	var asset = types.Asset{
-		Active:    true,
-		Owner:     order.Owner,
-		AssetType: "order",
-		Uid:       order.Uid,
-	}
-	c := k.cdc.MustMarshal(&asset)
-
-	assetStore.Set(types.AssetKey(
-		asset.Active,
-		asset.Owner,
-		asset.AssetType,
-	), c)
 }
 
 // GetOrder returns a order from its index

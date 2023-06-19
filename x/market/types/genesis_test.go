@@ -113,20 +113,6 @@ func TestGenesisState_Validate(t *testing.T) {
 						Next:      uint64(1),
 					},
 				},
-				AssetList: []types.Asset{
-					{
-						Active:    true,
-						Owner:     "0",
-						AssetType: "0",
-						Uid:       uint64(0),
-					},
-					{
-						Active:    false,
-						Owner:     "1",
-						AssetType: "1",
-						Uid:       uint64(1),
-					},
-				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -236,26 +222,6 @@ func TestGenesisState_Validate(t *testing.T) {
 						Rate:      []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
 						Prev:      uint64(0),
 						Next:      uint64(0),
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated asset",
-			genState: &types.GenesisState{
-				AssetList: []types.Asset{
-					{
-						Active:    true,
-						Owner:     "0",
-						AssetType: "0",
-						Uid:       uint64(0),
-					},
-					{
-						Active:    true,
-						Owner:     "0",
-						AssetType: "0",
-						Uid:       uint64(0),
 					},
 				},
 			},
