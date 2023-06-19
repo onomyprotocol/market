@@ -30,7 +30,7 @@ func TestRedeemDrop(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -46,7 +46,7 @@ func TestRedeemDrop(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "10", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "10"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -57,12 +57,10 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "35")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "45")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -99,12 +97,10 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "30")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "40")
-	require.Equal(t, members1.Protect, uint64(1))
 
 }
 
@@ -126,7 +122,7 @@ func TestRedeemDrop_create_drop_zero(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -142,7 +138,7 @@ func TestRedeemDrop_create_drop_zero(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "0", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "0"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -153,12 +149,10 @@ func TestRedeemDrop_create_drop_zero(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "30")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "40")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -195,12 +189,10 @@ func TestRedeemDrop_create_drop_zero(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "30")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "40")
-	require.Equal(t, members1.Protect, uint64(1))
 
 }
 
@@ -221,7 +213,7 @@ func TestRedeemDrop_create_drop_rates(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -237,7 +229,7 @@ func TestRedeemDrop_create_drop_rates(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -248,12 +240,10 @@ func TestRedeemDrop_create_drop_rates(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -290,12 +280,10 @@ func TestRedeemDrop_create_drop_rates(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "29")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "41")
-	require.Equal(t, members1.Protect, uint64(1))
 
 }
 func TestRedeemDrop_set_burnings(t *testing.T) {
@@ -315,7 +303,7 @@ func TestRedeemDrop_set_burnings(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -331,7 +319,7 @@ func TestRedeemDrop_set_burnings(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -342,12 +330,10 @@ func TestRedeemDrop_set_burnings(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -384,12 +370,10 @@ func TestRedeemDrop_set_burnings(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "29")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "41")
-	require.Equal(t, members1.Protect, uint64(1))
 	burningsa, burningafound := testInput.MarketKeeper.GetBurnings(testInput.Context, members.DenomB)
 	require.True(t, burningafound)
 	burningsa.Amount.Add(sdk.NewInt(20))
@@ -422,7 +406,7 @@ func TestRedeemDrop_create_drop_negative(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -438,7 +422,7 @@ func TestRedeemDrop_create_drop_negative(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -449,12 +433,10 @@ func TestRedeemDrop_create_drop_negative(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -468,7 +450,7 @@ func TestRedeemDrop_create_drop_negative(t *testing.T) {
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
 	//Validate Pool not found by GetDrop and GetPool method
 	Uid := strconv.FormatUint(drops1.Uid, 10)
-	var rd = types.MsgRedeemDrop{Creator: addr, Uid: "2"}
+	var rd = types.MsgRedeemDrop{Creator: addr, Uid: "3"}
 	createRedeemDropResponse, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
 	require.Error(t, redeemdropErr)
 	require.ErrorContains(t, redeemdropErr, "the pool not found")
@@ -511,7 +493,7 @@ func TestRedeemDrop_validate_burns(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -527,7 +509,7 @@ func TestRedeemDrop_validate_burns(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -538,12 +520,10 @@ func TestRedeemDrop_validate_burns(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -580,12 +560,10 @@ func TestRedeemDrop_validate_burns(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "29")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "41")
-	require.Equal(t, members1.Protect, uint64(1))
 	burningsa, burningafound := testInput.MarketKeeper.GetBurnings(testInput.Context, members.DenomB)
 	require.True(t, burningafound)
 	burningsa.Amount = sdk.NewInt(200)
@@ -624,7 +602,7 @@ func TestRedeemDrop_insufficient_funds_negative1(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -640,7 +618,7 @@ func TestRedeemDrop_insufficient_funds_negative1(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "55", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "55"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -651,12 +629,10 @@ func TestRedeemDrop_insufficient_funds_negative1(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	//require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Set Members
 	members.Balance = sdk.NewInt(200)
 	testInput.MarketKeeper.SetMember(testInput.Context, members)
@@ -701,7 +677,7 @@ func TestRedeemDrop_insufficient_funds_negative2(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -717,7 +693,7 @@ func TestRedeemDrop_insufficient_funds_negative2(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "55", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "55"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -728,12 +704,10 @@ func TestRedeemDrop_insufficient_funds_negative2(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	//require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	//require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
@@ -777,7 +751,7 @@ func TestRedeemDrop_max_burning_values(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -793,7 +767,7 @@ func TestRedeemDrop_max_burning_values(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "5"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -804,12 +778,10 @@ func TestRedeemDrop_max_burning_values(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "32")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "43")
-	require.Equal(t, members1.Protect, uint64(1))
 	//Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
@@ -846,12 +818,10 @@ func TestRedeemDrop_max_burning_values(t *testing.T) {
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
 	require.Equal(t, members.Balance.String(), "29")
-	require.Equal(t, members.Protect, uint64(1))
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, members1.Balance.String(), "41")
-	require.Equal(t, members1.Protect, uint64(1))
 	burningsa, burningafound := testInput.MarketKeeper.GetBurnings(testInput.Context, members.DenomB)
 	require.True(t, burningafound)
 	burningsa.Amount = sdk.NewInt(-2000000000000000000)

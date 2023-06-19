@@ -30,8 +30,6 @@ func SimulateMsgCreatePool(
 			Creator: addr.String(),
 			CoinA:   sdk.NewCoin("CoinA", sdk.NewInt(160)).String(),
 			CoinB:   sdk.NewCoin("CoinB", sdk.NewInt(170)).String(),
-			RateA:   []string{sdk.NewInt(175).String(), sdk.NewInt(185).String()},
-			RateB:   []string{sdk.NewInt(190).String(), sdk.NewInt(200).String()},
 		}
 		coins, _ := sample.SampleCoins(msg.CoinA, msg.CoinB)
 

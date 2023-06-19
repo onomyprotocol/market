@@ -7,8 +7,6 @@ export interface MsgCreatePool {
   creator: string;
   coinA: string;
   coinB: string;
-  rateA: string[];
-  rateB: string[];
 }
 
 export interface MsgCreatePoolResponse {}
@@ -17,12 +15,6 @@ export interface MsgCreateDrop {
   creator: string;
   pair: string;
   drops: string;
-  rate1: string[];
-  prev1: string;
-  next1: string;
-  rate2: string[];
-  prev2: string;
-  next2: string;
 }
 
 export interface MsgCreateDropResponse {}
@@ -65,13 +57,7 @@ export interface MsgMarketOrder {
 
 export interface MsgMarketOrderResponse {}
 
-const baseMsgCreatePool: object = {
-  creator: "",
-  coinA: "",
-  coinB: "",
-  rateA: "",
-  rateB: "",
-};
+const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
 export const MsgCreatePool = {
   encode(message: MsgCreatePool, writer: Writer = Writer.create()): Writer {
@@ -84,12 +70,6 @@ export const MsgCreatePool = {
     if (message.coinB !== "") {
       writer.uint32(26).string(message.coinB);
     }
-    for (const v of message.rateA) {
-      writer.uint32(34).string(v!);
-    }
-    for (const v of message.rateB) {
-      writer.uint32(42).string(v!);
-    }
     return writer;
   },
 
@@ -97,8 +77,6 @@ export const MsgCreatePool = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreatePool } as MsgCreatePool;
-    message.rateA = [];
-    message.rateB = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -111,12 +89,6 @@ export const MsgCreatePool = {
         case 3:
           message.coinB = reader.string();
           break;
-        case 4:
-          message.rateA.push(reader.string());
-          break;
-        case 5:
-          message.rateB.push(reader.string());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -127,8 +99,6 @@ export const MsgCreatePool = {
 
   fromJSON(object: any): MsgCreatePool {
     const message = { ...baseMsgCreatePool } as MsgCreatePool;
-    message.rateA = [];
-    message.rateB = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -144,16 +114,6 @@ export const MsgCreatePool = {
     } else {
       message.coinB = "";
     }
-    if (object.rateA !== undefined && object.rateA !== null) {
-      for (const e of object.rateA) {
-        message.rateA.push(String(e));
-      }
-    }
-    if (object.rateB !== undefined && object.rateB !== null) {
-      for (const e of object.rateB) {
-        message.rateB.push(String(e));
-      }
-    }
     return message;
   },
 
@@ -162,23 +122,11 @@ export const MsgCreatePool = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.coinA !== undefined && (obj.coinA = message.coinA);
     message.coinB !== undefined && (obj.coinB = message.coinB);
-    if (message.rateA) {
-      obj.rateA = message.rateA.map((e) => e);
-    } else {
-      obj.rateA = [];
-    }
-    if (message.rateB) {
-      obj.rateB = message.rateB.map((e) => e);
-    } else {
-      obj.rateB = [];
-    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<MsgCreatePool>): MsgCreatePool {
     const message = { ...baseMsgCreatePool } as MsgCreatePool;
-    message.rateA = [];
-    message.rateB = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -193,16 +141,6 @@ export const MsgCreatePool = {
       message.coinB = object.coinB;
     } else {
       message.coinB = "";
-    }
-    if (object.rateA !== undefined && object.rateA !== null) {
-      for (const e of object.rateA) {
-        message.rateA.push(e);
-      }
-    }
-    if (object.rateB !== undefined && object.rateB !== null) {
-      for (const e of object.rateB) {
-        message.rateB.push(e);
-      }
     }
     return message;
   },
@@ -246,17 +184,7 @@ export const MsgCreatePoolResponse = {
   },
 };
 
-const baseMsgCreateDrop: object = {
-  creator: "",
-  pair: "",
-  drops: "",
-  rate1: "",
-  prev1: "",
-  next1: "",
-  rate2: "",
-  prev2: "",
-  next2: "",
-};
+const baseMsgCreateDrop: object = { creator: "", pair: "", drops: "" };
 
 export const MsgCreateDrop = {
   encode(message: MsgCreateDrop, writer: Writer = Writer.create()): Writer {
@@ -269,24 +197,6 @@ export const MsgCreateDrop = {
     if (message.drops !== "") {
       writer.uint32(26).string(message.drops);
     }
-    for (const v of message.rate1) {
-      writer.uint32(34).string(v!);
-    }
-    if (message.prev1 !== "") {
-      writer.uint32(42).string(message.prev1);
-    }
-    if (message.next1 !== "") {
-      writer.uint32(50).string(message.next1);
-    }
-    for (const v of message.rate2) {
-      writer.uint32(58).string(v!);
-    }
-    if (message.prev2 !== "") {
-      writer.uint32(66).string(message.prev2);
-    }
-    if (message.next2 !== "") {
-      writer.uint32(74).string(message.next2);
-    }
     return writer;
   },
 
@@ -294,8 +204,6 @@ export const MsgCreateDrop = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreateDrop } as MsgCreateDrop;
-    message.rate1 = [];
-    message.rate2 = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -308,24 +216,6 @@ export const MsgCreateDrop = {
         case 3:
           message.drops = reader.string();
           break;
-        case 4:
-          message.rate1.push(reader.string());
-          break;
-        case 5:
-          message.prev1 = reader.string();
-          break;
-        case 6:
-          message.next1 = reader.string();
-          break;
-        case 7:
-          message.rate2.push(reader.string());
-          break;
-        case 8:
-          message.prev2 = reader.string();
-          break;
-        case 9:
-          message.next2 = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -336,8 +226,6 @@ export const MsgCreateDrop = {
 
   fromJSON(object: any): MsgCreateDrop {
     const message = { ...baseMsgCreateDrop } as MsgCreateDrop;
-    message.rate1 = [];
-    message.rate2 = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -353,36 +241,6 @@ export const MsgCreateDrop = {
     } else {
       message.drops = "";
     }
-    if (object.rate1 !== undefined && object.rate1 !== null) {
-      for (const e of object.rate1) {
-        message.rate1.push(String(e));
-      }
-    }
-    if (object.prev1 !== undefined && object.prev1 !== null) {
-      message.prev1 = String(object.prev1);
-    } else {
-      message.prev1 = "";
-    }
-    if (object.next1 !== undefined && object.next1 !== null) {
-      message.next1 = String(object.next1);
-    } else {
-      message.next1 = "";
-    }
-    if (object.rate2 !== undefined && object.rate2 !== null) {
-      for (const e of object.rate2) {
-        message.rate2.push(String(e));
-      }
-    }
-    if (object.prev2 !== undefined && object.prev2 !== null) {
-      message.prev2 = String(object.prev2);
-    } else {
-      message.prev2 = "";
-    }
-    if (object.next2 !== undefined && object.next2 !== null) {
-      message.next2 = String(object.next2);
-    } else {
-      message.next2 = "";
-    }
     return message;
   },
 
@@ -391,27 +249,11 @@ export const MsgCreateDrop = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.pair !== undefined && (obj.pair = message.pair);
     message.drops !== undefined && (obj.drops = message.drops);
-    if (message.rate1) {
-      obj.rate1 = message.rate1.map((e) => e);
-    } else {
-      obj.rate1 = [];
-    }
-    message.prev1 !== undefined && (obj.prev1 = message.prev1);
-    message.next1 !== undefined && (obj.next1 = message.next1);
-    if (message.rate2) {
-      obj.rate2 = message.rate2.map((e) => e);
-    } else {
-      obj.rate2 = [];
-    }
-    message.prev2 !== undefined && (obj.prev2 = message.prev2);
-    message.next2 !== undefined && (obj.next2 = message.next2);
     return obj;
   },
 
   fromPartial(object: DeepPartial<MsgCreateDrop>): MsgCreateDrop {
     const message = { ...baseMsgCreateDrop } as MsgCreateDrop;
-    message.rate1 = [];
-    message.rate2 = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -426,36 +268,6 @@ export const MsgCreateDrop = {
       message.drops = object.drops;
     } else {
       message.drops = "";
-    }
-    if (object.rate1 !== undefined && object.rate1 !== null) {
-      for (const e of object.rate1) {
-        message.rate1.push(e);
-      }
-    }
-    if (object.prev1 !== undefined && object.prev1 !== null) {
-      message.prev1 = object.prev1;
-    } else {
-      message.prev1 = "";
-    }
-    if (object.next1 !== undefined && object.next1 !== null) {
-      message.next1 = object.next1;
-    } else {
-      message.next1 = "";
-    }
-    if (object.rate2 !== undefined && object.rate2 !== null) {
-      for (const e of object.rate2) {
-        message.rate2.push(e);
-      }
-    }
-    if (object.prev2 !== undefined && object.prev2 !== null) {
-      message.prev2 = object.prev2;
-    } else {
-      message.prev2 = "";
-    }
-    if (object.next2 !== undefined && object.next2 !== null) {
-      message.next2 = object.next2;
-    } else {
-      message.next2 = "";
     }
     return message;
   },

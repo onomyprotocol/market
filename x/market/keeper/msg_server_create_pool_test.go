@@ -39,7 +39,7 @@ func TestCreatePool(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -88,7 +88,7 @@ func TestCreatePool_PoolAlreadyExist(t *testing.T) {
 		require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
 		requestAddress, _ := sdk.AccAddressFromBech32(addr)
 		require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-		var p = types.MsgCreatePool{CoinA: s.coinAStr, CoinB: s.coinBStr, Creator: addr, RateA: s.RateAstrArray, RateB: s.RateBstrArray}
+		var p = types.MsgCreatePool{CoinA: s.coinAStr, CoinB: s.coinBStr, Creator: addr}
 		response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 		if count == 0 {
 			require.NoError(t, err)
@@ -115,7 +115,7 @@ func TestCreatePool_Insufficient_Funds(t *testing.T) {
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
 	requestAddress, _ := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.Error(t, err)
 	require.ErrorContains(t, err, "insufficient funds")
@@ -130,8 +130,8 @@ func TestCreatePool_PoolAlready_Exists_ReSubmit(t *testing.T) {
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
 	requestAddress, _ := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	var p = types.MsgCreatePool{CoinA: "15CoinA", CoinB: "15CoinB", Creator: addr, RateA: []string{"10", "20"}, RateB: []string{"20", "30"}}
-	var p1 = types.MsgCreatePool{CoinA: "30CoinA", CoinB: "30CoinB", Creator: addr, RateA: []string{"10", "20"}, RateB: []string{"20", "30"}}
+	var p = types.MsgCreatePool{CoinA: "15CoinA", CoinB: "15CoinB", Creator: addr}
+	var p1 = types.MsgCreatePool{CoinA: "30CoinA", CoinB: "30CoinB", Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	response1, err1 := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p1)
 	require.NoError(t, err)
@@ -151,7 +151,7 @@ func TestCreatePool_With_New_Creator(t *testing.T) {
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
 	requestAddress, _ := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: sample.AccAddress(), RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: sample.AccAddress()}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.Error(t, err)
 	require.ErrorContains(t, err, "insufficient funds")
@@ -172,7 +172,7 @@ func TestCreatePool_With_Empty_Rates(t *testing.T) {
 	//validate SetUidCount function.
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.NoError(t, err)
 	require.Contains(t, p.GetCreator(), response.String())
@@ -211,7 +211,7 @@ func TestCreatePool_With_Swap_Coins(t *testing.T) {
 	//validate SetUidCount function.
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.NoError(t, err)
 	require.Contains(t, p.GetCreator(), response.String())
@@ -255,7 +255,7 @@ func TestCreatePool_Invalid_Coins(t *testing.T) {
 		require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
 		requestAddress, _ := sdk.AccAddressFromBech32(addr)
 		require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-		var p = types.MsgCreatePool{CoinA: s.coinAStr, CoinB: s.coinBStr, Creator: addr, RateA: s.RateAstrArray, RateB: s.RateBstrArray}
+		var p = types.MsgCreatePool{CoinA: s.coinAStr, CoinB: s.coinBStr, Creator: addr}
 		response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 		require.Error(t, err)
 		require.NotContains(t, p.GetCreator(), response.String())

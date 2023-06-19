@@ -20,17 +20,5 @@ message Drop {
     (gogoproto.nullable) = false
   ]; 
   bool active = 6;
-  repeated string rate1 = 7 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
-  uint64 prev1 = 8;
-  uint64 next1 = 9;
-  repeated string rate2 = 10 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
-  uint64 prev2 = 11;
-  uint64 next2 = 12;
 }
 

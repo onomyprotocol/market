@@ -12,7 +12,6 @@ export interface Member {
   previous: string;
   limit: number;
   stop: number;
-  protect: number;
 }
 
 const baseMember: object = {
@@ -23,7 +22,6 @@ const baseMember: object = {
   previous: "",
   limit: 0,
   stop: 0,
-  protect: 0,
 };
 
 export const Member = {
@@ -48,9 +46,6 @@ export const Member = {
     }
     if (message.stop !== 0) {
       writer.uint32(56).uint64(message.stop);
-    }
-    if (message.protect !== 0) {
-      writer.uint32(64).uint64(message.protect);
     }
     return writer;
   },
@@ -82,9 +77,6 @@ export const Member = {
           break;
         case 7:
           message.stop = longToNumber(reader.uint64() as Long);
-          break;
-        case 8:
-          message.protect = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -131,11 +123,6 @@ export const Member = {
     } else {
       message.stop = 0;
     }
-    if (object.protect !== undefined && object.protect !== null) {
-      message.protect = Number(object.protect);
-    } else {
-      message.protect = 0;
-    }
     return message;
   },
 
@@ -148,7 +135,6 @@ export const Member = {
     message.previous !== undefined && (obj.previous = message.previous);
     message.limit !== undefined && (obj.limit = message.limit);
     message.stop !== undefined && (obj.stop = message.stop);
-    message.protect !== undefined && (obj.protect = message.protect);
     return obj;
   },
 
@@ -188,11 +174,6 @@ export const Member = {
       message.stop = object.stop;
     } else {
       message.stop = 0;
-    }
-    if (object.protect !== undefined && object.protect !== null) {
-      message.protect = object.protect;
-    } else {
-      message.protect = 0;
     }
     return message;
   },

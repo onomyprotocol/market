@@ -430,8 +430,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
-	memberAsk, memberBid, sdkError = LiquidateDrop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
-
 	if sdkError != nil {
 		return false, sdkError
 	}
@@ -505,8 +503,6 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
-	memberAsk, memberBid, sdkError = LiquidateDrop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
-
 	if sdkError != nil {
 		return false, sdkError
 	}
@@ -514,156 +510,4 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 	return true, nil
-}
-
-func LiquidateDrop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member, error) {
-
-	pool, _ := k.GetPool(ctx, memberBid.Pair)
-	drop, _ := k.GetDrop(ctx, memberBid.Protect)
-
-	// Rates are Ask/Bid and books are stored Bid side
-	// DenomBid Member books would have DenomAsk/DenomBid rates
-	// Orders fulfilled by DenomAsk books would decrease the DenomAsk/DenomBid rate
-	// Protect book ordered like Stop book
-
-	avgAskBal := (memberAsk.Balance.Add(memberAsk.Previous)).Quo(sdk.NewInt(2))
-	avgBidBal := (memberBid.Balance.Add(memberBid.Previous)).Quo(sdk.NewInt(2))
-
-	// memberBid.DenomA is Pool Denom1 then
-	// Test if AMM Average Rate is GTE Rate2
-	// If drop is enabled then continue liquidation
-	if memberBid.DenomA == pool.Denom1 {
-		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, drop.Rate1) {
-			return memberAsk, memberBid, nil
-		}
-	}
-
-	// memberBid.DenomA is Pool Denom2 then
-	// Test if AMM Average Rate is GTE Rate2
-	// If drop is enabled then continue liquidation
-	if memberBid.DenomA == pool.Denom2 {
-		if types.GTE([]sdk.Int{avgAskBal, avgBidBal}, drop.Rate2) {
-			return memberAsk, memberBid, nil
-		}
-	}
-
-	poolSum := memberAsk.Balance.Add(memberBid.Balance)
-
-	// Each Drop is a proportional rite to the AMM balances
-	// % total drops in pool = dropAmount(drop)/dropAmount(pool)*100%
-	// drop_ratio = dropAmount(drop)/dropAmount(pool)
-	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
-	// Profit = dropSum(end) - dropSum(begin)
-	dropSumEnd := (poolSum.Mul(drop.Drops)).Quo(pool.Drops)
-	totalBid := (dropSumEnd.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(memberBid.Balance))
-	totalAsk := dropSumEnd.Sub(totalBid)
-
-	dropProfit := dropSumEnd.Sub(drop.Sum)
-
-	earnRate := k.EarnRate(ctx)
-	burnRate := k.BurnRate(ctx)
-
-	// (dropProfit * bigNum) / ( poolSum * bigNum / memberBid.balance )
-	profitBid := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(memberBid.Balance))
-	earnBid := (profitBid.Mul(earnRate[0])).Quo(earnRate[1])
-	burnBid := (profitBid.Mul(burnRate[0])).Quo(burnRate[1])
-
-	// Redemption value in coin Bid
-	dropOwnerBid := totalBid.Sub(earnBid.Add(burnBid))
-
-	profitAsk := dropProfit.Sub(profitBid)
-	earnAsk := (profitAsk.Mul(earnRate[0])).Quo(earnRate[1])
-	burnAsk := (profitAsk.Mul(burnRate[0])).Quo(burnRate[1])
-
-	var sdkError error
-
-	// Update burnings
-	burningsAsk, found := k.GetBurnings(ctx, denomAsk)
-	if !found {
-		burningsAsk = types.Burnings{
-			Denom:  denomAsk,
-			Amount: burnAsk,
-		}
-		burningsAsk, sdkError = Burn(k, ctx, burningsAsk)
-		if sdkError != nil {
-			return memberAsk, memberBid, sdkError
-		}
-	} else {
-		burningsAsk.Amount = burningsAsk.Amount.Add(burnAsk)
-		burningsAsk, sdkError = Burn(k, ctx, burningsAsk)
-		if sdkError != nil {
-			return memberAsk, memberBid, sdkError
-		}
-	}
-	k.SetBurnings(ctx, burningsAsk)
-
-	burningsBid, found := k.GetBurnings(ctx, denomBid)
-	if !found {
-		burningsBid = types.Burnings{
-			Denom:  denomBid,
-			Amount: burnBid,
-		}
-		burningsBid, sdkError = Burn(k, ctx, burningsBid)
-		if sdkError != nil {
-			return memberAsk, memberBid, sdkError
-		}
-	} else {
-		burningsBid.Amount = burningsBid.Amount.Add(burnBid)
-		burningsBid, sdkError = Burn(k, ctx, burningsBid)
-		if sdkError != nil {
-			return memberAsk, memberBid, sdkError
-		}
-	}
-	k.SetBurnings(ctx, burningsBid)
-
-	// Redemption value in coin Ask
-	dropOwnerAsk := totalAsk.Sub(earnAsk.Add(burnAsk))
-
-	// Update Pool Total Drops
-	pool.Drops = pool.Drops.Sub(drop.Drops)
-
-	// Withdraw from Pool
-	memberAsk.Balance = memberAsk.Balance.Sub(totalAsk)
-	memberBid.Balance = memberBid.Balance.Sub(totalBid)
-
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	owner, _ := sdk.AccAddressFromBech32(drop.Owner)
-
-	coinOwnerAsk := sdk.NewCoin(denomAsk, dropOwnerAsk)
-	coinOwnerBid := sdk.NewCoin(denomBid, dropOwnerBid)
-	coinsOwner := sdk.NewCoins(coinOwnerAsk, coinOwnerBid)
-
-	// Payout Owner
-	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsOwner)
-	if sdkError != nil {
-		return memberAsk, memberBid, sdkError
-	}
-
-	coinLeaderAsk := sdk.NewCoin(denomAsk, earnAsk)
-	coinLeaderBid := sdk.NewCoin(denomBid, earnBid)
-	coinsLeader := sdk.NewCoins(coinLeaderAsk, coinLeaderBid)
-
-	leader, _ := sdk.AccAddressFromBech32(pool.Leader)
-
-	// Payout Leader
-	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
-	if sdkError != nil {
-		return memberAsk, memberBid, sdkError
-	}
-
-	// Deactivate drop
-	drop.Active = false
-
-	// Set Pool Member and Drop
-	k.SetDrop(
-		ctx,
-		drop,
-	)
-
-	k.SetPool(
-		ctx,
-		pool,
-	)
-
-	return memberAsk, memberBid, nil
 }

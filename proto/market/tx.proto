@@ -7,7 +7,7 @@ option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc CreateDrop(MsgCreateDrop) returns (MsgCreateDropResponse);
   rpc RedeemDrop(MsgRedeemDrop) returns (MsgRedeemDropResponse);
   rpc CreateOrder(MsgCreateOrder) returns (MsgCreateOrderResponse);
@@ -20,8 +20,6 @@ message MsgCreatePool {
   string creator = 1;
   string coinA = 2;
   string coinB = 3;
-  repeated string rateA = 4;
-  repeated string rateB = 5;
 }
 
 message MsgCreatePoolResponse {
@@ -31,12 +29,6 @@ message MsgCreateDrop {
   string creator = 1;
   string pair = 2;
   string drops = 3;
-  repeated string rate1 = 4;
-  string prev1 = 5;
-  string next1 = 6;
-  repeated string rate2 = 7;
-  string prev2 = 8;
-  string next2 = 9;
 }
 
 message MsgCreateDropResponse {

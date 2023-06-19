@@ -22,7 +22,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg:  MsgCreatePool{CoinA: "20CoinA", CoinB: "20CoinB", Creator: sample.AccAddress(), RateA: []string{"10", "20"}, RateB: []string{"30", "40"}},
+			msg:  MsgCreatePool{CoinA: "20CoinA", CoinB: "20CoinB", Creator: sample.AccAddress()},
 		},
 	}
 	for _, tt := range tests {
