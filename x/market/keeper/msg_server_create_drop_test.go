@@ -30,7 +30,7 @@ func TestCreateDrop(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -46,7 +46,7 @@ func TestCreateDrop(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -94,7 +94,7 @@ func TestCreateDrop_Pool_Not_Found(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -124,7 +124,7 @@ func TestCreateDrop_Pool_Not_Found(t *testing.T) {
 		coinPair, _ = sample.SampleCoins(s.coinAStr, s.coinBStr)
 		denomA, denomB = sample.SampleDenoms(coinPair)
 		pair = strings.Join([]string{denomA, denomB}, ",")
-		var d = types.MsgCreateDrop{Creator: s.Creator, Pair: pair, Drops: "70", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+		var d = types.MsgCreateDrop{Creator: s.Creator, Pair: pair, Drops: "70"}
 		_, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 		require.Error(t, err)
 		require.ErrorContains(t, err, "the pool not found")
@@ -149,7 +149,7 @@ func TestCreateDrop_Negative(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -165,7 +165,7 @@ func TestCreateDrop_Negative(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
@@ -202,7 +202,7 @@ func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -218,7 +218,7 @@ func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "20", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "20"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.Error(t, err)
 	require.ErrorContains(t, err, "insufficient balance")
@@ -249,7 +249,7 @@ func TestCreateDrop_InvalidDrop(t *testing.T) {
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr, RateA: testdata.RateAstrArray, RateB: testdata.RateBstrArray}
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	//validate CreatePool
 	require.NoError(t, err)
@@ -265,7 +265,7 @@ func TestCreateDrop_InvalidDrop(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "-1", Rate1: testdata.RateAstrArray, Prev1: "0", Next1: "0", Rate2: testdata.RateBstrArray, Prev2: "0", Next2: "0"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "-1"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.Error(t, err)
 

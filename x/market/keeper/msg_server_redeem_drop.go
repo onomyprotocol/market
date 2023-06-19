@@ -193,7 +193,8 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 		return burnings, nil
 	}
 
-	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
+	// TODO: memberBid.balance.Add((memberAsk.Balance * Exchrate(A/B)) / 2)
+	maxMemberBidBal := memberBid.Balance.Add(memberAsk.Balance.Quo(sdk.NewInt(2)))
 	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
 
 	// Partial order may consume only half of memberAsk pool amount

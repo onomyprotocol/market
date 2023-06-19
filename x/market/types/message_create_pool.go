@@ -9,13 +9,11 @@ const TypeMsgCreatePool = "create_pool"
 
 var _ sdk.Msg = &MsgCreatePool{}
 
-func NewMsgCreatePool(creator string, coinA string, coinB string, rateA []string, rateB []string) *MsgCreatePool {
+func NewMsgCreatePool(creator string, coinA string, coinB string) *MsgCreatePool {
 	return &MsgCreatePool{
 		Creator: creator,
 		CoinA:   coinA,
 		CoinB:   coinB,
-		RateA:   rateA,
-		RateB:   rateB,
 	}
 }
 
@@ -58,26 +56,6 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 
 	if coinA.Denom == coinB.Denom {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CoinA equal to CoinB")
-	}
-
-	_, ok := sdk.NewIntFromString(msg.RateA[0])
-	if !ok {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
-	}
-
-	_, ok = sdk.NewIntFromString(msg.RateA[1])
-	if !ok {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
-	}
-
-	_, ok = sdk.NewIntFromString(msg.RateB[0])
-	if !ok {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
-	}
-
-	_, ok = sdk.NewIntFromString(msg.RateB[1])
-	if !ok {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
 	}
 
 	return nil

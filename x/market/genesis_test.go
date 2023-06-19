@@ -39,12 +39,6 @@ func TestGenesis(t *testing.T) {
 				Drops:  sdk.NewIntFromUint64(uint64(0)),
 				Sum:    sdk.NewIntFromUint64(uint64(0)),
 				Active: true,
-				Rate1:  []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
-				Prev1:  uint64(0),
-				Next1:  uint64(0),
-				Rate2:  []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
-				Prev2:  uint64(0),
-				Next2:  uint64(0),
 			},
 			{
 				Uid:    1,
@@ -53,12 +47,6 @@ func TestGenesis(t *testing.T) {
 				Drops:  sdk.NewIntFromUint64(uint64(1)),
 				Sum:    sdk.NewIntFromUint64(uint64(0)),
 				Active: true,
-				Rate1:  []sdk.Int{sdk.NewInt(int64(1)), sdk.NewInt(int64(1))},
-				Prev1:  uint64(1),
-				Next1:  uint64(1),
-				Rate2:  []sdk.Int{sdk.NewInt(int64(1)), sdk.NewInt(int64(1))},
-				Prev2:  uint64(1),
-				Next2:  uint64(1),
 			},
 		},
 		MemberList: []types.Member{
@@ -70,7 +58,6 @@ func TestGenesis(t *testing.T) {
 				Previous: sdk.NewIntFromUint64(uint64(0)),
 				Limit:    uint64(0),
 				Stop:     uint64(0),
-				Protect:  uint64(0),
 			},
 			{
 				Pair:     "1",
@@ -80,7 +67,6 @@ func TestGenesis(t *testing.T) {
 				Previous: sdk.NewIntFromUint64(uint64(1)),
 				Limit:    uint64(1),
 				Stop:     uint64(1),
-				Protect:  uint64(1),
 			},
 		},
 		BurningsList: []types.Burnings{

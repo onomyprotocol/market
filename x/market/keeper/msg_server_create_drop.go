@@ -48,17 +48,19 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	// The beginning Drop Sum is defined as:
 	// dropSum == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
-	dropSum := ((drops.Mul(poolSum).Mul(sdk.NewInt(10 ^ 18))).Quo(pool.Drops)).Quo(sdk.NewInt(10 ^ 18))
+	// dropSum == poolSum * (Drop.drops / Pool.drops)
+	// dropSum == (poolSum * Drop.drops) / Pool.drops
+	dropSum := (poolSum.Mul(drops)).Quo(pool.Drops)
 
 	// dropSum == A + B
 	// dropSum = B + B * exchrate(A/B)
 	// dropSum = B * (1 + exchrate(A/B))
 	// B = dropSum / (1 + exchrate(A/B))
-	// 1 + exchrate(A/B) = 1 + AMM A Balance / AMM B Balance
-	// = AMM B Balance / AMM B Balance + AMM A Balance / AMM B Balance
-	// = (AMM B Balance + AMM A Balance)/AMM B Balance
-	// B = dropSum / [(AMM B Balance + AMM A Balance)/AMM B Balance]
-	amount1 := dropSum.Mul(sdk.NewInt(10 ^ 18)).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
+	// B = dropSum / (1 + Member1 Balance / Member2 Balance)
+	// B = dropSum / ((Member1 + Member2) / Member2)
+	// B = dropSum / (poolSum / Member2)
+	// B = (dropSum * Member2) / poolSum
+	amount1 := (dropSum.Mul(member2.Balance)).Quo(poolSum)
 
 	coin1 := sdk.NewCoin(denom1, amount1)
 
@@ -100,7 +102,18 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member2.Balance = member2.Balance.Add(amount2)
 	k.SetMember(ctx, member2)
 
+	// update member1 event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeUpdateMember,
+			sdk.NewAttribute(types.AttributeKeyDenomA, denom1),
+			sdk.NewAttribute(types.AttributeKeyDenomB, denom2),
+			sdk.NewAttribute(types.AttributeKeyBalance, member2.Balance.String()),
+		),
+	)
+
 	// Get Drop Creator and Pool Leader total drops from all drops owned
+	// TODO: Need to double check that database is configured properly
 	sumDropsCreator := k.GetOwnerDropsInt(ctx, msg.Creator).Add(drops)
 	sumDropsLeader := k.GetOwnerDropsInt(ctx, pool.Leader)
 
@@ -119,7 +132,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		sdk.NewEvent(
 			types.EventTypeCreatePool,
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeader, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyLeader, pool.Leader),
 			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
 		),
 	)
