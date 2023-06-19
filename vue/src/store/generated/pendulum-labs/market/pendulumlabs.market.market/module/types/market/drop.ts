@@ -13,6 +13,11 @@ export interface Drop {
   active: boolean;
 }
 
+export interface DropOwner {
+  owner: string;
+  uids: number[];
+}
+
 const baseDrop: object = {
   uid: 0,
   owner: "",
@@ -155,6 +160,94 @@ export const Drop = {
       message.active = object.active;
     } else {
       message.active = false;
+    }
+    return message;
+  },
+};
+
+const baseDropOwner: object = { owner: "", uids: 0 };
+
+export const DropOwner = {
+  encode(message: DropOwner, writer: Writer = Writer.create()): Writer {
+    if (message.owner !== "") {
+      writer.uint32(10).string(message.owner);
+    }
+    writer.uint32(18).fork();
+    for (const v of message.uids) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): DropOwner {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseDropOwner } as DropOwner;
+    message.uids = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.owner = reader.string();
+          break;
+        case 2:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.uids.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.uids.push(longToNumber(reader.uint64() as Long));
+          }
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DropOwner {
+    const message = { ...baseDropOwner } as DropOwner;
+    message.uids = [];
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
+    }
+    if (object.uids !== undefined && object.uids !== null) {
+      for (const e of object.uids) {
+        message.uids.push(Number(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: DropOwner): unknown {
+    const obj: any = {};
+    message.owner !== undefined && (obj.owner = message.owner);
+    if (message.uids) {
+      obj.uids = message.uids.map((e) => e);
+    } else {
+      obj.uids = [];
+    }
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<DropOwner>): DropOwner {
+    const message = { ...baseDropOwner } as DropOwner;
+    message.uids = [];
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
+    }
+    if (object.uids !== undefined && object.uids !== null) {
+      for (const e of object.uids) {
+        message.uids.push(e);
+      }
     }
     return message;
   },

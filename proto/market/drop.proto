@@ -22,3 +22,7 @@ message Drop {
   bool active = 6;
 }
 
+message DropOwner {
+  string owner = 1;
+  repeated uint64 uids = 2;
+}

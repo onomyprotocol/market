@@ -2,6 +2,7 @@ import { txClient, queryClient, MissingWalletError , registry} from './module'
 
 import { Burnings } from "./module/types/market/burnings"
 import { Drop } from "./module/types/market/drop"
+import { DropOwner } from "./module/types/market/drop"
 import { Member } from "./module/types/market/member"
 import { Order } from "./module/types/market/order"
 import { OrderResponse } from "./module/types/market/order"
@@ -9,7 +10,7 @@ import { Params } from "./module/types/market/params"
 import { Pool } from "./module/types/market/pool"
 
 
-export { Burnings, Drop, Member, Order, OrderResponse, Params, Pool };
+export { Burnings, Drop, DropOwner, Member, Order, OrderResponse, Params, Pool };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -63,6 +64,7 @@ const getDefaultState = () => {
 				_Structure: {
 						Burnings: getStructure(Burnings.fromPartial({})),
 						Drop: getStructure(Drop.fromPartial({})),
+						DropOwner: getStructure(DropOwner.fromPartial({})),
 						Member: getStructure(Member.fromPartial({})),
 						Order: getStructure(Order.fromPartial({})),
 						OrderResponse: getStructure(OrderResponse.fromPartial({})),
@@ -494,6 +496,36 @@ export default {
 		},
 		
 		
+		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCancelOrder(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateDrop({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateDrop(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateDrop:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgRedeemDrop({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -521,21 +553,6 @@ export default {
 					throw new Error('TxClient:MsgCreateOrder:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgCreateOrder:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -569,22 +586,33 @@ export default {
 				}
 			}
 		},
-		async sendMsgCreateDrop({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		async MsgCancelOrder({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCancelOrder(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateDrop({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgCreateDrop(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
+				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgCreateDrop:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCreateDrop:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		
 		async MsgRedeemDrop({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -611,19 +639,6 @@ export default {
 				}
 			}
 		},
-		async MsgCancelOrder({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgMarketOrder({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -647,19 +662,6 @@ export default {
 					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreateDrop({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateDrop(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateDrop:Create Could not create message: ' + e.message)
 				}
 			}
 		},
