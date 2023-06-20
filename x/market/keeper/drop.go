@@ -96,13 +96,15 @@ func (k Keeper) GetDropsSum(
 	ctx sdk.Context,
 	owner string,
 ) (sumDrops sdk.Int) {
+	sumDrops = sdk.NewInt(0)
+
 	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
 
 	b := store1.Get(types.DropsKey(
 		owner,
 	))
 	if b == nil {
-		return sdk.NewInt(0)
+		return
 	}
 
 	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
