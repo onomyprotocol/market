@@ -15,9 +15,9 @@ func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
 		order.Uid,
 	), b)
 
-	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
 
-	c := store2.Get(types.DropsKey(
+	c := store2.Get(types.OrdersKey(
 		order.Owner,
 	))
 
@@ -54,6 +54,42 @@ func (k Keeper) GetOrder(
 
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
+}
+
+// GetOwnerOrders returns orders from a single owner
+func (k Keeper) GetOrders(
+	ctx sdk.Context,
+	owner string,
+) (list []types.Order) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
+
+	b := store1.Get(types.OrdersKey(
+		owner,
+	))
+	if b == nil {
+		return list
+	}
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	var orders types.Orders
+	var order types.Order
+
+	k.cdc.MustUnmarshal(b, &orders)
+
+	for _, uid := range orders.Uids {
+
+		b := store2.Get(types.OrderKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &order)
+			list = append(list, order)
+		}
+	}
+
+	return
 }
 
 // RemoveOrder removes a order from the store
@@ -131,12 +167,85 @@ func (k Keeper) GetBook(
 	return
 }
 
-// GetOrder returns a order from its index
+// GetBookEnds returns adjacent orders determined by rate
 func (k Keeper) GetBookEnds(
 	ctx sdk.Context,
 	denomA string,
 	denomB string,
 	orderType string,
-) (ends []types.OrderResponse) {
-	return nil
+	rate []sdk.Int,
+) (ends [2]uint64) {
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	member, _ := k.GetMember(ctx, denomA, denomB)
+
+	var uid uint64
+	var orderBytes []byte
+	var order types.Order
+
+	if orderType == "limit" {
+		uid = member.Limit
+
+		if uid == 0 {
+			return [2]uint64{0, 0}
+		}
+
+		orderBytes = store.Get(types.OrderKey(
+			uid,
+		))
+
+		k.cdc.MustUnmarshal(orderBytes, &order)
+
+		for types.GT(order.Rate, rate) || order.Next != uint64(0) {
+
+			orderBytes = store.Get(types.OrderKey(
+				order.Next,
+			))
+
+			k.cdc.MustUnmarshal(orderBytes, &order)
+
+		}
+
+		if order.Next == uint64(0) {
+			if types.LTE(order.Rate, rate) {
+				return [2]uint64{order.Uid, uint64(0)}
+			}
+		}
+
+		return [2]uint64{order.Prev, order.Uid}
+
+	} else {
+
+		uid = member.Stop
+
+		if uid == 0 {
+			return [2]uint64{0, 0}
+		}
+
+		orderBytes = store.Get(types.OrderKey(
+			uid,
+		))
+
+		k.cdc.MustUnmarshal(orderBytes, &order)
+
+		for types.LT(order.Rate, rate) || order.Next != uint64(0) {
+
+			orderBytes = store.Get(types.OrderKey(
+				order.Next,
+			))
+
+			k.cdc.MustUnmarshal(orderBytes, &order)
+
+		}
+
+		if order.Next == uint64(0) {
+			if types.GTE(order.Rate, rate) {
+				return [2]uint64{order.Uid, uint64(0)}
+			}
+		}
+
+		return [2]uint64{order.Prev, order.Uid}
+
+	}
 }
