@@ -165,6 +165,12 @@ func TestCreate2Orders(t *testing.T) {
 	beforecount = testInput.MarketKeeper.GetUidCount(testInput.Context)
 	//Create Order
 	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
+	rate, err := types.RateStringToInt(o.Rate)
+	require.NoError(t, err)
+	ends := testInput.MarketKeeper.GetBookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
+	require.NoError(t, err)
+	o.Prev = strconv.FormatUint(ends[0], 10)
+	o.Next = strconv.FormatUint(ends[1], 10)
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
 	require.NoError(t, err)
 	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
@@ -177,18 +183,18 @@ func TestCreate2Orders(t *testing.T) {
 	require.Equal(t, orders.Amount.String(), o.Amount)
 
 	//Create Order
-
+	beforecount = aftercount
 	var q = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
-	rate, err := types.RateStringToInt(q.Rate)
+	rate, err = types.RateStringToInt(q.Rate)
 	require.NoError(t, err)
-	ends := testInput.MarketKeeper.GetBookEnds(testInput.Context, q.DenomAsk, q.DenomBid, q.OrderType, rate)
+	ends = testInput.MarketKeeper.GetBookEnds(testInput.Context, q.DenomAsk, q.DenomBid, q.OrderType, rate)
 	require.NoError(t, err)
 	q.Prev = strconv.FormatUint(ends[0], 10)
 	q.Next = strconv.FormatUint(ends[1], 10)
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &q)
 	require.NoError(t, err)
-	// aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	// require.Equal(t, beforecount+1, aftercount)
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
 	//Validate Order
 	orders2, orderfound2 := testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
 	require.True(t, orderfound2)

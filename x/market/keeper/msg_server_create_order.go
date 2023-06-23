@@ -20,6 +20,9 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	*/
 
 	amount, _ := sdk.NewIntFromString(msg.Amount)
+	if amount == sdk.NewInt(0) {
+		sdkerrors.Wrapf(types.ErrInvalidOrderAmount, "Amount must be greater than zero")
+	}
 
 	coinBid := sdk.NewCoin(msg.DenomBid, amount)
 
@@ -44,25 +47,10 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
-	var rateUint64 [2]uint64
-	var err error
-
-	// Rate[0] needs to fit into uint64 to avoid numerical errors
-	rateUint64[0], err = strconv.ParseUint(msg.Rate[0], 10, 64)
+	rate, err := types.RateStringToInt(msg.Rate)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+		return nil, err
 	}
-
-	// Rate[1] needs to fit into uint64 to avoid numerical errors
-	rateUint64[1], err = strconv.ParseUint(msg.Rate[1], 10, 64)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
-	}
-
-	var rate []sdk.Int
-
-	rate = append(rate, sdk.NewIntFromUint64(rateUint64[0]))
-	rate = append(rate, sdk.NewIntFromUint64(rateUint64[1]))
 
 	prev, _ := strconv.ParseUint(msg.Prev, 10, 64)
 

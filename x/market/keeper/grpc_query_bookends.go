@@ -2,10 +2,8 @@ package keeper
 
 import (
 	"context"
-	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/pendulum-labs/market/x/market/types"
 	"google.golang.org/grpc/codes"
@@ -19,25 +17,10 @@ func (k Keeper) Bookends(goCtx context.Context, req *types.QueryBookendsRequest)
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var rateUint64 [2]uint64
-	var err error
-
-	// Rate[0] needs to fit into uint64 to avoid numerical errors
-	rateUint64[0], err = strconv.ParseUint(req.Rate[0], 10, 64)
+	rate, err := types.RateStringToInt(req.Rate)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+		return nil, err
 	}
-
-	// Rate[1] needs to fit into uint64 to avoid numerical errors
-	rateUint64[1], err = strconv.ParseUint(req.Rate[1], 10, 64)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
-	}
-
-	var rate []sdk.Int
-
-	rate[0] = sdk.NewIntFromUint64(rateUint64[0])
-	rate[1] = sdk.NewIntFromUint64(rateUint64[1])
 
 	ends := k.GetBookEnds(ctx, req.GetCoinA(), req.GetCoinB(), req.GetOrderType(), rate)
 
