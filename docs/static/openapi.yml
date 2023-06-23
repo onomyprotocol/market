@@ -26710,6 +26710,73 @@ paths:
           format: uint64
       tags:
         - Query
+  '/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}':
+    get:
+      summary: Queries a list of Bookends items.
+      operationId: PendulumlabsMarketMarketBookends
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              coinA:
+                type: string
+              coinB:
+                type: string
+              orderType:
+                type: string
+              rate:
+                type: array
+                items:
+                  type: string
+              prev:
+                type: string
+                format: uint64
+              next:
+                type: string
+                format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: coinA
+          in: path
+          required: true
+          type: string
+        - name: coinB
+          in: path
+          required: true
+          type: string
+        - name: orderType
+          in: path
+          required: true
+          type: string
+        - name: rate
+          in: path
+          required: true
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+          minItems: 1
+      tags:
+        - Query
   /pendulum-labs/market/market/burnings:
     get:
       summary: Queries a list of Burnings items.
@@ -46049,6 +46116,25 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  pendulumlabs.market.market.QueryBookendsResponse:
+    type: object
+    properties:
+      coinA:
+        type: string
+      coinB:
+        type: string
+      orderType:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
   pendulumlabs.market.market.QueryGetBookResponse:
     type: object
     properties:

@@ -70,13 +70,17 @@ func (msg *MsgCreateOrder) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
-	_, ok = sdk.NewIntFromString(msg.Rate[0])
-	if !ok {
+	// Rate[0] needs to fit into uint64 to avoid numerical errors
+	// Rate[0] will be converted to sdk.Int type in execution
+	_, err = strconv.ParseUint(msg.Rate[0], 10, 64)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
 	}
 
-	_, ok = sdk.NewIntFromString(msg.Rate[1])
-	if !ok {
+	// Rate[1] needs to fit into uint64 to avoid numerical errors
+	// Rate[1] will be converted to sdk.Int type in execution
+	_, err = strconv.ParseUint(msg.Rate[1], 10, 64)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
 	}
 

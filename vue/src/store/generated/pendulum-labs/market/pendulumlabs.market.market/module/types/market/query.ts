@@ -131,6 +131,22 @@ export interface QueryGetBookResponse {
   book: OrderResponse[];
 }
 
+export interface QueryBookendsRequest {
+  coinA: string;
+  coinB: string;
+  orderType: string;
+  rate: string[];
+}
+
+export interface QueryBookendsResponse {
+  coinA: string;
+  coinB: string;
+  orderType: string;
+  rate: string[];
+  prev: number;
+  next: number;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -2013,6 +2029,286 @@ export const QueryGetBookResponse = {
   },
 };
 
+const baseQueryBookendsRequest: object = {
+  coinA: "",
+  coinB: "",
+  orderType: "",
+  rate: "",
+};
+
+export const QueryBookendsRequest = {
+  encode(
+    message: QueryBookendsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.coinA !== "") {
+      writer.uint32(10).string(message.coinA);
+    }
+    if (message.coinB !== "") {
+      writer.uint32(18).string(message.coinB);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(26).string(message.orderType);
+    }
+    for (const v of message.rate) {
+      writer.uint32(34).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryBookendsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryBookendsRequest } as QueryBookendsRequest;
+    message.rate = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.coinA = reader.string();
+          break;
+        case 2:
+          message.coinB = reader.string();
+          break;
+        case 3:
+          message.orderType = reader.string();
+          break;
+        case 4:
+          message.rate.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryBookendsRequest {
+    const message = { ...baseQueryBookendsRequest } as QueryBookendsRequest;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = String(object.coinA);
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = String(object.coinB);
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(String(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: QueryBookendsRequest): unknown {
+    const obj: any = {};
+    message.coinA !== undefined && (obj.coinA = message.coinA);
+    message.coinB !== undefined && (obj.coinB = message.coinB);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    if (message.rate) {
+      obj.rate = message.rate.map((e) => e);
+    } else {
+      obj.rate = [];
+    }
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryBookendsRequest>): QueryBookendsRequest {
+    const message = { ...baseQueryBookendsRequest } as QueryBookendsRequest;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = object.coinA;
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = object.coinB;
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(e);
+      }
+    }
+    return message;
+  },
+};
+
+const baseQueryBookendsResponse: object = {
+  coinA: "",
+  coinB: "",
+  orderType: "",
+  rate: "",
+  prev: 0,
+  next: 0,
+};
+
+export const QueryBookendsResponse = {
+  encode(
+    message: QueryBookendsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.coinA !== "") {
+      writer.uint32(10).string(message.coinA);
+    }
+    if (message.coinB !== "") {
+      writer.uint32(18).string(message.coinB);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(26).string(message.orderType);
+    }
+    for (const v of message.rate) {
+      writer.uint32(34).string(v!);
+    }
+    if (message.prev !== 0) {
+      writer.uint32(40).uint64(message.prev);
+    }
+    if (message.next !== 0) {
+      writer.uint32(48).uint64(message.next);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryBookendsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryBookendsResponse } as QueryBookendsResponse;
+    message.rate = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.coinA = reader.string();
+          break;
+        case 2:
+          message.coinB = reader.string();
+          break;
+        case 3:
+          message.orderType = reader.string();
+          break;
+        case 4:
+          message.rate.push(reader.string());
+          break;
+        case 5:
+          message.prev = longToNumber(reader.uint64() as Long);
+          break;
+        case 6:
+          message.next = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryBookendsResponse {
+    const message = { ...baseQueryBookendsResponse } as QueryBookendsResponse;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = String(object.coinA);
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = String(object.coinB);
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(String(e));
+      }
+    }
+    if (object.prev !== undefined && object.prev !== null) {
+      message.prev = Number(object.prev);
+    } else {
+      message.prev = 0;
+    }
+    if (object.next !== undefined && object.next !== null) {
+      message.next = Number(object.next);
+    } else {
+      message.next = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryBookendsResponse): unknown {
+    const obj: any = {};
+    message.coinA !== undefined && (obj.coinA = message.coinA);
+    message.coinB !== undefined && (obj.coinB = message.coinB);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    if (message.rate) {
+      obj.rate = message.rate.map((e) => e);
+    } else {
+      obj.rate = [];
+    }
+    message.prev !== undefined && (obj.prev = message.prev);
+    message.next !== undefined && (obj.next = message.next);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryBookendsResponse>
+  ): QueryBookendsResponse {
+    const message = { ...baseQueryBookendsResponse } as QueryBookendsResponse;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = object.coinA;
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = object.coinB;
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(e);
+      }
+    }
+    if (object.prev !== undefined && object.prev !== null) {
+      message.prev = object.prev;
+    } else {
+      message.prev = 0;
+    }
+    if (object.next !== undefined && object.next !== null) {
+      message.next = object.next;
+    } else {
+      message.next = 0;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -2041,6 +2337,8 @@ export interface Query {
   OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse>;
   /** Queries a list of GetBook items. */
   Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse>;
+  /** Queries a list of Bookends items. */
+  Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2191,6 +2489,18 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryGetBookResponse.decode(new Reader(data))
+    );
+  }
+
+  Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse> {
+    const data = QueryBookendsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "Bookends",
+      data
+    );
+    return promise.then((data) =>
+      QueryBookendsResponse.decode(new Reader(data))
     );
   }
 }

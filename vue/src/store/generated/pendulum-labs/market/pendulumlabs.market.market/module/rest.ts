@@ -178,6 +178,19 @@ export interface MarketQueryAllPoolResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryBookendsResponse {
+  coinA?: string;
+  coinB?: string;
+  orderType?: string;
+  rate?: string[];
+
+  /** @format uint64 */
+  prev?: string;
+
+  /** @format uint64 */
+  next?: string;
+}
+
 export interface MarketQueryGetBookResponse {
   book?: MarketOrderResponse[];
 }
@@ -480,6 +493,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBookends
+   * @summary Queries a list of Bookends items.
+   * @request GET:/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}
+   */
+  queryBookends = (coinA: string, coinB: string, orderType: string, rate: string[], params: RequestParams = {}) =>
+    this.request<MarketQueryBookendsResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/bookends/${coinA}/${coinB}/${orderType}/${rate}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *

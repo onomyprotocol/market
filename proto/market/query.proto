@@ -75,6 +75,11 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}";
 	}
 
+// Queries a list of Bookends items.
+	rpc Bookends(QueryBookendsRequest) returns (QueryBookendsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -197,6 +202,22 @@ cosmos.base.query.v1beta1.PageRequest pagination = 4;
 
 message QueryGetBookResponse {
 	repeated OrderResponse book = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryBookendsRequest {
+  string coinA = 1;
+  string coinB = 2;
+  string orderType = 3;
+  repeated string rate = 4;
+}
+
+message QueryBookendsResponse {
+	string coinA = 1;
+    string coinB = 2;
+    string orderType = 3;
+    repeated string rate = 4;
+	uint64 prev = 5;
+	uint64 next = 6;
 }
 
 // this line is used by starport scaffolding # 3

@@ -70,7 +70,7 @@ func TestBurningsQuerySingle(t *testing.T) {
 }
 
 func TestBurningsQueryPaginated(t *testing.T) {
-	keeper:= keepertest.CreateTestEnvironment(t)
+	keeper := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(keeper.Context)
 	msgs := createNBurnings(keeper.MarketKeeper, keeper.Context, 5)
 
