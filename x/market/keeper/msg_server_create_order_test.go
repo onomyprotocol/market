@@ -77,7 +77,7 @@ func TestCreateOrder(t *testing.T) {
 	//Create Order
 	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
 	rate, _ := types.RateStringToInt(o.Rate)
-	bookends := testInput.MarketKeeper.GetBookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
+	bookends := testInput.MarketKeeper.BookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
 	o.Prev = strconv.FormatUint(bookends[0], 10)
 	o.Next = strconv.FormatUint(bookends[1], 10)
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
@@ -167,7 +167,7 @@ func TestCreate2Orders(t *testing.T) {
 	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
 	rate, err := types.RateStringToInt(o.Rate)
 	require.NoError(t, err)
-	ends := testInput.MarketKeeper.GetBookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
+	ends := testInput.MarketKeeper.BookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
 	require.NoError(t, err)
 	o.Prev = strconv.FormatUint(ends[0], 10)
 	o.Next = strconv.FormatUint(ends[1], 10)
@@ -187,7 +187,7 @@ func TestCreate2Orders(t *testing.T) {
 	var q = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
 	rate, err = types.RateStringToInt(q.Rate)
 	require.NoError(t, err)
-	ends = testInput.MarketKeeper.GetBookEnds(testInput.Context, q.DenomAsk, q.DenomBid, q.OrderType, rate)
+	ends = testInput.MarketKeeper.BookEnds(testInput.Context, q.DenomAsk, q.DenomBid, q.OrderType, rate)
 	require.NoError(t, err)
 	q.Prev = strconv.FormatUint(ends[0], 10)
 	q.Next = strconv.FormatUint(ends[1], 10)

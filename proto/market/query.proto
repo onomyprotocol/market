@@ -70,8 +70,8 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/order";
 	}
 
-// Queries a list of GetBook items.
-	rpc Book(QueryGetBookRequest) returns (QueryGetBookResponse) {
+// Queries a list of Book items.
+	rpc Book(QueryBookRequest) returns (QueryBookResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}";
 	}
 
@@ -193,14 +193,14 @@ message QueryAllOrderResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetBookRequest {
+message QueryBookRequest {
   string denomA = 1;
   string denomB = 2;
   string orderType = 3;
 cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
-message QueryGetBookResponse {
+message QueryBookResponse {
 	repeated OrderResponse book = 1 [(gogoproto.nullable) = false];
 }
 

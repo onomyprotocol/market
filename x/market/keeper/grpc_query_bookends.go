@@ -22,7 +22,7 @@ func (k Keeper) Bookends(goCtx context.Context, req *types.QueryBookendsRequest)
 		return nil, err
 	}
 
-	ends := k.GetBookEnds(ctx, req.GetCoinA(), req.GetCoinB(), req.GetOrderType(), rate)
+	ends := k.BookEnds(ctx, req.GetCoinA(), req.GetCoinB(), req.GetOrderType(), rate)
 
 	// TODO: Process the query
 	_ = ctx

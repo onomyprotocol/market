@@ -2,6 +2,7 @@ package cli
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -20,7 +21,7 @@ func CmdBookends() *cobra.Command {
 			reqCoinA := args[0]
 			reqCoinB := args[1]
 			reqOrderType := args[2]
-			reqRate := args[3]
+			reqRate := strings.Split(args[3], listSeparator)
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

@@ -178,6 +178,10 @@ export interface MarketQueryAllPoolResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryBookResponse {
+  book?: MarketOrderResponse[];
+}
+
 export interface MarketQueryBookendsResponse {
   coinA?: string;
   coinB?: string;
@@ -189,10 +193,6 @@ export interface MarketQueryBookendsResponse {
 
   /** @format uint64 */
   next?: string;
-}
-
-export interface MarketQueryGetBookResponse {
-  book?: MarketOrderResponse[];
 }
 
 export interface MarketQueryGetBurningsResponse {
@@ -598,7 +598,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryBook
-   * @summary Queries a list of GetBook items.
+   * @summary Queries a list of Book items.
    * @request GET:/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}
    */
   queryBook = (
@@ -614,7 +614,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryGetBookResponse, RpcStatus>({
+    this.request<MarketQueryBookResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/get_book/${denomA}/${denomB}/${orderType}`,
       method: "GET",
       query: query,

@@ -27136,7 +27136,7 @@ paths:
         - Query
   '/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}':
     get:
-      summary: Queries a list of GetBook items.
+      summary: Queries a list of Book items.
       operationId: PendulumlabsMarketMarketBook
       responses:
         '200':
@@ -46116,26 +46116,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryBookendsResponse:
-    type: object
-    properties:
-      coinA:
-        type: string
-      coinB:
-        type: string
-      orderType:
-        type: string
-      rate:
-        type: array
-        items:
-          type: string
-      prev:
-        type: string
-        format: uint64
-      next:
-        type: string
-        format: uint64
-  pendulumlabs.market.market.QueryGetBookResponse:
+  pendulumlabs.market.market.QueryBookResponse:
     type: object
     properties:
       book:
@@ -46168,6 +46149,25 @@ definitions:
             next:
               type: string
               format: uint64
+  pendulumlabs.market.market.QueryBookendsResponse:
+    type: object
+    properties:
+      coinA:
+        type: string
+      coinB:
+        type: string
+      orderType:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
   pendulumlabs.market.market.QueryGetBurningsResponse:
     type: object
     properties:

@@ -167,8 +167,8 @@ func (k Keeper) GetBook(
 	return
 }
 
-// GetBookEnds returns adjacent orders determined by rate
-func (k Keeper) GetBookEnds(
+// BookEnds returns adjacent orders determined by rate
+func (k Keeper) BookEnds(
 	ctx sdk.Context,
 	denomA string,
 	denomB string,
