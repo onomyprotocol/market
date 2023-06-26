@@ -102,7 +102,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member2.Balance = member2.Balance.Add(amount2)
 	k.SetMember(ctx, member2)
 
-	// update member1 event
+	// update member2 event
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeUpdateMember,
