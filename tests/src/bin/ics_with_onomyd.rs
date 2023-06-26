@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use common::{dockerfile_marketd, dockerfile_onomyd};
 use log::info;
 use onomy_test_lib::{
     cosmovisor::{
@@ -7,10 +8,11 @@ use onomy_test_lib::{
         onomyd_setup, set_minimum_gas_price, sh_cosmovisor_no_dbg, wait_for_num_blocks,
     },
     cosmovisor_ics::{cosmovisor_add_consumer, marketd_setup},
+    dockerfiles::dockerfile_hermes,
     hermes::{hermes_set_gas_price_denom, hermes_start, sh_hermes, IbcPair},
     onomy_std_init,
     super_orchestrator::{
-        docker::{Container, ContainerNetwork},
+        docker::{Container, ContainerNetwork, Dockerfile},
         net_message::NetMessenger,
         remove_files_in_dir, sh,
         stacked_errors::{MapAddError, Result},
@@ -44,9 +46,10 @@ async fn main() -> Result<()> {
 }
 
 async fn container_runner(args: &Args) -> Result<()> {
+    let logs_dir = "./tests/logs";
+    let dockerfiles_dir = "./tests/dockerfiles";
     let bin_entrypoint = &args.bin_name;
     let container_target = "x86_64-unknown-linux-gnu";
-    let logs_dir = "./tests/logs";
 
     // build internal runner with `--release`
     sh("cargo build --release --bin", &[
@@ -63,6 +66,7 @@ async fn container_runner(args: &Args) -> Result<()> {
         "./target/{container_target}/release/{bin_entrypoint}"
     ));
     let entrypoint = entrypoint.as_deref();
+
     let volumes = vec![(logs_dir, "/logs")];
     let mut onomyd_volumes = volumes.clone();
     let mut consumer_volumes = volumes.clone();
@@ -80,32 +84,36 @@ async fn container_runner(args: &Args) -> Result<()> {
         vec![
             Container::new(
                 "hermes",
-                Some("./tests/dockerfiles/hermes.dockerfile"),
-                None,
-                &volumes,
+                Dockerfile::Contents(dockerfile_hermes("hermes_config.toml")),
                 entrypoint,
                 &["--entry-name", "hermes"],
             ),
             Container::new(
                 "onomyd",
-                Some("./tests/dockerfiles/onomyd.dockerfile"),
-                None,
-                &onomyd_volumes,
+                Dockerfile::Contents(dockerfile_onomyd()),
                 entrypoint,
                 &["--entry-name", "onomyd"],
-            ),
+            )
+            .volumes(&[(
+                "./tests/resources/keyring-test",
+                "/root/.onomy/keyring-test",
+            )]),
             Container::new(
                 "marketd",
-                Some("./tests/dockerfiles/marketd.dockerfile"),
-                None,
-                &consumer_volumes,
+                Dockerfile::Contents(dockerfile_marketd()),
                 entrypoint,
                 &["--entry-name", "marketd"],
-            ),
+            )
+            .volumes(&[(
+                "./tests/resources/keyring-test",
+                "/root/.onomy_market/keyring-test",
+            )]),
         ],
+        Some(dockerfiles_dir),
         true,
         logs_dir,
-    )?;
+    )?
+    .add_common_volumes(&[(logs_dir, "/logs")]);
     cn.run_all(true).await?;
     cn.wait_with_timeout_all(true, TIMEOUT).await?;
     Ok(())
@@ -165,7 +173,7 @@ async fn onomyd_runner(args: &Args) -> Result<()> {
         .await
         .map_add_err(|| ())?;
 
-    let mnemonic = onomyd_setup(daemon_home, false).await?;
+    let mnemonic = onomyd_setup(daemon_home).await?;
     // send mnemonic to hermes
     nm_hermes.send::<String>(&mnemonic).await?;
 
