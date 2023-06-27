@@ -57,44 +57,41 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
-	earnRatesStringArray := strings.Split(k.EarnRates(ctx), ",")
-	var earnRates []sdk.Int
-	for i, v := range earnRatesStringArray {
-		earnRates[i], _ = sdk.NewIntFromString(v)
-	}
-
-	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
-
 	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
 	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
 
-	// Share profit
-	var earnings2 []sdk.Int
-	earnings2Total := sdk.NewInt(0)
-	for i, v := range earnRates {
-		earnings2[i] = (profit2.Mul(v)).Quo(sdk.NewInt(1000))
-		earnings2Total = earnings2Total.Add(earnings2[i])
-	}
-
-	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
-
-	// Redemption value in coin 2
-	redeem2 := total2.Sub(earnings2Total.Add(burn2))
-
 	profit1 := dropProfit.Sub(profit2)
 
-	// Share profit
-	var earnings1 []sdk.Int
+	earnRatesStringArray := strings.Split(k.EarnRates(ctx), ",")
+	var earnRates [10]sdk.Int
+	var earnings1 [10]sdk.Int
 	earnings1Total := sdk.NewInt(0)
-	for i, v := range earnRates {
-		earnings1[i] = (profit1.Mul(v)).Quo(sdk.NewInt(1000))
+	var earnings2 [10]sdk.Int
+	earnings2Total := sdk.NewInt(0)
+
+	for i, v := range earnRatesStringArray {
+		earnRates[i], _ = sdk.NewIntFromString(v)
+		if !found {
+			return nil, sdkerrors.Wrapf(types.ErrDropNotFound, "%s", msg.Uid)
+		}
+		earnings2[i] = (profit2.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
+		earnings2Total = earnings2Total.Add(earnings2[i])
+
+		earnings1[i] = (profit1.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
 		earnings1Total = earnings1Total.Add(earnings1[i])
 	}
+
+	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
 
 	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(1000))
 
 	// Redemption value in coin 1
 	redeem1 := total1.Sub(earnings1Total.Add(burn1))
+
+	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
+
+	// Redemption value in coin 2
+	redeem2 := total2.Sub(earnings2Total.Add(burn2))
 
 	var sdkError error
 
