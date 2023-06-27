@@ -57,20 +57,44 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
-	earnRate := k.EarnRate(ctx)
-	burnRate := k.BurnRate(ctx)
+	earnRatesStringArray := strings.Split(k.EarnRate(ctx), ",")
+	var earnRates []sdk.Int
+	for i, v := range earnRatesStringArray {
+		earnRates[i], _ = sdk.NewIntFromString(v)
+	}
+
+	burnRate := sdk.NewIntFromString(k.BurnRate(ctx))
 
 	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
 	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
-	earn2 := (profit2.Mul(earnRate[0])).Quo(earnRate[1])
-	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
+
+	// Share profit
+	var earns2 []sdk.Int
+	earns2Total := sdk.NewInt(0)
+	for i, v := range earnRates {
+		earns2[i] = (profit2.Mul(v)).Quo(sdk.NewInt(1000))
+		earns2Total = earns2Total.Add(earns2[i])
+	}
+
+	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
 
 	// Redemption value in coin 2
-	Drops2 := total2.Sub(earn2.Add(burn2))
+	Drops2 := total2.Sub(earns2Total.Add(burn2))
 
 	profit1 := dropProfit.Sub(profit2)
-	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
-	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
+
+	// Share profit
+	var earns1 []sdk.Int
+	earns1Total := sdk.NewInt(0)
+	for i, v := range earnRates {
+		earns1[i] = (profit1.Mul(v)).Quo(sdk.NewInt(1000))
+		earns1Total = earns1Total.Add(earns1[i])
+	}
+
+	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(1000))
+
+	// Redemption value in coin 1
+	Drops1 := total1.Sub(earn1.Add(burn1))
 
 	var sdkError error
 
@@ -112,9 +136,6 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		}
 	}
 	k.SetBurnings(ctx, burnings2)
-
-	// Redemption value in coin 1
-	Drops1 := total1.Sub(earn1.Add(burn1))
 
 	// Update Pool Total Drops
 	pool.Drops = pool.Drops.Sub(drop.Drops)

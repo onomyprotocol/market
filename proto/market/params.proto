@@ -9,19 +9,14 @@ option go_package = "github.com/pendulum-labs/market/x/market/types";
 message Params {
   option (gogoproto.goproto_stringer) = false;
 
-  // leader earnings rate
-  repeated string earn_rate = 1 [
-    (gogoproto.moretags) = "yaml:\"earn_rate\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
+  // earn and burn rates are (parameter / 1000), 9999 representing as 99.99%
+
+  // leader earnings rates
+  // 1,2,3 Comma separated, no space
+  repeated string earn_rates = 1;
 
   // pool burning rate
-  repeated string burn_rate = 2 [
-    (gogoproto.moretags) = "yaml:\"earn_rate\"",
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
+  string burn_rate = 2;
 
   // burn coin
   string burn_coin = 3;
