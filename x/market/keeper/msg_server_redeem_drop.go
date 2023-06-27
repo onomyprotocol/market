@@ -57,44 +57,44 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
-	earnRatesStringArray := strings.Split(k.EarnRate(ctx), ",")
+	earnRatesStringArray := strings.Split(k.EarnRates(ctx), ",")
 	var earnRates []sdk.Int
 	for i, v := range earnRatesStringArray {
 		earnRates[i], _ = sdk.NewIntFromString(v)
 	}
 
-	burnRate := sdk.NewIntFromString(k.BurnRate(ctx))
+	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
 
 	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
 	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
 
 	// Share profit
-	var earns2 []sdk.Int
-	earns2Total := sdk.NewInt(0)
+	var earnings2 []sdk.Int
+	earnings2Total := sdk.NewInt(0)
 	for i, v := range earnRates {
-		earns2[i] = (profit2.Mul(v)).Quo(sdk.NewInt(1000))
-		earns2Total = earns2Total.Add(earns2[i])
+		earnings2[i] = (profit2.Mul(v)).Quo(sdk.NewInt(1000))
+		earnings2Total = earnings2Total.Add(earnings2[i])
 	}
 
 	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
 
 	// Redemption value in coin 2
-	Drops2 := total2.Sub(earns2Total.Add(burn2))
+	redeem2 := total2.Sub(earnings2Total.Add(burn2))
 
 	profit1 := dropProfit.Sub(profit2)
 
 	// Share profit
-	var earns1 []sdk.Int
-	earns1Total := sdk.NewInt(0)
+	var earnings1 []sdk.Int
+	earnings1Total := sdk.NewInt(0)
 	for i, v := range earnRates {
-		earns1[i] = (profit1.Mul(v)).Quo(sdk.NewInt(1000))
-		earns1Total = earns1Total.Add(earns1[i])
+		earnings1[i] = (profit1.Mul(v)).Quo(sdk.NewInt(1000))
+		earnings1Total = earnings1Total.Add(earnings1[i])
 	}
 
 	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(1000))
 
 	// Redemption value in coin 1
-	Drops1 := total1.Sub(earn1.Add(burn1))
+	redeem1 := total1.Sub(earnings1Total.Add(burn1))
 
 	var sdkError error
 
@@ -148,8 +148,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	coinOwner1 := sdk.NewCoin(denom1, Drops1)
-	coinOwner2 := sdk.NewCoin(denom2, Drops2)
+	coinOwner1 := sdk.NewCoin(denom1, redeem1)
+	coinOwner2 := sdk.NewCoin(denom2, redeem2)
 	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
 	// Payout Owner
@@ -158,8 +158,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		return nil, sdkError
 	}
 
-	coinLeader1 := sdk.NewCoin(denom1, earn1)
-	coinLeader2 := sdk.NewCoin(denom2, earn2)
+	coinLeader1 := sdk.NewCoin(denom1, earnings1Total)
+	coinLeader2 := sdk.NewCoin(denom2, earnings2Total)
 	coinsLeader := sdk.NewCoins(coinLeader1, coinLeader2)
 
 	leader, _ := sdk.AccAddressFromBech32(pool.Leader)

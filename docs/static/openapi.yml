@@ -27702,15 +27702,13 @@ paths:
                 description: params holds all the parameters of this module.
                 type: object
                 properties:
-                  earn_rate:
-                    type: array
-                    items:
-                      type: string
-                    title: leader earnings rate
+                  earn_rates:
+                    type: string
+                    title: |-
+                      leader earnings rates
+                      1,2,3 Comma separated, no space
                   burn_rate:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     title: pool burning rate
                   burn_coin:
                     type: string
@@ -45856,15 +45854,13 @@ definitions:
   pendulumlabs.market.market.Params:
     type: object
     properties:
-      earn_rate:
-        type: array
-        items:
-          type: string
-        title: leader earnings rate
+      earn_rates:
+        type: string
+        title: |-
+          leader earnings rates
+          1,2,3 Comma separated, no space
       burn_rate:
-        type: array
-        items:
-          type: string
+        type: string
         title: pool burning rate
       burn_coin:
         type: string
@@ -46273,15 +46269,13 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
         properties:
-          earn_rate:
-            type: array
-            items:
-              type: string
-            title: leader earnings rate
+          earn_rates:
+            type: string
+            title: |-
+              leader earnings rates
+              1,2,3 Comma separated, no space
           burn_rate:
-            type: array
-            items:
-              type: string
+            type: string
             title: pool burning rate
           burn_coin:
             type: string

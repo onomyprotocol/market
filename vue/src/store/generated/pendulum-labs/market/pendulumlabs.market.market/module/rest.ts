@@ -90,8 +90,8 @@ export interface MarketOrderResponse {
  * Params defines the parameters for the module.
  */
 export interface MarketParams {
-  earn_rate?: string[];
-  burn_rate?: string[];
+  earn_rates?: string;
+  burn_rate?: string;
   burn_coin?: string;
 }
 

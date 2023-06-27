@@ -13,7 +13,7 @@ message Params {
 
   // leader earnings rates
   // 1,2,3 Comma separated, no space
-  repeated string earn_rates = 1;
+  string earn_rates = 1;
 
   // pool burning rate
   string burn_rate = 2;
