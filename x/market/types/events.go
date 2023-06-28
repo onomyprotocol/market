@@ -34,7 +34,7 @@ const (
 	AttributeKeyDenomAsk  = "denom_ask"
 	AttributeKeyDenomBid  = "denom_bid"
 	AttributeKeyDrops     = "drops"
-	AttributeKeyLeader    = "leader"
+	AttributeKeyLeaders   = "leaders"
 	AttributeKeyLimit     = "limit"
 	AttributeKeyNext      = "next"
 	AttributeKeyOwner     = "owner"

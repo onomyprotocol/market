@@ -115,6 +115,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// Get Drop Creator and Pool Leader total drops from all drops owned
 	// TODO: Need to double check that database is configured properly
 	sumDropsCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
+
 	sumDropsLeader := k.GetDropsSum(ctx, pool.Leader)
 
 	// If Creator totaled owned drops is greater than Leader then
@@ -132,7 +133,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		sdk.NewEvent(
 			types.EventTypeCreatePool,
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeader, pool.Leader),
+			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(pool.Leaders, ",")),
 			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
 		),
 	)

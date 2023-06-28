@@ -53,11 +53,12 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
 	pool = types.Pool{
-		Pair:   pair,
-		Leader: msg.Creator,
-		Denom1: coinPair.GetDenomByIndex(0),
-		Denom2: coinPair.GetDenomByIndex(1),
-		Drops:  drops,
+		Pair:            pair,
+		LeaderAddresses: []string{msg.Creator},
+		LeaderDrops:     []sdk.Int{drops},
+		Denom1:          coinPair.GetDenomByIndex(0),
+		Denom2:          coinPair.GetDenomByIndex(1),
+		Drops:           drops,
 	}
 
 	// Create the uid
@@ -100,7 +101,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		sdk.NewEvent(
 			types.EventTypeCreatePool,
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeader, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyLeaders, msg.Creator),
 			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
 		),
 	)

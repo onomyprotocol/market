@@ -99,7 +99,8 @@ export interface MarketPool {
   pair?: string;
   denom1?: string;
   denom2?: string;
-  leader?: string;
+  leader_addresses?: string[];
+  leader_drops?: string[];
   drops?: string;
 }
 

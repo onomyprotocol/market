@@ -7,7 +7,8 @@ export interface Pool {
   pair: string;
   denom1: string;
   denom2: string;
-  leader: string;
+  leader_addresses: string[];
+  leader_drops: string[];
   drops: string;
 }
 
@@ -15,7 +16,8 @@ const basePool: object = {
   pair: "",
   denom1: "",
   denom2: "",
-  leader: "",
+  leader_addresses: "",
+  leader_drops: "",
   drops: "",
 };
 
@@ -30,11 +32,14 @@ export const Pool = {
     if (message.denom2 !== "") {
       writer.uint32(26).string(message.denom2);
     }
-    if (message.leader !== "") {
-      writer.uint32(34).string(message.leader);
+    for (const v of message.leader_addresses) {
+      writer.uint32(34).string(v!);
+    }
+    for (const v of message.leader_drops) {
+      writer.uint32(42).string(v!);
     }
     if (message.drops !== "") {
-      writer.uint32(42).string(message.drops);
+      writer.uint32(50).string(message.drops);
     }
     return writer;
   },
@@ -43,6 +48,8 @@ export const Pool = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePool } as Pool;
+    message.leader_addresses = [];
+    message.leader_drops = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -56,9 +63,12 @@ export const Pool = {
           message.denom2 = reader.string();
           break;
         case 4:
-          message.leader = reader.string();
+          message.leader_addresses.push(reader.string());
           break;
         case 5:
+          message.leader_drops.push(reader.string());
+          break;
+        case 6:
           message.drops = reader.string();
           break;
         default:
@@ -71,6 +81,8 @@ export const Pool = {
 
   fromJSON(object: any): Pool {
     const message = { ...basePool } as Pool;
+    message.leader_addresses = [];
+    message.leader_drops = [];
     if (object.pair !== undefined && object.pair !== null) {
       message.pair = String(object.pair);
     } else {
@@ -86,10 +98,18 @@ export const Pool = {
     } else {
       message.denom2 = "";
     }
-    if (object.leader !== undefined && object.leader !== null) {
-      message.leader = String(object.leader);
-    } else {
-      message.leader = "";
+    if (
+      object.leader_addresses !== undefined &&
+      object.leader_addresses !== null
+    ) {
+      for (const e of object.leader_addresses) {
+        message.leader_addresses.push(String(e));
+      }
+    }
+    if (object.leader_drops !== undefined && object.leader_drops !== null) {
+      for (const e of object.leader_drops) {
+        message.leader_drops.push(String(e));
+      }
     }
     if (object.drops !== undefined && object.drops !== null) {
       message.drops = String(object.drops);
@@ -104,13 +124,24 @@ export const Pool = {
     message.pair !== undefined && (obj.pair = message.pair);
     message.denom1 !== undefined && (obj.denom1 = message.denom1);
     message.denom2 !== undefined && (obj.denom2 = message.denom2);
-    message.leader !== undefined && (obj.leader = message.leader);
+    if (message.leader_addresses) {
+      obj.leader_addresses = message.leader_addresses.map((e) => e);
+    } else {
+      obj.leader_addresses = [];
+    }
+    if (message.leader_drops) {
+      obj.leader_drops = message.leader_drops.map((e) => e);
+    } else {
+      obj.leader_drops = [];
+    }
     message.drops !== undefined && (obj.drops = message.drops);
     return obj;
   },
 
   fromPartial(object: DeepPartial<Pool>): Pool {
     const message = { ...basePool } as Pool;
+    message.leader_addresses = [];
+    message.leader_drops = [];
     if (object.pair !== undefined && object.pair !== null) {
       message.pair = object.pair;
     } else {
@@ -126,10 +157,18 @@ export const Pool = {
     } else {
       message.denom2 = "";
     }
-    if (object.leader !== undefined && object.leader !== null) {
-      message.leader = object.leader;
-    } else {
-      message.leader = "";
+    if (
+      object.leader_addresses !== undefined &&
+      object.leader_addresses !== null
+    ) {
+      for (const e of object.leader_addresses) {
+        message.leader_addresses.push(e);
+      }
+    }
+    if (object.leader_drops !== undefined && object.leader_drops !== null) {
+      for (const e of object.leader_drops) {
+        message.leader_drops.push(e);
+      }
     }
     if (object.drops !== undefined && object.drops !== null) {
       message.drops = object.drops;

@@ -11,10 +11,13 @@ message Pool {
   string pair = 1; 
   string denom1 = 2; 
   string denom2 = 3; 
-  string leader = 4; 
-  string drops = 5 [
+  repeated string leader_addresses = 4;
+  repeated string leader_drops = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string drops = 6 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
 }
-

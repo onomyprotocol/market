@@ -27757,8 +27757,14 @@ paths:
                       type: string
                     denom2:
                       type: string
-                    leader:
-                      type: string
+                    leader_addresses:
+                      type: array
+                      items:
+                        type: string
+                    leader_drops:
+                      type: array
+                      items:
+                        type: string
                     drops:
                       type: string
               pagination:
@@ -27884,8 +27890,14 @@ paths:
                     type: string
                   denom2:
                     type: string
-                  leader:
-                    type: string
+                  leader_addresses:
+                    type: array
+                    items:
+                      type: string
+                  leader_drops:
+                    type: array
+                    items:
+                      type: string
                   drops:
                     type: string
         default:
@@ -45875,8 +45887,14 @@ definitions:
         type: string
       denom2:
         type: string
-      leader:
-        type: string
+      leader_addresses:
+        type: array
+        items:
+          type: string
+      leader_drops:
+        type: array
+        items:
+          type: string
       drops:
         type: string
   pendulumlabs.market.market.QueryAllBurningsResponse:
@@ -46083,8 +46101,14 @@ definitions:
               type: string
             denom2:
               type: string
-            leader:
-              type: string
+            leader_addresses:
+              type: array
+              items:
+                type: string
+            leader_drops:
+              type: array
+              items:
+                type: string
             drops:
               type: string
       pagination:
@@ -46258,8 +46282,14 @@ definitions:
             type: string
           denom2:
             type: string
-          leader:
-            type: string
+          leader_addresses:
+            type: array
+            items:
+              type: string
+          leader_drops:
+            type: array
+            items:
+              type: string
           drops:
             type: string
   pendulumlabs.market.market.QueryParamsResponse:
