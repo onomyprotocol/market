@@ -118,48 +118,23 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	numLeaders := len(strings.Split(k.EarnRates(ctx), ","))
 
-	var priorFlag bool
-	priorIndex := 0
+	index := numLeaders
 
 	// Check if Drop Creator is already on leader board
+	// If so, make index = drop creator position
 	for i := 0; i < numLeaders; i++ {
 		if pool.LeaderAddresses[i] == msg.Creator {
-			priorFlag = true
-			priorIndex = i
+			index = i
 			break
 		}
 	}
 
-	// Adjust leaderboard
-	if priorFlag {
-		for i := priorIndex - 1; i >= 0; i-- {
-			// If drop creator is already top of leader board
-			// Only update number of drops
-			if priorIndex == 0 {
-				pool.LeaderDrops[i+1] = sumDropCreator
-				break
-			}
-			if sumDropCreator.GT(pool.LeaderDrops[i]) {
-				// If drop creator has more total drops move
-				// this position down the leader board
-				pool.LeaderAddresses[i+1] = pool.LeaderAddresses[i]
-				pool.LeaderDrops[i+1] = pool.LeaderDrops[i]
-				// If at top of the list then place drop creator
-				// as top leader
-				if i == 0 {
-					pool.LeaderAddresses[0] = msg.Creator
-					pool.LeaderDrops[0] = sumDropCreator
-				}
-			} else {
-				pool.LeaderAddresses[i+1] = msg.Creator
-				pool.LeaderDrops[i+1] = sumDropCreator
-				break
-			}
-		}
+	if index == 0 {
+		// If drop creator is already top of leader board
+		// Only update number of drops
+		pool.LeaderDrops[0] = sumDropCreator
 	} else {
-		// Check if Drop Creator is a leader starting from bottom
-		// of pool leader board
-		for i := numLeaders - 1; i >= 0; i-- {
+		for i := index - 1; i >= 0; i-- {
 			if sumDropCreator.GT(pool.LeaderDrops[i]) {
 				// If drop creator has more total drops move
 				// this position down the leader board
