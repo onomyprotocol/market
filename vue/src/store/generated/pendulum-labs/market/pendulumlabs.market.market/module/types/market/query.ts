@@ -25,9 +25,6 @@ export interface QueryParamsResponse {
 
 export interface QueryGetPoolRequest {
   pair: string;
-  denom1: string;
-  denom2: string;
-  leader: string;
 }
 
 export interface QueryGetPoolResponse {
@@ -45,8 +42,6 @@ export interface QueryAllPoolResponse {
 
 export interface QueryGetDropRequest {
   uid: number;
-  owner: string;
-  pair: string;
 }
 
 export interface QueryGetDropResponse {
@@ -63,7 +58,6 @@ export interface QueryAllDropResponse {
 }
 
 export interface QueryGetMemberRequest {
-  pair: string;
   denomA: string;
   denomB: string;
 }
@@ -244,12 +238,7 @@ export const QueryParamsResponse = {
   },
 };
 
-const baseQueryGetPoolRequest: object = {
-  pair: "",
-  denom1: "",
-  denom2: "",
-  leader: "",
-};
+const baseQueryGetPoolRequest: object = { pair: "" };
 
 export const QueryGetPoolRequest = {
   encode(
@@ -258,15 +247,6 @@ export const QueryGetPoolRequest = {
   ): Writer {
     if (message.pair !== "") {
       writer.uint32(10).string(message.pair);
-    }
-    if (message.denom1 !== "") {
-      writer.uint32(18).string(message.denom1);
-    }
-    if (message.denom2 !== "") {
-      writer.uint32(26).string(message.denom2);
-    }
-    if (message.leader !== "") {
-      writer.uint32(34).string(message.leader);
     }
     return writer;
   },
@@ -280,15 +260,6 @@ export const QueryGetPoolRequest = {
       switch (tag >>> 3) {
         case 1:
           message.pair = reader.string();
-          break;
-        case 2:
-          message.denom1 = reader.string();
-          break;
-        case 3:
-          message.denom2 = reader.string();
-          break;
-        case 4:
-          message.leader = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -305,30 +276,12 @@ export const QueryGetPoolRequest = {
     } else {
       message.pair = "";
     }
-    if (object.denom1 !== undefined && object.denom1 !== null) {
-      message.denom1 = String(object.denom1);
-    } else {
-      message.denom1 = "";
-    }
-    if (object.denom2 !== undefined && object.denom2 !== null) {
-      message.denom2 = String(object.denom2);
-    } else {
-      message.denom2 = "";
-    }
-    if (object.leader !== undefined && object.leader !== null) {
-      message.leader = String(object.leader);
-    } else {
-      message.leader = "";
-    }
     return message;
   },
 
   toJSON(message: QueryGetPoolRequest): unknown {
     const obj: any = {};
     message.pair !== undefined && (obj.pair = message.pair);
-    message.denom1 !== undefined && (obj.denom1 = message.denom1);
-    message.denom2 !== undefined && (obj.denom2 = message.denom2);
-    message.leader !== undefined && (obj.leader = message.leader);
     return obj;
   },
 
@@ -338,21 +291,6 @@ export const QueryGetPoolRequest = {
       message.pair = object.pair;
     } else {
       message.pair = "";
-    }
-    if (object.denom1 !== undefined && object.denom1 !== null) {
-      message.denom1 = object.denom1;
-    } else {
-      message.denom1 = "";
-    }
-    if (object.denom2 !== undefined && object.denom2 !== null) {
-      message.denom2 = object.denom2;
-    } else {
-      message.denom2 = "";
-    }
-    if (object.leader !== undefined && object.leader !== null) {
-      message.leader = object.leader;
-    } else {
-      message.leader = "";
     }
     return message;
   },
@@ -566,7 +504,7 @@ export const QueryAllPoolResponse = {
   },
 };
 
-const baseQueryGetDropRequest: object = { uid: 0, owner: "", pair: "" };
+const baseQueryGetDropRequest: object = { uid: 0 };
 
 export const QueryGetDropRequest = {
   encode(
@@ -575,12 +513,6 @@ export const QueryGetDropRequest = {
   ): Writer {
     if (message.uid !== 0) {
       writer.uint32(8).uint64(message.uid);
-    }
-    if (message.owner !== "") {
-      writer.uint32(18).string(message.owner);
-    }
-    if (message.pair !== "") {
-      writer.uint32(26).string(message.pair);
     }
     return writer;
   },
@@ -594,12 +526,6 @@ export const QueryGetDropRequest = {
       switch (tag >>> 3) {
         case 1:
           message.uid = longToNumber(reader.uint64() as Long);
-          break;
-        case 2:
-          message.owner = reader.string();
-          break;
-        case 3:
-          message.pair = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -616,24 +542,12 @@ export const QueryGetDropRequest = {
     } else {
       message.uid = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
-    } else {
-      message.owner = "";
-    }
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = String(object.pair);
-    } else {
-      message.pair = "";
-    }
     return message;
   },
 
   toJSON(message: QueryGetDropRequest): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
-    message.owner !== undefined && (obj.owner = message.owner);
-    message.pair !== undefined && (obj.pair = message.pair);
     return obj;
   },
 
@@ -643,16 +557,6 @@ export const QueryGetDropRequest = {
       message.uid = object.uid;
     } else {
       message.uid = 0;
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
-    } else {
-      message.owner = "";
-    }
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = object.pair;
-    } else {
-      message.pair = "";
     }
     return message;
   },
@@ -866,16 +770,13 @@ export const QueryAllDropResponse = {
   },
 };
 
-const baseQueryGetMemberRequest: object = { pair: "", denomA: "", denomB: "" };
+const baseQueryGetMemberRequest: object = { denomA: "", denomB: "" };
 
 export const QueryGetMemberRequest = {
   encode(
     message: QueryGetMemberRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.pair !== "") {
-      writer.uint32(10).string(message.pair);
-    }
     if (message.denomA !== "") {
       writer.uint32(18).string(message.denomA);
     }
@@ -892,9 +793,6 @@ export const QueryGetMemberRequest = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.pair = reader.string();
-          break;
         case 2:
           message.denomA = reader.string();
           break;
@@ -911,11 +809,6 @@ export const QueryGetMemberRequest = {
 
   fromJSON(object: any): QueryGetMemberRequest {
     const message = { ...baseQueryGetMemberRequest } as QueryGetMemberRequest;
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = String(object.pair);
-    } else {
-      message.pair = "";
-    }
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = String(object.denomA);
     } else {
@@ -931,7 +824,6 @@ export const QueryGetMemberRequest = {
 
   toJSON(message: QueryGetMemberRequest): unknown {
     const obj: any = {};
-    message.pair !== undefined && (obj.pair = message.pair);
     message.denomA !== undefined && (obj.denomA = message.denomA);
     message.denomB !== undefined && (obj.denomB = message.denomB);
     return obj;
@@ -941,11 +833,6 @@ export const QueryGetMemberRequest = {
     object: DeepPartial<QueryGetMemberRequest>
   ): QueryGetMemberRequest {
     const message = { ...baseQueryGetMemberRequest } as QueryGetMemberRequest;
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = object.pair;
-    } else {
-      message.pair = "";
-    }
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = object.denomA;
     } else {

@@ -584,11 +584,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDrop
    * @summary Queries a Drop by index.
-   * @request GET:/pendulum-labs/market/market/drop/{uid}/{owner}/{pair}
+   * @request GET:/pendulum-labs/market/market/drop/{uid}
    */
-  queryDrop = (uid: string, owner: string, pair: string, params: RequestParams = {}) =>
+  queryDrop = (uid: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetDropResponse, RpcStatus>({
-      path: `/pendulum-labs/market/market/drop/${uid}/${owner}/${pair}`,
+      path: `/pendulum-labs/market/market/drop/${uid}`,
       method: "GET",
       format: "json",
       ...params,
@@ -655,11 +655,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryMember
    * @summary Queries a Member by index.
-   * @request GET:/pendulum-labs/market/market/member/{pair}/{denomA}/{denomB}
+   * @request GET:/pendulum-labs/market/market/member/{denomA}/{denomB}
    */
-  queryMember = (pair: string, denomA: string, denomB: string, params: RequestParams = {}) =>
+  queryMember = (denomA: string, denomB: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetMemberResponse, RpcStatus>({
-      path: `/pendulum-labs/market/market/member/${pair}/${denomA}/${denomB}`,
+      path: `/pendulum-labs/market/market/member/${denomA}/${denomB}`,
       method: "GET",
       format: "json",
       ...params,
@@ -760,11 +760,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryPool
    * @summary Queries a Pool by index.
-   * @request GET:/pendulum-labs/market/market/pool/{pair}/{denom1}/{denom2}/{leader}
+   * @request GET:/pendulum-labs/market/market/pool/{pair}
    */
-  queryPool = (pair: string, denom1: string, denom2: string, leader: string, params: RequestParams = {}) =>
+  queryPool = (pair: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetPoolResponse, RpcStatus>({
-      path: `/pendulum-labs/market/market/pool/${pair}/${denom1}/${denom2}/${leader}`,
+      path: `/pendulum-labs/market/market/pool/${pair}`,
       method: "GET",
       format: "json",
       ...params,

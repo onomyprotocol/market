@@ -45,9 +45,9 @@ func CmdListDrop() *cobra.Command {
 
 func CmdShowDrop() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-drop [uid] [owner] [pair]",
+		Use:   "show-drop [uid]",
 		Short: "shows a drop",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -57,13 +57,9 @@ func CmdShowDrop() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argOwner := args[1]
-			argPair := args[2]
 
 			params := &types.QueryGetDropRequest{
-				Uid:   argUid,
-				Owner: argOwner,
-				Pair:  argPair,
+				Uid: argUid,
 			}
 
 			res, err := queryClient.Drop(context.Background(), params)

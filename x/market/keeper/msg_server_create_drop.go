@@ -114,14 +114,69 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	// Get Drop Creator and Pool Leader total drops from all drops owned
 	// TODO: Need to double check that database is configured properly
-	sumDropsCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
+	sumDropCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
 
-	sumDropsLeader := k.GetDropsSum(ctx, pool.Leader)
+	numLeaders := len(strings.Split(k.EarnRates(ctx), ","))
 
-	// If Creator totaled owned drops is greater than Leader then
-	// Creator is new leader
-	if sumDropsCreator.GT(sumDropsLeader) {
-		pool.Leader = msg.Creator
+	var priorFlag bool
+	priorIndex := 0
+
+	// Check if Drop Creator is already on leader board
+	for i := 0; i < numLeaders; i++ {
+		if pool.LeaderAddresses[i] == msg.Creator {
+			priorFlag = true
+			priorIndex = i
+			break
+		}
+	}
+
+	// Adjust leaderboard
+	if priorFlag {
+		for i := priorIndex - 1; i >= 0; i-- {
+			// If drop creator is already top of leader board
+			// Only update number of drops
+			if priorIndex == 0 {
+				pool.LeaderDrops[i+1] = sumDropCreator
+				break
+			}
+			if sumDropCreator.GT(pool.LeaderDrops[i]) {
+				// If drop creator has more total drops move
+				// this position down the leader board
+				pool.LeaderAddresses[i+1] = pool.LeaderAddresses[i]
+				pool.LeaderDrops[i+1] = pool.LeaderDrops[i]
+				// If at top of the list then place drop creator
+				// as top leader
+				if i == 0 {
+					pool.LeaderAddresses[0] = msg.Creator
+					pool.LeaderDrops[0] = sumDropCreator
+				}
+			} else {
+				pool.LeaderAddresses[i+1] = msg.Creator
+				pool.LeaderDrops[i+1] = sumDropCreator
+				break
+			}
+		}
+	} else {
+		// Check if Drop Creator is a leader starting from bottom
+		// of pool leader board
+		for i := numLeaders - 1; i >= 0; i-- {
+			if sumDropCreator.GT(pool.LeaderDrops[i]) {
+				// If drop creator has more total drops move
+				// this position down the leader board
+				pool.LeaderAddresses[i+1] = pool.LeaderAddresses[i]
+				pool.LeaderDrops[i+1] = pool.LeaderDrops[i]
+				// If at top of the list then place drop creator
+				// as top leader
+				if i == 0 {
+					pool.LeaderAddresses[0] = msg.Creator
+					pool.LeaderDrops[0] = sumDropCreator
+				}
+			} else {
+				pool.LeaderAddresses[i+1] = msg.Creator
+				pool.LeaderDrops[i+1] = sumDropCreator
+				break
+			}
+		}
 	}
 
 	pool.Drops = pool.Drops.Add(drops)
@@ -133,7 +188,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		sdk.NewEvent(
 			types.EventTypeCreatePool,
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(pool.Leaders, ",")),
+			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(pool.LeaderAddresses, ",")),
 			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
 		),
 	)

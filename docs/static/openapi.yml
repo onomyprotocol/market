@@ -27074,7 +27074,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/drop/{uid}/{owner}/{pair}':
+  '/pendulum-labs/market/market/drop/{uid}':
     get:
       summary: Queries a Drop by index.
       operationId: PendulumlabsMarketMarketDrop
@@ -27124,14 +27124,6 @@ paths:
           required: true
           type: string
           format: uint64
-        - name: owner
-          in: path
-          required: true
-          type: string
-        - name: pair
-          in: path
-          required: true
-          type: string
       tags:
         - Query
   '/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}':
@@ -27398,7 +27390,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/member/{pair}/{denomA}/{denomB}':
+  '/pendulum-labs/market/market/member/{denomA}/{denomB}':
     get:
       summary: Queries a Member by index.
       operationId: PendulumlabsMarketMarketMember
@@ -27446,10 +27438,6 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: pair
-          in: path
-          required: true
-          type: string
         - name: denomA
           in: path
           required: true
@@ -27871,7 +27859,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/pool/{pair}/{denom1}/{denom2}/{leader}':
+  '/pendulum-labs/market/market/pool/{pair}':
     get:
       summary: Queries a Pool by index.
       operationId: PendulumlabsMarketMarketPool
@@ -27920,18 +27908,6 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: pair
-          in: path
-          required: true
-          type: string
-        - name: denom1
-          in: path
-          required: true
-          type: string
-        - name: denom2
-          in: path
-          required: true
-          type: string
-        - name: leader
           in: path
           required: true
           type: string

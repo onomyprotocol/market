@@ -85,8 +85,6 @@ func TestShowDrop(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
 				strconv.Itoa(int(tc.idUid)),
-				tc.idOwner,
-				tc.idPair,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowDrop(), args)

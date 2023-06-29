@@ -68,8 +68,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	earnings1Total := sdk.NewInt(0)
 	var earnings2 [10]sdk.Int
 	earnings2Total := sdk.NewInt(0)
-	coinLeader1 := sdk.NewCoin(denom1, sdk.NewInt(0))
-	coinLeader2 := sdk.NewCoin(denom2, sdk.NewInt(0))
+	var coinLeader1 sdk.Coin
+	var coinLeader2 sdk.Coin
 	var coinsLeader sdk.Coins
 
 	for i, v := range earnRatesStringArray {

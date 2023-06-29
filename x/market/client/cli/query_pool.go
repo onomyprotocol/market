@@ -44,24 +44,18 @@ func CmdListPool() *cobra.Command {
 
 func CmdShowPool() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-pool [pair] [denom-1] [denom-2] [leader]",
+		Use:   "show-pool [pair]",
 		Short: "shows a pool",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
 			argPair := args[0]
-			argDenom1 := args[1]
-			argDenom2 := args[2]
-			argLeader := args[3]
 
 			params := &types.QueryGetPoolRequest{
-				Pair:   argPair,
-				Denom1: argDenom1,
-				Denom2: argDenom2,
-				Leader: argLeader,
+				Pair: argPair,
 			}
 
 			res, err := queryClient.Pool(context.Background(), params)

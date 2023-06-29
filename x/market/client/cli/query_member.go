@@ -44,7 +44,7 @@ func CmdListMember() *cobra.Command {
 
 func CmdShowMember() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-member [pair] [denom-a] [denom-b]",
+		Use:   "show-member [denom-a] [denom-b]",
 		Short: "shows a member",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -52,12 +52,10 @@ func CmdShowMember() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argPair := args[0]
-			argDenomA := args[1]
-			argDenomB := args[2]
+			argDenomA := args[0]
+			argDenomB := args[1]
 
 			params := &types.QueryGetMemberRequest{
-				Pair:   argPair,
 				DenomA: argDenomA,
 				DenomB: argDenomB,
 			}
