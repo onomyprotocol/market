@@ -27745,14 +27745,15 @@ paths:
                       type: string
                     denom2:
                       type: string
-                    leader_addresses:
+                    leaders:
                       type: array
                       items:
-                        type: string
-                    leader_drops:
-                      type: array
-                      items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          drops:
+                            type: string
                     drops:
                       type: string
               pagination:
@@ -27878,14 +27879,15 @@ paths:
                     type: string
                   denom2:
                     type: string
-                  leader_addresses:
+                  leaders:
                     type: array
                     items:
-                      type: string
-                  leader_drops:
-                    type: array
-                    items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        drops:
+                          type: string
                   drops:
                     type: string
         default:
@@ -45752,6 +45754,13 @@ definitions:
         type: string
       active:
         type: boolean
+  pendulumlabs.market.market.Leader:
+    type: object
+    properties:
+      address:
+        type: string
+      drops:
+        type: string
   pendulumlabs.market.market.Member:
     type: object
     properties:
@@ -45863,14 +45872,15 @@ definitions:
         type: string
       denom2:
         type: string
-      leader_addresses:
+      leaders:
         type: array
         items:
-          type: string
-      leader_drops:
-        type: array
-        items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            drops:
+              type: string
       drops:
         type: string
   pendulumlabs.market.market.QueryAllBurningsResponse:
@@ -46077,14 +46087,15 @@ definitions:
               type: string
             denom2:
               type: string
-            leader_addresses:
+            leaders:
               type: array
               items:
-                type: string
-            leader_drops:
-              type: array
-              items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  drops:
+                    type: string
             drops:
               type: string
       pagination:
@@ -46258,14 +46269,15 @@ definitions:
             type: string
           denom2:
             type: string
-          leader_addresses:
+          leaders:
             type: array
             items:
-              type: string
-          leader_drops:
-            type: array
-            items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                drops:
+                  type: string
           drops:
             type: string
   pendulumlabs.market.market.QueryParamsResponse:

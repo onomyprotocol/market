@@ -30,12 +30,16 @@ func networkWithPoolObjects(t *testing.T, n int) (*network.Network, []types.Pool
 
 	for i := 0; i < n; i++ {
 		pool := types.Pool{
-			Pair:            strconv.Itoa(i),
-			Denom1:          strconv.Itoa(i),
-			Denom2:          strconv.Itoa(i),
-			LeaderAddresses: []string{strconv.Itoa(i)},
-			LeaderDrops:     []sdk.Int{sdk.NewInt(int64(i))},
-			Drops:           sdk.NewIntFromUint64(uint64(i)),
+			Pair:   strconv.Itoa(i),
+			Denom1: strconv.Itoa(i),
+			Denom2: strconv.Itoa(i),
+			Leaders: []*types.Leader{
+				{
+					Address: strconv.Itoa(i),
+					Drops:   sdk.NewIntFromUint64(uint64(i)),
+				},
+			},
+			Drops: sdk.NewIntFromUint64(uint64(i)),
 		}
 		nullify.Fill(&pool)
 		state.PoolList = append(state.PoolList, pool)
@@ -54,38 +58,40 @@ func TestShowPool(t *testing.T) {
 		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 	}
 	for _, tc := range []struct {
-		desc              string
-		idPair            string
-		idDenom1          string
-		idDenom2          string
-		idLeaderAddresses []string
-		idLeaderDrops     []sdk.Int
-		idDrops           sdk.Int
-		args              []string
-		err               error
-		obj               types.Pool
+		desc      string
+		idPair    string
+		idDenom1  string
+		idDenom2  string
+		idLeaders []*types.Leader
+		idDrops   sdk.Int
+		args      []string
+		err       error
+		obj       types.Pool
 	}{
 		{
-			desc:              "found",
-			idPair:            objs[0].Pair,
-			idDenom1:          objs[0].Denom1,
-			idDenom2:          objs[0].Denom2,
-			idLeaderAddresses: objs[0].LeaderAddresses,
-			idLeaderDrops:     objs[0].LeaderDrops,
-			idDrops:           objs[0].Drops,
-			args:              common,
-			obj:               objs[0],
+			desc:      "found",
+			idPair:    objs[0].Pair,
+			idDenom1:  objs[0].Denom1,
+			idDenom2:  objs[0].Denom2,
+			idLeaders: objs[0].Leaders,
+			idDrops:   objs[0].Drops,
+			args:      common,
+			obj:       objs[0],
 		},
 		{
-			desc:              "not found",
-			idPair:            strconv.Itoa(100000),
-			idDenom1:          strconv.Itoa(100000),
-			idDenom2:          strconv.Itoa(100000),
-			idLeaderAddresses: []string{strconv.Itoa(100000)},
-			idLeaderDrops:     []sdk.Int{sdk.NewInt(100000)},
-			idDrops:           sdk.NewInt(100000),
-			args:              common,
-			err:               status.Error(codes.InvalidArgument, "not found"),
+			desc:     "not found",
+			idPair:   strconv.Itoa(100000),
+			idDenom1: strconv.Itoa(100000),
+			idDenom2: strconv.Itoa(100000),
+			idLeaders: []*types.Leader{
+				{
+					Address: strconv.Itoa(100000),
+					Drops:   sdk.NewInt(100000),
+				},
+			},
+			idDrops: sdk.NewInt(100000),
+			args:    common,
+			err:     status.Error(codes.InvalidArgument, "not found"),
 		},
 	} {
 		tc := tc

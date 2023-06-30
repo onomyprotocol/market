@@ -24,6 +24,11 @@ export interface MarketDrop {
   active?: boolean;
 }
 
+export interface MarketLeader {
+  address?: string;
+  drops?: string;
+}
+
 export interface MarketMember {
   pair?: string;
   denomA?: string;
@@ -99,8 +104,7 @@ export interface MarketPool {
   pair?: string;
   denom1?: string;
   denom2?: string;
-  leader_addresses?: string[];
-  leader_drops?: string[];
+  leaders?: MarketLeader[];
   drops?: string;
 }
 

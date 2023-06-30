@@ -14,23 +14,30 @@ import (
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-
 		PoolList: []types.Pool{
 			{
-				Pair:            "0",
-				Denom1:          "0",
-				Denom2:          "0",
-				LeaderAddresses: []string{"0"},
-				LeaderDrops:     []sdk.Int{sdk.NewIntFromUint64(uint64(0))},
-				Drops:           sdk.NewIntFromUint64(uint64(0)),
+				Pair:   "0",
+				Denom1: "0",
+				Denom2: "0",
+				Leaders: []*types.Leader{
+					{
+						Address: "0",
+						Drops:   sdk.NewIntFromUint64(uint64(0)),
+					},
+				},
+				Drops: sdk.NewIntFromUint64(uint64(0)),
 			},
 			{
-				Pair:            "1",
-				Denom1:          "1",
-				Denom2:          "1",
-				LeaderAddresses: []string{"1"},
-				LeaderDrops:     []sdk.Int{sdk.NewIntFromUint64(uint64(1))},
-				Drops:           sdk.NewIntFromUint64(uint64(1)),
+				Pair:   "1",
+				Denom1: "1",
+				Denom2: "1",
+				Leaders: []*types.Leader{
+					{
+						Address: "1",
+						Drops:   sdk.NewIntFromUint64(uint64(1)),
+					},
+				},
+				Drops: sdk.NewIntFromUint64(uint64(1)),
 			},
 		},
 		DropList: []types.Drop{

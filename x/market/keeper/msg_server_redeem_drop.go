@@ -87,12 +87,52 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		coinLeader2 = sdk.NewCoin(denom2, earnings2Total)
 		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
 
-		leader, _ := sdk.AccAddressFromBech32(pool.LeaderAddresses[i])
+		leader, _ := sdk.AccAddressFromBech32(pool.Leaders[i].Address)
 
 		// Payout Leader
 		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
 		if sdkError != nil {
 			return nil, sdkError
+		}
+	}
+
+	// Get Drop Redeemer total drops minus redeemed
+	sumDropRedeemer := k.GetDropsSum(ctx, msg.Creator).Sub(drop.Drops)
+
+	numLeaders := len(strings.Split(k.EarnRates(ctx), ","))
+
+	var index int
+	flag := false
+
+	// Check if Drop Creator is already on leader board
+	// If so, make index = drop creator position
+	for i := 0; i < numLeaders; i++ {
+		if pool.Leaders[i].Address == msg.Creator {
+			index = i
+			flag = true
+			break
+		}
+	}
+
+	// Re-order leader board to reflect new rankings
+	if flag && index != numLeaders-1 {
+		for i := index + 1; i < numLeaders; i++ {
+			if sumDropRedeemer.LT(pool.Leaders[i].Drops) {
+				// If drop reedemer has less total drops move
+				// this position down the leader board
+				pool.Leaders[i-1].Address = pool.Leaders[i].Address
+				pool.Leaders[i-1].Drops = pool.Leaders[i].Drops
+				// Remove redeemer from bottom of list
+				// Prevents someone from liquidating all drops
+				// yet still receive leader rewards
+				if i == numLeaders-1 {
+					break
+				}
+				pool.Leaders[i].Address = msg.Creator
+				pool.Leaders[i].Drops = sumDropRedeemer
+			} else {
+				break
+			}
 		}
 	}
 

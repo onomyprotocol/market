@@ -123,7 +123,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// Check if Drop Creator is already on leader board
 	// If so, make index = drop creator position
 	for i := 0; i < numLeaders; i++ {
-		if pool.LeaderAddresses[i] == msg.Creator {
+		if pool.Leaders[i].Address == msg.Creator {
 			index = i
 			break
 		}
@@ -132,23 +132,23 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	if index == 0 {
 		// If drop creator is already top of leader board
 		// Only update number of drops
-		pool.LeaderDrops[0] = sumDropCreator
+		pool.Leaders[0].Drops = sumDropCreator
 	} else {
 		for i := index - 1; i >= 0; i-- {
-			if sumDropCreator.GT(pool.LeaderDrops[i]) {
+			if sumDropCreator.GT(pool.Leaders[i].Drops) {
 				// If drop creator has more total drops move
 				// this position down the leader board
-				pool.LeaderAddresses[i+1] = pool.LeaderAddresses[i]
-				pool.LeaderDrops[i+1] = pool.LeaderDrops[i]
+				pool.Leaders[i+1].Address = pool.Leaders[i].Address
+				pool.Leaders[i+1].Drops = pool.Leaders[i].Drops
 				// If at top of the list then place drop creator
 				// as top leader
 				if i == 0 {
-					pool.LeaderAddresses[0] = msg.Creator
-					pool.LeaderDrops[0] = sumDropCreator
+					pool.Leaders[0].Address = msg.Creator
+					pool.Leaders[0].Drops = sumDropCreator
 				}
 			} else {
-				pool.LeaderAddresses[i+1] = msg.Creator
-				pool.LeaderDrops[i+1] = sumDropCreator
+				pool.Leaders[i+1].Address = msg.Creator
+				pool.Leaders[i+1].Drops = sumDropCreator
 				break
 			}
 		}
@@ -158,12 +158,18 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	k.SetPool(ctx, pool)
 
+	var leaders []string
+
+	for i := 0; i < numLeaders; i++ {
+		leaders[i] = "{" + strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ") + "}"
+	}
+
 	// update pool event
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeCreatePool,
+			types.EventTypeUpdatePool,
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(pool.LeaderAddresses, ",")),
+			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(leaders, ", ")),
 			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
 		),
 	)
