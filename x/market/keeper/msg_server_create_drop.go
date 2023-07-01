@@ -116,7 +116,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// TODO: Need to double check that database is configured properly
 	sumDropCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
 
-	numLeaders := len(strings.Split(k.EarnRates(ctx), ","))
+	numLeaders := len(pool.Leaders)
+	maxLeaders := len(strings.Split(k.EarnRates(ctx), ","))
 
 	index := numLeaders
 
@@ -136,19 +137,32 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	} else {
 		for i := index - 1; i >= 0; i-- {
 			if sumDropCreator.GT(pool.Leaders[i].Drops) {
-				// If drop creator has more total drops move
-				// this position down the leader board
-				pool.Leaders[i+1].Address = pool.Leaders[i].Address
-				pool.Leaders[i+1].Drops = pool.Leaders[i].Drops
-				// If at top of the list then place drop creator
-				// as top leader
-				if i == 0 {
-					pool.Leaders[0].Address = msg.Creator
-					pool.Leaders[0].Drops = sumDropCreator
+				// Append
+				if i == index-1 && index == numLeaders && numLeaders < maxLeaders {
+					pool.Leaders = append(pool.Leaders, pool.Leaders[i])
+				} else {
+					// If drop creator has more total drops move
+					// this position down the leader board
+					pool.Leaders[i+1] = pool.Leaders[i]
+					// If at top of the list then place drop creator
+					// as top leader
+					if i == 0 {
+						pool.Leaders[0] = &types.Leader{
+							Address: msg.Creator,
+							Drops:   sumDropCreator,
+						}
+					}
 				}
 			} else {
-				pool.Leaders[i+1].Address = msg.Creator
-				pool.Leaders[i+1].Drops = sumDropCreator
+				if index == numLeaders && numLeaders < maxLeaders {
+					pool.Leaders = append(pool.Leaders, &types.Leader{
+						Address: msg.Creator,
+						Drops:   sumDropCreator,
+					})
+				} else {
+					pool.Leaders[i+1].Address = msg.Creator
+					pool.Leaders[i+1].Drops = sumDropCreator
+				}
 				break
 			}
 		}
@@ -161,7 +175,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	var leaders []string
 
 	for i := 0; i < numLeaders; i++ {
-		leaders[i] = "{" + strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ") + "}"
+		leaders = append(leaders, "{"+strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ")+"}")
 	}
 
 	// update pool event
