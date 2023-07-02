@@ -62,7 +62,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	profit1 := dropProfit.Sub(profit2)
 
-	earnRatesStringArray := strings.Split(k.EarnRates(ctx), ",")
+	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRates [10]sdk.Int
 	var earnings1 [10]sdk.Int
 	earnings1Total := sdk.NewInt(0)
@@ -72,8 +72,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	var coinLeader2 sdk.Coin
 	var coinsLeader sdk.Coins
 
-	for i, v := range earnRatesStringArray {
-		earnRates[i], _ = sdk.NewIntFromString(v)
+	for i, v := range pool.Leaders {
+		earnRates[i], _ = sdk.NewIntFromString(earnRatesStringSlice[i])
 		if !found {
 			return nil, sdkerrors.Wrapf(types.ErrDropNotFound, "%s", msg.Uid)
 		}
@@ -87,7 +87,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		coinLeader2 = sdk.NewCoin(denom2, earnings2Total)
 		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
 
-		leader, _ := sdk.AccAddressFromBech32(pool.Leaders[i].Address)
+		leader, _ := sdk.AccAddressFromBech32(v.Address)
 
 		// Payout Leader
 		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
@@ -99,7 +99,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get Drop Redeemer total drops minus redeemed
 	sumDropRedeemer := k.GetDropsSum(ctx, msg.Creator).Sub(drop.Drops)
 
-	numLeaders := len(strings.Split(k.EarnRates(ctx), ","))
+	numLeaders := len(pool.Leaders)
 
 	var index int
 	flag := false
