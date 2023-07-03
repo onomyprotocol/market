@@ -10,7 +10,6 @@ import "market/drop.proto";
 import "market/member.proto";
 import "market/burnings.proto";
 import "market/order.proto";
-import "market/asset.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/pendulum-labs/market/x/market/types";
@@ -23,7 +22,7 @@ service Query {
   }
   // Queries a Pool by index.
 	rpc Pool(QueryGetPoolRequest) returns (QueryGetPoolResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/pool/{pair}/{denom1}/{denom2}/{leader}";
+		option (google.api.http).get = "/pendulum-labs/market/market/pool/{pair}";
 	}
 
 	// Queries a list of Pool items.
@@ -33,7 +32,7 @@ service Query {
 
 // Queries a Drop by index.
 	rpc Drop(QueryGetDropRequest) returns (QueryGetDropResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}/{owner}/{pair}";
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
 	}
 
 	// Queries a list of Drop items.
@@ -43,7 +42,7 @@ service Query {
 
 // Queries a Member by index.
 	rpc Member(QueryGetMemberRequest) returns (QueryGetMemberResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/member/{pair}/{denomA}/{denomB}";
+		option (google.api.http).get = "/pendulum-labs/market/market/member/{denomA}/{denomB}";
 	}
 
 	// Queries a list of Member items.
@@ -71,19 +70,14 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/order";
 	}
 
-// Queries a Asset by index.
-	rpc Asset(QueryGetAssetRequest) returns (QueryGetAssetResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/asset/{active}/{owner}/{assetType}";
-	}
-
-	// Queries a list of Asset items.
-	rpc AssetAll(QueryAllAssetRequest) returns (QueryAllAssetResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/asset";
-	}
-
-// Queries a list of GetBook items.
-	rpc Book(QueryGetBookRequest) returns (QueryGetBookResponse) {
+// Queries a list of Book items.
+	rpc Book(QueryBookRequest) returns (QueryBookResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}";
+	}
+
+// Queries a list of Bookends items.
+	rpc Bookends(QueryBookendsRequest) returns (QueryBookendsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -100,9 +94,6 @@ message QueryParamsResponse {
 
 message QueryGetPoolRequest {
 	string pair = 1;
-	string denom1 = 2;
-	string denom2 = 3;
-	string leader = 4;
 }
 
 message QueryGetPoolResponse {
@@ -119,10 +110,7 @@ message QueryAllPoolResponse {
 }
 
 message QueryGetDropRequest {
-	  uint64 uid = 1;
-  string owner = 2;
-  string pair = 3;
-
+	uint64 uid = 1;
 }
 
 message QueryGetDropResponse {
@@ -138,11 +126,9 @@ message QueryAllDropResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetMemberRequest {
-	  string pair = 1;
-  string denomA = 2;
-  string denomB = 3;
-
+message QueryGetMemberRequest {	  
+  	string denomA = 2;
+  	string denomB = 3;
 }
 
 message QueryGetMemberResponse {
@@ -199,35 +185,31 @@ message QueryAllOrderResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetAssetRequest {
-	  bool active = 1;
-  string owner = 2;
-  string assetType = 3;
-
-}
-
-message QueryGetAssetResponse {
-	Asset asset = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllAssetRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllAssetResponse {
-	repeated Asset asset = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetBookRequest {
+message QueryBookRequest {
   string denomA = 1;
   string denomB = 2;
   string orderType = 3;
 cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
-message QueryGetBookResponse {
+message QueryBookResponse {
 	repeated OrderResponse book = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryBookendsRequest {
+  string coinA = 1;
+  string coinB = 2;
+  string orderType = 3;
+  repeated string rate = 4;
+}
+
+message QueryBookendsResponse {
+	string coinA = 1;
+    string coinB = 2;
+    string orderType = 3;
+    repeated string rate = 4;
+	uint64 prev = 5;
+	uint64 next = 6;
 }
 
 // this line is used by starport scaffolding # 3

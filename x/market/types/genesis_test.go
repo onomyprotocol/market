@@ -28,15 +28,25 @@ func TestGenesisState_Validate(t *testing.T) {
 						Pair:   "0",
 						Denom1: "0",
 						Denom2: "0",
-						Leader: "0",
-						Drops:  sdk.NewIntFromUint64(uint64(0)),
+						Leaders: []*types.Leader{
+							{
+								Address: "0",
+								Drops:   sdk.NewInt(0),
+							},
+						},
+						Drops: sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
 						Pair:   "1",
 						Denom1: "1",
 						Denom2: "1",
-						Leader: "1",
-						Drops:  sdk.NewIntFromUint64(uint64(1)),
+						Leaders: []*types.Leader{
+							{
+								Address: "1",
+								Drops:   sdk.NewInt(1),
+							},
+						},
+						Drops: sdk.NewIntFromUint64(uint64(1)),
 					},
 				},
 				DropList: []types.Drop{
@@ -113,20 +123,6 @@ func TestGenesisState_Validate(t *testing.T) {
 						Next:      uint64(1),
 					},
 				},
-				AssetList: []types.Asset{
-					{
-						Active:    true,
-						Owner:     "0",
-						AssetType: "0",
-						Uid:       uint64(0),
-					},
-					{
-						Active:    false,
-						Owner:     "1",
-						AssetType: "1",
-						Uid:       uint64(1),
-					},
-				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -139,15 +135,25 @@ func TestGenesisState_Validate(t *testing.T) {
 						Pair:   "0",
 						Denom1: "0",
 						Denom2: "0",
-						Leader: "0",
-						Drops:  sdk.NewIntFromUint64(uint64(0)),
+						Leaders: []*types.Leader{
+							{
+								Address: "0",
+								Drops:   sdk.NewInt(0),
+							},
+						},
+						Drops: sdk.NewIntFromUint64(uint64(0)),
 					},
 					{
 						Pair:   "0",
 						Denom1: "0",
 						Denom2: "0",
-						Leader: "0",
-						Drops:  sdk.NewIntFromUint64(uint64(0)),
+						Leaders: []*types.Leader{
+							{
+								Address: "0",
+								Drops:   sdk.NewInt(0),
+							},
+						},
+						Drops: sdk.NewIntFromUint64(uint64(0)),
 					},
 				},
 			},
@@ -236,26 +242,6 @@ func TestGenesisState_Validate(t *testing.T) {
 						Rate:      []sdk.Int{sdk.NewInt(int64(0)), sdk.NewInt(int64(0))},
 						Prev:      uint64(0),
 						Next:      uint64(0),
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated asset",
-			genState: &types.GenesisState{
-				AssetList: []types.Asset{
-					{
-						Active:    true,
-						Owner:     "0",
-						AssetType: "0",
-						Uid:       uint64(0),
-					},
-					{
-						Active:    true,
-						Owner:     "0",
-						AssetType: "0",
-						Uid:       uint64(0),
 					},
 				},
 			},

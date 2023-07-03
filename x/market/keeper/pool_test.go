@@ -21,7 +21,12 @@ func createNPool(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Pool {
 		items[i].Pair = strconv.Itoa(i)
 		items[i].Denom1 = strconv.Itoa(i)
 		items[i].Denom2 = strconv.Itoa(i)
-		items[i].Leader = strconv.Itoa(i)
+		items[i].Leaders = []*types.Leader{
+			{
+				Address: strconv.Itoa(i),
+				Drops:   sdk.NewInt(int64(i)),
+			},
+		}
 		items[i].Drops = sdk.NewIntFromUint64(uint64(0))
 
 		keeper.SetPool(ctx, items[i])

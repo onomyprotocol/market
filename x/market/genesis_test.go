@@ -14,21 +14,30 @@ import (
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-
 		PoolList: []types.Pool{
 			{
 				Pair:   "0",
 				Denom1: "0",
 				Denom2: "0",
-				Leader: "0",
-				Drops:  sdk.NewIntFromUint64(uint64(0)),
+				Leaders: []*types.Leader{
+					{
+						Address: "0",
+						Drops:   sdk.NewIntFromUint64(uint64(0)),
+					},
+				},
+				Drops: sdk.NewIntFromUint64(uint64(0)),
 			},
 			{
 				Pair:   "1",
 				Denom1: "1",
 				Denom2: "1",
-				Leader: "1",
-				Drops:  sdk.NewIntFromUint64(uint64(1)),
+				Leaders: []*types.Leader{
+					{
+						Address: "1",
+						Drops:   sdk.NewIntFromUint64(uint64(1)),
+					},
+				},
+				Drops: sdk.NewIntFromUint64(uint64(1)),
 			},
 		},
 		DropList: []types.Drop{
@@ -105,20 +114,6 @@ func TestGenesis(t *testing.T) {
 				Next:      uint64(1),
 			},
 		},
-		AssetList: []types.Asset{
-			{
-				Active:    true,
-				Owner:     "0",
-				AssetType: "0",
-				Uid:       uint64(0),
-			},
-			{
-				Active:    false,
-				Owner:     "1",
-				AssetType: "1",
-				Uid:       uint64(1),
-			},
-		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -135,6 +130,5 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
 	require.ElementsMatch(t, genesisState.BurningsList, got.BurningsList)
 	require.ElementsMatch(t, genesisState.OrderList, got.OrderList)
-	require.ElementsMatch(t, genesisState.AssetList, got.AssetList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

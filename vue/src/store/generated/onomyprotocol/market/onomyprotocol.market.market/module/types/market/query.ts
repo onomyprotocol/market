@@ -140,14 +140,14 @@ export interface QueryAllAssetResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryGetBookRequest {
+export interface QueryBookRequest {
   denomA: string;
   denomB: string;
   orderType: string;
   pagination: PageRequest | undefined;
 }
 
-export interface QueryGetBookResponse {
+export interface QueryBookResponse {
   book: OrderResponse[];
 }
 
@@ -2158,15 +2158,15 @@ export const QueryAllAssetResponse = {
   },
 };
 
-const baseQueryGetBookRequest: object = {
+const baseQueryBookRequest: object = {
   denomA: "",
   denomB: "",
   orderType: "",
 };
 
-export const QueryGetBookRequest = {
+export const QueryBookRequest = {
   encode(
-    message: QueryGetBookRequest,
+    message: QueryBookRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.denomA !== "") {
@@ -2184,10 +2184,10 @@ export const QueryGetBookRequest = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetBookRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryBookRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+    const message = { ...baseQueryBookRequest } as QueryBookRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2211,8 +2211,8 @@ export const QueryGetBookRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetBookRequest {
-    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+  fromJSON(object: any): QueryBookRequest {
+    const message = { ...baseQueryBookRequest } as QueryBookRequest;
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = String(object.denomA);
     } else {
@@ -2236,7 +2236,7 @@ export const QueryGetBookRequest = {
     return message;
   },
 
-  toJSON(message: QueryGetBookRequest): unknown {
+  toJSON(message: QueryBookRequest): unknown {
     const obj: any = {};
     message.denomA !== undefined && (obj.denomA = message.denomA);
     message.denomB !== undefined && (obj.denomB = message.denomB);
@@ -2248,8 +2248,8 @@ export const QueryGetBookRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetBookRequest>): QueryGetBookRequest {
-    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+  fromPartial(object: DeepPartial<QueryBookRequest>): QueryBookRequest {
+    const message = { ...baseQueryBookRequest } as QueryBookRequest;
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = object.denomA;
     } else {
@@ -2274,11 +2274,11 @@ export const QueryGetBookRequest = {
   },
 };
 
-const baseQueryGetBookResponse: object = {};
+const baseQueryBookResponse: object = {};
 
-export const QueryGetBookResponse = {
+export const QueryBookResponse = {
   encode(
-    message: QueryGetBookResponse,
+    message: QueryBookResponse,
     writer: Writer = Writer.create()
   ): Writer {
     for (const v of message.book) {
@@ -2287,10 +2287,10 @@ export const QueryGetBookResponse = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetBookResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryBookResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+    const message = { ...baseQueryBookResponse } as QueryBookResponse;
     message.book = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -2306,8 +2306,8 @@ export const QueryGetBookResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetBookResponse {
-    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+  fromJSON(object: any): QueryBookResponse {
+    const message = { ...baseQueryBookResponse } as QueryBookResponse;
     message.book = [];
     if (object.book !== undefined && object.book !== null) {
       for (const e of object.book) {
@@ -2317,7 +2317,7 @@ export const QueryGetBookResponse = {
     return message;
   },
 
-  toJSON(message: QueryGetBookResponse): unknown {
+  toJSON(message: QueryBookResponse): unknown {
     const obj: any = {};
     if (message.book) {
       obj.book = message.book.map((e) =>
@@ -2329,8 +2329,8 @@ export const QueryGetBookResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetBookResponse>): QueryGetBookResponse {
-    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+  fromPartial(object: DeepPartial<QueryBookResponse>): QueryBookResponse {
+    const message = { ...baseQueryBookResponse } as QueryBookResponse;
     message.book = [];
     if (object.book !== undefined && object.book !== null) {
       for (const e of object.book) {
@@ -2371,8 +2371,8 @@ export interface Query {
   Asset(request: QueryGetAssetRequest): Promise<QueryGetAssetResponse>;
   /** Queries a list of Asset items. */
   AssetAll(request: QueryAllAssetRequest): Promise<QueryAllAssetResponse>;
-  /** Queries a list of GetBook items. */
-  Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse>;
+  /** Queries a list of Book items. */
+  Book(request: QueryBookRequest): Promise<QueryBookResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2538,15 +2538,15 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse> {
-    const data = QueryGetBookRequest.encode(request).finish();
+  Book(request: QueryBookRequest): Promise<QueryBookResponse> {
+    const data = QueryBookRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulum-labs.market.market.Query",
       "Book",
       data
     );
     return promise.then((data) =>
-      QueryGetBookResponse.decode(new Reader(data))
+      QueryBookResponse.decode(new Reader(data))
     );
   }
 }

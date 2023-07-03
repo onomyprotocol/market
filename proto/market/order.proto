@@ -26,6 +26,10 @@ message Order {
   uint64 next = 10;
 }
 
+message Orders {
+  repeated uint64 uids = 1;
+}
+
 message OrderResponse {
   uint64 uid = 1; 
   string owner = 2; 

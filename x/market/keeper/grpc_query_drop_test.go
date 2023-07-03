@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestDropQuerySingle(t *testing.T) {
-	keeper:= keepertest.CreateTestEnvironment(t)
+	keeper := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(keeper.Context)
 	msgs := createNDrop(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
@@ -31,27 +31,21 @@ func TestDropQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetDropRequest{
-				Uid:   msgs[0].Uid,
-				Owner: msgs[0].Owner,
-				Pair:  msgs[0].Pair,
+				Uid: msgs[0].Uid,
 			},
 			response: &types.QueryGetDropResponse{Drop: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetDropRequest{
-				Uid:   msgs[1].Uid,
-				Owner: msgs[1].Owner,
-				Pair:  msgs[1].Pair,
+				Uid: msgs[1].Uid,
 			},
 			response: &types.QueryGetDropResponse{Drop: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetDropRequest{
-				Uid:   100000,
-				Owner: strconv.Itoa(100000),
-				Pair:  strconv.Itoa(100000),
+				Uid: 100000,
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),
 		},
@@ -76,7 +70,7 @@ func TestDropQuerySingle(t *testing.T) {
 }
 
 func TestDropQueryPaginated(t *testing.T) {
-	keeper:= keepertest.CreateTestEnvironment(t)
+	keeper := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(keeper.Context)
 	msgs := createNDrop(keeper.MarketKeeper, keeper.Context, 5)
 

@@ -11,10 +11,10 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetBook() *cobra.Command {
+func CmdBook() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-book [denom-a] [denom-b] [order-type]",
-		Short: "Query get-book",
+		Use:   "book [denom-a] [denom-b] [order-type]",
+		Short: "Query book",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqDenomA := args[0]
@@ -28,7 +28,7 @@ func CmdGetBook() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetBookRequest{
+			params := &types.QueryBookRequest{
 				DenomA:    reqDenomA,
 				DenomB:    reqDenomB,
 				OrderType: reqOrderType,

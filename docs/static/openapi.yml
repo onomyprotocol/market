@@ -26710,57 +26710,32 @@ paths:
           format: uint64
       tags:
         - Query
-  /pendulum-labs/market/market/asset:
+  '/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}':
     get:
-      summary: Queries a list of Asset items.
-      operationId: PendulumlabsMarketMarketAssetAll
+      summary: Queries a list of Bookends items.
+      operationId: PendulumlabsMarketMarketBookends
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              asset:
+              coinA:
+                type: string
+              coinB:
+                type: string
+              orderType:
+                type: string
+              rate:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    active:
-                      type: boolean
-                    owner:
-                      type: string
-                    assetType:
-                      type: string
-                    uid:
-                      type: string
-                      format: uint64
-              pagination:
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
+                  type: string
+              prev:
+                type: string
+                format: uint64
+              next:
+                type: string
+                format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -26780,117 +26755,26 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/pendulum-labs/market/market/asset/{active}/{owner}/{assetType}':
-    get:
-      summary: Queries a Asset by index.
-      operationId: PendulumlabsMarketMarketAsset
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              asset:
-                type: object
-                properties:
-                  active:
-                    type: boolean
-                  owner:
-                    type: string
-                  assetType:
-                    type: string
-                  uid:
-                    type: string
-                    format: uint64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: active
-          in: path
-          required: true
-          type: boolean
-        - name: owner
+        - name: coinA
           in: path
           required: true
           type: string
-        - name: assetType
+        - name: coinB
           in: path
           required: true
           type: string
+        - name: orderType
+          in: path
+          required: true
+          type: string
+        - name: rate
+          in: path
+          required: true
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+          minItems: 1
       tags:
         - Query
   /pendulum-labs/market/market/burnings:
@@ -27190,7 +27074,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/drop/{uid}/{owner}/{pair}':
+  '/pendulum-labs/market/market/drop/{uid}':
     get:
       summary: Queries a Drop by index.
       operationId: PendulumlabsMarketMarketDrop
@@ -27240,19 +27124,11 @@ paths:
           required: true
           type: string
           format: uint64
-        - name: owner
-          in: path
-          required: true
-          type: string
-        - name: pair
-          in: path
-          required: true
-          type: string
       tags:
         - Query
   '/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}':
     get:
-      summary: Queries a list of GetBook items.
+      summary: Queries a list of Book items.
       operationId: PendulumlabsMarketMarketBook
       responses:
         '200':
@@ -27514,7 +27390,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/member/{pair}/{denomA}/{denomB}':
+  '/pendulum-labs/market/market/member/{denomA}/{denomB}':
     get:
       summary: Queries a Member by index.
       operationId: PendulumlabsMarketMarketMember
@@ -27562,10 +27438,6 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: pair
-          in: path
-          required: true
-          type: string
         - name: denomA
           in: path
           required: true
@@ -27818,15 +27690,13 @@ paths:
                 description: params holds all the parameters of this module.
                 type: object
                 properties:
-                  earn_rate:
-                    type: array
-                    items:
-                      type: string
-                    title: leader earnings rate
+                  earn_rates:
+                    type: string
+                    title: |-
+                      leader earnings rates
+                      1,2,3 Comma separated, no space
                   burn_rate:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     title: pool burning rate
                   burn_coin:
                     type: string
@@ -27875,8 +27745,15 @@ paths:
                       type: string
                     denom2:
                       type: string
-                    leader:
-                      type: string
+                    leaders:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          drops:
+                            type: string
                     drops:
                       type: string
               pagination:
@@ -27983,7 +27860,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/pool/{pair}/{denom1}/{denom2}/{leader}':
+  '/pendulum-labs/market/market/pool/{pair}':
     get:
       summary: Queries a Pool by index.
       operationId: PendulumlabsMarketMarketPool
@@ -28002,8 +27879,15 @@ paths:
                     type: string
                   denom2:
                     type: string
-                  leader:
-                    type: string
+                  leaders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        drops:
+                          type: string
                   drops:
                     type: string
         default:
@@ -28026,18 +27910,6 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: pair
-          in: path
-          required: true
-          type: string
-        - name: denom1
-          in: path
-          required: true
-          type: string
-        - name: denom2
-          in: path
-          required: true
-          type: string
-        - name: leader
           in: path
           required: true
           type: string
@@ -45859,18 +45731,6 @@ definitions:
     description: >-
       QueryAppVersionResponse is the response type for the Query/AppVersion RPC
       method.
-  pendulumlabs.market.market.Asset:
-    type: object
-    properties:
-      active:
-        type: boolean
-      owner:
-        type: string
-      assetType:
-        type: string
-      uid:
-        type: string
-        format: uint64
   pendulumlabs.market.market.Burnings:
     type: object
     properties:
@@ -45894,6 +45754,13 @@ definitions:
         type: string
       active:
         type: boolean
+  pendulumlabs.market.market.Leader:
+    type: object
+    properties:
+      address:
+        type: string
+      drops:
+        type: string
   pendulumlabs.market.market.Member:
     type: object
     properties:
@@ -45984,15 +45851,13 @@ definitions:
   pendulumlabs.market.market.Params:
     type: object
     properties:
-      earn_rate:
-        type: array
-        items:
-          type: string
-        title: leader earnings rate
+      earn_rates:
+        type: string
+        title: |-
+          leader earnings rates
+          1,2,3 Comma separated, no space
       burn_rate:
-        type: array
-        items:
-          type: string
+        type: string
         title: pool burning rate
       burn_coin:
         type: string
@@ -46007,52 +45872,17 @@ definitions:
         type: string
       denom2:
         type: string
-      leader:
-        type: string
-      drops:
-        type: string
-  pendulumlabs.market.market.QueryAllAssetResponse:
-    type: object
-    properties:
-      asset:
+      leaders:
         type: array
         items:
           type: object
           properties:
-            active:
-              type: boolean
-            owner:
+            address:
               type: string
-            assetType:
+            drops:
               type: string
-            uid:
-              type: string
-              format: uint64
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
+      drops:
+        type: string
   pendulumlabs.market.market.QueryAllBurningsResponse:
     type: object
     properties:
@@ -46257,8 +46087,15 @@ definitions:
               type: string
             denom2:
               type: string
-            leader:
-              type: string
+            leaders:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  drops:
+                    type: string
             drops:
               type: string
       pagination:
@@ -46286,22 +46123,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryGetAssetResponse:
-    type: object
-    properties:
-      asset:
-        type: object
-        properties:
-          active:
-            type: boolean
-          owner:
-            type: string
-          assetType:
-            type: string
-          uid:
-            type: string
-            format: uint64
-  pendulumlabs.market.market.QueryGetBookResponse:
+  pendulumlabs.market.market.QueryBookResponse:
     type: object
     properties:
       book:
@@ -46334,6 +46156,25 @@ definitions:
             next:
               type: string
               format: uint64
+  pendulumlabs.market.market.QueryBookendsResponse:
+    type: object
+    properties:
+      coinA:
+        type: string
+      coinB:
+        type: string
+      orderType:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
   pendulumlabs.market.market.QueryGetBurningsResponse:
     type: object
     properties:
@@ -46428,8 +46269,15 @@ definitions:
             type: string
           denom2:
             type: string
-          leader:
-            type: string
+          leaders:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                drops:
+                  type: string
           drops:
             type: string
   pendulumlabs.market.market.QueryParamsResponse:
@@ -46439,15 +46287,13 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
         properties:
-          earn_rate:
-            type: array
-            items:
-              type: string
-            title: leader earnings rate
+          earn_rates:
+            type: string
+            title: |-
+              leader earnings rates
+              1,2,3 Comma separated, no space
           burn_rate:
-            type: array
-            items:
-              type: string
+            type: string
             title: pool burning rate
           burn_coin:
             type: string

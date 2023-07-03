@@ -8,26 +8,34 @@ import (
 
 // SetOrder set a specific order in the store from its index
 func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
-	orderStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
 	b := k.cdc.MustMarshal(&order)
-	orderStore.Set(types.OrderKey(
+	store1.Set(types.OrderKey(
 		order.Uid,
 	), b)
 
-	assetStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKeyPrefix))
-	var asset = types.Asset{
-		Active:    true,
-		Owner:     order.Owner,
-		AssetType: "order",
-		Uid:       order.Uid,
-	}
-	c := k.cdc.MustMarshal(&asset)
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
 
-	assetStore.Set(types.AssetKey(
-		asset.Active,
-		asset.Owner,
-		asset.AssetType,
-	), c)
+	c := store2.Get(types.OrdersKey(
+		order.Owner,
+	))
+
+	var orders types.Orders
+
+	if c == nil {
+		orders = types.Orders{
+			Uids: []uint64{order.Uid},
+		}
+	} else {
+		k.cdc.MustUnmarshal(c, &orders)
+		orders.Uids = append(orders.Uids, order.Uid)
+	}
+
+	d := k.cdc.MustMarshal(&orders)
+	store2.Set(types.OrdersKey(
+		order.Owner,
+	), d)
 }
 
 // GetOrder returns a order from its index
@@ -46,6 +54,42 @@ func (k Keeper) GetOrder(
 
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
+}
+
+// GetOwnerOrders returns orders from a single owner
+func (k Keeper) GetOrders(
+	ctx sdk.Context,
+	owner string,
+) (list []types.Order) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
+
+	b := store1.Get(types.OrdersKey(
+		owner,
+	))
+	if b == nil {
+		return list
+	}
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	var orders types.Orders
+	var order types.Order
+
+	k.cdc.MustUnmarshal(b, &orders)
+
+	for _, uid := range orders.Uids {
+
+		b := store2.Get(types.OrderKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &order)
+			list = append(list, order)
+		}
+	}
+
+	return
 }
 
 // RemoveOrder removes a order from the store
@@ -121,4 +165,87 @@ func (k Keeper) GetBook(
 	}
 
 	return
+}
+
+// BookEnds returns adjacent orders determined by rate
+func (k Keeper) BookEnds(
+	ctx sdk.Context,
+	denomA string,
+	denomB string,
+	orderType string,
+	rate []sdk.Int,
+) (ends [2]uint64) {
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	member, _ := k.GetMember(ctx, denomA, denomB)
+
+	var uid uint64
+	var orderBytes []byte
+	var order types.Order
+
+	if orderType == "limit" {
+		uid = member.Limit
+
+		if uid == 0 {
+			return [2]uint64{0, 0}
+		}
+
+		orderBytes = store.Get(types.OrderKey(
+			uid,
+		))
+
+		k.cdc.MustUnmarshal(orderBytes, &order)
+
+		for types.GT(order.Rate, rate) || order.Next != uint64(0) {
+
+			orderBytes = store.Get(types.OrderKey(
+				order.Next,
+			))
+
+			k.cdc.MustUnmarshal(orderBytes, &order)
+
+		}
+
+		if order.Next == uint64(0) {
+			if types.LTE(order.Rate, rate) {
+				return [2]uint64{order.Uid, uint64(0)}
+			}
+		}
+
+		return [2]uint64{order.Prev, order.Uid}
+
+	} else {
+
+		uid = member.Stop
+
+		if uid == 0 {
+			return [2]uint64{0, 0}
+		}
+
+		orderBytes = store.Get(types.OrderKey(
+			uid,
+		))
+
+		k.cdc.MustUnmarshal(orderBytes, &order)
+
+		for types.LT(order.Rate, rate) || order.Next != uint64(0) {
+
+			orderBytes = store.Get(types.OrderKey(
+				order.Next,
+			))
+
+			k.cdc.MustUnmarshal(orderBytes, &order)
+
+		}
+
+		if order.Next == uint64(0) {
+			if types.GTE(order.Rate, rate) {
+				return [2]uint64{order.Uid, uint64(0)}
+			}
+		}
+
+		return [2]uint64{order.Prev, order.Uid}
+
+	}
 }

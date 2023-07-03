@@ -178,7 +178,7 @@ export default {
 					}
 			return state.AssetAll[JSON.stringify(params)] ?? {}
 		},
-				getBook: (state) => (params = { params: {}}) => {
+				book: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
 						(<any> params).query=null
 					}
@@ -550,7 +550,7 @@ export default {
 				}
 				commit('QUERY', { query: 'Book', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryBook', payload: { options: { all }, params: {...key},query }})
-				return getters['getBook']( { params: {...key}, query}) ?? {}
+				return getters['book']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryBook API Node Unavailable. Could not perform query: ' + e.message)
 				

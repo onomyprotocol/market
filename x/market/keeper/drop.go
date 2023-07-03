@@ -8,11 +8,33 @@ import (
 
 // SetDrop set a specific drop in the store from its index
 func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 	b := k.cdc.MustMarshal(&drop)
-	store.Set(types.DropSetKey(
+	store1.Set(types.DropSetKey(
 		drop.Uid,
 	), b)
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+
+	c := store2.Get(types.DropsKey(
+		drop.Owner,
+	))
+
+	var drops types.Drops
+
+	if c == nil {
+		drops = types.Drops{
+			Uids: []uint64{drop.Uid},
+		}
+	} else {
+		k.cdc.MustUnmarshal(c, &drops)
+		drops.Uids = append(drops.Uids, drop.Uid)
+	}
+
+	d := k.cdc.MustMarshal(&drops)
+	store2.Set(types.DropsKey(
+		drop.Owner,
+	), d)
 }
 
 // GetDrop returns a drop from its index
@@ -34,46 +56,74 @@ func (k Keeper) GetDrop(
 }
 
 // GetOwnerDrops returns drops from a single owner
-func (k Keeper) GetOwnerDrops(
+func (k Keeper) GetDrops(
 	ctx sdk.Context,
 	owner string,
 ) (list []types.Drop) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
 
-	iterator := sdk.KVStorePrefixIterator(store, types.DropOwnerKey(
+	b := store1.Get(types.DropsKey(
 		owner,
 	))
+	if b == nil {
+		return list
+	}
 
-	defer iterator.Close()
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 
-	for ; iterator.Valid(); iterator.Next() {
-		var val types.Drop
-		k.cdc.MustUnmarshal(iterator.Value(), &val)
-		list = append(list, val)
+	var drops types.Drops
+	var drop types.Drop
+
+	k.cdc.MustUnmarshal(b, &drops)
+
+	for _, uid := range drops.Uids {
+
+		b := store2.Get(types.DropKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &drop)
+			list = append(list, drop)
+		}
 	}
 
 	return
 }
 
 // GetOwnerDrops returns drops from a single owner
-func (k Keeper) GetOwnerDropsInt(
+func (k Keeper) GetDropsSum(
 	ctx sdk.Context,
 	owner string,
-) (drops sdk.Int) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+) (sumDrops sdk.Int) {
+	sumDrops = sdk.NewInt(0)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.DropOwnerKey(
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+
+	b := store1.Get(types.DropsKey(
 		owner,
 	))
+	if b == nil {
+		return
+	}
 
-	defer iterator.Close()
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
 
-	drops = sdk.NewInt(0)
+	var drops types.Drops
+	var drop types.Drop
 
-	for ; iterator.Valid(); iterator.Next() {
-		var val types.Drop
-		k.cdc.MustUnmarshal(iterator.Value(), &val)
-		drops = drops.Add(val.Drops)
+	k.cdc.MustUnmarshal(b, &drops)
+
+	for _, uid := range drops.Uids {
+
+		b := store2.Get(types.DropKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &drop)
+			sumDrops = sumDrops.Add(drop.Drops)
+		}
 	}
 
 	return
@@ -84,10 +134,57 @@ func (k Keeper) RemoveDrop(
 	ctx sdk.Context,
 	uid uint64,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
-	store.Delete(types.DropKey(
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	b := store1.Get(types.DropKey(
 		uid,
 	))
+
+	if b == nil {
+		return
+	}
+
+	var drop types.Drop
+
+	k.cdc.MustUnmarshal(b, &drop)
+
+	store1.Delete(types.DropKey(
+		uid,
+	))
+
+	// Remove uid from owner drop list
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+
+	var drops types.Drops
+
+	c := store2.Get(types.DropsKey(
+		drop.Owner,
+	))
+	if c == nil {
+		return
+	}
+
+	k.cdc.MustUnmarshal(c, &drops)
+
+	var list []uint64
+
+	for _, uid := range drops.Uids {
+
+		if uid != drop.Uid {
+			list = append(list, uid)
+		}
+	}
+
+	drops = types.Drops{
+		Uids: list,
+	}
+
+	d := k.cdc.MustMarshal(&drops)
+
+	store2.Set(types.DropsKey(
+		drop.Owner,
+	), d)
+
 }
 
 // GetAllDrop returns all drop

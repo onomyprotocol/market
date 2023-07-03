@@ -22,3 +22,6 @@ message Drop {
   bool active = 6;
 }
 
+message Drops {
+  repeated uint64 uids = 2;
+}

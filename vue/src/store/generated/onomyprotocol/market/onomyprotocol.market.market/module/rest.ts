@@ -222,7 +222,7 @@ export interface MarketQueryGetAssetResponse {
   asset?: MarketAsset;
 }
 
-export interface MarketQueryGetBookResponse {
+export interface MarketQueryBookResponse {
   book?: MarketOrderResponse[];
 }
 
@@ -655,7 +655,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryBook
-   * @summary Queries a list of GetBook items.
+   * @summary Queries a list of Book items.
    * @request GET:/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}
    */
   queryBook = (
@@ -671,7 +671,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryGetBookResponse, RpcStatus>({
+    this.request<MarketQueryBookResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/get_book/${denomA}/${denomB}/${orderType}`,
       method: "GET",
       query: query,

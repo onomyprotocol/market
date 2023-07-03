@@ -31,7 +31,6 @@ func TestMemberQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetMemberRequest{
-				Pair:   msgs[0].Pair,
 				DenomA: msgs[0].DenomA,
 				DenomB: msgs[0].DenomB,
 			},
@@ -40,7 +39,6 @@ func TestMemberQuerySingle(t *testing.T) {
 		{
 			desc: "Second",
 			request: &types.QueryGetMemberRequest{
-				Pair:   msgs[1].Pair,
 				DenomA: msgs[1].DenomA,
 				DenomB: msgs[1].DenomB,
 			},
@@ -49,7 +47,6 @@ func TestMemberQuerySingle(t *testing.T) {
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetMemberRequest{
-				Pair:   strconv.Itoa(100000),
 				DenomA: strconv.Itoa(100000),
 				DenomB: strconv.Itoa(100000),
 			},
@@ -76,7 +73,7 @@ func TestMemberQuerySingle(t *testing.T) {
 }
 
 func TestMemberQueryPaginated(t *testing.T) {
-	keeper:= keepertest.CreateTestEnvironment(t)
+	keeper := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(keeper.Context)
 	msgs := createNMember(keeper.MarketKeeper, keeper.Context, 5)
 

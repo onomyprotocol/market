@@ -21,7 +21,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	}
 
 	if drop.Owner != msg.Creator {
-		return nil, sdkerrors.Wrapf(types.ErrNotDropOwner, "%s", msg.Uid)
+		return nil, sdkerrors.Wrapf(types.ErrNotDrops, "%s", msg.Uid)
 	}
 
 	pair := strings.Split(drop.Pair, ",")
@@ -57,20 +57,96 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
-	earnRate := k.EarnRate(ctx)
-	burnRate := k.BurnRate(ctx)
-
 	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
 	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
-	earn2 := (profit2.Mul(earnRate[0])).Quo(earnRate[1])
-	burn2 := (profit2.Mul(burnRate[0])).Quo(burnRate[1])
-
-	// Redemption value in coin 2
-	dropOwner2 := total2.Sub(earn2.Add(burn2))
 
 	profit1 := dropProfit.Sub(profit2)
-	earn1 := (profit1.Mul(earnRate[0])).Quo(earnRate[1])
-	burn1 := (profit1.Mul(burnRate[0])).Quo(burnRate[1])
+
+	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
+	var earnRates [10]sdk.Int
+	var earnings1 [10]sdk.Int
+	earnings1Total := sdk.NewInt(0)
+	var earnings2 [10]sdk.Int
+	earnings2Total := sdk.NewInt(0)
+	var coinLeader1 sdk.Coin
+	var coinLeader2 sdk.Coin
+	var coinsLeader sdk.Coins
+
+	for i, v := range pool.Leaders {
+		earnRates[i], _ = sdk.NewIntFromString(earnRatesStringSlice[i])
+		if !found {
+			return nil, sdkerrors.Wrapf(types.ErrDropNotFound, "%s", msg.Uid)
+		}
+		earnings2[i] = (profit2.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
+		earnings2Total = earnings2Total.Add(earnings2[i])
+
+		earnings1[i] = (profit1.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
+		earnings1Total = earnings1Total.Add(earnings1[i])
+
+		coinLeader1 = sdk.NewCoin(denom1, earnings1Total)
+		coinLeader2 = sdk.NewCoin(denom2, earnings2Total)
+		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
+
+		leader, _ := sdk.AccAddressFromBech32(v.Address)
+
+		// Payout Leader
+		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
+		if sdkError != nil {
+			return nil, sdkError
+		}
+	}
+
+	// Get Drop Redeemer total drops minus redeemed
+	sumDropRedeemer := k.GetDropsSum(ctx, msg.Creator).Sub(drop.Drops)
+
+	numLeaders := len(pool.Leaders)
+
+	var index int
+	flag := false
+
+	// Check if Drop Creator is already on leader board
+	// If so, make index = drop creator position
+	for i := 0; i < numLeaders; i++ {
+		if pool.Leaders[i].Address == msg.Creator {
+			index = i
+			flag = true
+			break
+		}
+	}
+
+	// Re-order leader board to reflect new rankings
+	if flag && index != numLeaders-1 {
+		for i := index + 1; i < numLeaders; i++ {
+			if sumDropRedeemer.LT(pool.Leaders[i].Drops) {
+				// If drop reedemer has less total drops move
+				// this position down the leader board
+				pool.Leaders[i-1].Address = pool.Leaders[i].Address
+				pool.Leaders[i-1].Drops = pool.Leaders[i].Drops
+				// Remove redeemer from bottom of list
+				// Prevents someone from liquidating all drops
+				// yet still receive leader rewards
+				if i == numLeaders-1 {
+					break
+				}
+				pool.Leaders[i].Address = msg.Creator
+				pool.Leaders[i].Drops = sumDropRedeemer
+			} else {
+				break
+			}
+		}
+	}
+
+	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
+
+	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(1000))
+
+	// Redemption value in coin 1
+	redeem1 := total1.Sub(earnings1Total.Add(burn1))
+
+	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
+
+	// Redemption value in coin 2
+	redeem2 := total2.Sub(earnings2Total.Add(burn2))
 
 	var sdkError error
 
@@ -111,10 +187,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 			return nil, sdkError
 		}
 	}
-	k.SetBurnings(ctx, burnings2)
 
-	// Redemption value in coin 1
-	dropOwner1 := total1.Sub(earn1.Add(burn1))
+	k.SetBurnings(ctx, burnings2)
 
 	// Update Pool Total Drops
 	pool.Drops = pool.Drops.Sub(drop.Drops)
@@ -127,24 +201,12 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	coinOwner1 := sdk.NewCoin(denom1, dropOwner1)
-	coinOwner2 := sdk.NewCoin(denom2, dropOwner2)
+	coinOwner1 := sdk.NewCoin(denom1, redeem1)
+	coinOwner2 := sdk.NewCoin(denom2, redeem2)
 	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
 	// Payout Owner
 	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsOwner)
-	if sdkError != nil {
-		return nil, sdkError
-	}
-
-	coinLeader1 := sdk.NewCoin(denom1, earn1)
-	coinLeader2 := sdk.NewCoin(denom2, earn2)
-	coinsLeader := sdk.NewCoins(coinLeader1, coinLeader2)
-
-	leader, _ := sdk.AccAddressFromBech32(pool.Leader)
-
-	// Payout Leader
-	sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
 	if sdkError != nil {
 		return nil, sdkError
 	}

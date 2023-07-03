@@ -102,7 +102,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member2.Balance = member2.Balance.Add(amount2)
 	k.SetMember(ctx, member2)
 
-	// update member1 event
+	// update member2 event
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeUpdateMember,
@@ -114,25 +114,76 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	// Get Drop Creator and Pool Leader total drops from all drops owned
 	// TODO: Need to double check that database is configured properly
-	sumDropsCreator := k.GetOwnerDropsInt(ctx, msg.Creator).Add(drops)
-	sumDropsLeader := k.GetOwnerDropsInt(ctx, pool.Leader)
+	sumDropCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
 
-	// If Creator totaled owned drops is greater than Leader then
-	// Creator is new leader
-	if sumDropsCreator.GT(sumDropsLeader) {
-		pool.Leader = msg.Creator
+	numLeaders := len(pool.Leaders)
+	maxLeaders := len(strings.Split(k.EarnRates(ctx), ","))
+
+	index := numLeaders
+
+	// Check if Drop Creator is already on leader board
+	// If so, make index = drop creator position
+	for i := 0; i < numLeaders; i++ {
+		if pool.Leaders[i].Address == msg.Creator {
+			index = i
+			break
+		}
+	}
+
+	if index == 0 {
+		// If drop creator is already top of leader board
+		// Only update number of drops
+		pool.Leaders[0].Drops = sumDropCreator
+	} else {
+		for i := index - 1; i >= 0; i-- {
+			if sumDropCreator.GT(pool.Leaders[i].Drops) {
+				// Append
+				if i == index-1 && index == numLeaders && numLeaders < maxLeaders {
+					pool.Leaders = append(pool.Leaders, pool.Leaders[i])
+				} else {
+					// If drop creator has more total drops move
+					// this position down the leader board
+					pool.Leaders[i+1] = pool.Leaders[i]
+					// If at top of the list then place drop creator
+					// as top leader
+					if i == 0 {
+						pool.Leaders[0] = &types.Leader{
+							Address: msg.Creator,
+							Drops:   sumDropCreator,
+						}
+					}
+				}
+			} else {
+				if index == numLeaders && numLeaders < maxLeaders {
+					pool.Leaders = append(pool.Leaders, &types.Leader{
+						Address: msg.Creator,
+						Drops:   sumDropCreator,
+					})
+				} else {
+					pool.Leaders[i+1].Address = msg.Creator
+					pool.Leaders[i+1].Drops = sumDropCreator
+				}
+				break
+			}
+		}
 	}
 
 	pool.Drops = pool.Drops.Add(drops)
 
 	k.SetPool(ctx, pool)
 
+	var leaders []string
+
+	for i := 0; i < numLeaders; i++ {
+		leaders = append(leaders, "{"+strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ")+"}")
+	}
+
 	// update pool event
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeCreatePool,
+			types.EventTypeUpdatePool,
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeader, pool.Leader),
+			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(leaders, ", ")),
 			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
 		),
 	)

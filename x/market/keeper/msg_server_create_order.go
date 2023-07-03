@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,14 +13,10 @@ import (
 func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder) (*types.MsgCreateOrderResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	/*
-			    // TODO: validate orderType is 0 or 1
-		        require(coinAsk != coinBid, "Bid and ask coin cannot be the same");
-		        require(position.owner == msg.sender, "Position not owned by sender");
-		        require(position.amountBid > 0, "Amount of bid must be greater than zero");
-	*/
-
 	amount, _ := sdk.NewIntFromString(msg.Amount)
+	if amount == sdk.NewInt(0) {
+		sdkerrors.Wrapf(types.ErrInvalidOrderAmount, "Amount must be greater than zero")
+	}
 
 	coinBid := sdk.NewCoin(msg.DenomBid, amount)
 
@@ -44,11 +41,10 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
-	numerator, _ := sdk.NewIntFromString(msg.Rate[0])
-
-	denominator, _ := sdk.NewIntFromString(msg.Rate[1])
-
-	rate := []sdk.Int{numerator, denominator}
+	rate, err := types.RateStringToInt(msg.Rate)
+	if err != nil {
+		return nil, err
+	}
 
 	prev, _ := strconv.ParseUint(msg.Prev, 10, 64)
 
@@ -83,30 +79,19 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Bid Member stop field not 0")
 			}
 
-			// Stop order is valid
-
 			// Update MemberBid Stop Head
 			memberBid.Stop = uid
 
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
+			// update memberBid event
+			ctx.EventManager().EmitEvent(
+				sdk.NewEvent(
+					types.EventTypeUpdateMember,
+					sdk.NewAttribute(types.AttributeKeyDenomA, memberBid.DenomA),
+					sdk.NewAttribute(types.AttributeKeyDenomB, memberBid.DenomB),
+					sdk.NewAttribute(types.AttributeKeyStop, strconv.FormatUint(memberBid.Stop, 10)),
+				),
+			)
 
-			// Set Order and MemberBid
-			k.SetOrder(ctx, order)
-			k.SetMember(ctx, memberBid)
-
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Execute Ask Limit first which will check stops
-			// if there are no Ask Limits enabled.  This is a safe
-			// guard in the case there is a stop run.
-			// Stop run would potentially take place if
-			// stop book is checked first repeatedly during price fall
-			ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		}
 
 		if msg.OrderType == "limit" {
@@ -114,26 +99,23 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Bid Member limit field not 0")
 			}
 
-			// Limit order is valid
-
 			// Update MemberBid Limit Head
 			memberBid.Limit = uid
 
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
+			// update memberBid event
+			ctx.EventManager().EmitEvent(
+				sdk.NewEvent(
+					types.EventTypeUpdateMember,
+					sdk.NewAttribute(types.AttributeKeyDenomA, memberBid.DenomA),
+					sdk.NewAttribute(types.AttributeKeyDenomB, memberBid.DenomB),
+					sdk.NewAttribute(types.AttributeKeyStop, strconv.FormatUint(memberBid.Limit, 10)),
+				),
+			)
 
-			// Set Order and MemberBid
-			k.SetOrder(ctx, order)
-			k.SetMember(ctx, memberBid)
-
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		}
+
+		k.SetMember(ctx, memberBid)
+
 	}
 
 	// Case 2
@@ -157,23 +139,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			// Set order as new head of MemberBid Stop
 			memberBid.Stop = uid
 
-			// Set nextOrder prev field to order
-			nextOrder.Prev = uid
-
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
-
-			// Set Order and MemberBid
-			k.SetOrder(ctx, order)
-			k.SetMember(ctx, memberBid)
-
-			ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		}
 
 		if msg.OrderType == "limit" {
@@ -185,24 +150,16 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			// Set order as new head of MemberBid Limit
 			memberBid.Limit = uid
 
-			// Set nextOrder prev field to order
-			nextOrder.Prev = uid
-
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
-
-			// Set Order and MemberBid
-			k.SetOrder(ctx, order)
-			k.SetMember(ctx, memberBid)
-
-			ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		}
+
+		// Set nextOrder prev field to order
+		nextOrder.Prev = uid
+
+		// Update Next Order
+		k.SetOrder(ctx, nextOrder)
+
+		// Update Member Bid
+		k.SetMember(ctx, memberBid)
 	}
 
 	// Case 3
@@ -224,23 +181,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate greater than Prev")
 			}
 
-			// Set nextOrder Next field to Order
-			prevOrder.Next = uid
-
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
-
-			// Set Order and MemberBid
-			k.SetOrder(ctx, order)
-			k.SetMember(ctx, memberBid)
-
-			ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		}
 
 		if msg.OrderType == "limit" {
@@ -249,24 +189,13 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 				return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Order rate less than Prev")
 			}
 
-			// Set nextOrder Next field to Order
-			prevOrder.Next = uid
-
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
-
-			// Set Order and MemberBid
-			k.SetOrder(ctx, order)
-			k.SetMember(ctx, memberBid)
-
-			ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		}
+
+		// Set nextOrder Next field to Order
+		prevOrder.Next = uid
+
+		// Update Previous Order
+		k.SetOrder(ctx, prevOrder)
 	}
 
 	// Case 4
@@ -299,22 +228,9 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			prevOrder.Next = uid
 			nextOrder.Prev = uid
 
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
-
-			// Set Orders and MemberBid
-			k.SetOrder(ctx, order)
+			// Update Previous and Next Orders
 			k.SetOrder(ctx, prevOrder)
 			k.SetOrder(ctx, nextOrder)
-			k.SetMember(ctx, memberBid)
-
-			ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		}
 
 		if msg.OrderType == "limit" {
@@ -330,25 +246,52 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			prevOrder.Next = uid
 			nextOrder.Prev = uid
 
-			// Transfer order amount to module
-			sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
-			if sdkError != nil {
-				return nil, sdkError
-			}
-
-			// Increment UID Counter
-			k.SetUidCount(ctx, uid+1)
-
-			// Set Orders and MemberBid
-			k.SetOrder(ctx, order)
+			// Update Previous and Next Orders
 			k.SetOrder(ctx, prevOrder)
 			k.SetOrder(ctx, nextOrder)
-			k.SetMember(ctx, memberBid)
+		}
+	}
 
-			_, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-			if error != nil {
-				return nil, error
-			}
+	// Transfer order amount to module
+	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinsBid)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
+	// Increment UID Counter
+	k.SetUidCount(ctx, uid+1)
+
+	k.SetOrder(ctx, order)
+
+	// create order event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeCreateOrder,
+			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(order.Uid, 10)),
+			sdk.NewAttribute(types.AttributeKeyDenomA, memberBid.DenomA),
+			sdk.NewAttribute(types.AttributeKeyDenomB, memberBid.DenomB),
+			sdk.NewAttribute(types.AttributeKeyOrderType, order.OrderType),
+			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount),
+			sdk.NewAttribute(types.AttributeKeyRate, strings.Join(msg.Rate, ",")),
+			sdk.NewAttribute(types.AttributeKeyPrev, msg.Prev),
+			sdk.NewAttribute(types.AttributeKeyNext, msg.Next),
+		),
+	)
+
+	if msg.OrderType == "stop" {
+		// Execute Ask Limit first which will check stops
+		// if there are no Ask Limits enabled.  This is a safe
+		// guard in the case there is a stop run.
+		// Stop run would potentially take place if
+		// stop book is checked first repeatedly during price fall
+		_, error := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if error != nil {
+			return nil, error
+		}
+	} else if msg.OrderType == "limit" {
+		_, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if error != nil {
+			return nil, error
 		}
 	}
 
@@ -429,10 +372,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
-
-	if sdkError != nil {
-		return false, sdkError
-	}
 
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)

@@ -11,7 +11,6 @@ import { Drop } from "../market/drop";
 import { Member } from "../market/member";
 import { Burnings } from "../market/burnings";
 import { Order, OrderResponse } from "../market/order";
-import { Asset } from "../market/asset";
 
 export const protobufPackage = "pendulumlabs.market.market";
 
@@ -26,9 +25,6 @@ export interface QueryParamsResponse {
 
 export interface QueryGetPoolRequest {
   pair: string;
-  denom1: string;
-  denom2: string;
-  leader: string;
 }
 
 export interface QueryGetPoolResponse {
@@ -46,8 +42,6 @@ export interface QueryAllPoolResponse {
 
 export interface QueryGetDropRequest {
   uid: number;
-  owner: string;
-  pair: string;
 }
 
 export interface QueryGetDropResponse {
@@ -64,7 +58,6 @@ export interface QueryAllDropResponse {
 }
 
 export interface QueryGetMemberRequest {
-  pair: string;
   denomA: string;
   denomB: string;
 }
@@ -121,34 +114,31 @@ export interface QueryAllOrderResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryGetAssetRequest {
-  active: boolean;
-  owner: string;
-  assetType: string;
-}
-
-export interface QueryGetAssetResponse {
-  asset: Asset | undefined;
-}
-
-export interface QueryAllAssetRequest {
-  pagination: PageRequest | undefined;
-}
-
-export interface QueryAllAssetResponse {
-  asset: Asset[];
-  pagination: PageResponse | undefined;
-}
-
-export interface QueryGetBookRequest {
+export interface QueryBookRequest {
   denomA: string;
   denomB: string;
   orderType: string;
   pagination: PageRequest | undefined;
 }
 
-export interface QueryGetBookResponse {
+export interface QueryBookResponse {
   book: OrderResponse[];
+}
+
+export interface QueryBookendsRequest {
+  coinA: string;
+  coinB: string;
+  orderType: string;
+  rate: string[];
+}
+
+export interface QueryBookendsResponse {
+  coinA: string;
+  coinB: string;
+  orderType: string;
+  rate: string[];
+  prev: number;
+  next: number;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -248,12 +238,7 @@ export const QueryParamsResponse = {
   },
 };
 
-const baseQueryGetPoolRequest: object = {
-  pair: "",
-  denom1: "",
-  denom2: "",
-  leader: "",
-};
+const baseQueryGetPoolRequest: object = { pair: "" };
 
 export const QueryGetPoolRequest = {
   encode(
@@ -262,15 +247,6 @@ export const QueryGetPoolRequest = {
   ): Writer {
     if (message.pair !== "") {
       writer.uint32(10).string(message.pair);
-    }
-    if (message.denom1 !== "") {
-      writer.uint32(18).string(message.denom1);
-    }
-    if (message.denom2 !== "") {
-      writer.uint32(26).string(message.denom2);
-    }
-    if (message.leader !== "") {
-      writer.uint32(34).string(message.leader);
     }
     return writer;
   },
@@ -284,15 +260,6 @@ export const QueryGetPoolRequest = {
       switch (tag >>> 3) {
         case 1:
           message.pair = reader.string();
-          break;
-        case 2:
-          message.denom1 = reader.string();
-          break;
-        case 3:
-          message.denom2 = reader.string();
-          break;
-        case 4:
-          message.leader = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -309,30 +276,12 @@ export const QueryGetPoolRequest = {
     } else {
       message.pair = "";
     }
-    if (object.denom1 !== undefined && object.denom1 !== null) {
-      message.denom1 = String(object.denom1);
-    } else {
-      message.denom1 = "";
-    }
-    if (object.denom2 !== undefined && object.denom2 !== null) {
-      message.denom2 = String(object.denom2);
-    } else {
-      message.denom2 = "";
-    }
-    if (object.leader !== undefined && object.leader !== null) {
-      message.leader = String(object.leader);
-    } else {
-      message.leader = "";
-    }
     return message;
   },
 
   toJSON(message: QueryGetPoolRequest): unknown {
     const obj: any = {};
     message.pair !== undefined && (obj.pair = message.pair);
-    message.denom1 !== undefined && (obj.denom1 = message.denom1);
-    message.denom2 !== undefined && (obj.denom2 = message.denom2);
-    message.leader !== undefined && (obj.leader = message.leader);
     return obj;
   },
 
@@ -342,21 +291,6 @@ export const QueryGetPoolRequest = {
       message.pair = object.pair;
     } else {
       message.pair = "";
-    }
-    if (object.denom1 !== undefined && object.denom1 !== null) {
-      message.denom1 = object.denom1;
-    } else {
-      message.denom1 = "";
-    }
-    if (object.denom2 !== undefined && object.denom2 !== null) {
-      message.denom2 = object.denom2;
-    } else {
-      message.denom2 = "";
-    }
-    if (object.leader !== undefined && object.leader !== null) {
-      message.leader = object.leader;
-    } else {
-      message.leader = "";
     }
     return message;
   },
@@ -570,7 +504,7 @@ export const QueryAllPoolResponse = {
   },
 };
 
-const baseQueryGetDropRequest: object = { uid: 0, owner: "", pair: "" };
+const baseQueryGetDropRequest: object = { uid: 0 };
 
 export const QueryGetDropRequest = {
   encode(
@@ -579,12 +513,6 @@ export const QueryGetDropRequest = {
   ): Writer {
     if (message.uid !== 0) {
       writer.uint32(8).uint64(message.uid);
-    }
-    if (message.owner !== "") {
-      writer.uint32(18).string(message.owner);
-    }
-    if (message.pair !== "") {
-      writer.uint32(26).string(message.pair);
     }
     return writer;
   },
@@ -598,12 +526,6 @@ export const QueryGetDropRequest = {
       switch (tag >>> 3) {
         case 1:
           message.uid = longToNumber(reader.uint64() as Long);
-          break;
-        case 2:
-          message.owner = reader.string();
-          break;
-        case 3:
-          message.pair = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -620,24 +542,12 @@ export const QueryGetDropRequest = {
     } else {
       message.uid = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
-    } else {
-      message.owner = "";
-    }
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = String(object.pair);
-    } else {
-      message.pair = "";
-    }
     return message;
   },
 
   toJSON(message: QueryGetDropRequest): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
-    message.owner !== undefined && (obj.owner = message.owner);
-    message.pair !== undefined && (obj.pair = message.pair);
     return obj;
   },
 
@@ -647,16 +557,6 @@ export const QueryGetDropRequest = {
       message.uid = object.uid;
     } else {
       message.uid = 0;
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
-    } else {
-      message.owner = "";
-    }
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = object.pair;
-    } else {
-      message.pair = "";
     }
     return message;
   },
@@ -870,16 +770,13 @@ export const QueryAllDropResponse = {
   },
 };
 
-const baseQueryGetMemberRequest: object = { pair: "", denomA: "", denomB: "" };
+const baseQueryGetMemberRequest: object = { denomA: "", denomB: "" };
 
 export const QueryGetMemberRequest = {
   encode(
     message: QueryGetMemberRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.pair !== "") {
-      writer.uint32(10).string(message.pair);
-    }
     if (message.denomA !== "") {
       writer.uint32(18).string(message.denomA);
     }
@@ -896,9 +793,6 @@ export const QueryGetMemberRequest = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.pair = reader.string();
-          break;
         case 2:
           message.denomA = reader.string();
           break;
@@ -915,11 +809,6 @@ export const QueryGetMemberRequest = {
 
   fromJSON(object: any): QueryGetMemberRequest {
     const message = { ...baseQueryGetMemberRequest } as QueryGetMemberRequest;
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = String(object.pair);
-    } else {
-      message.pair = "";
-    }
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = String(object.denomA);
     } else {
@@ -935,7 +824,6 @@ export const QueryGetMemberRequest = {
 
   toJSON(message: QueryGetMemberRequest): unknown {
     const obj: any = {};
-    message.pair !== undefined && (obj.pair = message.pair);
     message.denomA !== undefined && (obj.denomA = message.denomA);
     message.denomB !== undefined && (obj.denomB = message.denomB);
     return obj;
@@ -945,11 +833,6 @@ export const QueryGetMemberRequest = {
     object: DeepPartial<QueryGetMemberRequest>
   ): QueryGetMemberRequest {
     const message = { ...baseQueryGetMemberRequest } as QueryGetMemberRequest;
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = object.pair;
-    } else {
-      message.pair = "";
-    }
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = object.denomA;
     } else {
@@ -1850,325 +1733,10 @@ export const QueryAllOrderResponse = {
   },
 };
 
-const baseQueryGetAssetRequest: object = {
-  active: false,
-  owner: "",
-  assetType: "",
-};
+const baseQueryBookRequest: object = { denomA: "", denomB: "", orderType: "" };
 
-export const QueryGetAssetRequest = {
-  encode(
-    message: QueryGetAssetRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.active === true) {
-      writer.uint32(8).bool(message.active);
-    }
-    if (message.owner !== "") {
-      writer.uint32(18).string(message.owner);
-    }
-    if (message.assetType !== "") {
-      writer.uint32(26).string(message.assetType);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryGetAssetRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetAssetRequest } as QueryGetAssetRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.active = reader.bool();
-          break;
-        case 2:
-          message.owner = reader.string();
-          break;
-        case 3:
-          message.assetType = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetAssetRequest {
-    const message = { ...baseQueryGetAssetRequest } as QueryGetAssetRequest;
-    if (object.active !== undefined && object.active !== null) {
-      message.active = Boolean(object.active);
-    } else {
-      message.active = false;
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
-    } else {
-      message.owner = "";
-    }
-    if (object.assetType !== undefined && object.assetType !== null) {
-      message.assetType = String(object.assetType);
-    } else {
-      message.assetType = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetAssetRequest): unknown {
-    const obj: any = {};
-    message.active !== undefined && (obj.active = message.active);
-    message.owner !== undefined && (obj.owner = message.owner);
-    message.assetType !== undefined && (obj.assetType = message.assetType);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryGetAssetRequest>): QueryGetAssetRequest {
-    const message = { ...baseQueryGetAssetRequest } as QueryGetAssetRequest;
-    if (object.active !== undefined && object.active !== null) {
-      message.active = object.active;
-    } else {
-      message.active = false;
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
-    } else {
-      message.owner = "";
-    }
-    if (object.assetType !== undefined && object.assetType !== null) {
-      message.assetType = object.assetType;
-    } else {
-      message.assetType = "";
-    }
-    return message;
-  },
-};
-
-const baseQueryGetAssetResponse: object = {};
-
-export const QueryGetAssetResponse = {
-  encode(
-    message: QueryGetAssetResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.asset !== undefined) {
-      Asset.encode(message.asset, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryGetAssetResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetAssetResponse } as QueryGetAssetResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.asset = Asset.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetAssetResponse {
-    const message = { ...baseQueryGetAssetResponse } as QueryGetAssetResponse;
-    if (object.asset !== undefined && object.asset !== null) {
-      message.asset = Asset.fromJSON(object.asset);
-    } else {
-      message.asset = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetAssetResponse): unknown {
-    const obj: any = {};
-    message.asset !== undefined &&
-      (obj.asset = message.asset ? Asset.toJSON(message.asset) : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetAssetResponse>
-  ): QueryGetAssetResponse {
-    const message = { ...baseQueryGetAssetResponse } as QueryGetAssetResponse;
-    if (object.asset !== undefined && object.asset !== null) {
-      message.asset = Asset.fromPartial(object.asset);
-    } else {
-      message.asset = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryAllAssetRequest: object = {};
-
-export const QueryAllAssetRequest = {
-  encode(
-    message: QueryAllAssetRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllAssetRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryAllAssetRequest } as QueryAllAssetRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllAssetRequest {
-    const message = { ...baseQueryAllAssetRequest } as QueryAllAssetRequest;
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAllAssetRequest): unknown {
-    const obj: any = {};
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageRequest.toJSON(message.pagination)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryAllAssetRequest>): QueryAllAssetRequest {
-    const message = { ...baseQueryAllAssetRequest } as QueryAllAssetRequest;
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryAllAssetResponse: object = {};
-
-export const QueryAllAssetResponse = {
-  encode(
-    message: QueryAllAssetResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    for (const v of message.asset) {
-      Asset.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(
-        message.pagination,
-        writer.uint32(18).fork()
-      ).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllAssetResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryAllAssetResponse } as QueryAllAssetResponse;
-    message.asset = [];
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.asset.push(Asset.decode(reader, reader.uint32()));
-          break;
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllAssetResponse {
-    const message = { ...baseQueryAllAssetResponse } as QueryAllAssetResponse;
-    message.asset = [];
-    if (object.asset !== undefined && object.asset !== null) {
-      for (const e of object.asset) {
-        message.asset.push(Asset.fromJSON(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAllAssetResponse): unknown {
-    const obj: any = {};
-    if (message.asset) {
-      obj.asset = message.asset.map((e) => (e ? Asset.toJSON(e) : undefined));
-    } else {
-      obj.asset = [];
-    }
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageResponse.toJSON(message.pagination)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryAllAssetResponse>
-  ): QueryAllAssetResponse {
-    const message = { ...baseQueryAllAssetResponse } as QueryAllAssetResponse;
-    message.asset = [];
-    if (object.asset !== undefined && object.asset !== null) {
-      for (const e of object.asset) {
-        message.asset.push(Asset.fromPartial(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryGetBookRequest: object = {
-  denomA: "",
-  denomB: "",
-  orderType: "",
-};
-
-export const QueryGetBookRequest = {
-  encode(
-    message: QueryGetBookRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+export const QueryBookRequest = {
+  encode(message: QueryBookRequest, writer: Writer = Writer.create()): Writer {
     if (message.denomA !== "") {
       writer.uint32(10).string(message.denomA);
     }
@@ -2184,10 +1752,10 @@ export const QueryGetBookRequest = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetBookRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryBookRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+    const message = { ...baseQueryBookRequest } as QueryBookRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2211,8 +1779,8 @@ export const QueryGetBookRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetBookRequest {
-    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+  fromJSON(object: any): QueryBookRequest {
+    const message = { ...baseQueryBookRequest } as QueryBookRequest;
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = String(object.denomA);
     } else {
@@ -2236,7 +1804,7 @@ export const QueryGetBookRequest = {
     return message;
   },
 
-  toJSON(message: QueryGetBookRequest): unknown {
+  toJSON(message: QueryBookRequest): unknown {
     const obj: any = {};
     message.denomA !== undefined && (obj.denomA = message.denomA);
     message.denomB !== undefined && (obj.denomB = message.denomB);
@@ -2248,8 +1816,8 @@ export const QueryGetBookRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetBookRequest>): QueryGetBookRequest {
-    const message = { ...baseQueryGetBookRequest } as QueryGetBookRequest;
+  fromPartial(object: DeepPartial<QueryBookRequest>): QueryBookRequest {
+    const message = { ...baseQueryBookRequest } as QueryBookRequest;
     if (object.denomA !== undefined && object.denomA !== null) {
       message.denomA = object.denomA;
     } else {
@@ -2274,23 +1842,20 @@ export const QueryGetBookRequest = {
   },
 };
 
-const baseQueryGetBookResponse: object = {};
+const baseQueryBookResponse: object = {};
 
-export const QueryGetBookResponse = {
-  encode(
-    message: QueryGetBookResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+export const QueryBookResponse = {
+  encode(message: QueryBookResponse, writer: Writer = Writer.create()): Writer {
     for (const v of message.book) {
       OrderResponse.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetBookResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryBookResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+    const message = { ...baseQueryBookResponse } as QueryBookResponse;
     message.book = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -2306,8 +1871,8 @@ export const QueryGetBookResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetBookResponse {
-    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+  fromJSON(object: any): QueryBookResponse {
+    const message = { ...baseQueryBookResponse } as QueryBookResponse;
     message.book = [];
     if (object.book !== undefined && object.book !== null) {
       for (const e of object.book) {
@@ -2317,7 +1882,7 @@ export const QueryGetBookResponse = {
     return message;
   },
 
-  toJSON(message: QueryGetBookResponse): unknown {
+  toJSON(message: QueryBookResponse): unknown {
     const obj: any = {};
     if (message.book) {
       obj.book = message.book.map((e) =>
@@ -2329,13 +1894,293 @@ export const QueryGetBookResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetBookResponse>): QueryGetBookResponse {
-    const message = { ...baseQueryGetBookResponse } as QueryGetBookResponse;
+  fromPartial(object: DeepPartial<QueryBookResponse>): QueryBookResponse {
+    const message = { ...baseQueryBookResponse } as QueryBookResponse;
     message.book = [];
     if (object.book !== undefined && object.book !== null) {
       for (const e of object.book) {
         message.book.push(OrderResponse.fromPartial(e));
       }
+    }
+    return message;
+  },
+};
+
+const baseQueryBookendsRequest: object = {
+  coinA: "",
+  coinB: "",
+  orderType: "",
+  rate: "",
+};
+
+export const QueryBookendsRequest = {
+  encode(
+    message: QueryBookendsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.coinA !== "") {
+      writer.uint32(10).string(message.coinA);
+    }
+    if (message.coinB !== "") {
+      writer.uint32(18).string(message.coinB);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(26).string(message.orderType);
+    }
+    for (const v of message.rate) {
+      writer.uint32(34).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryBookendsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryBookendsRequest } as QueryBookendsRequest;
+    message.rate = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.coinA = reader.string();
+          break;
+        case 2:
+          message.coinB = reader.string();
+          break;
+        case 3:
+          message.orderType = reader.string();
+          break;
+        case 4:
+          message.rate.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryBookendsRequest {
+    const message = { ...baseQueryBookendsRequest } as QueryBookendsRequest;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = String(object.coinA);
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = String(object.coinB);
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(String(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: QueryBookendsRequest): unknown {
+    const obj: any = {};
+    message.coinA !== undefined && (obj.coinA = message.coinA);
+    message.coinB !== undefined && (obj.coinB = message.coinB);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    if (message.rate) {
+      obj.rate = message.rate.map((e) => e);
+    } else {
+      obj.rate = [];
+    }
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryBookendsRequest>): QueryBookendsRequest {
+    const message = { ...baseQueryBookendsRequest } as QueryBookendsRequest;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = object.coinA;
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = object.coinB;
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(e);
+      }
+    }
+    return message;
+  },
+};
+
+const baseQueryBookendsResponse: object = {
+  coinA: "",
+  coinB: "",
+  orderType: "",
+  rate: "",
+  prev: 0,
+  next: 0,
+};
+
+export const QueryBookendsResponse = {
+  encode(
+    message: QueryBookendsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.coinA !== "") {
+      writer.uint32(10).string(message.coinA);
+    }
+    if (message.coinB !== "") {
+      writer.uint32(18).string(message.coinB);
+    }
+    if (message.orderType !== "") {
+      writer.uint32(26).string(message.orderType);
+    }
+    for (const v of message.rate) {
+      writer.uint32(34).string(v!);
+    }
+    if (message.prev !== 0) {
+      writer.uint32(40).uint64(message.prev);
+    }
+    if (message.next !== 0) {
+      writer.uint32(48).uint64(message.next);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryBookendsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryBookendsResponse } as QueryBookendsResponse;
+    message.rate = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.coinA = reader.string();
+          break;
+        case 2:
+          message.coinB = reader.string();
+          break;
+        case 3:
+          message.orderType = reader.string();
+          break;
+        case 4:
+          message.rate.push(reader.string());
+          break;
+        case 5:
+          message.prev = longToNumber(reader.uint64() as Long);
+          break;
+        case 6:
+          message.next = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryBookendsResponse {
+    const message = { ...baseQueryBookendsResponse } as QueryBookendsResponse;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = String(object.coinA);
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = String(object.coinB);
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = String(object.orderType);
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(String(e));
+      }
+    }
+    if (object.prev !== undefined && object.prev !== null) {
+      message.prev = Number(object.prev);
+    } else {
+      message.prev = 0;
+    }
+    if (object.next !== undefined && object.next !== null) {
+      message.next = Number(object.next);
+    } else {
+      message.next = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryBookendsResponse): unknown {
+    const obj: any = {};
+    message.coinA !== undefined && (obj.coinA = message.coinA);
+    message.coinB !== undefined && (obj.coinB = message.coinB);
+    message.orderType !== undefined && (obj.orderType = message.orderType);
+    if (message.rate) {
+      obj.rate = message.rate.map((e) => e);
+    } else {
+      obj.rate = [];
+    }
+    message.prev !== undefined && (obj.prev = message.prev);
+    message.next !== undefined && (obj.next = message.next);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryBookendsResponse>
+  ): QueryBookendsResponse {
+    const message = { ...baseQueryBookendsResponse } as QueryBookendsResponse;
+    message.rate = [];
+    if (object.coinA !== undefined && object.coinA !== null) {
+      message.coinA = object.coinA;
+    } else {
+      message.coinA = "";
+    }
+    if (object.coinB !== undefined && object.coinB !== null) {
+      message.coinB = object.coinB;
+    } else {
+      message.coinB = "";
+    }
+    if (object.orderType !== undefined && object.orderType !== null) {
+      message.orderType = object.orderType;
+    } else {
+      message.orderType = "";
+    }
+    if (object.rate !== undefined && object.rate !== null) {
+      for (const e of object.rate) {
+        message.rate.push(e);
+      }
+    }
+    if (object.prev !== undefined && object.prev !== null) {
+      message.prev = object.prev;
+    } else {
+      message.prev = 0;
+    }
+    if (object.next !== undefined && object.next !== null) {
+      message.next = object.next;
+    } else {
+      message.next = 0;
     }
     return message;
   },
@@ -2367,12 +2212,10 @@ export interface Query {
   Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse>;
   /** Queries a list of Order items. */
   OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse>;
-  /** Queries a Asset by index. */
-  Asset(request: QueryGetAssetRequest): Promise<QueryGetAssetResponse>;
-  /** Queries a list of Asset items. */
-  AssetAll(request: QueryAllAssetRequest): Promise<QueryAllAssetResponse>;
-  /** Queries a list of GetBook items. */
-  Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse>;
+  /** Queries a list of Book items. */
+  Book(request: QueryBookRequest): Promise<QueryBookResponse>;
+  /** Queries a list of Bookends items. */
+  Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2514,39 +2357,25 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Asset(request: QueryGetAssetRequest): Promise<QueryGetAssetResponse> {
-    const data = QueryGetAssetRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "pendulumlabs.market.market.Query",
-      "Asset",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetAssetResponse.decode(new Reader(data))
-    );
-  }
-
-  AssetAll(request: QueryAllAssetRequest): Promise<QueryAllAssetResponse> {
-    const data = QueryAllAssetRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "pendulumlabs.market.market.Query",
-      "AssetAll",
-      data
-    );
-    return promise.then((data) =>
-      QueryAllAssetResponse.decode(new Reader(data))
-    );
-  }
-
-  Book(request: QueryGetBookRequest): Promise<QueryGetBookResponse> {
-    const data = QueryGetBookRequest.encode(request).finish();
+  Book(request: QueryBookRequest): Promise<QueryBookResponse> {
+    const data = QueryBookRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulumlabs.market.market.Query",
       "Book",
       data
     );
+    return promise.then((data) => QueryBookResponse.decode(new Reader(data)));
+  }
+
+  Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse> {
+    const data = QueryBookendsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "Bookends",
+      data
+    );
     return promise.then((data) =>
-      QueryGetBookResponse.decode(new Reader(data))
+      QueryBookendsResponse.decode(new Reader(data))
     );
   }
 }

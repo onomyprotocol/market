@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestPoolQuerySingle(t *testing.T) {
-	keeper:= keepertest.CreateTestEnvironment(t)
+	keeper := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(keeper.Context)
 	msgs := createNPool(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
@@ -31,30 +31,21 @@ func TestPoolQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetPoolRequest{
-				Pair:   msgs[0].Pair,
-				Denom1: msgs[0].Denom1,
-				Denom2: msgs[0].Denom2,
-				Leader: msgs[0].Leader,
+				Pair: msgs[0].Pair,
 			},
 			response: &types.QueryGetPoolResponse{Pool: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetPoolRequest{
-				Pair:   msgs[1].Pair,
-				Denom1: msgs[1].Denom1,
-				Denom2: msgs[1].Denom2,
-				Leader: msgs[1].Leader,
+				Pair: msgs[1].Pair,
 			},
 			response: &types.QueryGetPoolResponse{Pool: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetPoolRequest{
-				Pair:   strconv.Itoa(100000),
-				Denom1: strconv.Itoa(100000),
-				Denom2: strconv.Itoa(100000),
-				Leader: strconv.Itoa(100000),
+				Pair: strconv.Itoa(100000),
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),
 		},
@@ -79,7 +70,7 @@ func TestPoolQuerySingle(t *testing.T) {
 }
 
 func TestPoolQueryPaginated(t *testing.T) {
-	keeper:= keepertest.CreateTestEnvironment(t)
+	keeper := keepertest.CreateTestEnvironment(t)
 	wctx := sdk.WrapSDKContext(keeper.Context)
 	msgs := createNPool(keeper.MarketKeeper, keeper.Context, 5)
 
