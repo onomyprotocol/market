@@ -52,13 +52,13 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
 	// Profit = dropSum(end) - dropSum(begin)
 	dropSumEnd := (poolSum.Mul(drop.Drops)).Quo(pool.Drops)
-	total2 := (dropSumEnd.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
+	total2 := (dropSumEnd.Mul(member2.Balance)).Quo(poolSum)
 	total1 := dropSumEnd.Sub(total2)
 
 	dropProfit := dropSumEnd.Sub(drop.Sum)
 
 	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
-	profit2 := (dropProfit.Mul(sdk.NewInt(10 ^ 18))).Quo((poolSum.Mul(sdk.NewInt(10 ^ 18))).Quo(member2.Balance))
+	profit2 := (dropProfit.Mul(member2.Balance)).Quo(poolSum)
 
 	profit1 := dropProfit.Sub(profit2)
 
