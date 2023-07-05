@@ -23,6 +23,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: dev/devnet
-          file: Dockerfile
+          file: dev/devnet/Dockerfile
           push: true
           tags: onomy/market-devnet:latest
