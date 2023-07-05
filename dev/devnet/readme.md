@@ -1,6 +1,6 @@
 Build base image
 ```
- docker build -t onomy/dev-base:latest .
+ docker build -t onomy/market-devnet:latest .
 ````
 
 Docker login
@@ -10,5 +10,5 @@ Docker login
 
 Docker push
 ```
- docker push onomy/dev-base:latest
+ docker push onomy/market-dev:latest
 ```
