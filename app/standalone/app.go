@@ -99,7 +99,7 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "cosmos"
+	AccountAddressPrefix = "onomy"
 	Name                 = "market"
 )
 
@@ -177,7 +177,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
+	DefaultNodeHome = filepath.Join(userHomeDir, ".onomy_"+Name)
 
 	// change default power reduction to 18 digits, since the onomy anom is 18 digits based.
 	// sdk.DefaultPowerReduction = sdk.NewIntWithDecimal(1, 18) // nolint: gomnd
