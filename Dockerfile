@@ -19,7 +19,7 @@ RUN go version
 
 # Install minimum necessary dependencies, build Cosmos SDK, remove packages
 RUN apk add --no-cache $PACKAGES
-RUN make install
+RUN make install-standalone
 
 # Final image
 FROM alpine:edge
@@ -37,7 +37,7 @@ USER market
 WORKDIR $MARKET
 
 # Copy over binaries from the build-env
-COPY --from=build-env /go/bin/marketd /usr/bin/marketd
+COPY --from=build-env /go/bin/market-standaloned /usr/bin/marketd
 
 # Run marketd by default, omit entrypoint to ease using container with marketcli
 CMD ["marketd"]

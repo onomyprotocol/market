@@ -4,7 +4,7 @@ import (
 	"os"
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/pendulum-labs/market/app"
+	"github.com/pendulum-labs/market/app/standalone"
 	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
 )
 

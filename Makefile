@@ -58,13 +58,17 @@ BUILD_FLAGS := -ldflags '$(ldflags)' -gcflags="all=-N -l"
 
 all: install
 
-install: go.sum
+# TODO make plain `install` and `build` with the consumer version
+install-standalone: go.sum
 		@echo ls
-		go install $(BUILD_FLAGS) ./cmd/marketd
+		go install $(BUILD_FLAGS) ./cmd/market-standaloned
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
 		GO111MODULE=on go mod verify
+
+build-standalone:
+	go build ./cmd/market-standaloned
 
 test:
 	@go test -mod=readonly $(PACKAGES)
