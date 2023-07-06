@@ -1,14 +1,14 @@
-name: Go
+name: Go Unit Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
   
 jobs:
   build:
-    name: Build and upload release assets
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
