@@ -1,18 +1,16 @@
 package main
 
 import (
-/*
-"os"
+	"os"
 
-"github.com/cosmos/cosmos-sdk/server"
-svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-app "github.com/pendulum-labs/market/app/consumer"
-"github.com/tendermint/spm/cosmoscmd"
-*/
+	"github.com/cosmos/cosmos-sdk/server"
+	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
+	app "github.com/pendulum-labs/market/app/consumer"
+	"github.com/tendermint/spm/cosmoscmd"
 )
 
 func main() {
-	/*rootCmd, _ := cosmoscmd.NewRootCmd(
+	rootCmd, _ := cosmoscmd.NewRootCmd(
 		app.AppName,
 		app.AccountAddressPrefix,
 		app.DefaultNodeHome,
@@ -30,5 +28,5 @@ func main() {
 		default:
 			os.Exit(1)
 		}
-	}*/
+	}
 }
