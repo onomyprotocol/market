@@ -11,7 +11,7 @@ ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
 WORKDIR /go/src/github.com/pendulum-labs/market
 
 # Add source files
-COPY ../.. .
+COPY . .
 RUN pwd
 RUN ls
 
