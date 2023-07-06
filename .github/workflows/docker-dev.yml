@@ -28,4 +28,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push blockchain
-        run: docker buildx build --tag onomy/market-dev --file Dockerfile --platform linux/amd64 --cache-from onomy/market-dev:cache --cache-to onomy/market-dev:cache --push --progress tty .
+        run: docker buildx build --tag onomy/market-dev --file Dockerfile --platform linux/amd64 --cache-from onomy/market-dev:cache --cache-to onomy/market-dev:cache --push --progress -i -t .
