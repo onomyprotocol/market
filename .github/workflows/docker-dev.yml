@@ -21,7 +21,7 @@ jobs:
       - name: Publish to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: dev/market
+          context: .
           file: Dockerfile
           push: true
           tags: onomy/market-dev:latest
