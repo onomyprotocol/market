@@ -4,28 +4,24 @@ on:
   push:
     branches:
       - 'dev'
-      
+
 jobs:
-  amd64:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Set up QEMU
-        run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes --credential yes
-
       - name: Set up Docker Buildx
-        id: buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          version: latest
-
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push blockchain
-        run: docker buildx build --tag onomy/market-dev --file Dockerfile --platform linux/amd64 --cache-from onomy/market-dev:cache --cache-to onomy/market-dev:cache --push --progress -i -t .
+      - name: Publish to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: dev/market
+          file: Dockerfile
+          push: true
+          tags: onomy/market-dev:latest
