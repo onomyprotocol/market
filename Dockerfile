@@ -29,15 +29,10 @@ ENV MARKET /market
 # Install ca-certificates
 RUN apk add --update ca-certificates
 
-RUN addgroup market && \
-    adduser -S -G market market -h "$MARKET"
-
-USER market
-
 WORKDIR $MARKET
 
 # Copy over binaries from the build-env
 COPY --from=build-env /go/bin/marketd /usr/bin/marketd
 
 # Run marketd by default, omit entrypoint to ease using container with marketcli
-CMD ["marketd"]
+ENTRYPOINT ["marketd"]
