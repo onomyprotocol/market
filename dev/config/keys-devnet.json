@@ -1,0 +1,24 @@
+{
+    "name": "dealer",
+    "address": "onomy1mczcy7z92fkyhrsctlv0ge690mzvmd9ye67mjy",
+    "pub_key": {
+      "type": "/cosmos.crypto.secp256k1.PubKey",
+      "value": "AkuGkNB37L8npslcXhqzgRggzSQzBQq+2UTZgN+neVE3"
+    },
+    "mnemonic": {
+      "type": "BIP39 - 24 Word",
+      "value": "trick absorb silver raven kite rhythm act quality glare lucky gun erode artefact ethics neck anxiety consider margin noise kind drift spray now join"
+    }
+}
+{
+  "name": "validator",
+  "address": "onomy15d2ltjk9knex7llg25y5uwa0ulst06pghzv4ln",
+  "pub_key": {
+    "type": "/cosmos.crypto.secp256k1.PubKey",
+    "value": "AzV1bAB3hzWo5wJoURVU1gdkR5+Q9GXc2smwAb0oP69M"
+  },
+  "mnemonic": {
+    "type": "BIP39 - 24 Word",
+    "value": "exact unaware feed switch oval voice target spin answer peace solid sell adult focus skate aisle review merry certain settle bike crop female city"
+  }
+}

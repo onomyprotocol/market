@@ -98,7 +98,7 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "cosmos"
+	AccountAddressPrefix = "onomy"
 	Name                 = "market"
 )
 

@@ -34,5 +34,9 @@ WORKDIR $MARKET
 # Copy over binaries from the build-env
 COPY --from=build-env /go/bin/marketd /usr/bin/marketd
 
+EXPOSE 26656
+EXPOSE 26657
+EXPOSE 1317
+
 # Run marketd by default, omit entrypoint to ease using container with marketcli
 ENTRYPOINT ["marketd"]
