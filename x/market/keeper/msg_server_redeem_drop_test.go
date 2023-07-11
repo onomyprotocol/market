@@ -90,6 +90,7 @@ func TestRedeemDrop(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, rst.Drops.String(), "70")
+	require.Equal(t, "70", rst.Leaders[0].Drops.String())
 	//validate GetMember After Redeem Drop
 	members, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
 	members1, memberfound1 = testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
