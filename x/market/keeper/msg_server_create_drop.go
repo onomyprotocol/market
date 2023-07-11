@@ -27,6 +27,10 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "%s", pair)
 	}
 
+	if pool.Drops.Equal(sdk.NewInt(0)) {
+		return nil, sdkerrors.Wrapf(types.ErrPoolInactive, "%s", pair)
+	}
+
 	member1, found := k.GetMember(ctx, denom2, denom1)
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", pair)

@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 
@@ -129,6 +130,103 @@ func TestCreateDrop_Pool_Not_Found(t *testing.T) {
 		require.Error(t, err)
 		require.ErrorContains(t, err, "the pool not found")
 
+	}
+}
+
+func TestCreateDrop_Pool_Not_Active(t *testing.T) {
+	testInput := keepertest.CreateTestEnvironment(t)
+	//TestData
+	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
+	coinPair, _ := sample.SampleCoins("70CoinA", "70CoinB")
+	denomA, denomB := sample.SampleDenoms(coinPair)
+	pair := strings.Join([]string{denomA, denomB}, ",")
+
+	//MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+	//SendCoinsFromModuleToAccount
+	requestAddress, err := sdk.AccAddressFromBech32(addr)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+	// GetUidCount before CreatePool
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	//Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
+	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	//validate CreatePool
+	require.NoError(t, err)
+	require.Contains(t, p.GetCreator(), response.String())
+	require.Contains(t, p.GetCoinA(), response.String())
+	require.Contains(t, p.GetCoinB(), response.String())
+	//validate SetUidCount function.
+	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	//validate GetDrop
+	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+
+	//Validate RedeemDrop
+	Uid := strconv.FormatUint(drops.Uid, 10)
+	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
+	createRedeemDropResponse, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
+	require.NoError(t, redeemdropErr)
+	require.Contains(t, rd.GetCreator(), createRedeemDropResponse.String())
+
+	//validate CreateDrop (Inactive Pool)
+	scenarios := []struct {
+		coinAStr      string
+		coinBStr      string
+		RateAstrArray []string
+		RateBstrArray []string
+		Creator       string
+	}{
+		{coinAStr: "20CoinA", coinBStr: "20CoinB", RateAstrArray: []string{"10", "20"}, RateBstrArray: []string{"20", "30"}, Creator: addr},
+		{coinAStr: "20CoinB", coinBStr: "20CoinA", RateAstrArray: []string{"10", "20"}, RateBstrArray: []string{"20", "30"}, Creator: sample.AccAddress()},
+	}
+	for _, s := range scenarios {
+		coinPair, _ = sample.SampleCoins(s.coinAStr, s.coinBStr)
+		denomA, denomB = sample.SampleDenoms(coinPair)
+		pair = strings.Join([]string{denomA, denomB}, ",")
+		var d = types.MsgCreateDrop{Creator: s.Creator, Pair: pair, Drops: "70"}
+		_, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+		require.Error(t, err)
+		require.ErrorContains(t, err, "the pool is inactive")
+
+	}
+
+	// GetUidCount before CreatePool
+	beforecount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	//Create Pool
+	p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
+	response, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	//validate CreatePool
+	require.NoError(t, err)
+	require.Contains(t, p.GetCreator(), response.String())
+	require.Contains(t, p.GetCoinA(), response.String())
+	require.Contains(t, p.GetCoinB(), response.String())
+	//validate SetUidCount function.
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	//validate CreateDrop (Active Pool)
+	scenarios = []struct {
+		coinAStr      string
+		coinBStr      string
+		RateAstrArray []string
+		RateBstrArray []string
+		Creator       string
+	}{
+		{coinAStr: "20CoinA", coinBStr: "20CoinB", RateAstrArray: []string{"10", "20"}, RateBstrArray: []string{"20", "30"}, Creator: addr},
+	}
+	for _, s := range scenarios {
+		coinPair, _ = sample.SampleCoins(s.coinAStr, s.coinBStr)
+		denomA, denomB = sample.SampleDenoms(coinPair)
+		pair = strings.Join([]string{denomA, denomB}, ",")
+		var d = types.MsgCreateDrop{Creator: s.Creator, Pair: pair, Drops: "70"}
+		_, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+
+		require.NoError(t, err)
 	}
 }
 
