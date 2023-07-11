@@ -134,13 +134,13 @@
         "min_deposit": [
           {
             "denom": "stake",
-            "amount": "10000000"
+            "amount": "100"
           }
         ],
         "max_deposit_period": "172800s"
       },
       "voting_params": {
-        "voting_period": "172800s"
+        "voting_period": "600s"
       },
       "tally_params": {
         "quorum": "0.334000000000000000",
