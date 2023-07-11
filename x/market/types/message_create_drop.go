@@ -12,7 +12,7 @@ const TypeMsgCreateDrop = "create_drop"
 
 var _ sdk.Msg = &MsgCreateDrop{}
 
-func NewMsgCreateDrop(creator string, pair string, drops string, rate1 []string, prev1 string, next1 string, rate2 []string, prev2 string, next2 string) *MsgCreateDrop {
+func NewMsgCreateDrop(creator string, pair string, drops string) *MsgCreateDrop {
 	return &MsgCreateDrop{
 		Creator: creator,
 		Pair:    pair,
