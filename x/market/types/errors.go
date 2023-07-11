@@ -36,4 +36,7 @@ var (
 	ErrInvalidOrderAmount = sdkerrors.Register(ModuleName, 13, "invalid order amount") // nolint: gomnd
 	// ErrSlippageTooGreat - slippage over limit
 	ErrSlippageTooGreat = sdkerrors.Register(ModuleName, 14, "slippage too great") // nolint: gomnd
+	// ErrPoolInactive - the pool is not active and has 0 drops.
+	ErrPoolInactive = sdkerrors.Register(ModuleName, 15, "the pool is inactive") // nolint: gomnd
+
 )

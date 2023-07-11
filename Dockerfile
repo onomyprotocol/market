@@ -5,7 +5,8 @@
 # > docker run -it -v ~/.market:/market/.market onomy/market-dev keys add dealer --recover --home /market/.market
 # > docker run -it -v ~/.market:/market/.market onomy/market-dev keys add validator --recover --home /market/.market
 # > docker run -it -v ~/.market:/market/.market onomy/market-dev gentx validator 10000000000000000000stake --chain-id market --home /market/.market
-# > docker run -it -p 26656:26656 -p 26657:26657 -p 1317:1317 -p 9090:9090 -p 9091:9091 -v ~/.market:/market/.market onomy/market-dev start --home /market/.market
+# > docker run -it -v ~/.market:/market/.market onomy/market-dev collect-gentxs --home /market/.market
+# > docker run -it -p 26656:26656 -p 26657:26657 -p 1317:1317 -p 9090:9090 -p 9091:9091 -d -v ~/.market:/market/.market onomy/market-dev start --home /market/.market
 FROM golang:1.19-alpine AS build-env
 
 # Set up dependencies
