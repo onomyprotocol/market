@@ -350,6 +350,12 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// Exchange Rate is held constant at initial AMM balances
 	strikeAmountAsk := (strikeAmountBid.Mul(limitHead.Rate[0])).Quo(limitHead.Rate[1])
 
+	// Edge case where strikeAskAmount rounds to 0
+	// Rounding favors AMM vs Order
+	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+		return false, nil
+	}
+
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(limitHead.Owner)
@@ -402,8 +408,22 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	if stopHead.Amount.GT(maxMemberBidAmount) {
 		strikeAmountBid = maxMemberBidAmount
 		strikeAmountAsk = (strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid))).Quo(memberBid.Balance.Add(strikeAmountBid))
+
+		// Edge case where strikeAskAmount rounds to 0
+		// Rounding favors AMM vs Order
+		if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+			return false, nil
+		}
+
 	} else {
 		strikeAmountAsk = strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid)).Quo(memberBid.Balance.Add(strikeAmountBid))
+
+		// Edge case where strikeAskAmount rounds to 0
+		// Rounding favors AMM vs Order
+		if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+			return false, nil
+		}
+
 		// THEN set Head(Stop) active to false as entire order will be filled
 		stopHead.Active = false
 		// Set Next Position as Head of Stop Book
