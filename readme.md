@@ -1,6 +1,8 @@
 # market
 **market** is a blockchain built using Cosmos SDK and Tendermint and created with [Starport](https://starport.com).
 
+Note: in order to regenerate proto files, install Ignite CLI v0.23.0 (do not use a later version until we update past SDK v0.45), `go mod tidy`, `rm -rf vendor` (you actually have to remove it for some reason), run `ignite generate proto-go`, then `go mod tidy` after that to clean up
+
 ## Get started
 
 ```
