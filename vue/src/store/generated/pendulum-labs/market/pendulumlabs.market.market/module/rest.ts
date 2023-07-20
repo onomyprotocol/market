@@ -98,6 +98,7 @@ export interface MarketParams {
   earn_rates?: string;
   burn_rate?: string;
   burn_coin?: string;
+  pool_ratio?: string;
 }
 
 export interface MarketPool {

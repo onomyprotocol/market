@@ -14,9 +14,19 @@ export interface Params {
   burn_rate: string;
   /** burn coin */
   burn_coin: string;
+  /**
+   * pool limit is (parameter / 1000), 9999 representing as 99.99%
+   * pool ratio
+   */
+  pool_ratio: string;
 }
 
-const baseParams: object = { earn_rates: "", burn_rate: "", burn_coin: "" };
+const baseParams: object = {
+  earn_rates: "",
+  burn_rate: "",
+  burn_coin: "",
+  pool_ratio: "",
+};
 
 export const Params = {
   encode(message: Params, writer: Writer = Writer.create()): Writer {
@@ -28,6 +38,9 @@ export const Params = {
     }
     if (message.burn_coin !== "") {
       writer.uint32(26).string(message.burn_coin);
+    }
+    if (message.pool_ratio !== "") {
+      writer.uint32(34).string(message.pool_ratio);
     }
     return writer;
   },
@@ -47,6 +60,9 @@ export const Params = {
           break;
         case 3:
           message.burn_coin = reader.string();
+          break;
+        case 4:
+          message.pool_ratio = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -73,6 +89,11 @@ export const Params = {
     } else {
       message.burn_coin = "";
     }
+    if (object.pool_ratio !== undefined && object.pool_ratio !== null) {
+      message.pool_ratio = String(object.pool_ratio);
+    } else {
+      message.pool_ratio = "";
+    }
     return message;
   },
 
@@ -81,6 +102,7 @@ export const Params = {
     message.earn_rates !== undefined && (obj.earn_rates = message.earn_rates);
     message.burn_rate !== undefined && (obj.burn_rate = message.burn_rate);
     message.burn_coin !== undefined && (obj.burn_coin = message.burn_coin);
+    message.pool_ratio !== undefined && (obj.pool_ratio = message.pool_ratio);
     return obj;
   },
 
@@ -100,6 +122,11 @@ export const Params = {
       message.burn_coin = object.burn_coin;
     } else {
       message.burn_coin = "";
+    }
+    if (object.pool_ratio !== undefined && object.pool_ratio !== null) {
+      message.pool_ratio = object.pool_ratio;
+    } else {
+      message.pool_ratio = "";
     }
     return message;
   },

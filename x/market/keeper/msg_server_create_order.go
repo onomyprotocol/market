@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -22,8 +23,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 	coinsBid := sdk.NewCoins(coinBid)
 
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
 
 	// Check if order creator has available balance
@@ -319,9 +318,27 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	}
 
 	// Execute Head Limit
+
+	// Max Member(Bid) Balance B(f)
 	// The AMM Balance of the Bid Coin corresponding to Limit Order Exchange Rate
+	// Model: Constant Product
+	// A(i): Initial Balance of Ask Coin in AMM Pool
+	// B(f): Final Balance of Bid Coin in AMM Pool
+	// Exch(f):
+	// A(i)*B(i)=A(f)*B(f)
+	// Exch(f)=A(f)/B(f) -> B(f)*Exch(f)=A(f)
+	// A(i)*B(i)=B(f)*Exch(f)*B(f) -> A(i)*B(i)=Exch(f)*B(f)^2
+	// (A(i)*B(i))/Exch(f)=B(f)^2
+	// B(f)=SQRT((A(i)*B(i))/Exch(f))
+	bigInt := &big.Int{}
 	maxMemberBidBalance :=
-		limitHead.Rate[1].Mul(memberAsk.Balance.Add(memberBid.Balance)).Quo(limitHead.Rate[1].Add(limitHead.Rate[0]))
+		sdk.NewIntFromBigInt(
+			bigInt.Sqrt(
+				sdk.Int.BigInt(
+					(limitHead.Rate[1].Mul(memberAsk.Balance.Mul(memberBid.Balance))).Quo(limitHead.Rate[0]),
+				),
+			),
+		)
 
 	// Maximum amountBid of the Bid Coin that the AMM may accept at Limit Order Exchange Rate
 	maxAmountBid := maxMemberBidBalance.Sub(memberBid.Balance)

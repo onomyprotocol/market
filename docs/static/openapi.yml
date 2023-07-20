@@ -27701,6 +27701,13 @@ paths:
                   burn_coin:
                     type: string
                     title: burn coin
+                  pool_ratio:
+                    type: string
+                    title: >-
+                      pool limit is (parameter / 1000), 9999 representing as
+                      99.99%
+
+                      pool ratio
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -45862,6 +45869,11 @@ definitions:
       burn_coin:
         type: string
         title: burn coin
+      pool_ratio:
+        type: string
+        title: |-
+          pool limit is (parameter / 1000), 9999 representing as 99.99%
+          pool ratio
     description: Params defines the parameters for the module.
   pendulumlabs.market.market.Pool:
     type: object
@@ -46298,4 +46310,9 @@ definitions:
           burn_coin:
             type: string
             title: burn coin
+          pool_ratio:
+            type: string
+            title: |-
+              pool limit is (parameter / 1000), 9999 representing as 99.99%
+              pool ratio
     description: QueryParamsResponse is response type for the Query/Params RPC method.
