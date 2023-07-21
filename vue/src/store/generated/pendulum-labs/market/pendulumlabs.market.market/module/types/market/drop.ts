@@ -9,7 +9,7 @@ export interface Drop {
   owner: string;
   pair: string;
   drops: string;
-  sum: string;
+  product: string;
   active: boolean;
 }
 
@@ -22,7 +22,7 @@ const baseDrop: object = {
   owner: "",
   pair: "",
   drops: "",
-  sum: "",
+  product: "",
   active: false,
 };
 
@@ -40,8 +40,8 @@ export const Drop = {
     if (message.drops !== "") {
       writer.uint32(34).string(message.drops);
     }
-    if (message.sum !== "") {
-      writer.uint32(42).string(message.sum);
+    if (message.product !== "") {
+      writer.uint32(42).string(message.product);
     }
     if (message.active === true) {
       writer.uint32(48).bool(message.active);
@@ -69,7 +69,7 @@ export const Drop = {
           message.drops = reader.string();
           break;
         case 5:
-          message.sum = reader.string();
+          message.product = reader.string();
           break;
         case 6:
           message.active = reader.bool();
@@ -104,10 +104,10 @@ export const Drop = {
     } else {
       message.drops = "";
     }
-    if (object.sum !== undefined && object.sum !== null) {
-      message.sum = String(object.sum);
+    if (object.product !== undefined && object.product !== null) {
+      message.product = String(object.product);
     } else {
-      message.sum = "";
+      message.product = "";
     }
     if (object.active !== undefined && object.active !== null) {
       message.active = Boolean(object.active);
@@ -123,7 +123,7 @@ export const Drop = {
     message.owner !== undefined && (obj.owner = message.owner);
     message.pair !== undefined && (obj.pair = message.pair);
     message.drops !== undefined && (obj.drops = message.drops);
-    message.sum !== undefined && (obj.sum = message.sum);
+    message.product !== undefined && (obj.product = message.product);
     message.active !== undefined && (obj.active = message.active);
     return obj;
   },
@@ -150,10 +150,10 @@ export const Drop = {
     } else {
       message.drops = "";
     }
-    if (object.sum !== undefined && object.sum !== null) {
-      message.sum = object.sum;
+    if (object.product !== undefined && object.product !== null) {
+      message.product = object.product;
     } else {
-      message.sum = "";
+      message.product = "";
     }
     if (object.active !== undefined && object.active !== null) {
       message.active = object.active;

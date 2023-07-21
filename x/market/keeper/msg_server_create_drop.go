@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"math/big"
 	"sort"
 	"strconv"
 	"strings"
@@ -45,31 +46,37 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	uid := k.GetUidCount(ctx)
 
 	// The Pool Sum is defined as:
-	// poolSum == AMM Coin A Balance + AMM Coin B Balance
-	poolSum := member1.Balance.Add(member2.Balance)
+	// poolProduct == AMM Coin A Balance * AMM Coin B Balance
+	poolProduct := member1.Balance.Mul(member2.Balance)
 
 	drops, _ := sdk.NewIntFromString(msg.Drops)
 
 	// The beginning Drop Sum is defined as:
-	// dropSum == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
-	// dropSum == poolSum * (Drop.drops / Pool.drops)
-	// dropSum == (poolSum * Drop.drops) / Pool.drops
-	dropSum := (poolSum.Mul(drops)).Quo(pool.Drops)
+	// dropProduct == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
+	// dropProduct == poolProduct * (Drop.drops / Pool.drops)
+	// dropProduct == (poolSum * Drop.drops) / Pool.drops
+	dropProduct := (poolProduct.Mul(drops)).Quo(pool.Drops)
 
-	// dropSum == A + B
-	// dropSum = B + B * exchrate(A/B)
-	// dropSum = B * (1 + exchrate(A/B))
-	// B = dropSum / (1 + exchrate(A/B))
-	// B = dropSum / (1 + Member1 Balance / Member2 Balance)
-	// B = dropSum / ((Member1 + Member2) / Member2)
-	// B = dropSum / (poolSum / Member2)
-	// B = (dropSum * Member2) / poolSum
-	amount1 := (dropSum.Mul(member2.Balance)).Quo(poolSum)
+	// dropProduct == A * B
+	// dropProduct = B * B * exchrate(A/B)
+	// dropProduct = B^2 * exchrate(A/B)
+	// B^2 = dropProduct / exchrate(A/B)
+	// B^2 = dropProduct / (Member1 Balance / Member2 Balance)
+	// B^2 = (dropProduct * Member2 Balance) / Member1
+	// B = SQRT((dropProduct * Member2 Balance) / Member1)
+	bigInt := &big.Int{}
+	amount1 :=
+		sdk.NewIntFromBigInt(
+			bigInt.Sqrt(
+				sdk.Int.BigInt(
+					(dropProduct.Mul(member2.Balance)).Quo(member1.Balance),
+				),
+			),
+		)
 
 	coin1 := sdk.NewCoin(denom1, amount1)
 
-	// The purchase price of the drop in A coin must be less than Available Balance
-	amount2 := dropSum.Sub(amount1)
+	amount2 := dropProduct.Quo(amount1)
 
 	coin2 := sdk.NewCoin(denom2, amount2)
 
@@ -193,12 +200,12 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	)
 
 	var drop = types.Drop{
-		Uid:    uid,
-		Owner:  msg.Creator,
-		Pair:   pair,
-		Drops:  drops,
-		Sum:    dropSum,
-		Active: true,
+		Uid:     uid,
+		Owner:   msg.Creator,
+		Pair:    pair,
+		Drops:   drops,
+		Product: dropProduct,
+		Active:  true,
 	}
 
 	// Add the drop to the keeper
@@ -215,7 +222,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
 			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
 			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-			sdk.NewAttribute(types.AttributeKeySum, dropSum.String()),
+			sdk.NewAttribute(types.AttributeKeyProduct, dropProduct.String()),
 		),
 	)
 

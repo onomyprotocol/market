@@ -14,18 +14,15 @@ export interface Params {
   burn_rate: string;
   /** burn coin */
   burn_coin: string;
-  /**
-   * pool limit is (parameter / 1000), 9999 representing as 99.99%
-   * pool ratio
-   */
-  pool_ratio: string;
+  /** market_fee (parameter / 1000), 9999 representing as 99.99% */
+  market_fee: string;
 }
 
 const baseParams: object = {
   earn_rates: "",
   burn_rate: "",
   burn_coin: "",
-  pool_ratio: "",
+  market_fee: "",
 };
 
 export const Params = {
@@ -39,8 +36,8 @@ export const Params = {
     if (message.burn_coin !== "") {
       writer.uint32(26).string(message.burn_coin);
     }
-    if (message.pool_ratio !== "") {
-      writer.uint32(34).string(message.pool_ratio);
+    if (message.market_fee !== "") {
+      writer.uint32(34).string(message.market_fee);
     }
     return writer;
   },
@@ -62,7 +59,7 @@ export const Params = {
           message.burn_coin = reader.string();
           break;
         case 4:
-          message.pool_ratio = reader.string();
+          message.market_fee = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -89,10 +86,10 @@ export const Params = {
     } else {
       message.burn_coin = "";
     }
-    if (object.pool_ratio !== undefined && object.pool_ratio !== null) {
-      message.pool_ratio = String(object.pool_ratio);
+    if (object.market_fee !== undefined && object.market_fee !== null) {
+      message.market_fee = String(object.market_fee);
     } else {
-      message.pool_ratio = "";
+      message.market_fee = "";
     }
     return message;
   },
@@ -102,7 +99,7 @@ export const Params = {
     message.earn_rates !== undefined && (obj.earn_rates = message.earn_rates);
     message.burn_rate !== undefined && (obj.burn_rate = message.burn_rate);
     message.burn_coin !== undefined && (obj.burn_coin = message.burn_coin);
-    message.pool_ratio !== undefined && (obj.pool_ratio = message.pool_ratio);
+    message.market_fee !== undefined && (obj.market_fee = message.market_fee);
     return obj;
   },
 
@@ -123,10 +120,10 @@ export const Params = {
     } else {
       message.burn_coin = "";
     }
-    if (object.pool_ratio !== undefined && object.pool_ratio !== null) {
-      message.pool_ratio = object.pool_ratio;
+    if (object.market_fee !== undefined && object.market_fee !== null) {
+      message.market_fee = object.market_fee;
     } else {
-      message.pool_ratio = "";
+      message.market_fee = "";
     }
     return message;
   },

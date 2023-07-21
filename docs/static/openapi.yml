@@ -26966,7 +26966,7 @@ paths:
                       type: string
                     drops:
                       type: string
-                    sum:
+                    product:
                       type: string
                     active:
                       type: boolean
@@ -27096,7 +27096,7 @@ paths:
                     type: string
                   drops:
                     type: string
-                  sum:
+                  product:
                     type: string
                   active:
                     type: boolean
@@ -27701,13 +27701,9 @@ paths:
                   burn_coin:
                     type: string
                     title: burn coin
-                  pool_ratio:
+                  market_fee:
                     type: string
-                    title: >-
-                      pool limit is (parameter / 1000), 9999 representing as
-                      99.99%
-
-                      pool ratio
+                    title: 'market_fee (parameter / 1000), 9999 representing as 99.99%'
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -45757,7 +45753,7 @@ definitions:
         type: string
       drops:
         type: string
-      sum:
+      product:
         type: string
       active:
         type: boolean
@@ -45869,11 +45865,9 @@ definitions:
       burn_coin:
         type: string
         title: burn coin
-      pool_ratio:
+      market_fee:
         type: string
-        title: |-
-          pool limit is (parameter / 1000), 9999 representing as 99.99%
-          pool ratio
+        title: 'market_fee (parameter / 1000), 9999 representing as 99.99%'
     description: Params defines the parameters for the module.
   pendulumlabs.market.market.Pool:
     type: object
@@ -45949,7 +45943,7 @@ definitions:
               type: string
             drops:
               type: string
-            sum:
+            product:
               type: string
             active:
               type: boolean
@@ -46212,7 +46206,7 @@ definitions:
             type: string
           drops:
             type: string
-          sum:
+          product:
             type: string
           active:
             type: boolean
@@ -46310,9 +46304,7 @@ definitions:
           burn_coin:
             type: string
             title: burn coin
-          pool_ratio:
+          market_fee:
             type: string
-            title: |-
-              pool limit is (parameter / 1000), 9999 representing as 99.99%
-              pool ratio
+            title: 'market_fee (parameter / 1000), 9999 representing as 99.99%'
     description: QueryParamsResponse is response type for the Query/Params RPC method.

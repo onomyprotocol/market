@@ -70,12 +70,12 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	count := k.GetUidCount(ctx)
 
 	var drop = types.Drop{
-		Uid:    count,
-		Owner:  msg.Creator,
-		Pair:   pair,
-		Drops:  drops,
-		Sum:    drops,
-		Active: true,
+		Uid:     count,
+		Owner:   msg.Creator,
+		Pair:    pair,
+		Drops:   drops,
+		Product: drops,
+		Active:  true,
 	}
 
 	var member1 = types.Member{

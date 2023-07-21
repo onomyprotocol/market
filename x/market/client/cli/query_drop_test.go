@@ -30,11 +30,11 @@ func networkWithDropObjects(t *testing.T, n int) (*network.Network, []types.Drop
 
 	for i := 0; i < n; i++ {
 		drop := types.Drop{
-			Uid:   uint64(i),
-			Owner: strconv.Itoa(i),
-			Pair:  strconv.Itoa(i),
-			Drops: sdk.NewIntFromUint64(uint64(i)),
-			Sum:   sdk.NewIntFromUint64(uint64(i)),
+			Uid:     uint64(i),
+			Owner:   strconv.Itoa(i),
+			Pair:    strconv.Itoa(i),
+			Drops:   sdk.NewIntFromUint64(uint64(i)),
+			Product: sdk.NewIntFromUint64(uint64(i)),
 		}
 		nullify.Fill(&drop)
 		state.DropList = append(state.DropList, drop)

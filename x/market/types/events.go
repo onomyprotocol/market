@@ -41,8 +41,8 @@ const (
 	AttributeKeyOrderType = "order_type"
 	AttributeKeyPair      = "pair"
 	AttributeKeyPrev      = "prev"
+	AttributeKeyProduct   = "product"
 	AttributeKeyRate      = "rate"
 	AttributeKeyStop      = "stop"
-	AttributeKeySum       = "sum"
 	AttributeKeyUid       = "uid"
 )
