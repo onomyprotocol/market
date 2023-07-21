@@ -9,5 +9,4 @@ app/stats.json
 /vendor
 /target
 /Cargo.lock
-/marketd
-/market_standaloned
+/onexd

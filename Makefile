@@ -48,7 +48,7 @@ comma := ,
 build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 ldflags = 	-X github.com/onomyprotocol/cosmos-sdk/version.Name=market \
-			-X github.com/onomyprotocol/cosmos-sdk/version.AppName=marketd \
+			-X github.com/onomyprotocol/cosmos-sdk/version.AppName=onexd \
 			-X github.com/onomyprotocol/cosmos-sdk/version.Version=$(VERSION) \
 			-X github.com/onomyprotocol/cosmos-sdk/version.Commit=$(COMMIT) \
 			-X "github.com/onomyprotocol/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
@@ -60,7 +60,7 @@ all: install
 
 install: go.sum
 		@echo ls
-		go install $(BUILD_FLAGS) ./cmd/marketd
+		go install $(BUILD_FLAGS) ./cmd/onexd
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"

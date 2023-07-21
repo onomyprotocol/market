@@ -37,7 +37,7 @@ RUN apk add --update ca-certificates
 WORKDIR $MARKET
 
 # Copy over binaries from the build-env
-COPY --from=build-env /go/bin/marketd /usr/bin/marketd
+COPY --from=build-env /go/bin/onexd /usr/bin/onexd
 
 EXPOSE 26656
 EXPOSE 26657
@@ -45,5 +45,5 @@ EXPOSE 1317
 EXPOSE 9090
 EXPOSE 9091
 
-# Run marketd by default, omit entrypoint to ease using container with marketcli
-ENTRYPOINT ["marketd"]
+# Run onexd by default, omit entrypoint to ease using container with marketcli
+ENTRYPOINT ["onexd"]

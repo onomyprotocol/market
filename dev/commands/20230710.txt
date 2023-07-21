@@ -1,3 +1,3 @@
-marketd tx market create-pool 3000000nom 100btc --from dealer
-marketd tx market redeem-drop 1 --from dealer
+onexd tx market create-pool 3000000nom 100btc --from dealer
+onexd tx market redeem-drop 1 --from dealer
 See that the leader doesn't change
