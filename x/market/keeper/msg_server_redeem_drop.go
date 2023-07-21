@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -44,23 +45,37 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", drop.Pair)
 	}
 
-	poolSum := member1.Balance.Add(member2.Balance)
+	poolProduct := member1.Balance.Mul(member2.Balance)
 
 	// Each Drop is a proportional rite to the AMM balances
 	// % total drops in pool = dropAmount(drop)/dropAmount(pool)*100%
 	// drop_ratio = dropAmount(drop)/dropAmount(pool)
 	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
 	// Profit = dropSum(end) - dropSum(begin)
-	dropSumEnd := (poolSum.Mul(drop.Drops)).Quo(pool.Drops)
-	total2 := (dropSumEnd.Mul(member2.Balance)).Quo(poolSum)
-	total1 := dropSumEnd.Sub(total2)
+	dropProductEnd := (poolProduct.Mul(drop.Drops)).Quo(pool.Drops)
+	total2 := (dropProductEnd.Mul(member2.Balance)).Quo(poolProduct)
+	total1 := dropProductEnd.Sub(total2)
 
-	dropProfit := dropSumEnd.Sub(drop.Sum)
+	dropProfit := dropProductEnd.Sub(drop.Product)
 
-	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
-	profit2 := (dropProfit.Mul(member2.Balance)).Quo(poolSum)
+	// dropProfit == A * B
+	// dropProfit = B * B * exchrate(A/B)
+	// dropProfit = B^2 * exchrate(A/B)
+	// B^2 = dropProfit / exchrate(A/B)
+	// B^2 = dropProfit / (Member1 Balance / Member2 Balance)
+	// B^2 = (dropProfit * Member2 Balance) / Member1
+	// B = SQRT((dropProfit * Member2 Balance) / Member1)
+	bigInt := &big.Int{}
+	profit2 :=
+		sdk.NewIntFromBigInt(
+			bigInt.Sqrt(
+				sdk.Int.BigInt(
+					(dropProfit.Mul(member2.Balance)).Quo(member1.Balance),
+				),
+			),
+		)
 
-	profit1 := dropProfit.Sub(profit2)
+	profit1 := dropProfit.Quo(profit2)
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRates [10]sdk.Int

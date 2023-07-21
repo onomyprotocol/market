@@ -65,7 +65,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// B^2 = (dropProduct * Member2 Balance) / Member1
 	// B = SQRT((dropProduct * Member2 Balance) / Member1)
 	bigInt := &big.Int{}
-	amount1 :=
+	amount2 :=
 		sdk.NewIntFromBigInt(
 			bigInt.Sqrt(
 				sdk.Int.BigInt(
@@ -74,11 +74,11 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			),
 		)
 
-	coin1 := sdk.NewCoin(denom1, amount1)
-
-	amount2 := dropProduct.Quo(amount1)
-
 	coin2 := sdk.NewCoin(denom2, amount2)
+
+	amount1 := dropProduct.Quo(amount2)
+
+	coin1 := sdk.NewCoin(denom1, amount1)
 
 	coinPair := sdk.NewCoins(coin1, coin2)
 

@@ -51,7 +51,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		return nil, sdkError
 	}
 
-	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
+	drops := coinPair.AmountOf(denom1).Mul(coinPair.AmountOf(denom2))
 
 	leader := types.Leader{
 		Address: msg.Creator,
@@ -155,7 +155,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
 			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
 			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-			sdk.NewAttribute(types.AttributeKeySum, drops.String()),
+			sdk.NewAttribute(types.AttributeKeyProduct, drops.String()),
 		),
 	)
 
