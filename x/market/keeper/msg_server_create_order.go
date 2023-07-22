@@ -413,48 +413,33 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		return true, nil
 	}
 
-	// Execute Stop Order
-
-	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
-	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
-
 	// Strike Bid Amount: The amountBid of the bid coin exchanged
 	strikeAmountBid := stopHead.Amount
-	var strikeAmountAsk sdk.Int
 
-	if stopHead.Amount.GT(maxMemberBidAmount) {
-		strikeAmountBid = maxMemberBidAmount
-		strikeAmountAsk = (strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid))).Quo(memberBid.Balance.Add(strikeAmountBid))
+	// A(i)*B(i) = A(f)*B(f)
+	// A(f) = A(i)*B(i)/B(f)
+	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
+	strikeAmountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(strikeAmountBid)))
 
-		// Edge case where strikeAskAmount rounds to 0
-		// Rounding favors AMM vs Order
-		if strikeAmountAsk.Equal(sdk.NewInt(0)) {
-			return false, nil
-		}
-
-	} else {
-		strikeAmountAsk = strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid)).Quo(memberBid.Balance.Add(strikeAmountBid))
-
-		// Edge case where strikeAskAmount rounds to 0
-		// Rounding favors AMM vs Order
-		if strikeAmountAsk.Equal(sdk.NewInt(0)) {
-			return false, nil
-		}
-
-		// THEN set Head(Stop) active to false as entire order will be filled
-		stopHead.Active = false
-		// Set Next Position as Head of Stop Book
-		memberBid.Stop = stopHead.Next
-
-		if stopHead.Next != 0 {
-			stopNext, _ := k.GetOrder(ctx, stopHead.Next)
-			stopNext.Prev = 0
-			k.SetOrder(ctx, stopNext)
-		}
-
-		// At this point the Head(Stop) position has been deactivated and the Next
-		// Stop position has been set as the Head Stop
+	// Edge case where strikeAskAmount rounds to 0
+	// Rounding favors AMM vs Order
+	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+		return false, nil
 	}
+
+	// THEN set Head(Stop) active to false as entire order will be filled
+	stopHead.Active = false
+	// Set Next Position as Head of Stop Book
+	memberBid.Stop = stopHead.Next
+
+	if stopHead.Next != 0 {
+		stopNext, _ := k.GetOrder(ctx, stopHead.Next)
+		stopNext.Prev = 0
+		k.SetOrder(ctx, stopNext)
+	}
+
+	// At this point the Head(Stop) position has been deactivated and the Next
+	// Stop position has been set as the Head Stop
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address

@@ -293,27 +293,10 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 		return burnings, nil
 	}
 
-	// TODO: memberBid.balance.Add((memberAsk.Balance * Exchrate(A/B)) / 2)
-	maxMemberBidBal := memberBid.Balance.Add(memberAsk.Balance.Quo(sdk.NewInt(2)))
-	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
-
-	// Partial order may consume only half of memberAsk pool amount
-	if amountBid.GT(maxMemberBidAmount) {
-		amountBid = maxMemberBidAmount
-	}
-
-	// Summation Invariant
-	// A(i) + B(i) = A(f) + B(f)
-
-	// Derivation
-	// A(f) = A(i) + B(i) - B(f)
-	// A(f) = A(i) - amountBid
-	// Exch(f) = A(f) / B(f)
-	// Exch(f) = (A(i) - amountBid) / B(f)
-	// B(f) = B(i) + amountBid
-	// Exch(f) =  (A(i) - amountBid) / (B(i) + amountBid)
-	// amountAsk = amountBid * Exch(f) = [amountBid * (A(i) - amountBid)] / (B(i) + amountBid)
-	amountAsk := (amountBid.Mul(memberAsk.Balance.Sub(amountBid))).Quo(memberBid.Balance.Add(amountBid))
+	// A(i)*B(i) = A(f)*B(f)
+	// A(f) = A(i)*B(i)/B(f)
+	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
+	amountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid)))
 
 	coinAsk := sdk.NewCoin(burnCoin, amountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)

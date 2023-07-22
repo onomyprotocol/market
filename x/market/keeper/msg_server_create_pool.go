@@ -26,10 +26,10 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	coinPair := sdk.NewCoins(coinA, coinB)
 
-	// NewCoins sorts denoms
+	// NewCoins sorts denoms.
+	// The sorted pair joined by "," is used as the key for the pool.
 	denom1 := coinPair.GetDenomByIndex(0)
 	denom2 := coinPair.GetDenomByIndex(1)
-
 	pair := strings.Join([]string{denom1, denom2}, ",")
 
 	// Test if pool either exists and active or exists and inactive
@@ -41,16 +41,16 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		}
 	}
 
-	//moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	// Use the module account as pool account
+	// All coins added to pools are deposited into the module account until redemption
 	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinPair)
 	if sdkError != nil {
 		return nil, sdkError
 	}
 
+	// Drops define proportional ownership to the liquidity in the pool
 	drops := coinPair.AmountOf(denom1).Mul(coinPair.AmountOf(denom2))
 
 	leader := types.Leader{

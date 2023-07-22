@@ -57,7 +57,10 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// dropProduct == (poolSum * Drop.drops) / Pool.drops
 	dropProduct := (poolProduct.Mul(drops)).Quo(pool.Drops)
 
+	// Amount of member1 coin in drop = A
+	// Amount of member2 coin in drop = B
 	// dropProduct == A * B
+	// A = B * exchrate(A/B)
 	// dropProduct = B * B * exchrate(A/B)
 	// dropProduct = B^2 * exchrate(A/B)
 	// B^2 = dropProduct / exchrate(A/B)
@@ -65,7 +68,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// B^2 = (dropProduct * Member2 Balance) / Member1
 	// B = SQRT((dropProduct * Member2 Balance) / Member1)
 	bigInt := &big.Int{}
-	amount2 :=
+	dropAmtMember2 :=
 		sdk.NewIntFromBigInt(
 			bigInt.Sqrt(
 				sdk.Int.BigInt(
@@ -74,11 +77,11 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			),
 		)
 
-	coin2 := sdk.NewCoin(denom2, amount2)
+	coin2 := sdk.NewCoin(denom2, dropAmtMember2)
 
-	amount1 := dropProduct.Quo(amount2)
+	dropAmtMember1 := dropProduct.Quo(dropAmtMember2)
 
-	coin1 := sdk.NewCoin(denom1, amount1)
+	coin1 := sdk.NewCoin(denom1, dropAmtMember1)
 
 	coinPair := sdk.NewCoins(coin1, coin2)
 
@@ -97,7 +100,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	}
 
 	// Deposit into Pool
-	member1.Balance = member1.Balance.Add(amount1)
+	member1.Balance = member1.Balance.Add(dropAmtMember1)
 	k.SetMember(ctx, member1)
 
 	// update member1 event
@@ -110,7 +113,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		),
 	)
 
-	member2.Balance = member2.Balance.Add(amount2)
+	member2.Balance = member2.Balance.Add(dropAmtMember2)
 	k.SetMember(ctx, member2)
 
 	// update member2 event
@@ -123,8 +126,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		),
 	)
 
-	// Get Drop Creator and Pool Leader total drops from all drops owned
-	// TODO: Need to double check that database is configured properly
+	// Get Drop Creator total drops from all drops owned
 	sumDropCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
 
 	numLeaders := len(pool.Leaders)
