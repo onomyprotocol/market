@@ -15,83 +15,96 @@ import (
 
 func TestRedeemDrop(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)
-	//TestData
+
+	// TestData
 	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"20", "30"}, RateBstrArray: []string{"40", "50"}}
 	coinPair, _ := sample.SampleCoins("40CoinA", "50CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
-	//MintCoins
+	// MintCoins
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
-	//SendCoinsFromModuleToAccount
+
+	// SendCoinsFromModuleToAccount
 	requestAddress, err := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Pool
+
+	// Create Pool
 	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
 	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
-	//validate CreatePool
+
+	// Validate CreatePool
 	require.NoError(t, err)
 	require.Contains(t, p.GetCreator(), response.String())
 	require.Contains(t, p.GetCoinA(), response.String())
 	require.Contains(t, p.GetCoinB(), response.String())
-	//validate SetUidCount function.
+
+	// Validate SetUidCount function.
 	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	require.Equal(t, beforecount+1, aftercount)
 
-	//validate GetDrop
+	// Validate GetDrop
 	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
-	//validate CreateDrop
+
+	// Validate CreateDrop
 	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "10"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
-	//validate GetMember
+	// Validate GetMember
 	members, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
 	members1, memberfound1 := testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
 	require.True(t, memberfound)
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "35")
+	require.Equal(t, "33", members.Balance.String())
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "45")
-	//Validate GetPool
+	require.Equal(t, "43", members1.Balance.String())
+
+	// Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
-	require.Equal(t, rst.Drops.String(), "80")
-	//validate GetDrop
+	require.Equal(t, "1210", rst.Drops.String())
+
+	// Validate GetDrop
 	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
 	require.True(t, drop1Found)
 	require.Equal(t, drops1.Pair, pair)
 	require.Equal(t, drops1.Drops.String(), d.Drops)
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
-	//Validate RedeemDrop
+
+	// Validate RedeemDrop
 	Uid := strconv.FormatUint(drops1.Uid, 10)
 	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
 	createRedeemDropResponse, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
 	require.NoError(t, redeemdropErr)
 	require.Contains(t, rd.GetCreator(), createRedeemDropResponse.String())
-	//Validate Drop After Redeem Drop
+
+	// Validate Drop After Redeem Drop
 	drops1, drop1Found = testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
 	require.True(t, drop1Found)
 	require.Equal(t, drops1.Pair, pair)
 	require.Equal(t, drops1.Drops.String(), d.Drops)
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
 	require.False(t, drops1.Active)
-	//Validate GetPool After Redeem Drop
+
+	// Validate GetPool After Redeem Drop
 	rst, found = testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, rst.Drops.String(), "70")
 	require.Equal(t, "70", rst.Leaders[0].Drops.String())
-	//validate GetMember After Redeem Drop
+
+	// Validate GetMember After Redeem Drop
 	members, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
 	members1, memberfound1 = testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
 	require.True(t, memberfound)

@@ -45,13 +45,13 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// Create the uid
 	uid := k.GetUidCount(ctx)
 
-	// The Pool Sum is defined as:
+	// The Pool Product is defined as:
 	// poolProduct == AMM Coin A Balance * AMM Coin B Balance
 	poolProduct := member1.Balance.Mul(member2.Balance)
 
 	drops, _ := sdk.NewIntFromString(msg.Drops)
 
-	// The beginning Drop Sum is defined as:
+	// The beginning Drop Product is defined as:
 	// dropProduct == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
 	// dropProduct == poolProduct * (Drop.drops / Pool.drops)
 	// dropProduct == (poolSum * Drop.drops) / Pool.drops
@@ -64,6 +64,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// dropProduct = B * B * exchrate(A/B)
 	// dropProduct = B^2 * exchrate(A/B)
 	// B^2 = dropProduct / exchrate(A/B)
+	// exchrate(A/B) = Member1 Balance / Member2 Balance
 	// B^2 = dropProduct / (Member1 Balance / Member2 Balance)
 	// B^2 = (dropProduct * Member2 Balance) / Member1
 	// B = SQRT((dropProduct * Member2 Balance) / Member1)
@@ -126,8 +127,12 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		),
 	)
 
-	// Get Drop Creator total drops from all drops owned
-	sumDropCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
+	sumDropCreator := drops
+	prevSum, ok := k.GetDropsSum(ctx, msg.Creator, pair)
+
+	if ok {
+		sumDropCreator = sumDropCreator.Add(prevSum)
+	}
 
 	numLeaders := len(pool.Leaders)
 	maxLeaders := len(strings.Split(k.EarnRates(ctx), ","))
@@ -214,6 +219,13 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	k.SetDrop(
 		ctx,
 		drop,
+	)
+
+	k.SetDropsSum(
+		ctx,
+		drop.Owner,
+		drop.Pair,
+		sumDropCreator,
 	)
 
 	// create drop event

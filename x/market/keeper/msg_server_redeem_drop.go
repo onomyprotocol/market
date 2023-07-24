@@ -78,25 +78,23 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	profit1 := dropProfit.Quo(profit2)
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
-	var earnRates [10]sdk.Int
-	var earnings1 [10]sdk.Int
+	var earnRate sdk.Int
+	var earnings1 sdk.Int
 	earnings1Total := sdk.NewInt(0)
-	var earnings2 [10]sdk.Int
+	var earnings2 sdk.Int
 	earnings2Total := sdk.NewInt(0)
 	var coinLeader1 sdk.Coin
 	var coinLeader2 sdk.Coin
 	var coinsLeader sdk.Coins
 
 	for i, v := range pool.Leaders {
-		earnRates[i], _ = sdk.NewIntFromString(earnRatesStringSlice[i])
-		if !found {
-			return nil, sdkerrors.Wrapf(types.ErrDropNotFound, "%s", msg.Uid)
-		}
-		earnings2[i] = (profit2.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
-		earnings2Total = earnings2Total.Add(earnings2[i])
+		earnRate, _ = sdk.NewIntFromString(earnRatesStringSlice[i])
 
-		earnings1[i] = (profit1.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
-		earnings1Total = earnings1Total.Add(earnings1[i])
+		earnings2 = (profit2.Mul(earnRate)).Quo(sdk.NewInt(1000))
+		earnings2Total = earnings2Total.Add(earnings2)
+
+		earnings1 = (profit1.Mul(earnRate)).Quo(sdk.NewInt(1000))
+		earnings1Total = earnings1Total.Add(earnings1)
 
 		coinLeader1 = sdk.NewCoin(denom1, earnings1Total)
 		coinLeader2 = sdk.NewCoin(denom2, earnings2Total)
@@ -111,8 +109,13 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		}
 	}
 
-	// Get Drop Redeemer total drops minus redeemed
-	sumDropRedeemer := k.GetDropsSum(ctx, msg.Creator).Sub(drop.Drops)
+	sumDropRedeemer, ok := k.GetDropsSum(ctx, msg.Creator, drop.Pair)
+
+	if ok {
+		sumDropRedeemer = sumDropRedeemer.Sub(drop.Drops)
+	} else {
+		return nil, sdkerrors.Wrapf(types.ErrDropSumNotFound, "%s", msg.Creator)
+	}
 
 	numLeaders := len(pool.Leaders)
 
@@ -256,6 +259,20 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	k.SetDrop(
 		ctx,
 		drop,
+	)
+
+	k.RemoveDropFromList(
+		ctx,
+		drop.Uid,
+		drop.Owner,
+		drop.Pair,
+	)
+
+	k.SetDropsSum(
+		ctx,
+		drop.Owner,
+		drop.Pair,
+		sumDropRedeemer,
 	)
 
 	k.SetPool(
