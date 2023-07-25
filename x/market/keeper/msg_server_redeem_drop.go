@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"math/big"
 	"strconv"
 	"strings"
 
@@ -53,29 +52,12 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
 	// Profit = dropSum(end) - dropSum(begin)
 	dropProductEnd := (poolProduct.Mul(drop.Drops)).Quo(pool.Drops)
-	total2 := (dropProductEnd.Mul(member2.Balance)).Quo(poolProduct)
-	total1 := dropProductEnd.Sub(total2)
 
-	dropProfit := dropProductEnd.Sub(drop.Product)
+	total1 := (drop.Drops.Mul(member1.Balance)).Quo(pool.Drops)
+	profit1 := (total1.Mul(dropProductEnd.Sub(drop.Product))).Quo(dropProductEnd)
 
-	// dropProfit == A * B
-	// dropProfit = B * B * exchrate(A/B)
-	// dropProfit = B^2 * exchrate(A/B)
-	// B^2 = dropProfit / exchrate(A/B)
-	// B^2 = dropProfit / (Member1 Balance / Member2 Balance)
-	// B^2 = (dropProfit * Member2 Balance) / Member1
-	// B = SQRT((dropProfit * Member2 Balance) / Member1)
-	bigInt := &big.Int{}
-	profit2 :=
-		sdk.NewIntFromBigInt(
-			bigInt.Sqrt(
-				sdk.Int.BigInt(
-					(dropProfit.Mul(member2.Balance)).Quo(member1.Balance),
-				),
-			),
-		)
-
-	profit1 := dropProfit.Quo(profit2)
+	total2 := (drop.Drops.Mul(member2.Balance)).Quo(pool.Drops)
+	profit2 := (total2.Mul(dropProductEnd.Sub(drop.Product))).Quo(dropProductEnd)
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRate sdk.Int
@@ -90,14 +72,14 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	for i, v := range pool.Leaders {
 		earnRate, _ = sdk.NewIntFromString(earnRatesStringSlice[i])
 
-		earnings2 = (profit2.Mul(earnRate)).Quo(sdk.NewInt(1000))
-		earnings2Total = earnings2Total.Add(earnings2)
-
-		earnings1 = (profit1.Mul(earnRate)).Quo(sdk.NewInt(1000))
+		earnings1 = (profit1.Mul(earnRate)).Quo(sdk.NewInt(10000))
 		earnings1Total = earnings1Total.Add(earnings1)
 
-		coinLeader1 = sdk.NewCoin(denom1, earnings1Total)
-		coinLeader2 = sdk.NewCoin(denom2, earnings2Total)
+		earnings2 = (profit2.Mul(earnRate)).Quo(sdk.NewInt(10000))
+		earnings2Total = earnings2Total.Add(earnings2)
+
+		coinLeader1 = sdk.NewCoin(denom1, earnings1)
+		coinLeader2 = sdk.NewCoin(denom2, earnings2)
 		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
 
 		leader, _ := sdk.AccAddressFromBech32(v.Address)
@@ -179,12 +161,12 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
 
-	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(1000))
+	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(10000))
 
 	// Redemption value in coin 1
 	redeem1 := total1.Sub(earnings1Total.Add(burn1))
 
-	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
+	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(10000))
 
 	// Redemption value in coin 2
 	redeem2 := total2.Sub(earnings2Total.Add(burn2))

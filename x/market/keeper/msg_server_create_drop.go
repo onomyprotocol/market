@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"math/big"
 	"sort"
 	"strconv"
 	"strings"
@@ -45,44 +44,15 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// Create the uid
 	uid := k.GetUidCount(ctx)
 
-	// The Pool Product is defined as:
-	// poolProduct == AMM Coin A Balance * AMM Coin B Balance
-	poolProduct := member1.Balance.Mul(member2.Balance)
-
 	drops, _ := sdk.NewIntFromString(msg.Drops)
 
-	// The beginning Drop Product is defined as:
-	// dropProduct == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
-	// dropProduct == poolProduct * (Drop.drops / Pool.drops)
-	// dropProduct == (poolSum * Drop.drops) / Pool.drops
-	dropProduct := (poolProduct.Mul(drops)).Quo(pool.Drops)
+	dropAmtMember1 := (drops.Mul(member1.Balance)).Quo(pool.Drops)
+	dropAmtMember2 := (drops.Mul(member2.Balance)).Quo(pool.Drops)
 
-	// Amount of member1 coin in drop = A
-	// Amount of member2 coin in drop = B
-	// dropProduct == A * B
-	// A = B * exchrate(A/B)
-	// dropProduct = B * B * exchrate(A/B)
-	// dropProduct = B^2 * exchrate(A/B)
-	// B^2 = dropProduct / exchrate(A/B)
-	// exchrate(A/B) = Member1 Balance / Member2 Balance
-	// B^2 = dropProduct / (Member1 Balance / Member2 Balance)
-	// B^2 = (dropProduct * Member2 Balance) / Member1
-	// B = SQRT((dropProduct * Member2 Balance) / Member1)
-	bigInt := &big.Int{}
-	dropAmtMember2 :=
-		sdk.NewIntFromBigInt(
-			bigInt.Sqrt(
-				sdk.Int.BigInt(
-					(dropProduct.Mul(member2.Balance)).Quo(member1.Balance),
-				),
-			),
-		)
-
-	coin2 := sdk.NewCoin(denom2, dropAmtMember2)
-
-	dropAmtMember1 := dropProduct.Quo(dropAmtMember2)
+	dropProduct := dropAmtMember1.Mul(dropAmtMember2)
 
 	coin1 := sdk.NewCoin(denom1, dropAmtMember1)
+	coin2 := sdk.NewCoin(denom2, dropAmtMember2)
 
 	coinPair := sdk.NewCoins(coin1, coin2)
 

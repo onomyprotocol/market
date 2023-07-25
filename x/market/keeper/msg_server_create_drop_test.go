@@ -53,8 +53,16 @@ func TestCreateDrop(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 
+	// Validate GetPool
+	rst1, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst1.Pair, pair)
+	require.Equal(t, "1200", rst1.Drops.String())
+	require.Equal(t, 1, len(rst1.Leaders))
+	require.Equal(t, "1200", rst1.Leaders[0].Drops.String())
+
 	// Validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -64,18 +72,20 @@ func TestCreateDrop(t *testing.T) {
 	require.True(t, memberfound)
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, "37", members.Balance.String())
+	require.Equal(t, "33", members.Balance.String())
 
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, "49", members1.Balance.String())
+	require.Equal(t, "44", members1.Balance.String())
 
 	// Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
-	require.Equal(t, rst.Drops.String(), "140")
+	require.Equal(t, "1320", rst.Drops.String())
+	require.Equal(t, 1, len(rst.Leaders))
+	require.Equal(t, "1320", rst.Leaders[0].Drops.String())
 
 	// Validate GetDrop
 	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
