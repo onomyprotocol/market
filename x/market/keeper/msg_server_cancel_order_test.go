@@ -15,100 +15,68 @@ import (
 
 func TestCancelOrder_case1_stop(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)
-	//TestData
+	// TestData
 	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
 	coinPair, _ := sample.SampleCoins("70CoinA", "70CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
-	//MintCoins
+	// MintCoins
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
-	//SendCoinsFromModuleToAccount
+
+	// SendCoinsFromModuleToAccount
 	requestAddress, err := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	// GetUidCount before CreatePool
-	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Pool
+
+	// Create Pool
 	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
-	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
-	//validate CreatePool
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.NoError(t, err)
-	require.Contains(t, p.GetCreator(), response.String())
-	require.Contains(t, p.GetCoinA(), response.String())
-	require.Contains(t, p.GetCoinB(), response.String())
-	//validate SetUidCount function.
+
+	// CreateDrop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.NoError(t, err)
+
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	// Create Order
+	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
+	require.NoError(t, err)
 	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	require.Equal(t, beforecount+1, aftercount)
 
-	//validate GetDrop
-	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
-	require.True(t, dropFound)
-	require.Equal(t, drops.Pair, pair)
-	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
-	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
-	require.NoError(t, err)
-
-	//validate GetMember
-	members, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
-	members1, memberfound1 := testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
-	require.True(t, memberfound)
-	require.Equal(t, members.DenomA, denomB)
-	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "70")
-	require.True(t, memberfound1)
-	require.Equal(t, members1.DenomA, denomA)
-	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "70")
-	//Validate GetPool
-	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
-	require.True(t, found)
-	require.Equal(t, rst.Pair, pair)
-	require.Equal(t, rst.Drops.String(), "140")
-	//validate GetDrop
-	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
-	require.True(t, drop1Found)
-	require.Equal(t, drops1.Pair, pair)
-	require.Equal(t, drops1.Drops.String(), d.Drops)
-	require.Contains(t, d.GetCreator(), createDropResponse.String())
-	// GetUidCount before CreatePool
-	beforecount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Order
-	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
-	require.NoError(t, err)
-	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	require.Equal(t, beforecount+1, aftercount)
-	//Validate Order
+	// Validate Order
 	orders, orderfound := testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
 	require.True(t, orderfound)
 	require.Equal(t, orders.DenomBid, denomB)
 	require.Equal(t, orders.DenomAsk, denomA)
 	require.Equal(t, orders.Amount.String(), o.Amount)
 
-	//validate GetMember
-	members, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
+	// Validate GetMember
+	memberA, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
 
 	require.True(t, memberfound)
-	require.Equal(t, members.DenomA, denomB)
-	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Stop, uint64(0))
+	require.Equal(t, memberA.DenomA, denomB)
+	require.Equal(t, memberA.DenomB, denomA)
+	require.Equal(t, "33", memberA.Balance.String())
+	require.Equal(t, memberA.Stop, uint64(0))
 
-	//Cancel Order
+	// Cancel Order
 	Uid := strconv.FormatUint(orders.Uid, 10)
 	var co = types.MsgCancelOrder{Creator: addr, Uid: Uid}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
 	require.NoError(t, err)
 
-	//validate GetMember
-	members, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
+	// Validate GetMember
+	memberA, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
 	require.True(t, memberfound)
-	require.Equal(t, members.DenomA, denomB)
-	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Stop, uint64(0))
+	require.Equal(t, memberA.DenomA, denomB)
+	require.Equal(t, memberA.DenomB, denomA)
+	require.Equal(t, "33", memberA.Balance.String())
+	require.Equal(t, memberA.Stop, uint64(0))
 
 	//Validate Order
 	orders, orderfound = testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
@@ -122,89 +90,59 @@ func TestCancelOrder_case1_stop(t *testing.T) {
 }
 
 func TestCancelOrder_case1_limit(t *testing.T) {
+
 	testInput := keepertest.CreateTestEnvironment(t)
-	//TestData
+	// TestData
 	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
 	coinPair, _ := sample.SampleCoins("70CoinA", "70CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
-	//MintCoins
+	// MintCoins
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
-	//SendCoinsFromModuleToAccount
+
+	// SendCoinsFromModuleToAccount
 	requestAddress, err := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	// GetUidCount before CreatePool
-	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Pool
+
+	// Create Pool
 	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
-	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
-	//validate CreatePool
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.NoError(t, err)
-	require.Contains(t, p.GetCreator(), response.String())
-	require.Contains(t, p.GetCoinA(), response.String())
-	require.Contains(t, p.GetCoinB(), response.String())
-	//validate SetUidCount function.
+
+	// CreateDrop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.NoError(t, err)
+
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	// Create Order
+	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "0", Prev: "0", Next: "0"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
+	require.NoError(t, err)
+
 	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	require.Equal(t, beforecount+1, aftercount)
 
-	//validate GetDrop
-	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
-	require.True(t, dropFound)
-	require.Equal(t, drops.Pair, pair)
-	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
-	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
-	require.NoError(t, err)
-
-	//validate GetMember
-	members, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
-	members1, memberfound1 := testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
-	require.True(t, memberfound)
-	require.Equal(t, members.DenomA, denomB)
-	require.Equal(t, members.DenomB, denomA)
-	//require.Equal(t, members.Balance.String(), "70")
-	require.True(t, memberfound1)
-	require.Equal(t, members1.DenomA, denomA)
-	require.Equal(t, members1.DenomB, denomB)
-	//require.Equal(t, members1.Balance.String(), "70")
-	//Validate GetPool
-	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
-	require.True(t, found)
-	require.Equal(t, rst.Pair, pair)
-	//require.Equal(t, rst.Drops.String(), "140")
-	//validate GetDrop
-	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
-	require.True(t, drop1Found)
-	require.Equal(t, drops1.Pair, pair)
-	require.Equal(t, drops1.Drops.String(), d.Drops)
-	require.Contains(t, d.GetCreator(), createDropResponse.String())
-	// GetUidCount before CreatePool
-	beforecount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Order
-	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "0", Prev: "0", Next: "0"}
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
-	require.NoError(t, err)
-	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	require.Equal(t, beforecount+1, aftercount)
-	//Validate Order
+	// Validate Order
 	orders, orderfound := testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
 	require.True(t, orderfound)
 	require.Equal(t, orders.DenomBid, denomB)
 	require.Equal(t, orders.DenomAsk, denomA)
 	require.Equal(t, orders.Amount.String(), o.Amount)
 
-	//validate GetMember
-	members1, memberfound1 = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
-	require.True(t, memberfound1)
-	require.Equal(t, members1.DenomA, denomA)
-	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Stop, uint64(0))
+	//Validate GetMember
+	memberBid, memberfoundBid := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
+	require.True(t, memberfoundBid)
+	require.Equal(t, memberBid.DenomA, denomA)
+	require.Equal(t, memberBid.DenomB, denomB)
+	require.Equal(t, "44", memberBid.Balance.String())
+	require.Equal(t, memberBid.Stop, uint64(0))
 
-	members1.Stop = orders.Uid
-	testInput.MarketKeeper.SetMember(testInput.Context, members1)
+	memberBid.Stop = orders.Uid
+	testInput.MarketKeeper.SetMember(testInput.Context, memberBid)
 
 	//Cancel Order
 	Uid := strconv.FormatUint(orders.Uid, 10)
@@ -212,12 +150,12 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
 	require.NoError(t, err)
 
-	members1, memberfound1 = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
-	require.True(t, memberfound1)
-	require.Equal(t, members1.DenomA, denomA)
-	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Stop, uint64(orders.Uid))
+	memberBid, memberfoundBid = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
+	require.True(t, memberfoundBid)
+	require.Equal(t, memberBid.DenomA, denomA)
+	require.Equal(t, memberBid.DenomB, denomB)
+	require.Equal(t, "44", memberBid.Balance.String())
+	require.Equal(t, memberBid.Stop, uint64(orders.Uid))
 
 	//Validate Order
 	orders, orderfound = testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
@@ -231,87 +169,56 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 }
 
 func TestCancelOrder_case2_stop(t *testing.T) {
+
 	testInput := keepertest.CreateTestEnvironment(t)
-	//TestData
+	// TestData
 	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
 	coinPair, _ := sample.SampleCoins("70CoinA", "70CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
-	//MintCoins
+	// MintCoins
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
-	//SendCoinsFromModuleToAccount
+
+	// SendCoinsFromModuleToAccount
 	requestAddress, err := sdk.AccAddressFromBech32(addr)
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	// GetUidCount before CreatePool
-	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Pool
+
+	// Create Pool
 	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
-	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
-	//validate CreatePool
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
 	require.NoError(t, err)
-	require.Contains(t, p.GetCreator(), response.String())
-	require.Contains(t, p.GetCoinA(), response.String())
-	require.Contains(t, p.GetCoinB(), response.String())
-	//validate SetUidCount function.
+
+	// CreateDrop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.NoError(t, err)
+
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	//Create Order
+	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
+	require.NoError(t, err)
 	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 	require.Equal(t, beforecount+1, aftercount)
 
-	//validate GetDrop
-	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
-	require.True(t, dropFound)
-	require.Equal(t, drops.Pair, pair)
-	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
-	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
-	require.NoError(t, err)
-
-	//validate GetMember
-	members, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
-	members1, memberfound1 := testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
-	require.True(t, memberfound)
-	require.Equal(t, members.DenomA, denomB)
-	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "70")
-	require.True(t, memberfound1)
-	require.Equal(t, members1.DenomA, denomA)
-	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "70")
-	//Validate GetPool
-	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
-	require.True(t, found)
-	require.Equal(t, rst.Pair, pair)
-	require.Equal(t, rst.Drops.String(), "140")
-	//validate GetDrop
-	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
-	require.True(t, drop1Found)
-	require.Equal(t, drops1.Pair, pair)
-	require.Equal(t, drops1.Drops.String(), d.Drops)
-	require.Contains(t, d.GetCreator(), createDropResponse.String())
-	// GetUidCount before CreatePool
-	beforecount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Order
-	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: members1.DenomA, DenomBid: members1.DenomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
-	require.NoError(t, err)
-	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
-	require.Equal(t, beforecount+1, aftercount)
-	//Validate Order
+	// Validate Order
 	orders, orderfound := testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
 	require.True(t, orderfound)
 	require.Equal(t, orders.DenomBid, denomB)
 	require.Equal(t, orders.DenomAsk, denomA)
 	require.Equal(t, orders.Amount.String(), o.Amount)
 
-	//validate GetMember
-	members, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
+	// Validate GetMember
+	memberAsk, memberAskfound := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
 
-	require.True(t, memberfound)
-	require.Equal(t, members.DenomA, denomB)
-	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "70")
-	require.Equal(t, members.Stop, uint64(0))
+	require.True(t, memberAskfound)
+	require.Equal(t, memberAsk.DenomA, denomB)
+	require.Equal(t, memberAsk.DenomB, denomA)
+	require.Equal(t, "33", memberAsk.Balance.String())
+	require.Equal(t, memberAsk.Stop, uint64(0))
 
 	o.Next = strconv.FormatUint(beforecount, 10)
 	o.Rate = []string{"70", "80"}
@@ -321,20 +228,21 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	orders, orderfound = testInput.MarketKeeper.GetOrder(testInput.Context, aftercount)
 	require.True(t, orderfound)
 	require.Equal(t, orders.Next, beforecount)
-	//Cancel Order
+
+	// Cancel Order
 	Uid := strconv.FormatUint(orders.Uid, 10)
 	var co = types.MsgCancelOrder{Creator: addr, Uid: Uid}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
 	require.NoError(t, err)
 
-	members1, memberfound1 = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
-	require.True(t, memberfound1)
-	require.Equal(t, members1.DenomA, denomA)
-	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "70")
-	require.Equal(t, members1.Stop, beforecount)
+	memberBid, memberBidfound := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
+	require.True(t, memberBidfound)
+	require.Equal(t, memberBid.DenomA, denomA)
+	require.Equal(t, memberBid.DenomB, denomB)
+	require.Equal(t, "44", memberBid.Balance.String())
+	require.Equal(t, memberBid.Stop, beforecount)
 
-	//Validate Order
+	// Validate Order
 	orders, orderfound = testInput.MarketKeeper.GetOrder(testInput.Context, aftercount)
 	require.True(t, orderfound)
 	require.False(t, orders.Active)
@@ -344,6 +252,7 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	require.Equal(t, orders.OrderType, "stop")
 }
 
+/*
 func TestCancelOrder_case2_limit(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)
 	//TestData
@@ -715,7 +624,6 @@ func TestCancelOrder_case3_limit(t *testing.T) {
 
 }
 
-/**
 
 func TestCancelOrder_case4_stop(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)

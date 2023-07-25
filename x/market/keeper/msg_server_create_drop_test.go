@@ -288,7 +288,7 @@ func TestCreateDrop_Negative(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "70"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
@@ -299,12 +299,12 @@ func TestCreateDrop_Negative(t *testing.T) {
 	require.True(t, memberfound)
 	require.Equal(t, members.DenomA, denomB)
 	require.Equal(t, members.DenomB, denomA)
-	require.Equal(t, members.Balance.String(), "70")
+	require.Equal(t, "33", members.Balance.String())
 
 	require.True(t, memberfound1)
 	require.Equal(t, members1.DenomA, denomA)
 	require.Equal(t, members1.DenomB, denomB)
-	require.Equal(t, members1.Balance.String(), "70")
+	require.Equal(t, "44", members1.Balance.String())
 
 }
 
@@ -341,7 +341,7 @@ func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
 	require.True(t, dropFound)
 	require.Equal(t, drops.Pair, pair)
 	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "20"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "2000"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.Error(t, err)
 	require.ErrorContains(t, err, "insufficient balance")
@@ -350,46 +350,13 @@ func TestCreateDrop_ValidateSenderBalance(t *testing.T) {
 
 func TestCreateDrop_InvalidDrop(t *testing.T) {
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic")
-		}
-	}()
-
-	testInput := keepertest.CreateTestEnvironment(t)
-	//TestData
-	testdata := testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"30", "40"}, RateBstrArray: []string{"50", "60"}}
 	coinPair, _ := sample.SampleCoins("35CoinA", "45CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
-	//MintCoins
-	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
-	//SendCoinsFromModuleToAccount
-	requestAddress, err := sdk.AccAddressFromBech32(addr)
-	require.NoError(t, err)
-	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
-	// GetUidCount before CreatePool
-	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
-	//Create Pool
-	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
-	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
-	//validate CreatePool
-	require.NoError(t, err)
-	require.Contains(t, p.GetCreator(), response.String())
-	require.Contains(t, p.GetCoinA(), response.String())
-	require.Contains(t, p.GetCoinB(), response.String())
-	//validate SetUidCount function.
-	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
-	require.Equal(t, beforecount+1, aftercount)
-
-	//validate GetDrop
-	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
-	require.True(t, dropFound)
-	require.Equal(t, drops.Pair, pair)
-	//validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "-1"}
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	// Validate CreateDrop
+	dropTest := types.NewMsgCreateDrop(addr, pair, "-1")
+	err := dropTest.ValidateBasic()
 	require.Error(t, err)
 
 }
