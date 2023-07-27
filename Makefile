@@ -190,7 +190,7 @@ buf-stamp:
 	touch $@
 
 build: 
-	go build $(BUILD_FLAGS) ./cmd/onomyd
+	go build $(BUILD_FLAGS) ./cmd/marketd
 
 tools-clean:
 	rm -f proto-tools-stamp buf-stamp
