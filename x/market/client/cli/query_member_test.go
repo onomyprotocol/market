@@ -54,7 +54,6 @@ func TestShowMember(t *testing.T) {
 	}
 	for _, tc := range []struct {
 		desc     string
-		idPair   string
 		idDenomA string
 		idDenomB string
 
@@ -64,7 +63,6 @@ func TestShowMember(t *testing.T) {
 	}{
 		{
 			desc:     "found",
-			idPair:   objs[0].Pair,
 			idDenomA: objs[0].DenomA,
 			idDenomB: objs[0].DenomB,
 
@@ -73,7 +71,6 @@ func TestShowMember(t *testing.T) {
 		},
 		{
 			desc:     "not found",
-			idPair:   strconv.Itoa(100000),
 			idDenomA: strconv.Itoa(100000),
 			idDenomB: strconv.Itoa(100000),
 
@@ -84,7 +81,6 @@ func TestShowMember(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idPair,
 				tc.idDenomA,
 				tc.idDenomB,
 			}
