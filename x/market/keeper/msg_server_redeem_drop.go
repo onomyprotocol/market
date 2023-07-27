@@ -49,15 +49,15 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Each Drop is a proportional rite to the AMM balances
 	// % total drops in pool = dropAmount(drop)/dropAmount(pool)*100%
 	// drop_ratio = dropAmount(drop)/dropAmount(pool)
-	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
-	// Profit = dropSum(end) - dropSum(begin)
+	// dropProduct(end) = (AMM Bal A * AMM Bal B) * drop_ratio
+	// Profit = total*[(dropProduct(end) - dropProduct(begin))/dropProduct(end)]
 	dropProductEnd := (poolProduct.Mul(drop.Drops)).Quo(pool.Drops)
 
 	total1 := (drop.Drops.Mul(member1.Balance)).Quo(pool.Drops)
-	profit1 := (total1.Mul(dropProductEnd.Sub(drop.Product))).Quo(dropProductEnd)
+	profit1 := (total1.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total1.Mul(drop.Product)).Quo(dropProductEnd))
 
 	total2 := (drop.Drops.Mul(member2.Balance)).Quo(pool.Drops)
-	profit2 := (total2.Mul(dropProductEnd.Sub(drop.Product))).Quo(dropProductEnd)
+	profit2 := (total2.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total1.Mul(drop.Product)).Quo(dropProductEnd))
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRate sdk.Int

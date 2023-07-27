@@ -360,3 +360,57 @@ func TestCreateDrop_InvalidDrop(t *testing.T) {
 	require.Error(t, err)
 
 }
+
+func TestZeroAmtPaid(t *testing.T) {
+
+	testInput := keepertest.CreateTestEnvironment(t)
+
+	// TestData
+	testdata := testData{coinAStr: "1CoinA", coinBStr: "4000CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
+	coinPair, _ := sample.SampleCoins("70CoinA", "7000CoinB")
+	denomA, denomB := sample.SampleDenoms(coinPair)
+	pair := strings.Join([]string{denomA, denomB}, ",")
+
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress, err := sdk.AccAddressFromBech32(addr)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+
+	// GetUidCount before CreatePool
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	// Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
+	response, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+
+	// Validate CreatePool
+	require.NoError(t, err)
+	require.Contains(t, p.GetCreator(), response.String())
+	require.Contains(t, p.GetCoinA(), response.String())
+	require.Contains(t, p.GetCoinB(), response.String())
+
+	// Validate SetUidCount function.
+	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	// Validate GetDrop
+	drops, dropFound := testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+
+	// Validate GetPool
+	rst1, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst1.Pair, pair)
+	require.Equal(t, "4000", rst1.Drops.String())
+	require.Equal(t, 1, len(rst1.Leaders))
+	require.Equal(t, "4000", rst1.Leaders[0].Drops.String())
+
+	// Validate CreateDrop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "1"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.Error(t, err)
+}
