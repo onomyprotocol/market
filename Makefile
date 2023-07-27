@@ -189,5 +189,8 @@ buf-stamp:
 
 	touch $@
 
+build: 
+	go build $(BUILD_FLAGS) ./cmd/onomyd
+
 tools-clean:
 	rm -f proto-tools-stamp buf-stamp
