@@ -40,5 +40,7 @@ var (
 	ErrPoolInactive = sdkerrors.Register(ModuleName, 15, "the pool is inactive") // nolint: gomnd
 	// ErrDropSumNotFound - the drop sum of owner with drop not found
 	ErrDropSumNotFound = sdkerrors.Register(ModuleName, 16, "drop sum not found") // nolint: gomnd
+	// ErrDropSumNotFound - the drop sum of owner with drop not found
+	ErrAmtZero = sdkerrors.Register(ModuleName, 17, "amount paid for drop equal zero") // nolint: gomnd
 
 )

@@ -47,7 +47,16 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	drops, _ := sdk.NewIntFromString(msg.Drops)
 
 	dropAmtMember1 := (drops.Mul(member1.Balance)).Quo(pool.Drops)
+
+	if !dropAmtMember1.GT(sdk.NewInt(0)) {
+		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "%s", denom1)
+	}
+
 	dropAmtMember2 := (drops.Mul(member2.Balance)).Quo(pool.Drops)
+
+	if !dropAmtMember2.GT(sdk.NewInt(0)) {
+		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "%s", denom2)
+	}
 
 	dropProduct := dropAmtMember1.Mul(dropAmtMember2)
 
