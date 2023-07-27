@@ -37,13 +37,15 @@ git push origin v0.1
 
 After a draft release is created, make your final changes from the release page and publish it.
 
-### Install
-To install the latest version of your blockchain node's binary, execute the following command on your machine:
+### Devnet Linux Install
 
-```
-curl https://get.starport.com/pendulum-labs/market@latest! | sudo bash
-```
-`pendulum-labs/market` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
+First download binary
+```curl https://github.com/pendulum-labs/market/releases/download/v0.0.4dev/marketd```
+Second make the binary executable
+```chmod +x marketd```
+Third move to /usr/local/bin
+```cp marketd /usr/local/bin```
+
 
 ## Learn more
 

@@ -67,7 +67,7 @@
           "coins": [
             {
               "denom": "btc",
-              "amount": "20000000000000000000"
+              "amount": "10000000000000000000"
             },
             {
               "denom": "eth",
@@ -85,7 +85,84 @@
         }
       ],
       "supply": [],
-      "denom_metadata": []
+      "denom_metadata": [
+        {
+          "name": "NOM",
+          "description": "NOM coin",
+          "denom_units": [
+            {
+              "denom": "anom",
+              "exponent": 0,
+              "aliases": []
+            },
+            {
+              "denom": "nom",
+              "exponent": 18,
+              "aliases": []
+            }
+          ],
+          "base": "anom",
+          "display": "nom",
+          "symbol": "NOM"
+        },
+        {
+          "name": "Bitcoin",
+          "description": "Bitcoin",
+          "denom_units": [
+            {
+              "denom": "abtc",
+              "exponent": 0,
+              "aliases": []
+            },
+            {
+              "denom": "btc",
+              "exponent": 18,
+              "aliases": []
+            }
+          ],
+          "base": "abtc",
+          "display": "btc",
+          "symbol": "BTC"
+        },
+        {
+          "name": "Tether",
+          "description": "Tether USD",
+          "denom_units": [
+            {
+              "denom": "ausdt",
+              "exponent": 0,
+              "aliases": []
+            },
+            {
+              "denom": "usdt",
+              "exponent": 18,
+              "aliases": []
+            }
+          ],
+          "base": "ausdt",
+          "display": "usdt",
+          "symbol": "USDT"
+        },
+        {
+          "name": "Ether",
+          "description": "Ethereum Native Coin",
+          "denom_units": [
+            {
+              "denom": "wei",
+              "exponent": 0,
+              "aliases": []
+            },
+            {
+              "denom": "eth",
+              "exponent": 18,
+              "aliases": []
+            }
+          ],
+          "base": "wei",
+          "display": "eth",
+          "symbol": "ETH"
+        }
+      ]
     },
     "capability": {
       "index": "1",
