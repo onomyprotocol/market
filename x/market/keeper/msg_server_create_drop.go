@@ -44,34 +44,15 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	// Create the uid
 	uid := k.GetUidCount(ctx)
 
-	// The Pool Sum is defined as:
-	// poolSum == AMM Coin A Balance + AMM Coin B Balance
-	poolSum := member1.Balance.Add(member2.Balance)
-
 	drops, _ := sdk.NewIntFromString(msg.Drops)
 
-	// The beginning Drop Sum is defined as:
-	// dropSum == Total amount of coinA+coinB needed to create the drop based on pool exchange rate
-	// dropSum == poolSum * (Drop.drops / Pool.drops)
-	// dropSum == (poolSum * Drop.drops) / Pool.drops
-	dropSum := (poolSum.Mul(drops)).Quo(pool.Drops)
+	dropAmtMember1 := (drops.Mul(member1.Balance)).Quo(pool.Drops)
+	dropAmtMember2 := (drops.Mul(member2.Balance)).Quo(pool.Drops)
 
-	// dropSum == A + B
-	// dropSum = B + B * exchrate(A/B)
-	// dropSum = B * (1 + exchrate(A/B))
-	// B = dropSum / (1 + exchrate(A/B))
-	// B = dropSum / (1 + Member1 Balance / Member2 Balance)
-	// B = dropSum / ((Member1 + Member2) / Member2)
-	// B = dropSum / (poolSum / Member2)
-	// B = (dropSum * Member2) / poolSum
-	amount1 := (dropSum.Mul(member2.Balance)).Quo(poolSum)
+	dropProduct := dropAmtMember1.Mul(dropAmtMember2)
 
-	coin1 := sdk.NewCoin(denom1, amount1)
-
-	// The purchase price of the drop in A coin must be less than Available Balance
-	amount2 := dropSum.Sub(amount1)
-
-	coin2 := sdk.NewCoin(denom2, amount2)
+	coin1 := sdk.NewCoin(denom1, dropAmtMember1)
+	coin2 := sdk.NewCoin(denom2, dropAmtMember2)
 
 	coinPair := sdk.NewCoins(coin1, coin2)
 
@@ -90,7 +71,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	}
 
 	// Deposit into Pool
-	member1.Balance = member1.Balance.Add(amount1)
+	member1.Balance = member1.Balance.Add(dropAmtMember1)
 	k.SetMember(ctx, member1)
 
 	// update member1 event
@@ -103,7 +84,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		),
 	)
 
-	member2.Balance = member2.Balance.Add(amount2)
+	member2.Balance = member2.Balance.Add(dropAmtMember2)
 	k.SetMember(ctx, member2)
 
 	// update member2 event
@@ -116,9 +97,12 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		),
 	)
 
-	// Get Drop Creator and Pool Leader total drops from all drops owned
-	// TODO: Need to double check that database is configured properly
-	sumDropCreator := k.GetDropsSum(ctx, msg.Creator).Add(drops)
+	sumDropCreator := drops
+	prevSum, ok := k.GetDropsSum(ctx, msg.Creator, pair)
+
+	if ok {
+		sumDropCreator = sumDropCreator.Add(prevSum)
+	}
 
 	numLeaders := len(pool.Leaders)
 	maxLeaders := len(strings.Split(k.EarnRates(ctx), ","))
@@ -193,18 +177,25 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	)
 
 	var drop = types.Drop{
-		Uid:    uid,
-		Owner:  msg.Creator,
-		Pair:   pair,
-		Drops:  drops,
-		Sum:    dropSum,
-		Active: true,
+		Uid:     uid,
+		Owner:   msg.Creator,
+		Pair:    pair,
+		Drops:   drops,
+		Product: dropProduct,
+		Active:  true,
 	}
 
 	// Add the drop to the keeper
 	k.SetDrop(
 		ctx,
 		drop,
+	)
+
+	k.SetDropsSum(
+		ctx,
+		drop.Owner,
+		drop.Pair,
+		sumDropCreator,
 	)
 
 	// create drop event
@@ -215,7 +206,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
 			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
 			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-			sdk.NewAttribute(types.AttributeKeySum, dropSum.String()),
+			sdk.NewAttribute(types.AttributeKeyProduct, dropProduct.String()),
 		),
 	)
 

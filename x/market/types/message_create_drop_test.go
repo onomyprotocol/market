@@ -1,7 +1,6 @@
 package types
 
 import (
-	"strings"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -23,7 +22,7 @@ func TestMsgCreateDrop_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg:  MsgCreateDrop{Creator: sample.AccAddress(), Pair: strings.Join([]string{"10CoinA", "20CoinB"}, ","), Drops: "70"},
+			msg:  MsgCreateDrop{Creator: sample.AccAddress(), Pair: "CoinA,CoinB", Drops: "70"},
 		},
 	}
 	for _, tt := range tests {

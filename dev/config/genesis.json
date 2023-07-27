@@ -182,16 +182,17 @@
       }
     },
     "market": {
-      "params": {
-        "earn_rates": "0500,0300,0200",
-        "burn_rate": "1000",
-        "burn_coin": "stake"
-      },
-      "poolList": [],
+      "burningsList": [],
       "dropList": [],
       "memberList": [],
-      "burningsList": [],
-      "orderList": []
+      "orderList": [],
+      "params": {
+        "burn_coin": "stake",
+        "burn_rate": "1000",
+        "earn_rates": "0500,0300,0200",
+        "market_fee": "0030"
+      },
+      "poolList": []
     },
     "mint": {
       "minter": {

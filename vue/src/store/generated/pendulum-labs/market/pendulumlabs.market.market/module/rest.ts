@@ -20,7 +20,7 @@ export interface MarketDrop {
   owner?: string;
   pair?: string;
   drops?: string;
-  sum?: string;
+  product?: string;
   active?: boolean;
 }
 
@@ -98,6 +98,7 @@ export interface MarketParams {
   earn_rates?: string;
   burn_rate?: string;
   burn_coin?: string;
+  market_fee?: string;
 }
 
 export interface MarketPool {

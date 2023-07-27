@@ -26,10 +26,10 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	coinPair := sdk.NewCoins(coinA, coinB)
 
-	// NewCoins sorts denoms
+	// NewCoins sorts denoms.
+	// The sorted pair joined by "," is used as the key for the pool.
 	denom1 := coinPair.GetDenomByIndex(0)
 	denom2 := coinPair.GetDenomByIndex(1)
-
 	pair := strings.Join([]string{denom1, denom2}, ",")
 
 	// Test if pool either exists and active or exists and inactive
@@ -41,17 +41,17 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		}
 	}
 
-	//moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	// Use the module account as pool account
+	// All coins added to pools are deposited into the module account until redemption
 	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coinPair)
 	if sdkError != nil {
 		return nil, sdkError
 	}
 
-	drops := coinPair.AmountOf(denom1).Add(coinPair.AmountOf(denom2))
+	// Drops define proportional ownership to the liquidity in the pool
+	drops := coinPair.AmountOf(denom1).Mul(coinPair.AmountOf(denom2))
 
 	leader := types.Leader{
 		Address: msg.Creator,
@@ -70,12 +70,12 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	count := k.GetUidCount(ctx)
 
 	var drop = types.Drop{
-		Uid:    count,
-		Owner:  msg.Creator,
-		Pair:   pair,
-		Drops:  drops,
-		Sum:    drops,
-		Active: true,
+		Uid:     count,
+		Owner:   msg.Creator,
+		Pair:    pair,
+		Drops:   drops,
+		Product: drops,
+		Active:  true,
 	}
 
 	var member1 = types.Member{
@@ -147,6 +147,13 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		drop,
 	)
 
+	k.SetDropsSum(
+		ctx,
+		drop.Owner,
+		drop.Pair,
+		drop.Drops,
+	)
+
 	// create drop event
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -155,7 +162,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			sdk.NewAttribute(types.AttributeKeyPair, pair),
 			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
 			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-			sdk.NewAttribute(types.AttributeKeySum, drops.String()),
+			sdk.NewAttribute(types.AttributeKeyProduct, drops.String()),
 		),
 	)
 

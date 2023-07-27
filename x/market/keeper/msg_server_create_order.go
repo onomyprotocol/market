@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -22,8 +23,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 	coinsBid := sdk.NewCoins(coinBid)
 
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	// Get the borrower address
 	creator, _ := sdk.AccAddressFromBech32(msg.Creator)
 
 	// Check if order creator has available balance
@@ -319,9 +318,27 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	}
 
 	// Execute Head Limit
+
+	// Max Member(Bid) Balance B(f)
 	// The AMM Balance of the Bid Coin corresponding to Limit Order Exchange Rate
+	// Model: Constant Product
+	// A(i): Initial Balance of Ask Coin in AMM Pool
+	// B(f): Final Balance of Bid Coin in AMM Pool
+	// Exch(f):
+	// A(i)*B(i)=A(f)*B(f)
+	// Exch(f)=A(f)/B(f) -> B(f)*Exch(f)=A(f)
+	// A(i)*B(i)=B(f)*Exch(f)*B(f) -> A(i)*B(i)=Exch(f)*B(f)^2
+	// (A(i)*B(i))/Exch(f)=B(f)^2
+	// B(f)=SQRT((A(i)*B(i))/Exch(f))
+	bigInt := &big.Int{}
 	maxMemberBidBalance :=
-		limitHead.Rate[1].Mul(memberAsk.Balance.Add(memberBid.Balance)).Quo(limitHead.Rate[1].Add(limitHead.Rate[0]))
+		sdk.NewIntFromBigInt(
+			bigInt.Sqrt(
+				sdk.Int.BigInt(
+					(limitHead.Rate[1].Mul(memberAsk.Balance.Mul(memberBid.Balance))).Quo(limitHead.Rate[0]),
+				),
+			),
+		)
 
 	// Maximum amountBid of the Bid Coin that the AMM may accept at Limit Order Exchange Rate
 	maxAmountBid := maxMemberBidBalance.Sub(memberBid.Balance)
@@ -349,6 +366,12 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// StrikeAmountAsk = StrikeAmountBid * ExchangeRate(A/B)
 	// Exchange Rate is held constant at initial AMM balances
 	strikeAmountAsk := (strikeAmountBid.Mul(limitHead.Rate[0])).Quo(limitHead.Rate[1])
+
+	// Edge case where strikeAskAmount rounds to 0
+	// Rounding favors AMM vs Order
+	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+		return false, nil
+	}
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
@@ -390,34 +413,33 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		return true, nil
 	}
 
-	// Execute Stop Order
-
-	maxMemberBidBal := memberAsk.Balance.Add(memberBid.Balance).Sub(memberAsk.Balance.Quo(sdk.NewInt(2)))
-	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
-
 	// Strike Bid Amount: The amountBid of the bid coin exchanged
 	strikeAmountBid := stopHead.Amount
-	var strikeAmountAsk sdk.Int
 
-	if stopHead.Amount.GT(maxMemberBidAmount) {
-		strikeAmountBid = maxMemberBidAmount
-		strikeAmountAsk = (strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid))).Quo(memberBid.Balance.Add(strikeAmountBid))
-	} else {
-		strikeAmountAsk = strikeAmountBid.Mul(memberAsk.Balance.Sub(strikeAmountBid)).Quo(memberBid.Balance.Add(strikeAmountBid))
-		// THEN set Head(Stop) active to false as entire order will be filled
-		stopHead.Active = false
-		// Set Next Position as Head of Stop Book
-		memberBid.Stop = stopHead.Next
+	// A(i)*B(i) = A(f)*B(f)
+	// A(f) = A(i)*B(i)/B(f)
+	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
+	strikeAmountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(strikeAmountBid)))
 
-		if stopHead.Next != 0 {
-			stopNext, _ := k.GetOrder(ctx, stopHead.Next)
-			stopNext.Prev = 0
-			k.SetOrder(ctx, stopNext)
-		}
-
-		// At this point the Head(Stop) position has been deactivated and the Next
-		// Stop position has been set as the Head Stop
+	// Edge case where strikeAskAmount rounds to 0
+	// Rounding favors AMM vs Order
+	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+		return false, nil
 	}
+
+	// THEN set Head(Stop) active to false as entire order will be filled
+	stopHead.Active = false
+	// Set Next Position as Head of Stop Book
+	memberBid.Stop = stopHead.Next
+
+	if stopHead.Next != 0 {
+		stopNext, _ := k.GetOrder(ctx, stopHead.Next)
+		stopNext.Prev = 0
+		k.SetOrder(ctx, stopNext)
+	}
+
+	// At this point the Head(Stop) position has been deactivated and the Next
+	// Stop position has been set as the Head Stop
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address

@@ -54,9 +54,13 @@ func (msg *MsgCreateDrop) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pair not a valid denom pair")
 	}
 
-	_, ok := sdk.NewIntFromString(msg.Drops)
+	drops, ok := sdk.NewIntFromString(msg.Drops)
 	if !ok {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not a valid integer")
+	}
+
+	if !drops.GT(sdk.NewInt(0)) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not >0")
 	}
 
 	return nil

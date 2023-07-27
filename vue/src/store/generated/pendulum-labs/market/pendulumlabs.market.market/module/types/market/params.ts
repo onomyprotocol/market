@@ -14,9 +14,16 @@ export interface Params {
   burn_rate: string;
   /** burn coin */
   burn_coin: string;
+  /** market_fee (parameter / 1000), 9999 representing as 99.99% */
+  market_fee: string;
 }
 
-const baseParams: object = { earn_rates: "", burn_rate: "", burn_coin: "" };
+const baseParams: object = {
+  earn_rates: "",
+  burn_rate: "",
+  burn_coin: "",
+  market_fee: "",
+};
 
 export const Params = {
   encode(message: Params, writer: Writer = Writer.create()): Writer {
@@ -28,6 +35,9 @@ export const Params = {
     }
     if (message.burn_coin !== "") {
       writer.uint32(26).string(message.burn_coin);
+    }
+    if (message.market_fee !== "") {
+      writer.uint32(34).string(message.market_fee);
     }
     return writer;
   },
@@ -47,6 +57,9 @@ export const Params = {
           break;
         case 3:
           message.burn_coin = reader.string();
+          break;
+        case 4:
+          message.market_fee = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -73,6 +86,11 @@ export const Params = {
     } else {
       message.burn_coin = "";
     }
+    if (object.market_fee !== undefined && object.market_fee !== null) {
+      message.market_fee = String(object.market_fee);
+    } else {
+      message.market_fee = "";
+    }
     return message;
   },
 
@@ -81,6 +99,7 @@ export const Params = {
     message.earn_rates !== undefined && (obj.earn_rates = message.earn_rates);
     message.burn_rate !== undefined && (obj.burn_rate = message.burn_rate);
     message.burn_coin !== undefined && (obj.burn_coin = message.burn_coin);
+    message.market_fee !== undefined && (obj.market_fee = message.market_fee);
     return obj;
   },
 
@@ -100,6 +119,11 @@ export const Params = {
       message.burn_coin = object.burn_coin;
     } else {
       message.burn_coin = "";
+    }
+    if (object.market_fee !== undefined && object.market_fee !== null) {
+      message.market_fee = object.market_fee;
+    } else {
+      message.market_fee = "";
     }
     return message;
   },

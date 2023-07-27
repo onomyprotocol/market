@@ -16,6 +16,8 @@ var (
 	KeyBurnRate = []byte("BurnRate") //nolint:gochecknoglobals // cosmos-sdk style
 	// KeyBurnCoin is byte key for BurnCoin param.
 	KeyBurnCoin = []byte("BurnCoin") //nolint:gochecknoglobals // cosmos-sdk style
+	// KeyBurnCoin is byte key for BurnCoin param.
+	KeyMarketFee = []byte("MarketFee") //nolint:gochecknoglobals // cosmos-sdk style
 )
 
 var (
@@ -25,6 +27,9 @@ var (
 	DefaultBurnRate = "1000" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
 	// DefaultBurnCoin is default value for the DefaultBurnCoin param.
 	DefaultBurnCoin = "stake" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
+	// DefaultMarketFee is default value for the MarketFee param.
+	DefaultMarketFee = "0030" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
+
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -39,17 +44,19 @@ func NewParams(
 	earnRates string,
 	burnRate string,
 	burnCoin string,
+	marketFee string,
 ) Params {
 	return Params{
 		EarnRates: earnRates,
 		BurnRate:  burnRate,
 		BurnCoin:  burnCoin,
+		MarketFee: marketFee,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams(DefaultEarnRates, DefaultBurnRate, DefaultBurnCoin)
+	return NewParams(DefaultEarnRates, DefaultBurnRate, DefaultBurnCoin, DefaultMarketFee)
 }
 
 // ParamSetPairs get the params.ParamSet
@@ -58,6 +65,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyEarnRates, &p.EarnRates, validateEarnRates),
 		paramtypes.NewParamSetPair(KeyBurnRate, &p.BurnRate, validateBurnRate),
 		paramtypes.NewParamSetPair(KeyBurnCoin, &p.BurnCoin, validateBurnCoin),
+		paramtypes.NewParamSetPair(KeyMarketFee, &p.MarketFee, validateMarketFee),
 	}
 }
 
@@ -70,6 +78,9 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateBurnCoin(p.BurnCoin); err != nil {
+		return err
+	}
+	if err := validateMarketFee(p.MarketFee); err != nil {
 		return err
 	}
 
@@ -140,6 +151,26 @@ func validateBurnCoin(i interface{}) error {
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	return nil
+}
+
+func validateMarketFee(i interface{}) error {
+	value, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	marketFee, ok := sdk.NewIntFromString(value)
+	if !ok {
+		return fmt.Errorf("invalid string number format: %q", value)
+	}
+	if marketFee.LTE(sdk.NewInt(0)) {
+		return fmt.Errorf("market fee numerator must be positive and greater than zero: %d", marketFee)
+	}
+	if marketFee.GTE(sdk.NewInt(10000)) {
+		return fmt.Errorf("market fee numerator must be less than 10000: %d", marketFee)
 	}
 
 	return nil

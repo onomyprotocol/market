@@ -44,47 +44,42 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", drop.Pair)
 	}
 
-	poolSum := member1.Balance.Add(member2.Balance)
+	poolProduct := member1.Balance.Mul(member2.Balance)
 
 	// Each Drop is a proportional rite to the AMM balances
 	// % total drops in pool = dropAmount(drop)/dropAmount(pool)*100%
 	// drop_ratio = dropAmount(drop)/dropAmount(pool)
 	// dropSum(end) = (AMM Bal A + AMM Bal B) * drop_ratio
 	// Profit = dropSum(end) - dropSum(begin)
-	dropSumEnd := (poolSum.Mul(drop.Drops)).Quo(pool.Drops)
-	total2 := (dropSumEnd.Mul(member2.Balance)).Quo(poolSum)
-	total1 := dropSumEnd.Sub(total2)
+	dropProductEnd := (poolProduct.Mul(drop.Drops)).Quo(pool.Drops)
 
-	dropProfit := dropSumEnd.Sub(drop.Sum)
+	total1 := (drop.Drops.Mul(member1.Balance)).Quo(pool.Drops)
+	profit1 := (total1.Mul(dropProductEnd.Sub(drop.Product))).Quo(dropProductEnd)
 
-	// (dropProfit * bigNum) / ( poolSum * bigNum / member2.balance )
-	profit2 := (dropProfit.Mul(member2.Balance)).Quo(poolSum)
-
-	profit1 := dropProfit.Sub(profit2)
+	total2 := (drop.Drops.Mul(member2.Balance)).Quo(pool.Drops)
+	profit2 := (total2.Mul(dropProductEnd.Sub(drop.Product))).Quo(dropProductEnd)
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
-	var earnRates [10]sdk.Int
-	var earnings1 [10]sdk.Int
+	var earnRate sdk.Int
+	var earnings1 sdk.Int
 	earnings1Total := sdk.NewInt(0)
-	var earnings2 [10]sdk.Int
+	var earnings2 sdk.Int
 	earnings2Total := sdk.NewInt(0)
 	var coinLeader1 sdk.Coin
 	var coinLeader2 sdk.Coin
 	var coinsLeader sdk.Coins
 
 	for i, v := range pool.Leaders {
-		earnRates[i], _ = sdk.NewIntFromString(earnRatesStringSlice[i])
-		if !found {
-			return nil, sdkerrors.Wrapf(types.ErrDropNotFound, "%s", msg.Uid)
-		}
-		earnings2[i] = (profit2.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
-		earnings2Total = earnings2Total.Add(earnings2[i])
+		earnRate, _ = sdk.NewIntFromString(earnRatesStringSlice[i])
 
-		earnings1[i] = (profit1.Mul(earnRates[i])).Quo(sdk.NewInt(1000))
-		earnings1Total = earnings1Total.Add(earnings1[i])
+		earnings1 = (profit1.Mul(earnRate)).Quo(sdk.NewInt(10000))
+		earnings1Total = earnings1Total.Add(earnings1)
 
-		coinLeader1 = sdk.NewCoin(denom1, earnings1Total)
-		coinLeader2 = sdk.NewCoin(denom2, earnings2Total)
+		earnings2 = (profit2.Mul(earnRate)).Quo(sdk.NewInt(10000))
+		earnings2Total = earnings2Total.Add(earnings2)
+
+		coinLeader1 = sdk.NewCoin(denom1, earnings1)
+		coinLeader2 = sdk.NewCoin(denom2, earnings2)
 		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
 
 		leader, _ := sdk.AccAddressFromBech32(v.Address)
@@ -96,8 +91,13 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		}
 	}
 
-	// Get Drop Redeemer total drops minus redeemed
-	sumDropRedeemer := k.GetDropsSum(ctx, msg.Creator).Sub(drop.Drops)
+	sumDropRedeemer, ok := k.GetDropsSum(ctx, msg.Creator, drop.Pair)
+
+	if ok {
+		sumDropRedeemer = sumDropRedeemer.Sub(drop.Drops)
+	} else {
+		return nil, sdkerrors.Wrapf(types.ErrDropSumNotFound, "%s", msg.Creator)
+	}
 
 	numLeaders := len(pool.Leaders)
 
@@ -161,12 +161,12 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
 
-	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(1000))
+	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(10000))
 
 	// Redemption value in coin 1
 	redeem1 := total1.Sub(earnings1Total.Add(burn1))
 
-	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(1000))
+	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(10000))
 
 	// Redemption value in coin 2
 	redeem2 := total2.Sub(earnings2Total.Add(burn2))
@@ -243,6 +243,20 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		drop,
 	)
 
+	k.RemoveDropFromList(
+		ctx,
+		drop.Uid,
+		drop.Owner,
+		drop.Pair,
+	)
+
+	k.SetDropsSum(
+		ctx,
+		drop.Owner,
+		drop.Pair,
+		sumDropRedeemer,
+	)
+
 	k.SetPool(
 		ctx,
 		pool,
@@ -278,27 +292,10 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 		return burnings, nil
 	}
 
-	// TODO: memberBid.balance.Add((memberAsk.Balance * Exchrate(A/B)) / 2)
-	maxMemberBidBal := memberBid.Balance.Add(memberAsk.Balance.Quo(sdk.NewInt(2)))
-	maxMemberBidAmount := maxMemberBidBal.Sub(memberBid.Balance)
-
-	// Partial order may consume only half of memberAsk pool amount
-	if amountBid.GT(maxMemberBidAmount) {
-		amountBid = maxMemberBidAmount
-	}
-
-	// Summation Invariant
-	// A(i) + B(i) = A(f) + B(f)
-
-	// Derivation
-	// A(f) = A(i) + B(i) - B(f)
-	// A(f) = A(i) - amountBid
-	// Exch(f) = A(f) / B(f)
-	// Exch(f) = (A(i) - amountBid) / B(f)
-	// B(f) = B(i) + amountBid
-	// Exch(f) =  (A(i) - amountBid) / (B(i) + amountBid)
-	// amountAsk = amountBid * Exch(f) = [amountBid * (A(i) - amountBid)] / (B(i) + amountBid)
-	amountAsk := (amountBid.Mul(memberAsk.Balance.Sub(amountBid))).Quo(memberBid.Balance.Add(amountBid))
+	// A(i)*B(i) = A(f)*B(f)
+	// A(f) = A(i)*B(i)/B(f)
+	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
+	amountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid)))
 
 	coinAsk := sdk.NewCoin(burnCoin, amountAsk)
 	coinsAsk := sdk.NewCoins(coinAsk)
