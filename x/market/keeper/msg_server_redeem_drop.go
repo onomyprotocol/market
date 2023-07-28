@@ -57,7 +57,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	profit1 := (total1.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total1.Mul(drop.Product)).Quo(dropProductEnd))
 
 	total2 := (drop.Drops.Mul(member2.Balance)).Quo(pool.Drops)
-	profit2 := (total2.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total1.Mul(drop.Product)).Quo(dropProductEnd))
+	profit2 := (total2.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total2.Mul(drop.Product)).Quo(dropProductEnd))
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRate sdk.Int
@@ -301,7 +301,7 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 	coinsAsk := sdk.NewCoins(coinAsk)
 
 	// Burn Ask Amount of Stake Coin
-	sdkError := k.bankKeeper.BurnCoins(ctx, "mint", coinsAsk)
+	sdkError := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coinsAsk)
 	if sdkError != nil {
 		return burnings, sdkError
 	}

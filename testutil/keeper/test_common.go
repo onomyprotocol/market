@@ -19,9 +19,13 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/mint"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/pendulum-labs/market/x/market/keeper"
 	markettypes "github.com/pendulum-labs/market/x/market/types"
@@ -46,6 +50,7 @@ var (
 type TestInput struct {
 	AccountKeeper authkeeper.AccountKeeper
 	BankKeeper    bankkeeper.BaseKeeper
+	MintKeeper    mintkeeper.Keeper
 	Context       sdk.Context
 	Marshaler     codec.Codec
 	MarketKeeper  *keeper.Keeper
@@ -79,6 +84,8 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 	storeKey := sdk.NewKVStoreKey(markettypes.StoreKey)
 	keyAuth := sdk.NewKVStoreKey(authtypes.StoreKey)
 	keyBank := sdk.NewKVStoreKey(banktypes.StoreKey)
+	keyStake := sdk.NewKVStoreKey(stakingtypes.StoreKey)
+	keyMint := sdk.NewKVStoreKey(minttypes.StoreKey)
 	keyParams := sdk.NewKVStoreKey(paramstypes.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(markettypes.MemStoreKey)
 	tkeyParams := sdk.NewTransientStoreKey(paramstypes.TStoreKey)
@@ -91,6 +98,8 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(keyAuth, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(keyBank, sdk.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(keyStake, sdk.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(keyMint, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(keyParams, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(tkeyParams, sdk.StoreTypeTransient, db)
 	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
@@ -129,6 +138,8 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 	paramsKeeper := paramskeeper.NewKeeper(cdc, legacyCodec, keyParams, tkeyParams)
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
+	paramsKeeper.Subspace(stakingtypes.ModuleName)
+	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(markettypes.ModuleName)
 
 	paramsSubspace := paramstypes.NewSubspace(cdc,
@@ -139,8 +150,11 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 	)
 	// this is also used to initialize module accounts for all the map keys
 	maccPerms := map[string][]string{
-		markettypes.ModuleName:     {authtypes.Minter},
-		authtypes.FeeCollectorName: nil,
+		markettypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
+		authtypes.FeeCollectorName:     nil,
+		minttypes.ModuleName:           {authtypes.Minter},
+		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 	}
 
 	accountKeeper := authkeeper.NewAccountKeeper(
@@ -166,6 +180,13 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 		SendEnabled:        []*banktypes.SendEnabled{},
 		DefaultSendEnabled: true,
 	})
+	stakingKeeper := stakingkeeper.NewKeeper(
+		cdc, keyStake, accountKeeper, bankKeeper, getSubspace(paramsKeeper, stakingtypes.ModuleName),
+	)
+	mintKeeper := mintkeeper.NewKeeper(
+		cdc, keyMint, getSubspace(paramsKeeper, minttypes.ModuleName), &stakingKeeper,
+		accountKeeper, bankKeeper, authtypes.FeeCollectorName,
+	)
 	marketKeeper := keeper.NewKeeper(
 		cdc,
 		storeKey,
@@ -180,6 +201,7 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 	return TestInput{
 		AccountKeeper: accountKeeper,
 		BankKeeper:    bankKeeper,
+		MintKeeper:    mintKeeper,
 		Context:       ctx,
 		Marshaler:     cdc,
 		LegacyAmino:   legacyCodec,
