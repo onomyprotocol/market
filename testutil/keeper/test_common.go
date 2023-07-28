@@ -150,9 +150,9 @@ func CreateTestEnvironment(t testing.TB) TestInput {
 	)
 	// this is also used to initialize module accounts for all the map keys
 	maccPerms := map[string][]string{
-		markettypes.ModuleName:         {authtypes.Minter},
+		markettypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
 		authtypes.FeeCollectorName:     nil,
-		minttypes.ModuleName:           {authtypes.Burner, authtypes.Minter},
+		minttypes.ModuleName:           {authtypes.Minter},
 		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 	}
