@@ -147,8 +147,8 @@ func TestRedeemDrop_WithBurnCoin(t *testing.T) {
 	require.Equal(t, testInput.MarketKeeper.BurnCoin(testInput.Context), "stake")
 
 	// TestData
-	testdata := testData{coinAStr: "100stake", coinBStr: "100CoinB"}
-	coinPair, _ := sample.SampleCoins("70000stake", "70000CoinB")
+	testdata := testData{coinAStr: "100stake", coinBStr: "700CoinB"}
+	coinPair, _ := sample.SampleCoins("1000000000stake", "1000000000CoinB")
 	denomA, denomB := sample.SampleDenoms(coinPair)
 	pair := strings.Join([]string{denomA, denomB}, ",")
 
@@ -166,7 +166,7 @@ func TestRedeemDrop_WithBurnCoin(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create Drop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "12345"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "123450000"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -175,4 +175,9 @@ func TestRedeemDrop_WithBurnCoin(t *testing.T) {
 	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
 	_, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
 	require.NoError(t, redeemdropErr)
+
+	rst1, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst1.Pair, pair)
+	require.Equal(t, "70000", rst1.Drops.String())
 }
