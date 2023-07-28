@@ -140,3 +140,39 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, rst.Drops.String(), "0")
 }
+
+func TestRedeemDrop_WithBurnCoin(t *testing.T) {
+	testInput := keepertest.CreateTestEnvironment(t)
+
+	require.Equal(t, testInput.MarketKeeper.BurnCoin(testInput.Context), "stake")
+
+	// TestData
+	testdata := testData{coinAStr: "100stake", coinBStr: "100CoinB"}
+	coinPair, _ := sample.SampleCoins("70000stake", "70000CoinB")
+	denomA, denomB := sample.SampleDenoms(coinPair)
+	pair := strings.Join([]string{denomA, denomB}, ",")
+
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress, err := sdk.AccAddressFromBech32(addr)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+
+	// Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	require.NoError(t, err)
+
+	// Create Drop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "12345"}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.NoError(t, err)
+
+	// redeem the drop
+	Uid := strconv.FormatUint(2, 10)
+	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
+	_, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
+	require.NoError(t, redeemdropErr)
+}

@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/pendulum-labs/market/x/market/types"
 )
 
@@ -301,7 +302,7 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 	coinsAsk := sdk.NewCoins(coinAsk)
 
 	// Burn Ask Amount of Stake Coin
-	sdkError := k.bankKeeper.BurnCoins(ctx, "mint", coinsAsk)
+	sdkError := k.bankKeeper.BurnCoins(ctx, minttypes.ModuleName, coinsAsk)
 	if sdkError != nil {
 		return burnings, sdkError
 	}
