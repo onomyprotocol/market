@@ -66,45 +66,30 @@
           "address": "onomy1mczcy7z92fkyhrsctlv0ge690mzvmd9ye67mjy",
           "coins": [
             {
-              "denom": "btc",
-              "amount": "10000000000000000000"
+              "denom": "abtc",
+              "amount": "10000000000000000000000"
             },
             {
-              "denom": "eth",
-              "amount": "20000000000000000000"
+              "denom": "wei",
+              "amount": "100000000000000000000000"
             },
             {
-              "denom": "nom",
-              "amount": "20000000000000000000"
+              "denom": "anom",
+              "amount": "100000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "1000000000000000000000000000"
             },
             {
               "denom": "stake",
-              "amount": "20000000000000000000"
+              "amount": "100000000000000000000000000"
             }
           ]
         }
       ],
       "supply": [],
       "denom_metadata": [
-        {
-          "name": "NOM",
-          "description": "NOM coin",
-          "denom_units": [
-            {
-              "denom": "anom",
-              "exponent": 0,
-              "aliases": []
-            },
-            {
-              "denom": "nom",
-              "exponent": 18,
-              "aliases": []
-            }
-          ],
-          "base": "anom",
-          "display": "nom",
-          "symbol": "NOM"
-        },
         {
           "name": "Bitcoin",
           "description": "Bitcoin",
@@ -125,25 +110,6 @@
           "symbol": "BTC"
         },
         {
-          "name": "Tether",
-          "description": "Tether USD",
-          "denom_units": [
-            {
-              "denom": "ausdt",
-              "exponent": 0,
-              "aliases": []
-            },
-            {
-              "denom": "usdt",
-              "exponent": 18,
-              "aliases": []
-            }
-          ],
-          "base": "ausdt",
-          "display": "usdt",
-          "symbol": "USDT"
-        },
-        {
           "name": "Ether",
           "description": "Ethereum Native Coin",
           "denom_units": [
@@ -161,6 +127,44 @@
           "base": "wei",
           "display": "eth",
           "symbol": "ETH"
+        },
+        {
+          "name": "NOM",
+          "description": "NOM coin",
+          "denom_units": [
+            {
+              "denom": "anom",
+              "exponent": 0,
+              "aliases": []
+            },
+            {
+              "denom": "nom",
+              "exponent": 18,
+              "aliases": []
+            }
+          ],
+          "base": "anom",
+          "display": "nom",
+          "symbol": "NOM"
+        },
+        {
+          "name": "Tether",
+          "description": "Tether USD",
+          "denom_units": [
+            {
+              "denom": "ausdt",
+              "exponent": 0,
+              "aliases": []
+            },
+            {
+              "denom": "usdt",
+              "exponent": 18,
+              "aliases": []
+            }
+          ],
+          "base": "ausdt",
+          "display": "usdt",
+          "symbol": "USDT"
         }
       ]
     },
