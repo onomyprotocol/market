@@ -72,7 +72,7 @@ service Query {
 
 // Queries a list of Book items.
 	rpc Book(QueryBookRequest) returns (QueryBookResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}";
+		option (google.api.http).get = "/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}";
 	}
 
 // Queries a list of Bookends items.

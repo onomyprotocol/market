@@ -1409,7 +1409,7 @@ var (
 
 	pattern_Query_OrderAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"pendulum-labs", "market", "order"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Book_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "get_book", "denomA", "denomB", "orderType"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Book_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "book", "denomA", "denomB", "orderType"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_Bookends_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"pendulum-labs", "market", "bookends", "coinA", "coinB", "orderType", "rate"}, "", runtime.AssumeColonVerbOpt(true)))
 )

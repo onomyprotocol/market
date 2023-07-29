@@ -503,6 +503,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryBook
+   * @summary Queries a list of Book items.
+   * @request GET:/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}
+   */
+  queryBook = (
+    denomA: string,
+    denomB: string,
+    orderType: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryBookResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/book/${denomA}/${denomB}/${orderType}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryBookends
    * @summary Queries a list of Bookends items.
    * @request GET:/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}
@@ -595,35 +624,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<MarketQueryGetDropResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop/${uid}`,
       method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryBook
-   * @summary Queries a list of Book items.
-   * @request GET:/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}
-   */
-  queryBook = (
-    denomA: string,
-    denomB: string,
-    orderType: string,
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<MarketQueryBookResponse, RpcStatus>({
-      path: `/pendulum-labs/market/market/get_book/${denomA}/${denomB}/${orderType}`,
-      method: "GET",
-      query: query,
       format: "json",
       ...params,
     });

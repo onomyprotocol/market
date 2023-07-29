@@ -727,6 +727,380 @@ paths:
           type: string
       tags:
         - Query
+  '/cosmos/auth/v1beta1/module_accounts/{name}':
+    get:
+      summary: ModuleAccountByName returns the module account info by module name
+      operationId: CosmosAuthV1Beta1ModuleAccountByName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              account:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                    description: >-
+                      A URL/resource name that uniquely identifies the type of
+                      the serialized
+
+                      protocol buffer message. This string must contain at least
+
+                      one "/" character. The last segment of the URL's path must
+                      represent
+
+                      the fully qualified name of the type (as in
+
+                      `path/google.protobuf.Duration`). The name should be in a
+                      canonical form
+
+                      (e.g., leading "." is not accepted).
+
+
+                      In practice, teams usually precompile into the binary all
+                      types that they
+
+                      expect it to use in the context of Any. However, for URLs
+                      which use the
+
+                      scheme `http`, `https`, or no scheme, one can optionally
+                      set up a type
+
+                      server that maps type URLs to message definitions as
+                      follows:
+
+
+                      * If no scheme is provided, `https` is assumed.
+
+                      * An HTTP GET on the URL must yield a
+                      [google.protobuf.Type][]
+                        value in binary format, or produce an error.
+                      * Applications are allowed to cache lookup results based
+                      on the
+                        URL, or have them precompiled into a binary to avoid any
+                        lookup. Therefore, binary compatibility needs to be preserved
+                        on changes to types. (Use versioned type names to manage
+                        breaking changes.)
+
+                      Note: this functionality is not currently available in the
+                      official
+
+                      protobuf release, and it is not used for type URLs
+                      beginning with
+
+                      type.googleapis.com.
+
+
+                      Schemes other than `http`, `https` (or the empty scheme)
+                      might be
+
+                      used with implementation specific semantics.
+                additionalProperties: {}
+                description: >-
+                  `Any` contains an arbitrary serialized protocol buffer message
+                  along with a
+
+                  URL that describes the type of the serialized message.
+
+
+                  Protobuf library provides support to pack/unpack Any values in
+                  the form
+
+                  of utility functions or additional generated methods of the
+                  Any type.
+
+
+                  Example 1: Pack and unpack a message in C++.
+
+                      Foo foo = ...;
+                      Any any;
+                      any.PackFrom(foo);
+                      ...
+                      if (any.UnpackTo(&foo)) {
+                        ...
+                      }
+
+                  Example 2: Pack and unpack a message in Java.
+
+                      Foo foo = ...;
+                      Any any = Any.pack(foo);
+                      ...
+                      if (any.is(Foo.class)) {
+                        foo = any.unpack(Foo.class);
+                      }
+
+                   Example 3: Pack and unpack a message in Python.
+
+                      foo = Foo(...)
+                      any = Any()
+                      any.Pack(foo)
+                      ...
+                      if any.Is(Foo.DESCRIPTOR):
+                        any.Unpack(foo)
+                        ...
+
+                   Example 4: Pack and unpack a message in Go
+
+                       foo := &pb.Foo{...}
+                       any, err := anypb.New(foo)
+                       if err != nil {
+                         ...
+                       }
+                       ...
+                       foo := &pb.Foo{}
+                       if err := any.UnmarshalTo(foo); err != nil {
+                         ...
+                       }
+
+                  The pack methods provided by protobuf library will by default
+                  use
+
+                  'type.googleapis.com/full.type.name' as the type URL and the
+                  unpack
+
+                  methods only use the fully qualified type name after the last
+                  '/'
+
+                  in the type URL, for example "foo.bar.com/x/y.z" will yield
+                  type
+
+                  name "y.z".
+
+
+
+                  JSON
+
+                  ====
+
+                  The JSON representation of an `Any` value uses the regular
+
+                  representation of the deserialized, embedded message, with an
+
+                  additional field `@type` which contains the type URL. Example:
+
+                      package google.profile;
+                      message Person {
+                        string first_name = 1;
+                        string last_name = 2;
+                      }
+
+                      {
+                        "@type": "type.googleapis.com/google.profile.Person",
+                        "firstName": <string>,
+                        "lastName": <string>
+                      }
+
+                  If the embedded message type is well-known and has a custom
+                  JSON
+
+                  representation, that representation will be embedded adding a
+                  field
+
+                  `value` which holds the custom JSON in addition to the `@type`
+
+                  field. Example (for message [google.protobuf.Duration][]):
+
+                      {
+                        "@type": "type.googleapis.com/google.protobuf.Duration",
+                        "value": "1.212s"
+                      }
+            description: >-
+              QueryModuleAccountByNameResponse is the response type for the
+              Query/ModuleAccountByName RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /cosmos/auth/v1beta1/params:
     get:
       summary: Params queries all parameters.
@@ -1484,6 +1858,141 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  '/cosmos/bank/v1beta1/spendable_balances/{address}':
+    get:
+      summary: |-
+        SpendableBalances queries the spenable balance of all coins for a single
+        account.
+      operationId: CosmosBankV1Beta1SpendableBalances
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              balances:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+                description: balances is the spendable balances of all the coins.
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: >-
+              QuerySpendableBalancesResponse defines the gRPC response structure
+              for querying
+
+              an account's spendable balances.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          description: address is the address to query spendable balances for.
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /cosmos/bank/v1beta1/supply:
     get:
       summary: TotalSupply queries the total supply of all coins.
@@ -1779,7 +2288,7 @@ paths:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   data:
                     type: object
                     properties:
@@ -2040,8 +2549,8 @@ paths:
                                               format: byte
                                               title: original proposer of the block
                                           description: >-
-                                            Header defines the structure of a
-                                            Tendermint block header.
+                                            Header defines the structure of a block
+                                            header.
                                         commit:
                                           type: object
                                           properties:
@@ -2122,7 +2631,7 @@ paths:
                                                     format: byte
                                                 title: >-
                                                   PublicKey defines the keys available for
-                                                  use with Tendermint Validators
+                                                  use with Validators
                                               voting_power:
                                                 type: string
                                                 format: int64
@@ -2146,7 +2655,7 @@ paths:
                                                   format: byte
                                               title: >-
                                                 PublicKey defines the keys available for
-                                                use with Tendermint Validators
+                                                use with Validators
                                             voting_power:
                                               type: string
                                               format: int64
@@ -2178,7 +2687,7 @@ paths:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -2559,7 +3068,7 @@ paths:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   data:
                     type: object
                     properties:
@@ -2820,8 +3329,8 @@ paths:
                                               format: byte
                                               title: original proposer of the block
                                           description: >-
-                                            Header defines the structure of a
-                                            Tendermint block header.
+                                            Header defines the structure of a block
+                                            header.
                                         commit:
                                           type: object
                                           properties:
@@ -2902,7 +3411,7 @@ paths:
                                                     format: byte
                                                 title: >-
                                                   PublicKey defines the keys available for
-                                                  use with Tendermint Validators
+                                                  use with Validators
                                               voting_power:
                                                 type: string
                                                 format: int64
@@ -2926,7 +3435,7 @@ paths:
                                                   format: byte
                                               title: >-
                                                 PublicKey defines the keys available for
-                                                use with Tendermint Validators
+                                                use with Validators
                                             voting_power:
                                               type: string
                                               format: int64
@@ -2958,7 +3467,7 @@ paths:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -6636,6 +7145,371 @@ paths:
           type: boolean
       tags:
         - Query
+  '/cosmos/feegrant/v1beta1/issued/{granter}':
+    get:
+      summary: |-
+        AllowancesByGranter returns all the grants given by an address
+        Since v0.46
+      operationId: CosmosFeegrantV1Beta1AllowancesByGranter
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              allowances:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    granter:
+                      type: string
+                      description: >-
+                        granter is the address of the user granting an allowance
+                        of their funds.
+                    grantee:
+                      type: string
+                      description: >-
+                        grantee is the address of the user being granted an
+                        allowance of another user's funds.
+                    allowance:
+                      description: >-
+                        allowance can be any of basic and filtered fee
+                        allowance.
+                      type: object
+                      properties:
+                        '@type':
+                          type: string
+                          description: >-
+                            A URL/resource name that uniquely identifies the
+                            type of the serialized
+
+                            protocol buffer message. This string must contain at
+                            least
+
+                            one "/" character. The last segment of the URL's
+                            path must represent
+
+                            the fully qualified name of the type (as in
+
+                            `path/google.protobuf.Duration`). The name should be
+                            in a canonical form
+
+                            (e.g., leading "." is not accepted).
+
+
+                            In practice, teams usually precompile into the
+                            binary all types that they
+
+                            expect it to use in the context of Any. However, for
+                            URLs which use the
+
+                            scheme `http`, `https`, or no scheme, one can
+                            optionally set up a type
+
+                            server that maps type URLs to message definitions as
+                            follows:
+
+
+                            * If no scheme is provided, `https` is assumed.
+
+                            * An HTTP GET on the URL must yield a
+                            [google.protobuf.Type][]
+                              value in binary format, or produce an error.
+                            * Applications are allowed to cache lookup results
+                            based on the
+                              URL, or have them precompiled into a binary to avoid any
+                              lookup. Therefore, binary compatibility needs to be preserved
+                              on changes to types. (Use versioned type names to manage
+                              breaking changes.)
+
+                            Note: this functionality is not currently available
+                            in the official
+
+                            protobuf release, and it is not used for type URLs
+                            beginning with
+
+                            type.googleapis.com.
+
+
+                            Schemes other than `http`, `https` (or the empty
+                            scheme) might be
+
+                            used with implementation specific semantics.
+                      additionalProperties: {}
+                  title: >-
+                    Grant is stored in the KVStore to record a grant with full
+                    context
+                description: allowances that have been issued by the granter.
+              pagination:
+                description: pagination defines an pagination for the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: >-
+              QueryAllowancesByGranterResponse is the response type for the
+              Query/AllowancesByGranter RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: granter
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   '/cosmos/gov/v1beta1/params/{params_type}':
     get:
       summary: Params queries all parameters of the gov module.
@@ -10228,6 +11102,18 @@ paths:
                                   shares_dst is the amount of
                                   destination-validator shares created by
                                   redelegation.
+                              unbonding_id:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Incrementing id that uniquely identifies this
+                                  entry
+                              unbonding_on_hold_ref_count:
+                                type: string
+                                format: int64
+                                title: >-
+                                  Strictly positive if this entry's unbonding
+                                  has been stopped by external modules
                             description: >-
                               RedelegationEntry defines a redelegation object
                               with relevant metadata.
@@ -10272,6 +11158,18 @@ paths:
                                   shares_dst is the amount of
                                   destination-validator shares created by
                                   redelegation.
+                              unbonding_id:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Incrementing id that uniquely identifies this
+                                  entry
+                              unbonding_on_hold_ref_count:
+                                type: string
+                                format: int64
+                                title: >-
+                                  Strictly positive if this entry's unbonding
+                                  has been stopped by external modules
                             description: >-
                               RedelegationEntry defines a redelegation object
                               with relevant metadata.
@@ -10631,6 +11529,18 @@ paths:
                             description: >-
                               balance defines the tokens to receive at
                               completion.
+                          unbonding_id:
+                            type: string
+                            format: uint64
+                            title: >-
+                              Incrementing id that uniquely identifies this
+                              entry
+                          unbonding_on_hold_ref_count:
+                            type: string
+                            format: int64
+                            title: >-
+                              Strictly positive if this entry's unbonding has
+                              been stopped by external modules
                         description: >-
                           UnbondingDelegationEntry defines an unbonding object
                           with relevant metadata.
@@ -11104,6 +12014,20 @@ paths:
                       description: >-
                         min_self_delegation is the validator's self declared
                         minimum self delegation.
+                    unbonding_on_hold_ref_count:
+                      type: string
+                      format: int64
+                      title: >-
+                        strictly positive if this validator's unbonding has been
+                        stopped by external modules
+                    unbonding_ids:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
+                      title: >-
+                        list of unbonding ids, each uniquely identifing an
+                        unbonding of this validator
                   description: >-
                     Validator defines a validator, together with the total
                     amount of the
@@ -11585,6 +12509,20 @@ paths:
                     description: >-
                       min_self_delegation is the validator's self declared
                       minimum self delegation.
+                  unbonding_on_hold_ref_count:
+                    type: string
+                    format: int64
+                    title: >-
+                      strictly positive if this validator's unbonding has been
+                      stopped by external modules
+                  unbonding_ids:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
+                    title: >-
+                      list of unbonding ids, each uniquely identifing an
+                      unbonding of this validator
             description: |-
               QueryDelegatorValidatorResponse response type for the
               Query/DelegatorValidator RPC method.
@@ -11887,7 +12825,7 @@ paths:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   valset:
                     type: array
                     items:
@@ -12066,6 +13004,20 @@ paths:
                           description: >-
                             min_self_delegation is the validator's self declared
                             minimum self delegation.
+                        unbonding_on_hold_ref_count:
+                          type: string
+                          format: int64
+                          title: >-
+                            strictly positive if this validator's unbonding has
+                            been stopped by external modules
+                        unbonding_ids:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
+                          title: >-
+                            list of unbonding ids, each uniquely identifing an
+                            unbonding of this validator
                       description: >-
                         Validator defines a validator, together with the total
                         amount of the
@@ -12907,6 +13859,20 @@ paths:
                       description: >-
                         min_self_delegation is the validator's self declared
                         minimum self delegation.
+                    unbonding_on_hold_ref_count:
+                      type: string
+                      format: int64
+                      title: >-
+                        strictly positive if this validator's unbonding has been
+                        stopped by external modules
+                    unbonding_ids:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
+                      title: >-
+                        list of unbonding ids, each uniquely identifing an
+                        unbonding of this validator
                   description: >-
                     Validator defines a validator, together with the total
                     amount of the
@@ -13386,6 +14352,20 @@ paths:
                     description: >-
                       min_self_delegation is the validator's self declared
                       minimum self delegation.
+                  unbonding_on_hold_ref_count:
+                    type: string
+                    format: int64
+                    title: >-
+                      strictly positive if this validator's unbonding has been
+                      stopped by external modules
+                  unbonding_ids:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
+                    title: >-
+                      list of unbonding ids, each uniquely identifing an
+                      unbonding of this validator
             title: >-
               QueryValidatorResponse is response type for the Query/Validator
               RPC method
@@ -14219,6 +15199,16 @@ paths:
                         balance:
                           type: string
                           description: balance defines the tokens to receive at completion.
+                        unbonding_id:
+                          type: string
+                          format: uint64
+                          title: Incrementing id that uniquely identifies this entry
+                        unbonding_on_hold_ref_count:
+                          type: string
+                          format: int64
+                          title: >-
+                            Strictly positive if this entry's unbonding has been
+                            stopped by external modules
                       description: >-
                         UnbondingDelegationEntry defines an unbonding object
                         with relevant metadata.
@@ -14483,6 +15473,18 @@ paths:
                             description: >-
                               balance defines the tokens to receive at
                               completion.
+                          unbonding_id:
+                            type: string
+                            format: uint64
+                            title: >-
+                              Incrementing id that uniquely identifies this
+                              entry
+                          unbonding_on_hold_ref_count:
+                            type: string
+                            format: int64
+                            title: >-
+                              Strictly positive if this entry's unbonding has
+                              been stopped by external modules
                         description: >-
                           UnbondingDelegationEntry defines an unbonding object
                           with relevant metadata.
@@ -15765,6 +16767,266 @@ paths:
               RPC method.
       tags:
         - Service
+  '/cosmos/tx/v1beta1/txs/block/{height}':
+    get:
+      summary: GetBlockWithTxs fetches a block with decoded txs.
+      description: 'Since: cosmos-sdk 0.45.2'
+      operationId: CosmosTxV1Beta1GetBlockWithTxs
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/cosmos.tx.v1beta1.GetBlockWithTxsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: height
+          description: height is the height of the block to query.
+          in: path
+          required: true
+          type: string
+          format: int64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Service
   '/cosmos/tx/v1beta1/txs/{hash}':
     get:
       summary: GetTx fetches a tx by hash.
@@ -16960,6 +18222,480 @@ paths:
           format: int64
       tags:
         - Query
+  /ibc/apps/interchain_accounts/host/v1/params:
+    get:
+      summary: Params queries all parameters of the ICA host submodule.
+      operationId: IbcApplicationsInterchainAccountsHostV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  host_enabled:
+                    type: boolean
+                    description: host_enabled enables or disables the host submodule.
+                  allow_messages:
+                    type: array
+                    items:
+                      type: string
+                    description: >-
+                      allow_messages defines a list of sdk message typeURLs
+                      allowed to be executed on a host chain.
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  '/ibc/apps/transfer/v1/channels/{channel_id}/ports/{port_id}/escrow_address':
+    get:
+      summary: >-
+        EscrowAddress returns the escrow address for a particular port and
+        channel id.
+      operationId: IbcApplicationsTransferV1EscrowAddress
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              escrow_address:
+                type: string
+                title: the escrow account address
+            description: >-
+              QueryEscrowAddressResponse is the response type of the
+              EscrowAddress RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: channel_id
+          description: unique channel identifier
+          in: path
+          required: true
+          type: string
+        - name: port_id
+          description: unique port identifier
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/ibc/apps/transfer/v1/denom_hashes/{trace}':
+    get:
+      summary: DenomHash queries a denomination hash information.
+      operationId: IbcApplicationsTransferV1DenomHash
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              hash:
+                type: string
+                description: hash (in hex format) of the denomination trace information.
+            description: >-
+              QueryDenomHashResponse is the response type for the
+              Query/DenomHash RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: trace
+          description: 'The denomination trace ([port_id]/[channel_id])+/[denom]'
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /ibc/apps/transfer/v1/denom_traces:
     get:
       summary: DenomTraces queries all denomination traces.
@@ -17466,7 +19202,9 @@ paths:
                         }
       parameters:
         - name: hash
-          description: hash (in hex format) of the denomination trace information.
+          description: >-
+            hash (in hex format) or denom (full denom with ibc prefix) of the
+            denomination trace information.
           in: path
           required: true
           type: string
@@ -23705,6 +25443,326 @@ paths:
           type: boolean
       tags:
         - Query
+  '/ibc/core/client/v1/consensus_states/{client_id}/heights':
+    get:
+      summary: >-
+        ConsensusStateHeights queries the height of every consensus states
+        associated with a given client.
+      operationId: IbcCoreClientV1ConsensusStateHeights
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              consensus_state_heights:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    revision_number:
+                      type: string
+                      format: uint64
+                      title: the revision that the client is currently on
+                    revision_height:
+                      type: string
+                      format: uint64
+                      title: the height within the given revision
+                  description: >-
+                    Normally the RevisionHeight is incremented at each height
+                    while keeping
+
+                    RevisionNumber the same. However some consensus algorithms
+                    may choose to
+
+                    reset the height in certain conditions e.g. hard forks,
+                    state-machine
+
+                    breaking changes In these cases, the RevisionNumber is
+                    incremented so that
+
+                    height continues to be monitonically increasing even as the
+                    RevisionHeight
+
+                    gets reset
+                  title: >-
+                    Height is a monotonically increasing data type
+
+                    that can be compared against another Height for the purposes
+                    of updating and
+
+                    freezing clients
+                title: consensus state heights
+              pagination:
+                title: pagination response
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: |-
+              QueryConsensusStateHeightsResponse is the response type for the
+              Query/ConsensusStateHeights RPC method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: client_id
+          description: client identifier
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   '/ibc/core/client/v1/consensus_states/{client_id}/revision/{revision_number}/height/{revision_height}':
     get:
       summary: >-
@@ -26710,6 +28768,135 @@ paths:
           format: uint64
       tags:
         - Query
+  '/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}':
+    get:
+      summary: Queries a list of Book items.
+      operationId: PendulumlabsMarketMarketBook
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              book:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    active:
+                      type: boolean
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomA
+          in: path
+          required: true
+          type: string
+        - name: denomB
+          in: path
+          required: true
+          type: string
+        - name: orderType
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   '/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}':
     get:
       summary: Queries a list of Bookends items.
@@ -27124,135 +29311,6 @@ paths:
           required: true
           type: string
           format: uint64
-      tags:
-        - Query
-  '/pendulum-labs/market/market/get_book/{denomA}/{denomB}/{orderType}':
-    get:
-      summary: Queries a list of Book items.
-      operationId: PendulumlabsMarketMarketBook
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              book:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uid:
-                      type: string
-                      format: uint64
-                    owner:
-                      type: string
-                    active:
-                      type: boolean
-                    orderType:
-                      type: string
-                    denomAsk:
-                      type: string
-                    denomBid:
-                      type: string
-                    amount:
-                      type: string
-                    rate:
-                      type: array
-                      items:
-                        type: string
-                    prev:
-                      type: string
-                      format: uint64
-                    next:
-                      type: string
-                      format: uint64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: denomA
-          in: path
-          required: true
-          type: string
-        - name: denomB
-          in: path
-          required: true
-          type: string
-        - name: orderType
-          in: path
-          required: true
-          type: string
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
       tags:
         - Query
   /pendulum-labs/market/market/member:
@@ -28191,6 +30249,169 @@ definitions:
 
 
       Since: cosmos-sdk 0.43
+  cosmos.auth.v1beta1.QueryModuleAccountByNameResponse:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          '@type':
+            type: string
+            description: >-
+              A URL/resource name that uniquely identifies the type of the
+              serialized
+
+              protocol buffer message. This string must contain at least
+
+              one "/" character. The last segment of the URL's path must
+              represent
+
+              the fully qualified name of the type (as in
+
+              `path/google.protobuf.Duration`). The name should be in a
+              canonical form
+
+              (e.g., leading "." is not accepted).
+
+
+              In practice, teams usually precompile into the binary all types
+              that they
+
+              expect it to use in the context of Any. However, for URLs which
+              use the
+
+              scheme `http`, `https`, or no scheme, one can optionally set up a
+              type
+
+              server that maps type URLs to message definitions as follows:
+
+
+              * If no scheme is provided, `https` is assumed.
+
+              * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                value in binary format, or produce an error.
+              * Applications are allowed to cache lookup results based on the
+                URL, or have them precompiled into a binary to avoid any
+                lookup. Therefore, binary compatibility needs to be preserved
+                on changes to types. (Use versioned type names to manage
+                breaking changes.)
+
+              Note: this functionality is not currently available in the
+              official
+
+              protobuf release, and it is not used for type URLs beginning with
+
+              type.googleapis.com.
+
+
+              Schemes other than `http`, `https` (or the empty scheme) might be
+
+              used with implementation specific semantics.
+        additionalProperties: {}
+        description: >-
+          `Any` contains an arbitrary serialized protocol buffer message along
+          with a
+
+          URL that describes the type of the serialized message.
+
+
+          Protobuf library provides support to pack/unpack Any values in the
+          form
+
+          of utility functions or additional generated methods of the Any type.
+
+
+          Example 1: Pack and unpack a message in C++.
+
+              Foo foo = ...;
+              Any any;
+              any.PackFrom(foo);
+              ...
+              if (any.UnpackTo(&foo)) {
+                ...
+              }
+
+          Example 2: Pack and unpack a message in Java.
+
+              Foo foo = ...;
+              Any any = Any.pack(foo);
+              ...
+              if (any.is(Foo.class)) {
+                foo = any.unpack(Foo.class);
+              }
+
+           Example 3: Pack and unpack a message in Python.
+
+              foo = Foo(...)
+              any = Any()
+              any.Pack(foo)
+              ...
+              if any.Is(Foo.DESCRIPTOR):
+                any.Unpack(foo)
+                ...
+
+           Example 4: Pack and unpack a message in Go
+
+               foo := &pb.Foo{...}
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
+               ...
+               foo := &pb.Foo{}
+               if err := any.UnmarshalTo(foo); err != nil {
+                 ...
+               }
+
+          The pack methods provided by protobuf library will by default use
+
+          'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+          methods only use the fully qualified type name after the last '/'
+
+          in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+          name "y.z".
+
+
+
+          JSON
+
+          ====
+
+          The JSON representation of an `Any` value uses the regular
+
+          representation of the deserialized, embedded message, with an
+
+          additional field `@type` which contains the type URL. Example:
+
+              package google.profile;
+              message Person {
+                string first_name = 1;
+                string last_name = 2;
+              }
+
+              {
+                "@type": "type.googleapis.com/google.profile.Person",
+                "firstName": <string>,
+                "lastName": <string>
+              }
+
+          If the embedded message type is well-known and has a custom JSON
+
+          representation, that representation will be embedded adding a field
+
+          `value` which holds the custom JSON in addition to the `@type`
+
+          field. Example (for message [google.protobuf.Duration][]):
+
+              {
+                "@type": "type.googleapis.com/google.protobuf.Duration",
+                "value": "1.212s"
+              }
+    description: >-
+      QueryModuleAccountByNameResponse is the response type for the
+      Query/ModuleAccountByName RPC method.
   cosmos.auth.v1beta1.QueryParamsResponse:
     type: object
     properties:
@@ -29025,6 +31246,47 @@ definitions:
     description: >-
       QueryParamsResponse defines the response type for querying x/bank
       parameters.
+  cosmos.bank.v1beta1.QuerySpendableBalancesResponse:
+    type: object
+    properties:
+      balances:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        description: balances is the spendable balances of all the coins.
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: >-
+      QuerySpendableBalancesResponse defines the gRPC response structure for
+      querying
+
+      an account's spendable balances.
   cosmos.bank.v1beta1.QuerySupplyOfResponse:
     type: object
     properties:
@@ -29213,7 +31475,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           data:
             type: object
             properties:
@@ -29471,8 +31733,8 @@ definitions:
                                       format: byte
                                       title: original proposer of the block
                                   description: >-
-                                    Header defines the structure of a Tendermint
-                                    block header.
+                                    Header defines the structure of a block
+                                    header.
                                 commit:
                                   type: object
                                   properties:
@@ -29552,7 +31814,7 @@ definitions:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -29576,7 +31838,7 @@ definitions:
                                           format: byte
                                       title: >-
                                         PublicKey defines the keys available for
-                                        use with Tendermint Validators
+                                        use with Validators
                                     voting_power:
                                       type: string
                                       format: int64
@@ -29608,7 +31870,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -29788,7 +32050,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           data:
             type: object
             properties:
@@ -30046,8 +32308,8 @@ definitions:
                                       format: byte
                                       title: original proposer of the block
                                   description: >-
-                                    Header defines the structure of a Tendermint
-                                    block header.
+                                    Header defines the structure of a block
+                                    header.
                                 commit:
                                   type: object
                                   properties:
@@ -30127,7 +32389,7 @@ definitions:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -30151,7 +32413,7 @@ definitions:
                                           format: byte
                                       title: >-
                                         PublicKey defines the keys available for
-                                        use with Tendermint Validators
+                                        use with Validators
                                     voting_power:
                                       type: string
                                       format: int64
@@ -30183,7 +32445,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -30979,7 +33241,7 @@ definitions:
       secp256k1:
         type: string
         format: byte
-    title: PublicKey defines the keys available for use with Tendermint Validators
+    title: PublicKey defines the keys available for use with Validators
   tendermint.p2p.DefaultNodeInfo:
     type: object
     properties:
@@ -31122,7 +33384,7 @@ definitions:
             type: string
             format: byte
             title: original proposer of the block
-        description: Header defines the structure of a Tendermint block header.
+        description: Header defines the structure of a block header.
       data:
         type: object
         properties:
@@ -31376,9 +33638,7 @@ definitions:
                                   type: string
                                   format: byte
                                   title: original proposer of the block
-                              description: >-
-                                Header defines the structure of a Tendermint
-                                block header.
+                              description: Header defines the structure of a block header.
                             commit:
                               type: object
                               properties:
@@ -31458,7 +33718,7 @@ definitions:
                                         format: byte
                                     title: >-
                                       PublicKey defines the keys available for
-                                      use with Tendermint Validators
+                                      use with Validators
                                   voting_power:
                                     type: string
                                     format: int64
@@ -31482,7 +33742,7 @@ definitions:
                                       format: byte
                                   title: >-
                                     PublicKey defines the keys available for use
-                                    with Tendermint Validators
+                                    with Validators
                                 voting_power:
                                   type: string
                                   format: int64
@@ -31514,7 +33774,7 @@ definitions:
                                 format: byte
                             title: >-
                               PublicKey defines the keys available for use with
-                              Tendermint Validators
+                              Validators
                           voting_power:
                             type: string
                             format: int64
@@ -32057,7 +34317,7 @@ definitions:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   commit:
                     type: object
                     properties:
@@ -32137,7 +34397,7 @@ definitions:
                               format: byte
                           title: >-
                             PublicKey defines the keys available for use with
-                            Tendermint Validators
+                            Validators
                         voting_power:
                           type: string
                           format: int64
@@ -32161,7 +34421,7 @@ definitions:
                             format: byte
                         title: >-
                           PublicKey defines the keys available for use with
-                          Tendermint Validators
+                          Validators
                       voting_power:
                         type: string
                         format: int64
@@ -32191,9 +34451,7 @@ definitions:
                     secp256k1:
                       type: string
                       format: byte
-                  title: >-
-                    PublicKey defines the keys available for use with Tendermint
-                    Validators
+                  title: PublicKey defines the keys available for use with Validators
                 voting_power:
                   type: string
                   format: int64
@@ -32444,9 +34702,7 @@ definitions:
                               type: string
                               format: byte
                               title: original proposer of the block
-                          description: >-
-                            Header defines the structure of a Tendermint block
-                            header.
+                          description: Header defines the structure of a block header.
                         commit:
                           type: object
                           properties:
@@ -32526,7 +34782,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -32550,7 +34806,7 @@ definitions:
                                   format: byte
                               title: >-
                                 PublicKey defines the keys available for use
-                                with Tendermint Validators
+                                with Validators
                             voting_power:
                               type: string
                               format: int64
@@ -32582,7 +34838,7 @@ definitions:
                             format: byte
                         title: >-
                           PublicKey defines the keys available for use with
-                          Tendermint Validators
+                          Validators
                       voting_power:
                         type: string
                         format: int64
@@ -32683,7 +34939,7 @@ definitions:
         type: string
         format: byte
         title: original proposer of the block
-    description: Header defines the structure of a Tendermint block header.
+    description: Header defines the structure of a block header.
   tendermint.types.LightBlock:
     type: object
     properties:
@@ -32775,7 +35031,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           commit:
             type: object
             properties:
@@ -32849,9 +35105,7 @@ definitions:
                     secp256k1:
                       type: string
                       format: byte
-                  title: >-
-                    PublicKey defines the keys available for use with Tendermint
-                    Validators
+                  title: PublicKey defines the keys available for use with Validators
                 voting_power:
                   type: string
                   format: int64
@@ -32873,9 +35127,7 @@ definitions:
                   secp256k1:
                     type: string
                     format: byte
-                title: >-
-                  PublicKey defines the keys available for use with Tendermint
-                  Validators
+                title: PublicKey defines the keys available for use with Validators
               voting_power:
                 type: string
                 format: int64
@@ -32981,7 +35233,7 @@ definitions:
                     type: string
                     format: byte
                     title: original proposer of the block
-                description: Header defines the structure of a Tendermint block header.
+                description: Header defines the structure of a block header.
               commit:
                 type: object
                 properties:
@@ -33059,7 +35311,7 @@ definitions:
                           format: byte
                       title: >-
                         PublicKey defines the keys available for use with
-                        Tendermint Validators
+                        Validators
                     voting_power:
                       type: string
                       format: int64
@@ -33083,7 +35335,7 @@ definitions:
                         format: byte
                     title: >-
                       PublicKey defines the keys available for use with
-                      Tendermint Validators
+                      Validators
                   voting_power:
                     type: string
                     format: int64
@@ -33113,9 +35365,7 @@ definitions:
                 secp256k1:
                   type: string
                   format: byte
-              title: >-
-                PublicKey defines the keys available for use with Tendermint
-                Validators
+              title: PublicKey defines the keys available for use with Validators
             voting_power:
               type: string
               format: int64
@@ -33229,7 +35479,7 @@ definitions:
             type: string
             format: byte
             title: original proposer of the block
-        description: Header defines the structure of a Tendermint block header.
+        description: Header defines the structure of a block header.
       commit:
         type: object
         properties:
@@ -33311,9 +35561,7 @@ definitions:
           secp256k1:
             type: string
             format: byte
-        title: >-
-          PublicKey defines the keys available for use with Tendermint
-          Validators
+        title: PublicKey defines the keys available for use with Validators
       voting_power:
         type: string
         format: int64
@@ -33340,9 +35588,7 @@ definitions:
                 secp256k1:
                   type: string
                   format: byte
-              title: >-
-                PublicKey defines the keys available for use with Tendermint
-                Validators
+              title: PublicKey defines the keys available for use with Validators
             voting_power:
               type: string
               format: int64
@@ -33364,9 +35610,7 @@ definitions:
               secp256k1:
                 type: string
                 format: byte
-            title: >-
-              PublicKey defines the keys available for use with Tendermint
-              Validators
+            title: PublicKey defines the keys available for use with Validators
           voting_power:
             type: string
             format: int64
@@ -34222,6 +36466,109 @@ definitions:
     description: >-
       QueryAllowanceResponse is the response type for the Query/Allowance RPC
       method.
+  cosmos.feegrant.v1beta1.QueryAllowancesByGranterResponse:
+    type: object
+    properties:
+      allowances:
+        type: array
+        items:
+          type: object
+          properties:
+            granter:
+              type: string
+              description: >-
+                granter is the address of the user granting an allowance of
+                their funds.
+            grantee:
+              type: string
+              description: >-
+                grantee is the address of the user being granted an allowance of
+                another user's funds.
+            allowance:
+              description: allowance can be any of basic and filtered fee allowance.
+              type: object
+              properties:
+                '@type':
+                  type: string
+                  description: >-
+                    A URL/resource name that uniquely identifies the type of the
+                    serialized
+
+                    protocol buffer message. This string must contain at least
+
+                    one "/" character. The last segment of the URL's path must
+                    represent
+
+                    the fully qualified name of the type (as in
+
+                    `path/google.protobuf.Duration`). The name should be in a
+                    canonical form
+
+                    (e.g., leading "." is not accepted).
+
+
+                    In practice, teams usually precompile into the binary all
+                    types that they
+
+                    expect it to use in the context of Any. However, for URLs
+                    which use the
+
+                    scheme `http`, `https`, or no scheme, one can optionally set
+                    up a type
+
+                    server that maps type URLs to message definitions as
+                    follows:
+
+
+                    * If no scheme is provided, `https` is assumed.
+
+                    * An HTTP GET on the URL must yield a
+                    [google.protobuf.Type][]
+                      value in binary format, or produce an error.
+                    * Applications are allowed to cache lookup results based on
+                    the
+                      URL, or have them precompiled into a binary to avoid any
+                      lookup. Therefore, binary compatibility needs to be preserved
+                      on changes to types. (Use versioned type names to manage
+                      breaking changes.)
+
+                    Note: this functionality is not currently available in the
+                    official
+
+                    protobuf release, and it is not used for type URLs beginning
+                    with
+
+                    type.googleapis.com.
+
+
+                    Schemes other than `http`, `https` (or the empty scheme)
+                    might be
+
+                    used with implementation specific semantics.
+              additionalProperties: {}
+          title: Grant is stored in the KVStore to record a grant with full context
+        description: allowances that have been issued by the granter.
+      pagination:
+        description: pagination defines an pagination for the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: >-
+      QueryAllowancesByGranterResponse is the response type for the
+      Query/AllowancesByGranter RPC method.
   cosmos.feegrant.v1beta1.QueryAllowancesResponse:
     type: object
     properties:
@@ -36153,7 +38500,7 @@ definitions:
             type: string
             format: byte
             title: original proposer of the block
-        description: Header defines the structure of a Tendermint block header.
+        description: Header defines the structure of a block header.
       valset:
         type: array
         items:
@@ -36321,6 +38668,20 @@ definitions:
               description: >-
                 min_self_delegation is the validator's self declared minimum
                 self delegation.
+            unbonding_on_hold_ref_count:
+              type: string
+              format: int64
+              title: >-
+                strictly positive if this validator's unbonding has been stopped
+                by external modules
+            unbonding_ids:
+              type: array
+              items:
+                type: string
+                format: uint64
+              title: >-
+                list of unbonding ids, each uniquely identifing an unbonding of
+                this validator
           description: >-
             Validator defines a validator, together with the total amount of the
 
@@ -36574,6 +38935,16 @@ definitions:
                   balance:
                     type: string
                     description: balance defines the tokens to receive at completion.
+                  unbonding_id:
+                    type: string
+                    format: uint64
+                    title: Incrementing id that uniquely identifies this entry
+                  unbonding_on_hold_ref_count:
+                    type: string
+                    format: int64
+                    title: >-
+                      Strictly positive if this entry's unbonding has been
+                      stopped by external modules
                 description: >-
                   UnbondingDelegationEntry defines an unbonding object with
                   relevant metadata.
@@ -36772,6 +39143,20 @@ definitions:
             description: >-
               min_self_delegation is the validator's self declared minimum self
               delegation.
+          unbonding_on_hold_ref_count:
+            type: string
+            format: int64
+            title: >-
+              strictly positive if this validator's unbonding has been stopped
+              by external modules
+          unbonding_ids:
+            type: array
+            items:
+              type: string
+              format: uint64
+            title: >-
+              list of unbonding ids, each uniquely identifing an unbonding of
+              this validator
     description: |-
       QueryDelegatorValidatorResponse response type for the
       Query/DelegatorValidator RPC method.
@@ -36945,6 +39330,20 @@ definitions:
               description: >-
                 min_self_delegation is the validator's self declared minimum
                 self delegation.
+            unbonding_on_hold_ref_count:
+              type: string
+              format: int64
+              title: >-
+                strictly positive if this validator's unbonding has been stopped
+                by external modules
+            unbonding_ids:
+              type: array
+              items:
+                type: string
+                format: uint64
+              title: >-
+                list of unbonding ids, each uniquely identifing an unbonding of
+                this validator
           description: >-
             Validator defines a validator, together with the total amount of the
 
@@ -37080,7 +39479,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           valset:
             type: array
             items:
@@ -37249,6 +39648,20 @@ definitions:
                   description: >-
                     min_self_delegation is the validator's self declared minimum
                     self delegation.
+                unbonding_on_hold_ref_count:
+                  type: string
+                  format: int64
+                  title: >-
+                    strictly positive if this validator's unbonding has been
+                    stopped by external modules
+                unbonding_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
+                  title: >-
+                    list of unbonding ids, each uniquely identifing an unbonding
+                    of this validator
               description: >-
                 Validator defines a validator, together with the total amount of
                 the
@@ -37370,6 +39783,16 @@ definitions:
                         description: >-
                           shares_dst is the amount of destination-validator
                           shares created by redelegation.
+                      unbonding_id:
+                        type: string
+                        format: uint64
+                        title: Incrementing id that uniquely identifies this entry
+                      unbonding_on_hold_ref_count:
+                        type: string
+                        format: int64
+                        title: >-
+                          Strictly positive if this entry's unbonding has been
+                          stopped by external modules
                     description: >-
                       RedelegationEntry defines a redelegation object with
                       relevant metadata.
@@ -37413,6 +39836,16 @@ definitions:
                         description: >-
                           shares_dst is the amount of destination-validator
                           shares created by redelegation.
+                      unbonding_id:
+                        type: string
+                        format: uint64
+                        title: Incrementing id that uniquely identifies this entry
+                      unbonding_on_hold_ref_count:
+                        type: string
+                        format: int64
+                        title: >-
+                          Strictly positive if this entry's unbonding has been
+                          stopped by external modules
                     description: >-
                       RedelegationEntry defines a redelegation object with
                       relevant metadata.
@@ -37493,6 +39926,16 @@ definitions:
                 balance:
                   type: string
                   description: balance defines the tokens to receive at completion.
+                unbonding_id:
+                  type: string
+                  format: uint64
+                  title: Incrementing id that uniquely identifies this entry
+                unbonding_on_hold_ref_count:
+                  type: string
+                  format: int64
+                  title: >-
+                    Strictly positive if this entry's unbonding has been stopped
+                    by external modules
               description: >-
                 UnbondingDelegationEntry defines an unbonding object with
                 relevant metadata.
@@ -37742,6 +40185,20 @@ definitions:
             description: >-
               min_self_delegation is the validator's self declared minimum self
               delegation.
+          unbonding_on_hold_ref_count:
+            type: string
+            format: int64
+            title: >-
+              strictly positive if this validator's unbonding has been stopped
+              by external modules
+          unbonding_ids:
+            type: array
+            items:
+              type: string
+              format: uint64
+            title: >-
+              list of unbonding ids, each uniquely identifing an unbonding of
+              this validator
     title: QueryValidatorResponse is response type for the Query/Validator RPC method
   cosmos.staking.v1beta1.QueryValidatorUnbondingDelegationsResponse:
     type: object
@@ -37784,6 +40241,16 @@ definitions:
                   balance:
                     type: string
                     description: balance defines the tokens to receive at completion.
+                  unbonding_id:
+                    type: string
+                    format: uint64
+                    title: Incrementing id that uniquely identifies this entry
+                  unbonding_on_hold_ref_count:
+                    type: string
+                    format: int64
+                    title: >-
+                      Strictly positive if this entry's unbonding has been
+                      stopped by external modules
                 description: >-
                   UnbondingDelegationEntry defines an unbonding object with
                   relevant metadata.
@@ -37987,6 +40454,20 @@ definitions:
               description: >-
                 min_self_delegation is the validator's self declared minimum
                 self delegation.
+            unbonding_on_hold_ref_count:
+              type: string
+              format: int64
+              title: >-
+                strictly positive if this validator's unbonding has been stopped
+                by external modules
+            unbonding_ids:
+              type: array
+              items:
+                type: string
+                format: uint64
+              title: >-
+                list of unbonding ids, each uniquely identifing an unbonding of
+                this validator
           description: >-
             Validator defines a validator, together with the total amount of the
 
@@ -38073,6 +40554,16 @@ definitions:
               description: >-
                 shares_dst is the amount of destination-validator shares created
                 by redelegation.
+            unbonding_id:
+              type: string
+              format: uint64
+              title: Incrementing id that uniquely identifies this entry
+            unbonding_on_hold_ref_count:
+              type: string
+              format: int64
+              title: >-
+                Strictly positive if this entry's unbonding has been stopped by
+                external modules
           description: >-
             RedelegationEntry defines a redelegation object with relevant
             metadata.
@@ -38104,6 +40595,16 @@ definitions:
         description: >-
           shares_dst is the amount of destination-validator shares created by
           redelegation.
+      unbonding_id:
+        type: string
+        format: uint64
+        title: Incrementing id that uniquely identifies this entry
+      unbonding_on_hold_ref_count:
+        type: string
+        format: int64
+        title: >-
+          Strictly positive if this entry's unbonding has been stopped by
+          external modules
     description: RedelegationEntry defines a redelegation object with relevant metadata.
   cosmos.staking.v1beta1.RedelegationEntryResponse:
     type: object
@@ -38131,6 +40632,16 @@ definitions:
             description: >-
               shares_dst is the amount of destination-validator shares created
               by redelegation.
+          unbonding_id:
+            type: string
+            format: uint64
+            title: Incrementing id that uniquely identifies this entry
+          unbonding_on_hold_ref_count:
+            type: string
+            format: int64
+            title: >-
+              Strictly positive if this entry's unbonding has been stopped by
+              external modules
         description: >-
           RedelegationEntry defines a redelegation object with relevant
           metadata.
@@ -38189,6 +40700,16 @@ definitions:
                   description: >-
                     shares_dst is the amount of destination-validator shares
                     created by redelegation.
+                unbonding_id:
+                  type: string
+                  format: uint64
+                  title: Incrementing id that uniquely identifies this entry
+                unbonding_on_hold_ref_count:
+                  type: string
+                  format: int64
+                  title: >-
+                    Strictly positive if this entry's unbonding has been stopped
+                    by external modules
               description: >-
                 RedelegationEntry defines a redelegation object with relevant
                 metadata.
@@ -38232,6 +40753,16 @@ definitions:
                   description: >-
                     shares_dst is the amount of destination-validator shares
                     created by redelegation.
+                unbonding_id:
+                  type: string
+                  format: uint64
+                  title: Incrementing id that uniquely identifies this entry
+                unbonding_on_hold_ref_count:
+                  type: string
+                  format: int64
+                  title: >-
+                    Strictly positive if this entry's unbonding has been stopped
+                    by external modules
               description: >-
                 RedelegationEntry defines a redelegation object with relevant
                 metadata.
@@ -38282,6 +40813,16 @@ definitions:
             balance:
               type: string
               description: balance defines the tokens to receive at completion.
+            unbonding_id:
+              type: string
+              format: uint64
+              title: Incrementing id that uniquely identifies this entry
+            unbonding_on_hold_ref_count:
+              type: string
+              format: int64
+              title: >-
+                Strictly positive if this entry's unbonding has been stopped by
+                external modules
           description: >-
             UnbondingDelegationEntry defines an unbonding object with relevant
             metadata.
@@ -38311,6 +40852,16 @@ definitions:
       balance:
         type: string
         description: balance defines the tokens to receive at completion.
+      unbonding_id:
+        type: string
+        format: uint64
+        title: Incrementing id that uniquely identifies this entry
+      unbonding_on_hold_ref_count:
+        type: string
+        format: int64
+        title: >-
+          Strictly positive if this entry's unbonding has been stopped by
+          external modules
     description: >-
       UnbondingDelegationEntry defines an unbonding object with relevant
       metadata.
@@ -38470,6 +41021,20 @@ definitions:
         description: >-
           min_self_delegation is the validator's self declared minimum self
           delegation.
+      unbonding_on_hold_ref_count:
+        type: string
+        format: int64
+        title: >-
+          strictly positive if this validator's unbonding has been stopped by
+          external modules
+      unbonding_ids:
+        type: array
+        items:
+          type: string
+          format: uint64
+        title: >-
+          list of unbonding ids, each uniquely identifing an unbonding of this
+          validator
     description: >-
       Validator defines a validator, together with the total amount of the
 
@@ -38844,6 +41409,7 @@ definitions:
       - SIGN_MODE_DIRECT
       - SIGN_MODE_TEXTUAL
       - SIGN_MODE_LEGACY_AMINO_JSON
+      - SIGN_MODE_EIP_191
     default: SIGN_MODE_UNSPECIFIED
     description: |-
       SignMode represents a signing mode with its own security guarantees.
@@ -38857,6 +41423,16 @@ definitions:
       from SIGN_MODE_DIRECT
        - SIGN_MODE_LEGACY_AMINO_JSON: SIGN_MODE_LEGACY_AMINO_JSON is a backwards compatibility mode which uses
       Amino JSON and will be removed in the future
+       - SIGN_MODE_EIP_191: SIGN_MODE_EIP_191 specifies the sign mode for EIP 191 signing on the Cosmos
+      SDK. Ref: https://eips.ethereum.org/EIPS/eip-191
+
+      Currently, SIGN_MODE_EIP_191 is registered as a SignMode enum variant,
+      but is not implemented on the SDK by default. To enable EIP-191, you need
+      to pass a custom `TxConfig` that has an implementation of
+      `SignModeHandler` for EIP-191. The SDK may decide to fully support
+      EIP-191 in the future.
+
+      Since: cosmos-sdk 0.45.2
   cosmos.tx.v1beta1.AuthInfo:
     type: object
     properties:
@@ -39248,6 +41824,608 @@ definitions:
       "gasprice",
 
       which must be above some miminum to be accepted into the mempool.
+  cosmos.tx.v1beta1.GetBlockWithTxsResponse:
+    type: object
+    properties:
+      txs:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/cosmos.tx.v1beta1.Tx'
+        description: txs are the transactions in the block.
+      block_id:
+        type: object
+        properties:
+          hash:
+            type: string
+            format: byte
+          part_set_header:
+            type: object
+            properties:
+              total:
+                type: integer
+                format: int64
+              hash:
+                type: string
+                format: byte
+            title: PartsetHeader
+        title: BlockID
+      block:
+        type: object
+        properties:
+          header:
+            type: object
+            properties:
+              version:
+                title: basic block info
+                type: object
+                properties:
+                  block:
+                    type: string
+                    format: uint64
+                  app:
+                    type: string
+                    format: uint64
+                description: >-
+                  Consensus captures the consensus rules for processing a block
+                  in the blockchain,
+
+                  including all blockchain data structures and the rules of the
+                  application's
+
+                  state transition machine.
+              chain_id:
+                type: string
+              height:
+                type: string
+                format: int64
+              time:
+                type: string
+                format: date-time
+              last_block_id:
+                type: object
+                properties:
+                  hash:
+                    type: string
+                    format: byte
+                  part_set_header:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      hash:
+                        type: string
+                        format: byte
+                    title: PartsetHeader
+                title: BlockID
+              last_commit_hash:
+                type: string
+                format: byte
+                description: commit from validators from the last block
+                title: hashes of block data
+              data_hash:
+                type: string
+                format: byte
+                title: transactions
+              validators_hash:
+                type: string
+                format: byte
+                description: validators for the current block
+                title: hashes from the app output from the prev block
+              next_validators_hash:
+                type: string
+                format: byte
+                title: validators for the next block
+              consensus_hash:
+                type: string
+                format: byte
+                title: consensus params for current block
+              app_hash:
+                type: string
+                format: byte
+                title: state after txs from the previous block
+              last_results_hash:
+                type: string
+                format: byte
+                title: root hash of all results from the txs from the previous block
+              evidence_hash:
+                type: string
+                format: byte
+                description: evidence included in the block
+                title: consensus info
+              proposer_address:
+                type: string
+                format: byte
+                title: original proposer of the block
+            description: Header defines the structure of a block header.
+          data:
+            type: object
+            properties:
+              txs:
+                type: array
+                items:
+                  type: string
+                  format: byte
+                description: >-
+                  Txs that will be applied by state @ block.Height+1.
+
+                  NOTE: not all txs here are valid.  We're just agreeing on the
+                  order first.
+
+                  This means that block.AppHash does not include these txs.
+            title: Data contains the set of transactions included in the block
+          evidence:
+            type: object
+            properties:
+              evidence:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    duplicate_vote_evidence:
+                      type: object
+                      properties:
+                        vote_a:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - SIGNED_MSG_TYPE_UNKNOWN
+                                - SIGNED_MSG_TYPE_PREVOTE
+                                - SIGNED_MSG_TYPE_PRECOMMIT
+                                - SIGNED_MSG_TYPE_PROPOSAL
+                              default: SIGNED_MSG_TYPE_UNKNOWN
+                              description: >-
+                                SignedMsgType is a type of signed message in the
+                                consensus.
+
+                                 - SIGNED_MSG_TYPE_PREVOTE: Votes
+                                 - SIGNED_MSG_TYPE_PROPOSAL: Proposals
+                            height:
+                              type: string
+                              format: int64
+                            round:
+                              type: integer
+                              format: int32
+                            block_id:
+                              type: object
+                              properties:
+                                hash:
+                                  type: string
+                                  format: byte
+                                part_set_header:
+                                  type: object
+                                  properties:
+                                    total:
+                                      type: integer
+                                      format: int64
+                                    hash:
+                                      type: string
+                                      format: byte
+                                  title: PartsetHeader
+                              title: BlockID
+                              description: zero if vote is nil.
+                            timestamp:
+                              type: string
+                              format: date-time
+                            validator_address:
+                              type: string
+                              format: byte
+                            validator_index:
+                              type: integer
+                              format: int32
+                            signature:
+                              type: string
+                              format: byte
+                          description: >-
+                            Vote represents a prevote, precommit, or commit vote
+                            from validators for
+
+                            consensus.
+                        vote_b:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - SIGNED_MSG_TYPE_UNKNOWN
+                                - SIGNED_MSG_TYPE_PREVOTE
+                                - SIGNED_MSG_TYPE_PRECOMMIT
+                                - SIGNED_MSG_TYPE_PROPOSAL
+                              default: SIGNED_MSG_TYPE_UNKNOWN
+                              description: >-
+                                SignedMsgType is a type of signed message in the
+                                consensus.
+
+                                 - SIGNED_MSG_TYPE_PREVOTE: Votes
+                                 - SIGNED_MSG_TYPE_PROPOSAL: Proposals
+                            height:
+                              type: string
+                              format: int64
+                            round:
+                              type: integer
+                              format: int32
+                            block_id:
+                              type: object
+                              properties:
+                                hash:
+                                  type: string
+                                  format: byte
+                                part_set_header:
+                                  type: object
+                                  properties:
+                                    total:
+                                      type: integer
+                                      format: int64
+                                    hash:
+                                      type: string
+                                      format: byte
+                                  title: PartsetHeader
+                              title: BlockID
+                              description: zero if vote is nil.
+                            timestamp:
+                              type: string
+                              format: date-time
+                            validator_address:
+                              type: string
+                              format: byte
+                            validator_index:
+                              type: integer
+                              format: int32
+                            signature:
+                              type: string
+                              format: byte
+                          description: >-
+                            Vote represents a prevote, precommit, or commit vote
+                            from validators for
+
+                            consensus.
+                        total_voting_power:
+                          type: string
+                          format: int64
+                        validator_power:
+                          type: string
+                          format: int64
+                        timestamp:
+                          type: string
+                          format: date-time
+                      description: >-
+                        DuplicateVoteEvidence contains evidence of a validator
+                        signed two conflicting votes.
+                    light_client_attack_evidence:
+                      type: object
+                      properties:
+                        conflicting_block:
+                          type: object
+                          properties:
+                            signed_header:
+                              type: object
+                              properties:
+                                header:
+                                  type: object
+                                  properties:
+                                    version:
+                                      title: basic block info
+                                      type: object
+                                      properties:
+                                        block:
+                                          type: string
+                                          format: uint64
+                                        app:
+                                          type: string
+                                          format: uint64
+                                      description: >-
+                                        Consensus captures the consensus rules
+                                        for processing a block in the
+                                        blockchain,
+
+                                        including all blockchain data structures
+                                        and the rules of the application's
+
+                                        state transition machine.
+                                    chain_id:
+                                      type: string
+                                    height:
+                                      type: string
+                                      format: int64
+                                    time:
+                                      type: string
+                                      format: date-time
+                                    last_block_id:
+                                      type: object
+                                      properties:
+                                        hash:
+                                          type: string
+                                          format: byte
+                                        part_set_header:
+                                          type: object
+                                          properties:
+                                            total:
+                                              type: integer
+                                              format: int64
+                                            hash:
+                                              type: string
+                                              format: byte
+                                          title: PartsetHeader
+                                      title: BlockID
+                                    last_commit_hash:
+                                      type: string
+                                      format: byte
+                                      description: >-
+                                        commit from validators from the last
+                                        block
+                                      title: hashes of block data
+                                    data_hash:
+                                      type: string
+                                      format: byte
+                                      title: transactions
+                                    validators_hash:
+                                      type: string
+                                      format: byte
+                                      description: validators for the current block
+                                      title: >-
+                                        hashes from the app output from the prev
+                                        block
+                                    next_validators_hash:
+                                      type: string
+                                      format: byte
+                                      title: validators for the next block
+                                    consensus_hash:
+                                      type: string
+                                      format: byte
+                                      title: consensus params for current block
+                                    app_hash:
+                                      type: string
+                                      format: byte
+                                      title: state after txs from the previous block
+                                    last_results_hash:
+                                      type: string
+                                      format: byte
+                                      title: >-
+                                        root hash of all results from the txs
+                                        from the previous block
+                                    evidence_hash:
+                                      type: string
+                                      format: byte
+                                      description: evidence included in the block
+                                      title: consensus info
+                                    proposer_address:
+                                      type: string
+                                      format: byte
+                                      title: original proposer of the block
+                                  description: >-
+                                    Header defines the structure of a block
+                                    header.
+                                commit:
+                                  type: object
+                                  properties:
+                                    height:
+                                      type: string
+                                      format: int64
+                                    round:
+                                      type: integer
+                                      format: int32
+                                    block_id:
+                                      type: object
+                                      properties:
+                                        hash:
+                                          type: string
+                                          format: byte
+                                        part_set_header:
+                                          type: object
+                                          properties:
+                                            total:
+                                              type: integer
+                                              format: int64
+                                            hash:
+                                              type: string
+                                              format: byte
+                                          title: PartsetHeader
+                                      title: BlockID
+                                    signatures:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          block_id_flag:
+                                            type: string
+                                            enum:
+                                              - BLOCK_ID_FLAG_UNKNOWN
+                                              - BLOCK_ID_FLAG_ABSENT
+                                              - BLOCK_ID_FLAG_COMMIT
+                                              - BLOCK_ID_FLAG_NIL
+                                            default: BLOCK_ID_FLAG_UNKNOWN
+                                            title: >-
+                                              BlockIdFlag indicates which BlcokID the
+                                              signature is for
+                                          validator_address:
+                                            type: string
+                                            format: byte
+                                          timestamp:
+                                            type: string
+                                            format: date-time
+                                          signature:
+                                            type: string
+                                            format: byte
+                                        description: >-
+                                          CommitSig is a part of the Vote included
+                                          in a Commit.
+                                  description: >-
+                                    Commit contains the evidence that a block
+                                    was committed by a set of validators.
+                            validator_set:
+                              type: object
+                              properties:
+                                validators:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      address:
+                                        type: string
+                                        format: byte
+                                      pub_key:
+                                        type: object
+                                        properties:
+                                          ed25519:
+                                            type: string
+                                            format: byte
+                                          secp256k1:
+                                            type: string
+                                            format: byte
+                                        title: >-
+                                          PublicKey defines the keys available for
+                                          use with Validators
+                                      voting_power:
+                                        type: string
+                                        format: int64
+                                      proposer_priority:
+                                        type: string
+                                        format: int64
+                                proposer:
+                                  type: object
+                                  properties:
+                                    address:
+                                      type: string
+                                      format: byte
+                                    pub_key:
+                                      type: object
+                                      properties:
+                                        ed25519:
+                                          type: string
+                                          format: byte
+                                        secp256k1:
+                                          type: string
+                                          format: byte
+                                      title: >-
+                                        PublicKey defines the keys available for
+                                        use with Validators
+                                    voting_power:
+                                      type: string
+                                      format: int64
+                                    proposer_priority:
+                                      type: string
+                                      format: int64
+                                total_voting_power:
+                                  type: string
+                                  format: int64
+                        common_height:
+                          type: string
+                          format: int64
+                        byzantine_validators:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                                format: byte
+                              pub_key:
+                                type: object
+                                properties:
+                                  ed25519:
+                                    type: string
+                                    format: byte
+                                  secp256k1:
+                                    type: string
+                                    format: byte
+                                title: >-
+                                  PublicKey defines the keys available for use
+                                  with Validators
+                              voting_power:
+                                type: string
+                                format: int64
+                              proposer_priority:
+                                type: string
+                                format: int64
+                        total_voting_power:
+                          type: string
+                          format: int64
+                        timestamp:
+                          type: string
+                          format: date-time
+                      description: >-
+                        LightClientAttackEvidence contains evidence of a set of
+                        validators attempting to mislead a light client.
+          last_commit:
+            type: object
+            properties:
+              height:
+                type: string
+                format: int64
+              round:
+                type: integer
+                format: int32
+              block_id:
+                type: object
+                properties:
+                  hash:
+                    type: string
+                    format: byte
+                  part_set_header:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      hash:
+                        type: string
+                        format: byte
+                    title: PartsetHeader
+                title: BlockID
+              signatures:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    block_id_flag:
+                      type: string
+                      enum:
+                        - BLOCK_ID_FLAG_UNKNOWN
+                        - BLOCK_ID_FLAG_ABSENT
+                        - BLOCK_ID_FLAG_COMMIT
+                        - BLOCK_ID_FLAG_NIL
+                      default: BLOCK_ID_FLAG_UNKNOWN
+                      title: BlockIdFlag indicates which BlcokID the signature is for
+                    validator_address:
+                      type: string
+                      format: byte
+                    timestamp:
+                      type: string
+                      format: date-time
+                    signature:
+                      type: string
+                      format: byte
+                  description: CommitSig is a part of the Vote included in a Commit.
+            description: >-
+              Commit contains the evidence that a block was committed by a set
+              of validators.
+      pagination:
+        description: pagination defines a pagination for the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: >-
+      GetBlockWithTxsResponse is the response type for the
+      Service.GetBlockWithTxs method.
+
+
+      Since: cosmos-sdk 0.45.2
   cosmos.tx.v1beta1.GetTxResponse:
     type: object
     properties:
@@ -39676,7 +42854,7 @@ definitions:
             tags are stringified and the log is JSON decoded.
         description: tx_responses is the list of queried TxResponses.
       pagination:
-        description: pagination defines an pagination for the response.
+        description: pagination defines a pagination for the response.
         type: object
         properties:
           next_key:
@@ -39711,6 +42889,7 @@ definitions:
               - SIGN_MODE_DIRECT
               - SIGN_MODE_TEXTUAL
               - SIGN_MODE_LEGACY_AMINO_JSON
+              - SIGN_MODE_EIP_191
             default: SIGN_MODE_UNSPECIFIED
             description: >-
               SignMode represents a signing mode with its own security
@@ -39727,6 +42906,24 @@ definitions:
               from SIGN_MODE_DIRECT
                - SIGN_MODE_LEGACY_AMINO_JSON: SIGN_MODE_LEGACY_AMINO_JSON is a backwards compatibility mode which uses
               Amino JSON and will be removed in the future
+               - SIGN_MODE_EIP_191: SIGN_MODE_EIP_191 specifies the sign mode for EIP 191 signing on the Cosmos
+              SDK. Ref: https://eips.ethereum.org/EIPS/eip-191
+
+
+              Currently, SIGN_MODE_EIP_191 is registered as a SignMode enum
+              variant,
+
+              but is not implemented on the SDK by default. To enable EIP-191,
+              you need
+
+              to pass a custom `TxConfig` that has an implementation of
+
+              `SignModeHandler` for EIP-191. The SDK may decide to fully support
+
+              EIP-191 in the future.
+
+
+              Since: cosmos-sdk 0.45.2
       multi:
         $ref: '#/definitions/cosmos.tx.v1beta1.ModeInfo.Multi'
         title: multi represents a nested multisig signer
@@ -39773,6 +42970,7 @@ definitions:
           - SIGN_MODE_DIRECT
           - SIGN_MODE_TEXTUAL
           - SIGN_MODE_LEGACY_AMINO_JSON
+          - SIGN_MODE_EIP_191
         default: SIGN_MODE_UNSPECIFIED
         description: >-
           SignMode represents a signing mode with its own security guarantees.
@@ -39788,6 +42986,23 @@ definitions:
           from SIGN_MODE_DIRECT
            - SIGN_MODE_LEGACY_AMINO_JSON: SIGN_MODE_LEGACY_AMINO_JSON is a backwards compatibility mode which uses
           Amino JSON and will be removed in the future
+           - SIGN_MODE_EIP_191: SIGN_MODE_EIP_191 specifies the sign mode for EIP 191 signing on the Cosmos
+          SDK. Ref: https://eips.ethereum.org/EIPS/eip-191
+
+
+          Currently, SIGN_MODE_EIP_191 is registered as a SignMode enum variant,
+
+          but is not implemented on the SDK by default. To enable EIP-191, you
+          need
+
+          to pass a custom `TxConfig` that has an implementation of
+
+          `SignModeHandler` for EIP-191. The SDK may decide to fully support
+
+          EIP-191 in the future.
+
+
+          Since: cosmos-sdk 0.45.2
     title: |-
       Single is the mode info for a single signer. It is structured as a message
       to allow for additional fields such as locale for SIGN_MODE_TEXTUAL in the
@@ -41450,6 +44665,40 @@ definitions:
     description: >-
       MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
       response type.
+  ibc.applications.interchain_accounts.host.v1.Params:
+    type: object
+    properties:
+      host_enabled:
+        type: boolean
+        description: host_enabled enables or disables the host submodule.
+      allow_messages:
+        type: array
+        items:
+          type: string
+        description: >-
+          allow_messages defines a list of sdk message typeURLs allowed to be
+          executed on a host chain.
+    description: |-
+      Params defines the set of on-chain interchain accounts parameters.
+      The following parameters may be used to disable the host submodule.
+  ibc.applications.interchain_accounts.host.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          host_enabled:
+            type: boolean
+            description: host_enabled enables or disables the host submodule.
+          allow_messages:
+            type: array
+            items:
+              type: string
+            description: >-
+              allow_messages defines a list of sdk message typeURLs allowed to
+              be executed on a host chain.
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
   ibc.applications.transfer.v1.DenomTrace:
     type: object
     properties:
@@ -41470,6 +44719,11 @@ definitions:
       source tracing information path.
   ibc.applications.transfer.v1.MsgTransferResponse:
     type: object
+    properties:
+      sequence:
+        type: string
+        format: uint64
+        title: sequence number of the transfer packet sent
     description: MsgTransferResponse defines the Msg/Transfer response type.
   ibc.applications.transfer.v1.Params:
     type: object
@@ -41497,6 +44751,15 @@ definitions:
       SendEnabled
 
       parameter for the denomination to false.
+  ibc.applications.transfer.v1.QueryDenomHashResponse:
+    type: object
+    properties:
+      hash:
+        type: string
+        description: hash (in hex format) of the denomination trace information.
+    description: |-
+      QueryDenomHashResponse is the response type for the Query/DenomHash RPC
+      method.
   ibc.applications.transfer.v1.QueryDenomTraceResponse:
     type: object
     properties:
@@ -41563,6 +44826,15 @@ definitions:
       QueryConnectionsResponse is the response type for the Query/DenomTraces
       RPC
 
+      method.
+  ibc.applications.transfer.v1.QueryEscrowAddressResponse:
+    type: object
+    properties:
+      escrow_address:
+        type: string
+        title: the escrow account address
+    description: >-
+      QueryEscrowAddressResponse is the response type of the EscrowAddress RPC
       method.
   ibc.applications.transfer.v1.QueryParamsResponse:
     type: object
@@ -41756,6 +45028,21 @@ definitions:
       identifier fields.
   ibc.core.channel.v1.MsgAcknowledgementResponse:
     type: object
+    properties:
+      result:
+        type: string
+        enum:
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED
+          - RESPONSE_RESULT_TYPE_NOOP
+          - RESPONSE_RESULT_TYPE_SUCCESS
+        default: RESPONSE_RESULT_TYPE_UNSPECIFIED
+        description: |-
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED: Default zero value enumeration
+           - RESPONSE_RESULT_TYPE_NOOP: The message did not call the IBC application callbacks (because, for example, the packet had already been relayed)
+           - RESPONSE_RESULT_TYPE_SUCCESS: The message was executed successfully
+        title: >-
+          ResponseResultType defines the possible outcomes of the execution of a
+          message
     description: MsgAcknowledgementResponse defines the Msg/Acknowledgement response type.
   ibc.core.channel.v1.MsgChannelCloseConfirmResponse:
     type: object
@@ -41779,18 +45066,71 @@ definitions:
       type.
   ibc.core.channel.v1.MsgChannelOpenInitResponse:
     type: object
+    properties:
+      channel_id:
+        type: string
+      version:
+        type: string
     description: MsgChannelOpenInitResponse defines the Msg/ChannelOpenInit response type.
   ibc.core.channel.v1.MsgChannelOpenTryResponse:
     type: object
+    properties:
+      version:
+        type: string
     description: MsgChannelOpenTryResponse defines the Msg/ChannelOpenTry response type.
   ibc.core.channel.v1.MsgRecvPacketResponse:
     type: object
+    properties:
+      result:
+        type: string
+        enum:
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED
+          - RESPONSE_RESULT_TYPE_NOOP
+          - RESPONSE_RESULT_TYPE_SUCCESS
+        default: RESPONSE_RESULT_TYPE_UNSPECIFIED
+        description: |-
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED: Default zero value enumeration
+           - RESPONSE_RESULT_TYPE_NOOP: The message did not call the IBC application callbacks (because, for example, the packet had already been relayed)
+           - RESPONSE_RESULT_TYPE_SUCCESS: The message was executed successfully
+        title: >-
+          ResponseResultType defines the possible outcomes of the execution of a
+          message
     description: MsgRecvPacketResponse defines the Msg/RecvPacket response type.
   ibc.core.channel.v1.MsgTimeoutOnCloseResponse:
     type: object
+    properties:
+      result:
+        type: string
+        enum:
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED
+          - RESPONSE_RESULT_TYPE_NOOP
+          - RESPONSE_RESULT_TYPE_SUCCESS
+        default: RESPONSE_RESULT_TYPE_UNSPECIFIED
+        description: |-
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED: Default zero value enumeration
+           - RESPONSE_RESULT_TYPE_NOOP: The message did not call the IBC application callbacks (because, for example, the packet had already been relayed)
+           - RESPONSE_RESULT_TYPE_SUCCESS: The message was executed successfully
+        title: >-
+          ResponseResultType defines the possible outcomes of the execution of a
+          message
     description: MsgTimeoutOnCloseResponse defines the Msg/TimeoutOnClose response type.
   ibc.core.channel.v1.MsgTimeoutResponse:
     type: object
+    properties:
+      result:
+        type: string
+        enum:
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED
+          - RESPONSE_RESULT_TYPE_NOOP
+          - RESPONSE_RESULT_TYPE_SUCCESS
+        default: RESPONSE_RESULT_TYPE_UNSPECIFIED
+        description: |-
+          - RESPONSE_RESULT_TYPE_UNSPECIFIED: Default zero value enumeration
+           - RESPONSE_RESULT_TYPE_NOOP: The message did not call the IBC application callbacks (because, for example, the packet had already been relayed)
+           - RESPONSE_RESULT_TYPE_SUCCESS: The message was executed successfully
+        title: >-
+          ResponseResultType defines the possible outcomes of the execution of a
+          message
     description: MsgTimeoutResponse defines the Msg/Timeout response type.
   ibc.core.channel.v1.Order:
     type: string
@@ -43115,6 +46455,20 @@ definitions:
     title: |-
       QueryUnreceivedPacketsResponse is the response type for the
       Query/UnreceivedPacketCommitments RPC method
+  ibc.core.channel.v1.ResponseResultType:
+    type: string
+    enum:
+      - RESPONSE_RESULT_TYPE_UNSPECIFIED
+      - RESPONSE_RESULT_TYPE_NOOP
+      - RESPONSE_RESULT_TYPE_SUCCESS
+    default: RESPONSE_RESULT_TYPE_UNSPECIFIED
+    description: |-
+      - RESPONSE_RESULT_TYPE_UNSPECIFIED: Default zero value enumeration
+       - RESPONSE_RESULT_TYPE_NOOP: The message did not call the IBC application callbacks (because, for example, the packet had already been relayed)
+       - RESPONSE_RESULT_TYPE_SUCCESS: The message was executed successfully
+    title: >-
+      ResponseResultType defines the possible outcomes of the execution of a
+      message
   ibc.core.channel.v1.State:
     type: string
     enum:
@@ -43962,6 +47316,76 @@ definitions:
       RPC
 
       method. It returns the current status of the IBC client.
+  ibc.core.client.v1.QueryConsensusStateHeightsResponse:
+    type: object
+    properties:
+      consensus_state_heights:
+        type: array
+        items:
+          type: object
+          properties:
+            revision_number:
+              type: string
+              format: uint64
+              title: the revision that the client is currently on
+            revision_height:
+              type: string
+              format: uint64
+              title: the height within the given revision
+          description: >-
+            Normally the RevisionHeight is incremented at each height while
+            keeping
+
+            RevisionNumber the same. However some consensus algorithms may
+            choose to
+
+            reset the height in certain conditions e.g. hard forks,
+            state-machine
+
+            breaking changes In these cases, the RevisionNumber is incremented
+            so that
+
+            height continues to be monitonically increasing even as the
+            RevisionHeight
+
+            gets reset
+          title: >-
+            Height is a monotonically increasing data type
+
+            that can be compared against another Height for the purposes of
+            updating and
+
+            freezing clients
+        title: consensus state heights
+      pagination:
+        title: pagination response
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryConsensusStateHeightsResponse is the response type for the
+      Query/ConsensusStateHeights RPC method
   ibc.core.client.v1.QueryConsensusStateResponse:
     type: object
     properties:
@@ -45722,18 +49146,6 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
-  ibc.core.port.v1.QueryAppVersionResponse:
-    type: object
-    properties:
-      port_id:
-        type: string
-        title: port id associated with the request identifiers
-      version:
-        type: string
-        title: supported app version
-    description: >-
-      QueryAppVersionResponse is the response type for the Query/AppVersion RPC
-      method.
   pendulumlabs.market.market.Burnings:
     type: object
     properties:
