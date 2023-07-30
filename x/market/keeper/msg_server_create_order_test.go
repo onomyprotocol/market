@@ -94,7 +94,7 @@ func TestBookEnds(t *testing.T) {
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
 	//Create Order
-	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
+	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"}
 	rate, err := types.RateStringToInt(o.Rate)
 	require.NoError(t, err)
 	ends := testInput.MarketKeeper.BookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
@@ -115,7 +115,7 @@ func TestBookEnds(t *testing.T) {
 
 	// Create Order Msg Type
 	beforecount = aftercount
-	var q = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
+	var q = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"}
 	rate, err = types.RateStringToInt(q.Rate)
 	require.NoError(t, err)
 
@@ -137,6 +137,31 @@ func TestBookEnds(t *testing.T) {
 	require.Equal(t, orders2.DenomBid, denomB)
 	require.Equal(t, orders2.DenomAsk, denomA)
 	require.Equal(t, orders2.Amount.String(), o.Amount)
+
+	// Create Order Msg Type
+	beforecount = aftercount
+	var r = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"}
+	rate, err = types.RateStringToInt(r.Rate)
+	require.NoError(t, err)
+
+	// Get Bookends
+	ends = testInput.MarketKeeper.BookEnds(testInput.Context, r.DenomAsk, r.DenomBid, r.OrderType, rate)
+	require.NoError(t, err)
+	q.Prev = strconv.FormatUint(ends[0], 10)
+	q.Next = strconv.FormatUint(ends[1], 10)
+
+	// Create Order
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &r)
+	require.NoError(t, err)
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	// Validate Order
+	orders3, orderfound3 := testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
+	require.True(t, orderfound3)
+	require.Equal(t, orders3.DenomBid, denomB)
+	require.Equal(t, orders3.DenomAsk, denomA)
+	require.Equal(t, orders3.Amount.String(), o.Amount)
 
 	// Validate GetMember
 	memberAsk, memberAskfound := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
