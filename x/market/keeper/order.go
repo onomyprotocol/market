@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pendulum-labs/market/x/market/types"
@@ -8,6 +10,10 @@ import (
 
 // SetOrder set a specific order in the store from its index
 func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
+	if (order.Uid != 0) && (order.Prev == order.Uid || order.Next == order.Uid) {
+		fmt.Println("(order.Prev, order.Uid, order.Next) = ", order.Prev, order.Uid, order.Next)
+		panic("attempted to call `SetOrder` with a self referential link")
+	}
 	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
 
 	b := k.cdc.MustMarshal(&order)
@@ -126,8 +132,6 @@ func (k Keeper) GetBook(
 	denomB string,
 	orderType string,
 ) (list []types.OrderResponse) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
-
 	member, _ := k.GetMember(ctx, denomA, denomB)
 
 	var uid uint64
@@ -143,11 +147,10 @@ func (k Keeper) GetBook(
 	}
 
 	for uid > 0 {
-		b := store.Get(types.OrderKey(
-			uid,
-		))
-		var order types.Order
-		k.cdc.MustUnmarshal(b, &order)
+		order, found := k.GetOrder(ctx, uid)
+		if !found {
+			panic("order not found")
+		}
 		orderResponse := types.OrderResponse{
 			Uid:       order.Uid,
 			Owner:     order.Owner,
@@ -175,14 +178,9 @@ func (k Keeper) BookEnds(
 	orderType string,
 	rate []sdk.Int,
 ) (ends [2]uint64) {
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
-
 	member, _ := k.GetMember(ctx, denomA, denomB)
 
 	var uid uint64
-	var orderBytes []byte
-	var order types.Order
 
 	if orderType == "limit" {
 		uid = member.Limit
@@ -191,20 +189,18 @@ func (k Keeper) BookEnds(
 			return [2]uint64{0, 0}
 		}
 
-		orderBytes = store.Get(types.OrderKey(
-			uid,
-		))
-
-		k.cdc.MustUnmarshal(orderBytes, &order)
+		order, found := k.GetOrder(ctx, uid)
+		if !found {
+			panic("order not found")
+		}
 
 		for types.GT(order.Rate, rate) || order.Next != uint64(0) {
-
-			orderBytes = store.Get(types.OrderKey(
-				order.Next,
-			))
-
-			k.cdc.MustUnmarshal(orderBytes, &order)
-
+			next := order.Next
+			next_order, found := k.GetOrder(ctx, next)
+			if !found {
+				panic("order not found")
+			}
+			order = next_order
 		}
 
 		if order.Next == uint64(0) {
@@ -223,20 +219,18 @@ func (k Keeper) BookEnds(
 			return [2]uint64{0, 0}
 		}
 
-		orderBytes = store.Get(types.OrderKey(
-			uid,
-		))
-
-		k.cdc.MustUnmarshal(orderBytes, &order)
+		order, found := k.GetOrder(ctx, uid)
+		if !found {
+			panic("order not found")
+		}
 
 		for types.LT(order.Rate, rate) || order.Next != uint64(0) {
-
-			orderBytes = store.Get(types.OrderKey(
-				order.Next,
-			))
-
-			k.cdc.MustUnmarshal(orderBytes, &order)
-
+			next := order.Next
+			next_order, found := k.GetOrder(ctx, next)
+			if !found {
+				panic("order not found")
+			}
+			order = next_order
 		}
 
 		if order.Next == uint64(0) {
