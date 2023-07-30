@@ -147,8 +147,8 @@ func TestBookEnds(t *testing.T) {
 	// Get Bookends
 	ends = testInput.MarketKeeper.BookEnds(testInput.Context, r.DenomAsk, r.DenomBid, r.OrderType, rate)
 	require.NoError(t, err)
-	q.Prev = strconv.FormatUint(ends[0], 10)
-	q.Next = strconv.FormatUint(ends[1], 10)
+	r.Prev = strconv.FormatUint(ends[0], 10)
+	r.Next = strconv.FormatUint(ends[1], 10)
 
 	// Create Order
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &r)
