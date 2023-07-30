@@ -55,8 +55,12 @@ func (msg *MsgCreateOrder) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid order type")
 	}
 
-	_, ok := sdk.NewIntFromString(msg.Amount)
+	amount, ok := sdk.NewIntFromString(msg.Amount)
 	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+
+	if !amount.GT(sdk.NewInt(0)) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
