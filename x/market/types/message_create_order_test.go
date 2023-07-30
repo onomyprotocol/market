@@ -22,7 +22,7 @@ func TestMsgCreateOrder_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg:  MsgCreateOrder{Creator: sample.AccAddress(), DenomAsk: "20CoinA", DenomBid: "20CoinB", Rate: []string{"10", "20"}, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"},
+			msg:  MsgCreateOrder{Creator: sample.AccAddress(), DenomAsk: "20CoinA", DenomBid: "20CoinB", Rate: []string{"10", "20"}, OrderType: "stop", Amount: "10", Prev: "0", Next: "0"},
 		},
 	}
 	for _, tt := range tests {
