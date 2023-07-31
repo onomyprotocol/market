@@ -176,25 +176,34 @@ func (k Keeper) BookEnds(
 	rate []sdk.Int,
 ) (ends [2]uint64) {
 
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
 	member, _ := k.GetMember(ctx, denomA, denomB)
 
-	var uid uint64
+	var orderBytes []byte
 	var order types.Order
+	var next_order types.Order
 
 	if orderType == "limit" {
-		uid = member.Limit
 
-		if uid == 0 {
+		if member.Limit == 0 {
 			return [2]uint64{0, 0}
 		}
 
-		order, _ = k.GetOrder(ctx, uid)
+		orderBytes = store.Get(types.OrderKey(
+			member.Limit,
+		))
 
-		for types.GT(order.Rate, rate) || uid != 0 {
+		k.cdc.MustUnmarshal(orderBytes, &order)
 
-			order, _ = k.GetOrder(ctx, uid)
+		for types.GT(order.Rate, rate) || order.Next != 0 {
 
-			uid = order.Next
+			orderBytes = store.Get(types.OrderKey(
+				order.Next,
+			))
+
+			k.cdc.MustUnmarshal(orderBytes, &next_order)
+			order = next_order
 
 		}
 
@@ -208,25 +217,30 @@ func (k Keeper) BookEnds(
 
 	} else {
 
-		uid = member.Stop
-
-		if uid == 0 {
+		if member.Stop == 0 {
 			return [2]uint64{0, 0}
 		}
 
-		order, _ = k.GetOrder(ctx, uid)
+		orderBytes = store.Get(types.OrderKey(
+			member.Stop,
+		))
 
-		for types.LT(order.Rate, rate) || order.Next != uint64(0) {
+		k.cdc.MustUnmarshal(orderBytes, &order)
 
-			order, _ = k.GetOrder(ctx, uid)
+		for types.LT(order.Rate, rate) || order.Next != 0 {
 
-			uid = order.Next
+			orderBytes = store.Get(types.OrderKey(
+				order.Next,
+			))
+
+			k.cdc.MustUnmarshal(orderBytes, &next_order)
+			order = next_order
 
 		}
 
 		if order.Next == uint64(0) {
 			if types.GTE(order.Rate, rate) {
-				return [2]uint64{order.Uid, uint64(0)}
+				return [2]uint64{order.Uid, 0}
 			}
 		}
 

@@ -93,8 +93,10 @@ func TestBookEnds(t *testing.T) {
 
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
+	orderType1 := "limit"
+
 	//Create Order
-	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"}
+	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
 	rate, err := types.RateStringToInt(o.Rate)
 	require.NoError(t, err)
 	ends := testInput.MarketKeeper.BookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
@@ -115,7 +117,7 @@ func TestBookEnds(t *testing.T) {
 
 	// Create Order Msg Type
 	beforecount = aftercount
-	var q = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"}
+	var q = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
 	rate, err = types.RateStringToInt(q.Rate)
 	require.NoError(t, err)
 
@@ -140,7 +142,7 @@ func TestBookEnds(t *testing.T) {
 
 	// Create Order Msg Type
 	beforecount = aftercount
-	var r = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"}
+	var r = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
 	rate, err = types.RateStringToInt(r.Rate)
 	require.NoError(t, err)
 
