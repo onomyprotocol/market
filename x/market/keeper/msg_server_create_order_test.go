@@ -189,7 +189,7 @@ func TestBookEnds(t *testing.T) {
 
 	// Create Order Msg Type
 	beforecount = aftercount
-	var s = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: []string{"1", "500"}, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
+	var s = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: []string{"65", "70"}, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
 	rate, err = types.RateStringToInt(s.Rate)
 	require.NoError(t, err)
 
@@ -199,8 +199,8 @@ func TestBookEnds(t *testing.T) {
 		// Get Bookends
 		ends = testInput.MarketKeeper.BookEnds(testInput.Context, s.DenomAsk, s.DenomBid, s.OrderType, rate)
 		require.NoError(t, err)
-		r.Prev = strconv.FormatUint(ends[0], 10)
-		r.Next = strconv.FormatUint(ends[1], 10)
+		s.Prev = strconv.FormatUint(ends[0], 10)
+		s.Next = strconv.FormatUint(ends[1], 10)
 		time.Sleep(5 * time.Second)
 		done <- true
 	}()
@@ -212,7 +212,7 @@ func TestBookEnds(t *testing.T) {
 	}
 
 	// Create Order
-	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &r)
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &s)
 	require.NoError(t, err)
 	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
 	require.Equal(t, beforecount+1, aftercount)
