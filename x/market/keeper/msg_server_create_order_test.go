@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	keepertest "github.com/pendulum-labs/market/testutil/keeper"
@@ -142,9 +143,27 @@ func TestBookEnds(t *testing.T) {
 
 	// Create Order Msg Type
 	beforecount = aftercount
-	var r = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
+	var r = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: []string{"1", "1000"}, OrderType: orderType1, Amount: "10", Prev: "0", Next: "0"}
 	rate, err = types.RateStringToInt(r.Rate)
 	require.NoError(t, err)
+
+	timeout := time.After(10 * time.Second)
+	done := make(chan bool)
+	go func() {
+		// Get Bookends
+		ends = testInput.MarketKeeper.BookEnds(testInput.Context, r.DenomAsk, r.DenomBid, r.OrderType, rate)
+		require.NoError(t, err)
+		r.Prev = strconv.FormatUint(ends[0], 10)
+		r.Next = strconv.FormatUint(ends[1], 10)
+		time.Sleep(5 * time.Second)
+		done <- true
+	}()
+
+	select {
+	case <-timeout:
+		t.Fatal("Test didn't finish in time")
+	case <-done:
+	}
 
 	// Get Bookends
 	ends = testInput.MarketKeeper.BookEnds(testInput.Context, r.DenomAsk, r.DenomBid, r.OrderType, rate)
