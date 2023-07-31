@@ -196,7 +196,11 @@ func (k Keeper) BookEnds(
 
 		k.cdc.MustUnmarshal(orderBytes, &order)
 
-		for types.GT(order.Rate, rate) || order.Next != 0 {
+		for types.GTE(rate, order.Rate) {
+
+			if order.Next == 0 {
+				break
+			}
 
 			orderBytes = store.Get(types.OrderKey(
 				order.Next,
@@ -208,7 +212,7 @@ func (k Keeper) BookEnds(
 		}
 
 		if order.Next == 0 {
-			if types.LTE(order.Rate, rate) {
+			if types.GTE(rate, order.Rate) {
 				return [2]uint64{order.Uid, 0}
 			}
 		}
@@ -227,7 +231,11 @@ func (k Keeper) BookEnds(
 
 		k.cdc.MustUnmarshal(orderBytes, &order)
 
-		for types.LT(order.Rate, rate) || order.Next != 0 {
+		for types.LTE(rate, order.Rate) {
+
+			if order.Next == 0 {
+				break
+			}
 
 			orderBytes = store.Get(types.OrderKey(
 				order.Next,
@@ -239,12 +247,11 @@ func (k Keeper) BookEnds(
 		}
 
 		if order.Next == uint64(0) {
-			if types.GTE(order.Rate, rate) {
+			if types.LTE(rate, order.Rate) {
 				return [2]uint64{order.Uid, 0}
 			}
 		}
 
 		return [2]uint64{order.Prev, order.Uid}
-
 	}
 }
