@@ -29712,26 +29712,6 @@ paths:
           required: true
           type: string
           format: uint64
-        - name: owner
-          in: query
-          required: false
-          type: string
-        - name: active
-          in: query
-          required: false
-          type: boolean
-        - name: orderType
-          in: query
-          required: false
-          type: string
-        - name: denomAsk
-          in: query
-          required: false
-          type: string
-        - name: denomBid
-          in: query
-          required: false
-          type: string
       tags:
         - Query
   /pendulum-labs/market/market/params:

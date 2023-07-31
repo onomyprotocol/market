@@ -94,11 +94,6 @@ export interface QueryAllBurningsResponse {
 
 export interface QueryGetOrderRequest {
   uid: number;
-  owner: string;
-  active: boolean;
-  orderType: string;
-  denomAsk: string;
-  denomBid: string;
 }
 
 export interface QueryGetOrderResponse {
@@ -1371,14 +1366,7 @@ export const QueryAllBurningsResponse = {
   },
 };
 
-const baseQueryGetOrderRequest: object = {
-  uid: 0,
-  owner: "",
-  active: false,
-  orderType: "",
-  denomAsk: "",
-  denomBid: "",
-};
+const baseQueryGetOrderRequest: object = { uid: 0 };
 
 export const QueryGetOrderRequest = {
   encode(
@@ -1387,21 +1375,6 @@ export const QueryGetOrderRequest = {
   ): Writer {
     if (message.uid !== 0) {
       writer.uint32(8).uint64(message.uid);
-    }
-    if (message.owner !== "") {
-      writer.uint32(18).string(message.owner);
-    }
-    if (message.active === true) {
-      writer.uint32(24).bool(message.active);
-    }
-    if (message.orderType !== "") {
-      writer.uint32(34).string(message.orderType);
-    }
-    if (message.denomAsk !== "") {
-      writer.uint32(42).string(message.denomAsk);
-    }
-    if (message.denomBid !== "") {
-      writer.uint32(50).string(message.denomBid);
     }
     return writer;
   },
@@ -1415,21 +1388,6 @@ export const QueryGetOrderRequest = {
       switch (tag >>> 3) {
         case 1:
           message.uid = longToNumber(reader.uint64() as Long);
-          break;
-        case 2:
-          message.owner = reader.string();
-          break;
-        case 3:
-          message.active = reader.bool();
-          break;
-        case 4:
-          message.orderType = reader.string();
-          break;
-        case 5:
-          message.denomAsk = reader.string();
-          break;
-        case 6:
-          message.denomBid = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1446,42 +1404,12 @@ export const QueryGetOrderRequest = {
     } else {
       message.uid = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
-    } else {
-      message.owner = "";
-    }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = Boolean(object.active);
-    } else {
-      message.active = false;
-    }
-    if (object.orderType !== undefined && object.orderType !== null) {
-      message.orderType = String(object.orderType);
-    } else {
-      message.orderType = "";
-    }
-    if (object.denomAsk !== undefined && object.denomAsk !== null) {
-      message.denomAsk = String(object.denomAsk);
-    } else {
-      message.denomAsk = "";
-    }
-    if (object.denomBid !== undefined && object.denomBid !== null) {
-      message.denomBid = String(object.denomBid);
-    } else {
-      message.denomBid = "";
-    }
     return message;
   },
 
   toJSON(message: QueryGetOrderRequest): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
-    message.owner !== undefined && (obj.owner = message.owner);
-    message.active !== undefined && (obj.active = message.active);
-    message.orderType !== undefined && (obj.orderType = message.orderType);
-    message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
-    message.denomBid !== undefined && (obj.denomBid = message.denomBid);
     return obj;
   },
 
@@ -1491,31 +1419,6 @@ export const QueryGetOrderRequest = {
       message.uid = object.uid;
     } else {
       message.uid = 0;
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
-    } else {
-      message.owner = "";
-    }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = object.active;
-    } else {
-      message.active = false;
-    }
-    if (object.orderType !== undefined && object.orderType !== null) {
-      message.orderType = object.orderType;
-    } else {
-      message.orderType = "";
-    }
-    if (object.denomAsk !== undefined && object.denomAsk !== null) {
-      message.denomAsk = object.denomAsk;
-    } else {
-      message.denomAsk = "";
-    }
-    if (object.denomBid !== undefined && object.denomBid !== null) {
-      message.denomBid = object.denomBid;
-    } else {
-      message.denomBid = "";
     }
     return message;
   },

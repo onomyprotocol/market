@@ -163,13 +163,7 @@ message QueryAllBurningsResponse {
 }
 
 message QueryGetOrderRequest {
-	  uint64 uid = 1;
-  string owner = 2;
-  bool active = 3;
-  string orderType = 4;
-  string denomAsk = 5;
-  string denomBid = 6;
-
+	uint64 uid = 1;
 }
 
 message QueryGetOrderResponse {

@@ -704,15 +704,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Queries a Order by index.
    * @request GET:/pendulum-labs/market/market/order/{uid}
    */
-  queryOrder = (
-    uid: string,
-    query?: { owner?: string; active?: boolean; orderType?: string; denomAsk?: string; denomBid?: string },
-    params: RequestParams = {},
-  ) =>
+  queryOrder = (uid: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetOrderResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order/${uid}`,
       method: "GET",
-      query: query,
       format: "json",
       ...params,
     });
