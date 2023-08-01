@@ -20,7 +20,7 @@ func createNOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Order {
 	for i := range items {
 		items[i].Uid = uint64(i)
 		items[i].Owner = strconv.Itoa(i)
-		items[i].Active = false
+		items[i].Status = "active"
 		items[i].OrderType = strconv.Itoa(i)
 		items[i].DenomAsk = strconv.Itoa(i)
 		items[i].DenomBid = strconv.Itoa(i)
