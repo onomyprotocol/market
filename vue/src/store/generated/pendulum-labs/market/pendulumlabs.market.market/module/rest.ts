@@ -59,7 +59,7 @@ export interface MarketOrder {
   /** @format uint64 */
   uid?: string;
   owner?: string;
-  active?: boolean;
+  status?: string;
   orderType?: string;
   denomAsk?: string;
   denomBid?: string;
@@ -77,7 +77,7 @@ export interface MarketOrderResponse {
   /** @format uint64 */
   uid?: string;
   owner?: string;
-  active?: boolean;
+  status?: string;
   orderType?: string;
   denomAsk?: string;
   denomBid?: string;
@@ -107,6 +107,9 @@ export interface MarketPool {
   denom2?: string;
   leaders?: MarketLeader[];
   drops?: string;
+
+  /** @format uint64 */
+  history?: string;
 }
 
 export interface MarketQueryAllBurningsResponse {

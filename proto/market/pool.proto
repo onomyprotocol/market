@@ -16,6 +16,7 @@ message Pool {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
+  uint64 history = 6;
 }
 
 message Leader {

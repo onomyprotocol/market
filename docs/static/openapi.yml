@@ -28788,8 +28788,8 @@ paths:
                       format: uint64
                     owner:
                       type: string
-                    active:
-                      type: boolean
+                    status:
+                      type: string
                     orderType:
                       type: string
                     denomAsk:
@@ -29526,8 +29526,8 @@ paths:
                       format: uint64
                     owner:
                       type: string
-                    active:
-                      type: boolean
+                    status:
+                      type: string
                     orderType:
                       type: string
                     denomAsk:
@@ -29668,8 +29668,8 @@ paths:
                     format: uint64
                   owner:
                     type: string
-                  active:
-                    type: boolean
+                  status:
+                    type: string
                   orderType:
                     type: string
                   denomAsk:
@@ -29797,6 +29797,9 @@ paths:
                             type: string
                     drops:
                       type: string
+                    history:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -29931,6 +29934,9 @@ paths:
                           type: string
                   drops:
                     type: string
+                  history:
+                    type: string
+                    format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -49195,8 +49201,8 @@ definitions:
         format: uint64
       owner:
         type: string
-      active:
-        type: boolean
+      status:
+        type: string
       orderType:
         type: string
       denomAsk:
@@ -49223,8 +49229,8 @@ definitions:
         format: uint64
       owner:
         type: string
-      active:
-        type: boolean
+      status:
+        type: string
       orderType:
         type: string
       denomAsk:
@@ -49281,6 +49287,9 @@ definitions:
               type: string
       drops:
         type: string
+      history:
+        type: string
+        format: uint64
   pendulumlabs.market.market.QueryAllBurningsResponse:
     type: object
     properties:
@@ -49426,8 +49435,8 @@ definitions:
               format: uint64
             owner:
               type: string
-            active:
-              type: boolean
+            status:
+              type: string
             orderType:
               type: string
             denomAsk:
@@ -49496,6 +49505,9 @@ definitions:
                     type: string
             drops:
               type: string
+            history:
+              type: string
+              format: uint64
       pagination:
         type: object
         properties:
@@ -49534,8 +49546,8 @@ definitions:
               format: uint64
             owner:
               type: string
-            active:
-              type: boolean
+            status:
+              type: string
             orderType:
               type: string
             denomAsk:
@@ -49635,8 +49647,8 @@ definitions:
             format: uint64
           owner:
             type: string
-          active:
-            type: boolean
+          status:
+            type: string
           orderType:
             type: string
           denomAsk:
@@ -49678,6 +49690,9 @@ definitions:
                   type: string
           drops:
             type: string
+          history:
+            type: string
+            format: uint64
   pendulumlabs.market.market.QueryParamsResponse:
     type: object
     properties:

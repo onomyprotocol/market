@@ -7,7 +7,7 @@ export const protobufPackage = "pendulumlabs.market.market";
 export interface Order {
   uid: number;
   owner: string;
-  active: boolean;
+  status: string;
   orderType: string;
   denomAsk: string;
   denomBid: string;
@@ -24,7 +24,7 @@ export interface Orders {
 export interface OrderResponse {
   uid: number;
   owner: string;
-  active: boolean;
+  status: string;
   orderType: string;
   denomAsk: string;
   denomBid: string;
@@ -37,7 +37,7 @@ export interface OrderResponse {
 const baseOrder: object = {
   uid: 0,
   owner: "",
-  active: false,
+  status: "",
   orderType: "",
   denomAsk: "",
   denomBid: "",
@@ -55,8 +55,8 @@ export const Order = {
     if (message.owner !== "") {
       writer.uint32(18).string(message.owner);
     }
-    if (message.active === true) {
-      writer.uint32(24).bool(message.active);
+    if (message.status !== "") {
+      writer.uint32(26).string(message.status);
     }
     if (message.orderType !== "") {
       writer.uint32(34).string(message.orderType);
@@ -97,7 +97,7 @@ export const Order = {
           message.owner = reader.string();
           break;
         case 3:
-          message.active = reader.bool();
+          message.status = reader.string();
           break;
         case 4:
           message.orderType = reader.string();
@@ -141,10 +141,10 @@ export const Order = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = Boolean(object.active);
+    if (object.status !== undefined && object.status !== null) {
+      message.status = String(object.status);
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = String(object.orderType);
@@ -188,7 +188,7 @@ export const Order = {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     message.owner !== undefined && (obj.owner = message.owner);
-    message.active !== undefined && (obj.active = message.active);
+    message.status !== undefined && (obj.status = message.status);
     message.orderType !== undefined && (obj.orderType = message.orderType);
     message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
     message.denomBid !== undefined && (obj.denomBid = message.denomBid);
@@ -216,10 +216,10 @@ export const Order = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = object.active;
+    if (object.status !== undefined && object.status !== null) {
+      message.status = object.status;
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = object.orderType;
@@ -334,7 +334,7 @@ export const Orders = {
 const baseOrderResponse: object = {
   uid: 0,
   owner: "",
-  active: false,
+  status: "",
   orderType: "",
   denomAsk: "",
   denomBid: "",
@@ -352,8 +352,8 @@ export const OrderResponse = {
     if (message.owner !== "") {
       writer.uint32(18).string(message.owner);
     }
-    if (message.active === true) {
-      writer.uint32(24).bool(message.active);
+    if (message.status !== "") {
+      writer.uint32(26).string(message.status);
     }
     if (message.orderType !== "") {
       writer.uint32(34).string(message.orderType);
@@ -394,7 +394,7 @@ export const OrderResponse = {
           message.owner = reader.string();
           break;
         case 3:
-          message.active = reader.bool();
+          message.status = reader.string();
           break;
         case 4:
           message.orderType = reader.string();
@@ -438,10 +438,10 @@ export const OrderResponse = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = Boolean(object.active);
+    if (object.status !== undefined && object.status !== null) {
+      message.status = String(object.status);
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = String(object.orderType);
@@ -485,7 +485,7 @@ export const OrderResponse = {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     message.owner !== undefined && (obj.owner = message.owner);
-    message.active !== undefined && (obj.active = message.active);
+    message.status !== undefined && (obj.status = message.status);
     message.orderType !== undefined && (obj.orderType = message.orderType);
     message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
     message.denomBid !== undefined && (obj.denomBid = message.denomBid);
@@ -513,10 +513,10 @@ export const OrderResponse = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = object.active;
+    if (object.status !== undefined && object.status !== null) {
+      message.status = object.status;
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = object.orderType;
