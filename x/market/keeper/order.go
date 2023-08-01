@@ -151,7 +151,7 @@ func (k Keeper) GetBook(
 		orderResponse := types.OrderResponse{
 			Uid:       order.Uid,
 			Owner:     order.Owner,
-			Active:    order.Active,
+			Status:    order.Status,
 			OrderType: order.OrderType,
 			DenomAsk:  order.DenomAsk,
 			DenomBid:  order.DenomBid,

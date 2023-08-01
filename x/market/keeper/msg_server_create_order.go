@@ -55,7 +55,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	var order = types.Order{
 		Uid:       uid,
 		Owner:     msg.Creator,
-		Active:    true,
+		Status:    "active",
 		DenomAsk:  msg.DenomAsk,
 		DenomBid:  msg.DenomBid,
 		OrderType: msg.OrderType,
@@ -122,7 +122,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	if order.Prev == 0 && order.Next > 0 {
 
 		nextOrder, _ := k.GetOrder(ctx, next)
-		if !nextOrder.Active {
+		if !(nextOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
 		}
 		if nextOrder.Prev != 0 {
@@ -167,7 +167,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 		prevOrder, _ := k.GetOrder(ctx, prev)
 
-		if !prevOrder.Active {
+		if !(prevOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not active")
 		}
 		if prevOrder.Next != 0 {
@@ -203,10 +203,10 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		prevOrder, _ := k.GetOrder(ctx, prev)
 		nextOrder, _ := k.GetOrder(ctx, next)
 
-		if !prevOrder.Active {
+		if !(prevOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not active")
 		}
-		if !nextOrder.Active {
+		if !(nextOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
 		}
 
@@ -350,7 +350,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// Pair AMM Pool B Member is the lesser of maxPoolBid or limit amountBid
 	if limitHead.Amount.LTE(maxAmountBid) {
 		strikeAmountBid = limitHead.Amount
-		limitHead.Active = false
+		limitHead.Status = "filled"
 		memberBid.Limit = limitHead.Next
 		if limitHead.Next != 0 {
 			limitNext, _ := k.GetOrder(ctx, limitHead.Next)
@@ -428,7 +428,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	}
 
 	// THEN set Head(Stop) active to false as entire order will be filled
-	stopHead.Active = false
+	stopHead.Status = "filled"
 	// Set Next Position as Head of Stop Book
 	memberBid.Stop = stopHead.Next
 

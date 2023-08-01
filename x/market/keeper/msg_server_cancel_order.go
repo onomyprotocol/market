@@ -85,7 +85,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 		}
 	}
 
-	order.Active = false
+	order.Status = "canceled"
 	k.SetOrder(ctx, order)
 
 	return &types.MsgCancelOrderResponse{}, nil
