@@ -374,49 +374,46 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
-		// order filled
-		// just add the order to history
+		limitHead.Prev = 0
+		pool.History = limitHead.Uid
+
 		if pool.History == 0 {
-			pool.History = limitHead.Uid
-			limitHead.Prev = 0
 			limitHead.Next = 0
-			limitHead.Status = "filled"
-			k.SetOrder(ctx, limitHead)
 		} else {
 			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
 			prevFilledOrder.Prev = limitHead.Uid
-			limitHead.Prev = 0
 			limitHead.Next = prevFilledOrder.Uid
 			k.SetOrder(ctx, prevFilledOrder)
-			k.SetOrder(ctx, limitHead)
 		}
 	} else {
-		// order partially filled
-		// add new partial order to history
-		// keep old in place, update remaining amount and leave active
+		// Add partially filled order to history
+		// Keep remainder of order into book
 		partialFillOrder := limitHead
 		partialFillOrder.Uid = k.GetUidCount(ctx)
-		k.SetUidCount(ctx, partialFillOrder.Uid+1)
 		partialFillOrder.Amount = strikeAmountBid
+		partialFillOrder.Status = "filled"
+
+		k.SetUidCount(ctx, partialFillOrder.Uid+1)
+
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
 		if pool.History == 0 {
 			pool.History = partialFillOrder.Uid
 			partialFillOrder.Prev = 0
 			partialFillOrder.Next = 0
-			k.SetOrder(ctx, partialFillOrder)
-			k.SetOrder(ctx, limitHead)
 		} else {
 			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
 			prevFilledOrder.Prev = partialFillOrder.Uid
 			k.SetOrder(ctx, prevFilledOrder)
 			partialFillOrder.Prev = 0
 			partialFillOrder.Next = prevFilledOrder.Uid
-			partialFillOrder.Status = "filled"
-			k.SetOrder(ctx, partialFillOrder)
-			k.SetOrder(ctx, limitHead)
 		}
+
+		k.SetOrder(ctx, partialFillOrder)
 	}
+
+	k.SetOrder(ctx, limitHead)
+	k.SetPool(ctx, pool)
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	// Get the borrower address
@@ -468,7 +465,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		return false, nil
 	}
 
-	// THEN set Head(Stop) active to false as entire order will be filled
+	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
 	// Set Next Position as Head of Stop Book
 	memberBid.Stop = stopHead.Next
@@ -495,9 +492,25 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		return false, sdkError
 	}
 
-	stopHead.Amount = stopHead.Amount.Sub(strikeAmountBid)
+	// Update pool order history
+	pool, _ := k.GetPool(ctx, memberAsk.Pair)
+	pool.History = stopHead.Uid
+	stopHead.Status = "filled"
+	// order filled
+	// just add the order to history
+	if pool.History == 0 {
+		stopHead.Prev = 0
+		stopHead.Next = 0
+	} else {
+		prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
+		prevFilledOrder.Prev = stopHead.Uid
+		stopHead.Prev = 0
+		stopHead.Next = prevFilledOrder.Uid
+		k.SetOrder(ctx, prevFilledOrder)
+	}
 
 	k.SetOrder(ctx, stopHead)
+	k.SetPool(ctx, pool)
 
 	memberBid.Previous = memberBid.Balance
 	memberAsk.Previous = memberAsk.Balance
