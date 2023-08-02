@@ -28808,6 +28808,12 @@ paths:
                     next:
                       type: string
                       format: uint64
+                    beg_time:
+                      type: string
+                      format: uint64
+                    end_time:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -29573,6 +29579,12 @@ paths:
                     next:
                       type: string
                       format: uint64
+                    beg_time:
+                      type: string
+                      format: uint64
+                    end_time:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -29713,6 +29725,12 @@ paths:
                     type: string
                     format: uint64
                   next:
+                    type: string
+                    format: uint64
+                  beg_time:
+                    type: string
+                    format: uint64
+                  end_time:
                     type: string
                     format: uint64
         default:
@@ -49248,6 +49266,12 @@ definitions:
       next:
         type: string
         format: uint64
+      beg_time:
+        type: string
+        format: uint64
+      end_time:
+        type: string
+        format: uint64
   pendulumlabs.market.market.OrderResponse:
     type: object
     properties:
@@ -49274,6 +49298,12 @@ definitions:
         type: string
         format: uint64
       next:
+        type: string
+        format: uint64
+      beg_time:
+        type: string
+        format: uint64
+      end_time:
         type: string
         format: uint64
   pendulumlabs.market.market.Params:
@@ -49482,6 +49512,12 @@ definitions:
             next:
               type: string
               format: uint64
+            beg_time:
+              type: string
+              format: uint64
+            end_time:
+              type: string
+              format: uint64
       pagination:
         type: object
         properties:
@@ -49591,6 +49627,12 @@ definitions:
               type: string
               format: uint64
             next:
+              type: string
+              format: uint64
+            beg_time:
+              type: string
+              format: uint64
+            end_time:
               type: string
               format: uint64
       pagination:
@@ -49717,6 +49759,12 @@ definitions:
             type: string
             format: uint64
           next:
+            type: string
+            format: uint64
+          beg_time:
+            type: string
+            format: uint64
+          end_time:
             type: string
             format: uint64
   pendulumlabs.market.market.QueryGetPoolResponse:

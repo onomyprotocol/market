@@ -71,6 +71,12 @@ export interface MarketOrder {
 
   /** @format uint64 */
   next?: string;
+
+  /** @format uint64 */
+  beg_time?: string;
+
+  /** @format uint64 */
+  end_time?: string;
 }
 
 export interface MarketOrderResponse {
@@ -89,6 +95,12 @@ export interface MarketOrderResponse {
 
   /** @format uint64 */
   next?: string;
+
+  /** @format uint64 */
+  beg_time?: string;
+
+  /** @format uint64 */
+  end_time?: string;
 }
 
 /**

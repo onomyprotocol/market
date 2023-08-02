@@ -15,6 +15,8 @@ export interface Order {
   rate: string[];
   prev: number;
   next: number;
+  beg_time: number;
+  end_time: number;
 }
 
 export interface Orders {
@@ -32,6 +34,8 @@ export interface OrderResponse {
   rate: string[];
   prev: number;
   next: number;
+  beg_time: number;
+  end_time: number;
 }
 
 const baseOrder: object = {
@@ -45,6 +49,8 @@ const baseOrder: object = {
   rate: "",
   prev: 0,
   next: 0,
+  beg_time: 0,
+  end_time: 0,
 };
 
 export const Order = {
@@ -78,6 +84,12 @@ export const Order = {
     }
     if (message.next !== 0) {
       writer.uint32(80).uint64(message.next);
+    }
+    if (message.beg_time !== 0) {
+      writer.uint32(88).uint64(message.beg_time);
+    }
+    if (message.end_time !== 0) {
+      writer.uint32(96).uint64(message.end_time);
     }
     return writer;
   },
@@ -119,6 +131,12 @@ export const Order = {
           break;
         case 10:
           message.next = longToNumber(reader.uint64() as Long);
+          break;
+        case 11:
+          message.beg_time = longToNumber(reader.uint64() as Long);
+          break;
+        case 12:
+          message.end_time = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -181,6 +199,16 @@ export const Order = {
     } else {
       message.next = 0;
     }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = Number(object.beg_time);
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = Number(object.end_time);
+    } else {
+      message.end_time = 0;
+    }
     return message;
   },
 
@@ -200,6 +228,8 @@ export const Order = {
     }
     message.prev !== undefined && (obj.prev = message.prev);
     message.next !== undefined && (obj.next = message.next);
+    message.beg_time !== undefined && (obj.beg_time = message.beg_time);
+    message.end_time !== undefined && (obj.end_time = message.end_time);
     return obj;
   },
 
@@ -255,6 +285,16 @@ export const Order = {
       message.next = object.next;
     } else {
       message.next = 0;
+    }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = object.beg_time;
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = object.end_time;
+    } else {
+      message.end_time = 0;
     }
     return message;
   },
@@ -342,6 +382,8 @@ const baseOrderResponse: object = {
   rate: "",
   prev: 0,
   next: 0,
+  beg_time: 0,
+  end_time: 0,
 };
 
 export const OrderResponse = {
@@ -375,6 +417,12 @@ export const OrderResponse = {
     }
     if (message.next !== 0) {
       writer.uint32(80).uint64(message.next);
+    }
+    if (message.beg_time !== 0) {
+      writer.uint32(88).uint64(message.beg_time);
+    }
+    if (message.end_time !== 0) {
+      writer.uint32(96).uint64(message.end_time);
     }
     return writer;
   },
@@ -416,6 +464,12 @@ export const OrderResponse = {
           break;
         case 10:
           message.next = longToNumber(reader.uint64() as Long);
+          break;
+        case 11:
+          message.beg_time = longToNumber(reader.uint64() as Long);
+          break;
+        case 12:
+          message.end_time = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -478,6 +532,16 @@ export const OrderResponse = {
     } else {
       message.next = 0;
     }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = Number(object.beg_time);
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = Number(object.end_time);
+    } else {
+      message.end_time = 0;
+    }
     return message;
   },
 
@@ -497,6 +561,8 @@ export const OrderResponse = {
     }
     message.prev !== undefined && (obj.prev = message.prev);
     message.next !== undefined && (obj.next = message.next);
+    message.beg_time !== undefined && (obj.beg_time = message.beg_time);
+    message.end_time !== undefined && (obj.end_time = message.end_time);
     return obj;
   },
 
@@ -552,6 +618,16 @@ export const OrderResponse = {
       message.next = object.next;
     } else {
       message.next = 0;
+    }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = object.beg_time;
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = object.end_time;
+    } else {
+      message.end_time = 0;
     }
     return message;
   },

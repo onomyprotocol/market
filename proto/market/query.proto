@@ -181,9 +181,9 @@ message QueryAllOrderResponse {
 }
 
 message QueryBookRequest {
-  string denomA = 1;
-  string denomB = 2;
-  string orderType = 3;
+  	string denomA = 1;
+  	string denomB = 2;
+  	string orderType = 3;
 	cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
@@ -193,10 +193,10 @@ message QueryBookResponse {
 }
 
 message QueryBookendsRequest {
-  string coinA = 1;
-  string coinB = 2;
-  string orderType = 3;
-  repeated string rate = 4;
+	string coinA = 1;
+	string coinB = 2;
+	string orderType = 3;
+	repeated string rate = 4;
 }
 
 message QueryBookendsResponse {
