@@ -66,15 +66,23 @@ func (msg *MsgCreateOrder) ValidateBasic() error {
 
 	// Rate[0] needs to fit into uint64 to avoid numerical errors
 	// Rate[0] will be converted to sdk.Int type in execution
-	_, err = strconv.ParseUint(msg.Rate[0], 10, 64)
+	rate0, err := strconv.ParseUint(msg.Rate[0], 10, 64)
 	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	if rate0 == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
 	}
 
 	// Rate[1] needs to fit into uint64 to avoid numerical errors
 	// Rate[1] will be converted to sdk.Int type in execution
-	_, err = strconv.ParseUint(msg.Rate[1], 10, 64)
+	rate1, err := strconv.ParseUint(msg.Rate[1], 10, 64)
 	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
+	}
+
+	if rate1 == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate")
 	}
 
