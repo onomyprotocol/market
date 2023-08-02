@@ -28810,10 +28810,10 @@ paths:
                       format: uint64
                     beg_time:
                       type: string
-                      format: uint64
+                      format: int64
                     end_time:
                       type: string
-                      format: uint64
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -29581,10 +29581,10 @@ paths:
                       format: uint64
                     beg_time:
                       type: string
-                      format: uint64
+                      format: int64
                     end_time:
                       type: string
-                      format: uint64
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -29729,10 +29729,10 @@ paths:
                     format: uint64
                   beg_time:
                     type: string
-                    format: uint64
+                    format: int64
                   end_time:
                     type: string
-                    format: uint64
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -49268,10 +49268,10 @@ definitions:
         format: uint64
       beg_time:
         type: string
-        format: uint64
+        format: int64
       end_time:
         type: string
-        format: uint64
+        format: int64
   pendulumlabs.market.market.OrderResponse:
     type: object
     properties:
@@ -49302,10 +49302,10 @@ definitions:
         format: uint64
       beg_time:
         type: string
-        format: uint64
+        format: int64
       end_time:
         type: string
-        format: uint64
+        format: int64
   pendulumlabs.market.market.Params:
     type: object
     properties:
@@ -49514,10 +49514,10 @@ definitions:
               format: uint64
             beg_time:
               type: string
-              format: uint64
+              format: int64
             end_time:
               type: string
-              format: uint64
+              format: int64
       pagination:
         type: object
         properties:
@@ -49631,10 +49631,10 @@ definitions:
               format: uint64
             beg_time:
               type: string
-              format: uint64
+              format: int64
             end_time:
               type: string
-              format: uint64
+              format: int64
       pagination:
         type: object
         properties:
@@ -49763,10 +49763,10 @@ definitions:
             format: uint64
           beg_time:
             type: string
-            format: uint64
+            format: int64
           end_time:
             type: string
-            format: uint64
+            format: int64
   pendulumlabs.market.market.QueryGetPoolResponse:
     type: object
     properties:

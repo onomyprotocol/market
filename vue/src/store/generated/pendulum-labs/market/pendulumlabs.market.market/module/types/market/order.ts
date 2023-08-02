@@ -86,10 +86,10 @@ export const Order = {
       writer.uint32(80).uint64(message.next);
     }
     if (message.beg_time !== 0) {
-      writer.uint32(88).uint64(message.beg_time);
+      writer.uint32(88).int64(message.beg_time);
     }
     if (message.end_time !== 0) {
-      writer.uint32(96).uint64(message.end_time);
+      writer.uint32(96).int64(message.end_time);
     }
     return writer;
   },
@@ -133,10 +133,10 @@ export const Order = {
           message.next = longToNumber(reader.uint64() as Long);
           break;
         case 11:
-          message.beg_time = longToNumber(reader.uint64() as Long);
+          message.beg_time = longToNumber(reader.int64() as Long);
           break;
         case 12:
-          message.end_time = longToNumber(reader.uint64() as Long);
+          message.end_time = longToNumber(reader.int64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -419,10 +419,10 @@ export const OrderResponse = {
       writer.uint32(80).uint64(message.next);
     }
     if (message.beg_time !== 0) {
-      writer.uint32(88).uint64(message.beg_time);
+      writer.uint32(88).int64(message.beg_time);
     }
     if (message.end_time !== 0) {
-      writer.uint32(96).uint64(message.end_time);
+      writer.uint32(96).int64(message.end_time);
     }
     return writer;
   },
@@ -466,10 +466,10 @@ export const OrderResponse = {
           message.next = longToNumber(reader.uint64() as Long);
           break;
         case 11:
-          message.beg_time = longToNumber(reader.uint64() as Long);
+          message.beg_time = longToNumber(reader.int64() as Long);
           break;
         case 12:
-          message.end_time = longToNumber(reader.uint64() as Long);
+          message.end_time = longToNumber(reader.int64() as Long);
           break;
         default:
           reader.skipType(tag & 7);

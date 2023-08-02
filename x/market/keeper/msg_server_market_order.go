@@ -97,6 +97,31 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 
+	uid := k.GetUidCount(ctx)
+
+	pool, _ := k.GetPool(ctx, memberBid.Pair)
+	prevOrder, _ := k.GetOrder(ctx, pool.History)
+
+	prevOrder.Prev = uid
+
+	var order = types.Order{
+		Uid:       uid,
+		Owner:     msg.Creator,
+		Status:    "filled",
+		DenomAsk:  msg.DenomAsk,
+		DenomBid:  msg.DenomBid,
+		OrderType: "market",
+		Amount:    amountBid,
+		Rate:      []sdk.Int{amountAsk, amountBid},
+		Prev:      0,
+		Next:      pool.History,
+		BegTime:   ctx.BlockHeader().Time.Unix(),
+		EndTime:   ctx.BlockHeader().Time.Unix(),
+	}
+
+	k.SetUidCount(ctx, uid+1)
+	k.SetOrder(ctx, order)
+
 	return &types.MsgMarketOrderResponse{}, nil
 
 }

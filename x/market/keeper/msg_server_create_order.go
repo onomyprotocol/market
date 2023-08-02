@@ -63,6 +63,8 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		Rate:      rate,
 		Prev:      prev,
 		Next:      next,
+		BegTime:   ctx.BlockHeader().Time.Unix(),
+		EndTime:   0,
 	}
 
 	// Case 1
@@ -412,6 +414,8 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		k.SetOrder(ctx, partialFillOrder)
 	}
 
+	limitHead.EndTime = ctx.BlockHeader().Time.Unix()
+
 	k.SetOrder(ctx, limitHead)
 	k.SetPool(ctx, pool)
 
@@ -508,6 +512,8 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		stopHead.Next = prevFilledOrder.Uid
 		k.SetOrder(ctx, prevFilledOrder)
 	}
+
+	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, stopHead)
 	k.SetPool(ctx, pool)

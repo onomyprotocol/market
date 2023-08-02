@@ -24,8 +24,8 @@ message Order {
   ];
   uint64 prev = 9;
   uint64 next = 10;
-  uint64 beg_time = 11;
-  uint64 end_time = 12;
+  int64 beg_time = 11;
+  int64 end_time = 12;
 }
 
 message Orders {
@@ -43,6 +43,6 @@ message OrderResponse {
   repeated string rate = 8;
   uint64 prev = 9;
   uint64 next = 10;
-  uint64 beg_time = 11;
-  uint64 end_time = 12;
+  int64 beg_time = 11;
+  int64 end_time = 12;
 }
