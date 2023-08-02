@@ -350,7 +350,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// Pair AMM Pool B Member is the lesser of maxPoolBid or limit amountBid
 	if limitHead.Amount.LTE(maxAmountBid) {
 		strikeAmountBid = limitHead.Amount
-		limitHead.Status = "filled"
 		memberBid.Limit = limitHead.Next
 		if limitHead.Next != 0 {
 			limitNext, _ := k.GetOrder(ctx, limitHead.Next)
@@ -361,8 +360,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		strikeAmountBid = maxAmountBid
 	}
 
-	// Need limits on Rates.
-
 	// StrikeAmountAsk = StrikeAmountBid * ExchangeRate(A/B)
 	// Exchange Rate is held constant at initial AMM balances
 	strikeAmountAsk := (strikeAmountBid.Mul(limitHead.Rate[0])).Quo(limitHead.Rate[1])
@@ -371,6 +368,54 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// Rounding favors AMM vs Order
 	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
 		return false, nil
+	}
+
+	pool, _ := k.GetPool(ctx, memberAsk.Pair)
+
+	if limitHead.Amount.Equal(strikeAmountBid) {
+		limitHead.Status = "filled"
+		// order filled
+		// just add the order to history
+		if pool.History == 0 {
+			pool.History = limitHead.Uid
+			limitHead.Prev = 0
+			limitHead.Next = 0
+			limitHead.Status = "filled"
+			k.SetOrder(ctx, limitHead)
+		} else {
+			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
+			prevFilledOrder.Prev = limitHead.Uid
+			limitHead.Prev = 0
+			limitHead.Next = prevFilledOrder.Uid
+			k.SetOrder(ctx, prevFilledOrder)
+			k.SetOrder(ctx, limitHead)
+		}
+	} else {
+		// order partially filled
+		// add new partial order to history
+		// keep old in place, update remaining amount and leave active
+		partialFillOrder := limitHead
+		partialFillOrder.Uid = k.GetUidCount(ctx)
+		k.SetUidCount(ctx, partialFillOrder.Uid+1)
+		partialFillOrder.Amount = strikeAmountBid
+		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
+
+		if pool.History == 0 {
+			pool.History = partialFillOrder.Uid
+			partialFillOrder.Prev = 0
+			partialFillOrder.Next = 0
+			k.SetOrder(ctx, partialFillOrder)
+			k.SetOrder(ctx, limitHead)
+		} else {
+			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
+			prevFilledOrder.Prev = partialFillOrder.Uid
+			k.SetOrder(ctx, prevFilledOrder)
+			partialFillOrder.Prev = 0
+			partialFillOrder.Next = prevFilledOrder.Uid
+			partialFillOrder.Status = "filled"
+			k.SetOrder(ctx, partialFillOrder)
+			k.SetOrder(ctx, limitHead)
+		}
 	}
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
@@ -385,10 +430,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	if sdkError != nil {
 		return false, sdkError
 	}
-
-	limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
-
-	k.SetOrder(ctx, limitHead)
 
 	memberBid.Previous = memberBid.Balance
 	memberAsk.Previous = memberAsk.Balance
