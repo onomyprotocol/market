@@ -16,11 +16,12 @@ option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/pendulum-labs/market/market/params";
-  }
-  // Queries a Pool by index.
+	// Parameters queries the parameters of the module.
+	rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/params";
+	}
+	
+  	// Queries a Pool by index.
 	rpc Pool(QueryGetPoolRequest) returns (QueryGetPoolResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/pool/{pair}";
 	}
@@ -30,7 +31,7 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/pool";
 	}
 
-// Queries a Drop by index.
+	// Queries a Drop by index.
 	rpc Drop(QueryGetDropRequest) returns (QueryGetDropResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
 	}
@@ -40,7 +41,7 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop";
 	}
 
-// Queries a Member by index.
+	// Queries a Member by index.
 	rpc Member(QueryGetMemberRequest) returns (QueryGetMemberResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/member/{denomA}/{denomB}";
 	}
@@ -50,7 +51,7 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/member";
 	}
 
-// Queries a Burnings by index.
+	// Queries a Burnings by index.
 	rpc Burnings(QueryGetBurningsRequest) returns (QueryGetBurningsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/burnings/{denom}";
 	}
@@ -60,7 +61,7 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/burnings";
 	}
 
-// Queries a Order by index.
+	// Queries a Order by index.
 	rpc Order(QueryGetOrderRequest) returns (QueryGetOrderResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/order/{uid}";
 	}
@@ -70,12 +71,12 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/order";
 	}
 
-// Queries a list of Book items.
+	// Queries a list of Book items.
 	rpc Book(QueryBookRequest) returns (QueryBookResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}";
 	}
 
-// Queries a list of Bookends items.
+	// Queries a list of Bookends items.
 	rpc Bookends(QueryBookendsRequest) returns (QueryBookendsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}";
 	}
@@ -183,11 +184,12 @@ message QueryBookRequest {
   string denomA = 1;
   string denomB = 2;
   string orderType = 3;
-cosmos.base.query.v1beta1.PageRequest pagination = 4;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
 message QueryBookResponse {
 	repeated OrderResponse book = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryBookendsRequest {
@@ -204,6 +206,17 @@ message QueryBookendsResponse {
     repeated string rate = 4;
 	uint64 prev = 5;
 	uint64 next = 6;
+}
+
+message QueryHistoryRequest {
+	string pair = 1;
+	string length = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+  
+message QueryHistoryResponse {
+	repeated OrderResponse history = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

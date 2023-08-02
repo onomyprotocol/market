@@ -189,6 +189,17 @@ export interface MarketQueryAllPoolResponse {
 
 export interface MarketQueryBookResponse {
   book?: MarketOrderResponse[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 export interface MarketQueryBookendsResponse {
