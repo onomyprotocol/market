@@ -43,6 +43,7 @@ const (
 	AttributeKeyPrev      = "prev"
 	AttributeKeyProduct   = "product"
 	AttributeKeyRate      = "rate"
+	AttributeKeyStatus      = "status"
 	AttributeKeyStop      = "stop"
 	AttributeKeyUid       = "uid"
 )

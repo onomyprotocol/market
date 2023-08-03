@@ -118,6 +118,7 @@ export interface QueryBookRequest {
 
 export interface QueryBookResponse {
   book: OrderResponse[];
+  pagination: PageResponse | undefined;
 }
 
 export interface QueryBookendsRequest {
@@ -134,6 +135,17 @@ export interface QueryBookendsResponse {
   rate: string[];
   prev: number;
   next: number;
+}
+
+export interface QueryHistoryRequest {
+  pair: string;
+  length: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryHistoryResponse {
+  history: OrderResponse[];
+  pagination: PageResponse | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -1752,6 +1764,12 @@ export const QueryBookResponse = {
     for (const v of message.book) {
       OrderResponse.encode(v!, writer.uint32(10).fork()).ldelim();
     }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
     return writer;
   },
 
@@ -1765,6 +1783,9 @@ export const QueryBookResponse = {
       switch (tag >>> 3) {
         case 1:
           message.book.push(OrderResponse.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -1782,6 +1803,11 @@ export const QueryBookResponse = {
         message.book.push(OrderResponse.fromJSON(e));
       }
     }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 
@@ -1794,6 +1820,10 @@ export const QueryBookResponse = {
     } else {
       obj.book = [];
     }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
     return obj;
   },
 
@@ -1804,6 +1834,11 @@ export const QueryBookResponse = {
       for (const e of object.book) {
         message.book.push(OrderResponse.fromPartial(e));
       }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
     }
     return message;
   },
@@ -2089,6 +2124,191 @@ export const QueryBookendsResponse = {
   },
 };
 
+const baseQueryHistoryRequest: object = { pair: "", length: "" };
+
+export const QueryHistoryRequest = {
+  encode(
+    message: QueryHistoryRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pair !== "") {
+      writer.uint32(10).string(message.pair);
+    }
+    if (message.length !== "") {
+      writer.uint32(18).string(message.length);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryHistoryRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryHistoryRequest } as QueryHistoryRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pair = reader.string();
+          break;
+        case 2:
+          message.length = reader.string();
+          break;
+        case 3:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryHistoryRequest {
+    const message = { ...baseQueryHistoryRequest } as QueryHistoryRequest;
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.length !== undefined && object.length !== null) {
+      message.length = String(object.length);
+    } else {
+      message.length = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryHistoryRequest): unknown {
+    const obj: any = {};
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.length !== undefined && (obj.length = message.length);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryHistoryRequest>): QueryHistoryRequest {
+    const message = { ...baseQueryHistoryRequest } as QueryHistoryRequest;
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.length !== undefined && object.length !== null) {
+      message.length = object.length;
+    } else {
+      message.length = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryHistoryResponse: object = {};
+
+export const QueryHistoryResponse = {
+  encode(
+    message: QueryHistoryResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.history) {
+      OrderResponse.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryHistoryResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryHistoryResponse } as QueryHistoryResponse;
+    message.history = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.history.push(OrderResponse.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryHistoryResponse {
+    const message = { ...baseQueryHistoryResponse } as QueryHistoryResponse;
+    message.history = [];
+    if (object.history !== undefined && object.history !== null) {
+      for (const e of object.history) {
+        message.history.push(OrderResponse.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryHistoryResponse): unknown {
+    const obj: any = {};
+    if (message.history) {
+      obj.history = message.history.map((e) =>
+        e ? OrderResponse.toJSON(e) : undefined
+      );
+    } else {
+      obj.history = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryHistoryResponse>): QueryHistoryResponse {
+    const message = { ...baseQueryHistoryResponse } as QueryHistoryResponse;
+    message.history = [];
+    if (object.history !== undefined && object.history !== null) {
+      for (const e of object.history) {
+        message.history.push(OrderResponse.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -2119,6 +2339,8 @@ export interface Query {
   Book(request: QueryBookRequest): Promise<QueryBookResponse>;
   /** Queries a list of Bookends items. */
   Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse>;
+  /** Queries pool trade history. */
+  History(request: QueryHistoryRequest): Promise<QueryHistoryResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2279,6 +2501,18 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryBookendsResponse.decode(new Reader(data))
+    );
+  }
+
+  History(request: QueryHistoryRequest): Promise<QueryHistoryResponse> {
+    const data = QueryHistoryRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "History",
+      data
+    );
+    return promise.then((data) =>
+      QueryHistoryResponse.decode(new Reader(data))
     );
   }
 }

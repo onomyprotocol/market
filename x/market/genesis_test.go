@@ -92,7 +92,7 @@ func TestGenesis(t *testing.T) {
 			{
 				Uid:       0,
 				Owner:     "0",
-				Active:    true,
+				Status:    "active",
 				OrderType: "0",
 				DenomAsk:  "0",
 				DenomBid:  "0",
@@ -104,7 +104,7 @@ func TestGenesis(t *testing.T) {
 			{
 				Uid:       1,
 				Owner:     "1",
-				Active:    false,
+				Status:    "active",
 				OrderType: "1",
 				DenomAsk:  "1",
 				DenomBid:  "1",

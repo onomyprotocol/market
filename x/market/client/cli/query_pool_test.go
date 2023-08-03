@@ -100,7 +100,7 @@ func TestShowPool(t *testing.T) {
 				tc.idPair,
 			}
 			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowPool(), args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdPool(), args)
 			if tc.err != nil {
 				stat, ok := status.FromError(tc.err)
 				require.True(t, ok)

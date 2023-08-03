@@ -537,7 +537,8 @@ type MsgMarketOrder struct {
 	DenomBid  string `protobuf:"bytes,3,opt,name=denomBid,proto3" json:"denomBid,omitempty"`
 	AmountBid string `protobuf:"bytes,4,opt,name=amountBid,proto3" json:"amountBid,omitempty"`
 	QuoteAsk  string `protobuf:"bytes,5,opt,name=quoteAsk,proto3" json:"quoteAsk,omitempty"`
-	Slippage  string `protobuf:"bytes,6,opt,name=slippage,proto3" json:"slippage,omitempty"`
+	//Slippage is percentage based on (parameter / 1000), 9999 representing as 99.99%
+	Slippage string `protobuf:"bytes,6,opt,name=slippage,proto3" json:"slippage,omitempty"`
 }
 
 func (m *MsgMarketOrder) Reset()         { *m = MsgMarketOrder{} }

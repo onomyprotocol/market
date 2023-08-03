@@ -33,7 +33,7 @@ func networkWithOrderObjects(t *testing.T, n int) (*network.Network, []types.Ord
 		order := types.Order{
 			Uid:       uint64(i),
 			Owner:     strconv.Itoa(i),
-			Active:    false,
+			Status:    "active",
 			OrderType: strconv.Itoa(i),
 			DenomAsk:  strconv.Itoa(i),
 			DenomBid:  strconv.Itoa(i),
@@ -60,7 +60,7 @@ func TestShowOrder(t *testing.T) {
 		desc        string
 		idUid       uint64
 		idOwner     string
-		idActive    bool
+		idStatus    string
 		idOrderType string
 		idDenomAsk  string
 		idDenomBid  string
@@ -75,7 +75,7 @@ func TestShowOrder(t *testing.T) {
 			desc:        "found",
 			idUid:       objs[0].Uid,
 			idOwner:     objs[0].Owner,
-			idActive:    objs[0].Active,
+			idStatus:    objs[0].Status,
 			idOrderType: objs[0].OrderType,
 			idDenomAsk:  objs[0].DenomAsk,
 			idDenomBid:  objs[0].DenomBid,
@@ -89,7 +89,7 @@ func TestShowOrder(t *testing.T) {
 			desc:        "not found",
 			idUid:       100000,
 			idOwner:     strconv.Itoa(100000),
-			idActive:    false,
+			idStatus:    "active",
 			idOrderType: strconv.Itoa(100000),
 			idDenomAsk:  strconv.Itoa(100000),
 			idDenomBid:  strconv.Itoa(100000),

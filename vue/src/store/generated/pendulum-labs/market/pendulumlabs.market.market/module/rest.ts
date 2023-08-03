@@ -59,7 +59,7 @@ export interface MarketOrder {
   /** @format uint64 */
   uid?: string;
   owner?: string;
-  active?: boolean;
+  status?: string;
   orderType?: string;
   denomAsk?: string;
   denomBid?: string;
@@ -71,13 +71,19 @@ export interface MarketOrder {
 
   /** @format uint64 */
   next?: string;
+
+  /** @format int64 */
+  beg_time?: string;
+
+  /** @format int64 */
+  end_time?: string;
 }
 
 export interface MarketOrderResponse {
   /** @format uint64 */
   uid?: string;
   owner?: string;
-  active?: boolean;
+  status?: string;
   orderType?: string;
   denomAsk?: string;
   denomBid?: string;
@@ -89,6 +95,12 @@ export interface MarketOrderResponse {
 
   /** @format uint64 */
   next?: string;
+
+  /** @format int64 */
+  beg_time?: string;
+
+  /** @format int64 */
+  end_time?: string;
 }
 
 /**
@@ -107,6 +119,9 @@ export interface MarketPool {
   denom2?: string;
   leaders?: MarketLeader[];
   drops?: string;
+
+  /** @format uint64 */
+  history?: string;
 }
 
 export interface MarketQueryAllBurningsResponse {
@@ -186,6 +201,17 @@ export interface MarketQueryAllPoolResponse {
 
 export interface MarketQueryBookResponse {
   book?: MarketOrderResponse[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 export interface MarketQueryBookendsResponse {
@@ -219,6 +245,21 @@ export interface MarketQueryGetOrderResponse {
 
 export interface MarketQueryGetPoolResponse {
   pool?: MarketPool;
+}
+
+export interface MarketQueryHistoryResponse {
+  history?: MarketOrderResponse[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 /**
@@ -624,6 +665,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<MarketQueryGetDropResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop/${uid}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryHistory
+   * @summary Queries pool trade history.
+   * @request GET:/pendulum-labs/market/market/history/{pair}
+   */
+  queryHistory = (
+    pair: string,
+    query?: {
+      length?: string;
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryHistoryResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/history/${pair}`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

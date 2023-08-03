@@ -55,3 +55,21 @@ func (k Keeper) Pool(c context.Context, req *types.QueryGetPoolRequest) (*types.
 
 	return &types.QueryGetPoolResponse{Pool: val}, nil
 }
+
+func (k Keeper) History(c context.Context, req *types.QueryHistoryRequest) (*types.QueryHistoryResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	val, found := k.GetHistory(
+		ctx,
+		req.Pair,
+		req.Length,
+	)
+	if !found {
+		return nil, status.Error(codes.InvalidArgument, "not found")
+	}
+
+	return &types.QueryHistoryResponse{History: val}, nil
+}

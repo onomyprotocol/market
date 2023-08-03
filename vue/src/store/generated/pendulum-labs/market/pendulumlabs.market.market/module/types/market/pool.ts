@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+import * as Long from "long";
+import { util, configure, Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "pendulumlabs.market.market";
 
@@ -9,6 +10,7 @@ export interface Pool {
   denom2: string;
   leaders: Leader[];
   drops: string;
+  history: number;
 }
 
 export interface Leader {
@@ -16,7 +18,13 @@ export interface Leader {
   drops: string;
 }
 
-const basePool: object = { pair: "", denom1: "", denom2: "", drops: "" };
+const basePool: object = {
+  pair: "",
+  denom1: "",
+  denom2: "",
+  drops: "",
+  history: 0,
+};
 
 export const Pool = {
   encode(message: Pool, writer: Writer = Writer.create()): Writer {
@@ -34,6 +42,9 @@ export const Pool = {
     }
     if (message.drops !== "") {
       writer.uint32(42).string(message.drops);
+    }
+    if (message.history !== 0) {
+      writer.uint32(48).uint64(message.history);
     }
     return writer;
   },
@@ -60,6 +71,9 @@ export const Pool = {
           break;
         case 5:
           message.drops = reader.string();
+          break;
+        case 6:
+          message.history = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -97,6 +111,11 @@ export const Pool = {
     } else {
       message.drops = "";
     }
+    if (object.history !== undefined && object.history !== null) {
+      message.history = Number(object.history);
+    } else {
+      message.history = 0;
+    }
     return message;
   },
 
@@ -113,6 +132,7 @@ export const Pool = {
       obj.leaders = [];
     }
     message.drops !== undefined && (obj.drops = message.drops);
+    message.history !== undefined && (obj.history = message.history);
     return obj;
   },
 
@@ -143,6 +163,11 @@ export const Pool = {
       message.drops = object.drops;
     } else {
       message.drops = "";
+    }
+    if (object.history !== undefined && object.history !== null) {
+      message.history = object.history;
+    } else {
+      message.history = 0;
     }
     return message;
   },
@@ -220,6 +245,16 @@ export const Leader = {
   },
 };
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -230,3 +265,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}

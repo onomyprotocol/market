@@ -7,7 +7,7 @@ export const protobufPackage = "pendulumlabs.market.market";
 export interface Order {
   uid: number;
   owner: string;
-  active: boolean;
+  status: string;
   orderType: string;
   denomAsk: string;
   denomBid: string;
@@ -15,6 +15,8 @@ export interface Order {
   rate: string[];
   prev: number;
   next: number;
+  beg_time: number;
+  end_time: number;
 }
 
 export interface Orders {
@@ -24,7 +26,7 @@ export interface Orders {
 export interface OrderResponse {
   uid: number;
   owner: string;
-  active: boolean;
+  status: string;
   orderType: string;
   denomAsk: string;
   denomBid: string;
@@ -32,12 +34,14 @@ export interface OrderResponse {
   rate: string[];
   prev: number;
   next: number;
+  beg_time: number;
+  end_time: number;
 }
 
 const baseOrder: object = {
   uid: 0,
   owner: "",
-  active: false,
+  status: "",
   orderType: "",
   denomAsk: "",
   denomBid: "",
@@ -45,6 +49,8 @@ const baseOrder: object = {
   rate: "",
   prev: 0,
   next: 0,
+  beg_time: 0,
+  end_time: 0,
 };
 
 export const Order = {
@@ -55,8 +61,8 @@ export const Order = {
     if (message.owner !== "") {
       writer.uint32(18).string(message.owner);
     }
-    if (message.active === true) {
-      writer.uint32(24).bool(message.active);
+    if (message.status !== "") {
+      writer.uint32(26).string(message.status);
     }
     if (message.orderType !== "") {
       writer.uint32(34).string(message.orderType);
@@ -79,6 +85,12 @@ export const Order = {
     if (message.next !== 0) {
       writer.uint32(80).uint64(message.next);
     }
+    if (message.beg_time !== 0) {
+      writer.uint32(88).int64(message.beg_time);
+    }
+    if (message.end_time !== 0) {
+      writer.uint32(96).int64(message.end_time);
+    }
     return writer;
   },
 
@@ -97,7 +109,7 @@ export const Order = {
           message.owner = reader.string();
           break;
         case 3:
-          message.active = reader.bool();
+          message.status = reader.string();
           break;
         case 4:
           message.orderType = reader.string();
@@ -120,6 +132,12 @@ export const Order = {
         case 10:
           message.next = longToNumber(reader.uint64() as Long);
           break;
+        case 11:
+          message.beg_time = longToNumber(reader.int64() as Long);
+          break;
+        case 12:
+          message.end_time = longToNumber(reader.int64() as Long);
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -141,10 +159,10 @@ export const Order = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = Boolean(object.active);
+    if (object.status !== undefined && object.status !== null) {
+      message.status = String(object.status);
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = String(object.orderType);
@@ -181,6 +199,16 @@ export const Order = {
     } else {
       message.next = 0;
     }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = Number(object.beg_time);
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = Number(object.end_time);
+    } else {
+      message.end_time = 0;
+    }
     return message;
   },
 
@@ -188,7 +216,7 @@ export const Order = {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     message.owner !== undefined && (obj.owner = message.owner);
-    message.active !== undefined && (obj.active = message.active);
+    message.status !== undefined && (obj.status = message.status);
     message.orderType !== undefined && (obj.orderType = message.orderType);
     message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
     message.denomBid !== undefined && (obj.denomBid = message.denomBid);
@@ -200,6 +228,8 @@ export const Order = {
     }
     message.prev !== undefined && (obj.prev = message.prev);
     message.next !== undefined && (obj.next = message.next);
+    message.beg_time !== undefined && (obj.beg_time = message.beg_time);
+    message.end_time !== undefined && (obj.end_time = message.end_time);
     return obj;
   },
 
@@ -216,10 +246,10 @@ export const Order = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = object.active;
+    if (object.status !== undefined && object.status !== null) {
+      message.status = object.status;
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = object.orderType;
@@ -255,6 +285,16 @@ export const Order = {
       message.next = object.next;
     } else {
       message.next = 0;
+    }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = object.beg_time;
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = object.end_time;
+    } else {
+      message.end_time = 0;
     }
     return message;
   },
@@ -334,7 +374,7 @@ export const Orders = {
 const baseOrderResponse: object = {
   uid: 0,
   owner: "",
-  active: false,
+  status: "",
   orderType: "",
   denomAsk: "",
   denomBid: "",
@@ -342,6 +382,8 @@ const baseOrderResponse: object = {
   rate: "",
   prev: 0,
   next: 0,
+  beg_time: 0,
+  end_time: 0,
 };
 
 export const OrderResponse = {
@@ -352,8 +394,8 @@ export const OrderResponse = {
     if (message.owner !== "") {
       writer.uint32(18).string(message.owner);
     }
-    if (message.active === true) {
-      writer.uint32(24).bool(message.active);
+    if (message.status !== "") {
+      writer.uint32(26).string(message.status);
     }
     if (message.orderType !== "") {
       writer.uint32(34).string(message.orderType);
@@ -376,6 +418,12 @@ export const OrderResponse = {
     if (message.next !== 0) {
       writer.uint32(80).uint64(message.next);
     }
+    if (message.beg_time !== 0) {
+      writer.uint32(88).int64(message.beg_time);
+    }
+    if (message.end_time !== 0) {
+      writer.uint32(96).int64(message.end_time);
+    }
     return writer;
   },
 
@@ -394,7 +442,7 @@ export const OrderResponse = {
           message.owner = reader.string();
           break;
         case 3:
-          message.active = reader.bool();
+          message.status = reader.string();
           break;
         case 4:
           message.orderType = reader.string();
@@ -417,6 +465,12 @@ export const OrderResponse = {
         case 10:
           message.next = longToNumber(reader.uint64() as Long);
           break;
+        case 11:
+          message.beg_time = longToNumber(reader.int64() as Long);
+          break;
+        case 12:
+          message.end_time = longToNumber(reader.int64() as Long);
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -438,10 +492,10 @@ export const OrderResponse = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = Boolean(object.active);
+    if (object.status !== undefined && object.status !== null) {
+      message.status = String(object.status);
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = String(object.orderType);
@@ -478,6 +532,16 @@ export const OrderResponse = {
     } else {
       message.next = 0;
     }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = Number(object.beg_time);
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = Number(object.end_time);
+    } else {
+      message.end_time = 0;
+    }
     return message;
   },
 
@@ -485,7 +549,7 @@ export const OrderResponse = {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     message.owner !== undefined && (obj.owner = message.owner);
-    message.active !== undefined && (obj.active = message.active);
+    message.status !== undefined && (obj.status = message.status);
     message.orderType !== undefined && (obj.orderType = message.orderType);
     message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
     message.denomBid !== undefined && (obj.denomBid = message.denomBid);
@@ -497,6 +561,8 @@ export const OrderResponse = {
     }
     message.prev !== undefined && (obj.prev = message.prev);
     message.next !== undefined && (obj.next = message.next);
+    message.beg_time !== undefined && (obj.beg_time = message.beg_time);
+    message.end_time !== undefined && (obj.end_time = message.end_time);
     return obj;
   },
 
@@ -513,10 +579,10 @@ export const OrderResponse = {
     } else {
       message.owner = "";
     }
-    if (object.active !== undefined && object.active !== null) {
-      message.active = object.active;
+    if (object.status !== undefined && object.status !== null) {
+      message.status = object.status;
     } else {
-      message.active = false;
+      message.status = "";
     }
     if (object.orderType !== undefined && object.orderType !== null) {
       message.orderType = object.orderType;
@@ -552,6 +618,16 @@ export const OrderResponse = {
       message.next = object.next;
     } else {
       message.next = 0;
+    }
+    if (object.beg_time !== undefined && object.beg_time !== null) {
+      message.beg_time = object.beg_time;
+    } else {
+      message.beg_time = 0;
+    }
+    if (object.end_time !== undefined && object.end_time !== null) {
+      message.end_time = object.end_time;
+    } else {
+      message.end_time = 0;
     }
     return message;
   },

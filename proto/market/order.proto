@@ -10,7 +10,7 @@ option (gogoproto.goproto_getters_all) = false;
 message Order {
   uint64 uid = 1; 
   string owner = 2; 
-  bool active = 3; 
+  string status = 3; 
   string orderType = 4; 
   string denomAsk = 5; 
   string denomBid = 6; 
@@ -24,6 +24,8 @@ message Order {
   ];
   uint64 prev = 9;
   uint64 next = 10;
+  int64 beg_time = 11;
+  int64 end_time = 12;
 }
 
 message Orders {
@@ -33,7 +35,7 @@ message Orders {
 message OrderResponse {
   uint64 uid = 1; 
   string owner = 2; 
-  bool active = 3; 
+  string status = 3; 
   string orderType = 4; 
   string denomAsk = 5; 
   string denomBid = 6; 
@@ -41,4 +43,6 @@ message OrderResponse {
   repeated string rate = 8;
   uint64 prev = 9;
   uint64 next = 10;
+  int64 beg_time = 11;
+  int64 end_time = 12;
 }

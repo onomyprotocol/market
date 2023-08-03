@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pendulum-labs/market/x/market/types"
@@ -55,6 +57,62 @@ func (k Keeper) GetAllPool(ctx sdk.Context) (list []types.Pool) {
 		var val types.Pool
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
+	}
+
+	return
+}
+
+// GetHistory returns history of pool trades
+func (k Keeper) GetHistory(
+	ctx sdk.Context,
+	pair string,
+	length string,
+) (list []types.OrderResponse, found bool) {
+
+	len, err := strconv.ParseUint(length, 10, 64)
+	if err != nil {
+		len = 0
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	pool, found := k.GetPool(ctx, pair)
+
+	if !found {
+		return nil, found
+	}
+
+	uid := pool.History
+
+	if uid == 0 {
+		return nil, found
+	}
+
+	counter := uint64(0)
+
+	for uid > 0 && (counter < len || len == 0) {
+		b := store.Get(types.OrderKey(
+			uid,
+		))
+		var order types.Order
+		k.cdc.MustUnmarshal(b, &order)
+		orderResponse := types.OrderResponse{
+			Uid:       order.Uid,
+			Owner:     order.Owner,
+			Status:    order.Status,
+			OrderType: order.OrderType,
+			DenomAsk:  order.DenomAsk,
+			DenomBid:  order.DenomBid,
+			Amount:    order.Amount.String(),
+			Rate:      []string{order.Rate[0].String(), order.Rate[1].String()},
+			Prev:      order.Prev,
+			Next:      order.Next,
+			BegTime:   order.BegTime,
+			EndTime:   order.EndTime,
+		}
+		list = append(list, orderResponse)
+		counter = counter + 1
+		uid = order.Next
 	}
 
 	return
