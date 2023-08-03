@@ -2339,6 +2339,8 @@ export interface Query {
   Book(request: QueryBookRequest): Promise<QueryBookResponse>;
   /** Queries a list of Bookends items. */
   Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse>;
+  /** Queries pool trade history. */
+  History(request: QueryHistoryRequest): Promise<QueryHistoryResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2499,6 +2501,18 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryBookendsResponse.decode(new Reader(data))
+    );
+  }
+
+  History(request: QueryHistoryRequest): Promise<QueryHistoryResponse> {
+    const data = QueryHistoryRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "History",
+      data
+    );
+    return promise.then((data) =>
+      QueryHistoryResponse.decode(new Reader(data))
     );
   }
 }

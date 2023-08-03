@@ -42,9 +42,9 @@ func CmdListPool() *cobra.Command {
 	return cmd
 }
 
-func CmdShowPool() *cobra.Command {
+func CmdPool() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-pool [pair]",
+		Use:   "pool [pair]",
 		Short: "shows a pool",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -67,6 +67,45 @@ func CmdShowPool() *cobra.Command {
 		},
 	}
 
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdHistory() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "history [pair] [length]",
+		Short: "pool trade history",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			argPair := args[0]
+			argLength := args[1]
+
+			params := &types.QueryHistoryRequest{
+				Pair:       argPair,
+				Length:     argLength,
+				Pagination: pageReq,
+			}
+
+			res, err := queryClient.History(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

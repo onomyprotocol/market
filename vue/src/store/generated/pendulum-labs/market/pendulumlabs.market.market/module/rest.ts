@@ -247,6 +247,21 @@ export interface MarketQueryGetPoolResponse {
   pool?: MarketPool;
 }
 
+export interface MarketQueryHistoryResponse {
+  history?: MarketOrderResponse[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -650,6 +665,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<MarketQueryGetDropResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop/${uid}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryHistory
+   * @summary Queries pool trade history.
+   * @request GET:/pendulum-labs/market/market/history/{pair}
+   */
+  queryHistory = (
+    pair: string,
+    query?: {
+      length?: string;
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryHistoryResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/history/${pair}`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

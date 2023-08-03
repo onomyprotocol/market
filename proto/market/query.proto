@@ -81,6 +81,11 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}";
 	}
 
+	// Queries pool trade history.
+	rpc History(QueryHistoryRequest) returns (QueryHistoryResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/history/{pair}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
