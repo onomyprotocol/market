@@ -69,9 +69,8 @@ message MsgMarketOrder {
   string denomAsk = 2;
   string denomBid = 3;
   string amountBid = 4;
-  string quoteAsk = 5;
   //Slippage is percentage based on (parameter / 1000), 9999 representing as 99.99%
-  string slippage = 6;
+  string slippage = 5;
 }
 
 message MsgMarketOrderResponse {

@@ -51,7 +51,6 @@ export interface MsgMarketOrder {
   denomAsk: string;
   denomBid: string;
   amountBid: string;
-  quoteAsk: string;
   /** Slippage is percentage based on (parameter / 1000), 9999 representing as 99.99% */
   slippage: string;
 }
@@ -765,7 +764,6 @@ const baseMsgMarketOrder: object = {
   denomAsk: "",
   denomBid: "",
   amountBid: "",
-  quoteAsk: "",
   slippage: "",
 };
 
@@ -783,11 +781,8 @@ export const MsgMarketOrder = {
     if (message.amountBid !== "") {
       writer.uint32(34).string(message.amountBid);
     }
-    if (message.quoteAsk !== "") {
-      writer.uint32(42).string(message.quoteAsk);
-    }
     if (message.slippage !== "") {
-      writer.uint32(50).string(message.slippage);
+      writer.uint32(42).string(message.slippage);
     }
     return writer;
   },
@@ -812,9 +807,6 @@ export const MsgMarketOrder = {
           message.amountBid = reader.string();
           break;
         case 5:
-          message.quoteAsk = reader.string();
-          break;
-        case 6:
           message.slippage = reader.string();
           break;
         default:
@@ -847,11 +839,6 @@ export const MsgMarketOrder = {
     } else {
       message.amountBid = "";
     }
-    if (object.quoteAsk !== undefined && object.quoteAsk !== null) {
-      message.quoteAsk = String(object.quoteAsk);
-    } else {
-      message.quoteAsk = "";
-    }
     if (object.slippage !== undefined && object.slippage !== null) {
       message.slippage = String(object.slippage);
     } else {
@@ -866,7 +853,6 @@ export const MsgMarketOrder = {
     message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
     message.denomBid !== undefined && (obj.denomBid = message.denomBid);
     message.amountBid !== undefined && (obj.amountBid = message.amountBid);
-    message.quoteAsk !== undefined && (obj.quoteAsk = message.quoteAsk);
     message.slippage !== undefined && (obj.slippage = message.slippage);
     return obj;
   },
@@ -892,11 +878,6 @@ export const MsgMarketOrder = {
       message.amountBid = object.amountBid;
     } else {
       message.amountBid = "";
-    }
-    if (object.quoteAsk !== undefined && object.quoteAsk !== null) {
-      message.quoteAsk = object.quoteAsk;
-    } else {
-      message.quoteAsk = "";
     }
     if (object.slippage !== undefined && object.slippage !== null) {
       message.slippage = object.slippage;

@@ -27,7 +27,6 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 				DenomAsk:  "20CoinA",
 				DenomBid:  "30CoinB",
 				AmountBid: "40",
-				QuoteAsk:  "20",
 				Slippage:  "20",
 			},
 		},
