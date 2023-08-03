@@ -39,12 +39,17 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	// amountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
 	amountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid)))
 
+	// Market Order Fee
+	fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
+	amountAsk = amountAsk.Sub((amountAsk.Mul(fee)).Quo(sdk.NewInt(10000)))
+
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
 	if amountAsk.Equal(sdk.NewInt(0)) {
 		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal to zero")
 	}
 
+	// Slippage includes Market Order Fee
 	// (A1*B2 - A2*B1)/(A1*B2)
 	slippage :=
 		((memberAsk.Balance.Mul(amountBid).Sub(amountAsk.Mul(memberBid.Balance))).Mul(sdk.NewInt(10000))).Quo(memberAsk.Balance.Mul(amountBid))

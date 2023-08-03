@@ -21,8 +21,7 @@ func CmdMarketOrder() *cobra.Command {
 			argDenomAsk := args[0]
 			argDenomBid := args[1]
 			argAmountBid := args[2]
-			argQuoteAsk := args[3]
-			argSlippage := args[4]
+			argSlippage := args[3]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -34,7 +33,6 @@ func CmdMarketOrder() *cobra.Command {
 				argDenomAsk,
 				argDenomBid,
 				argAmountBid,
-				argQuoteAsk,
 				argSlippage,
 			)
 			if err := msg.ValidateBasic(); err != nil {

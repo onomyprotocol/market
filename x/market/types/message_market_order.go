@@ -9,13 +9,12 @@ const TypeMsgMarketOrder = "market_order"
 
 var _ sdk.Msg = &MsgMarketOrder{}
 
-func NewMsgMarketOrder(creator string, denomAsk string, denomBid string, amountBid string, quoteAsk string, slippage string) *MsgMarketOrder {
+func NewMsgMarketOrder(creator string, denomAsk string, denomBid string, amountBid string, slippage string) *MsgMarketOrder {
 	return &MsgMarketOrder{
 		Creator:   creator,
 		DenomAsk:  denomAsk,
 		DenomBid:  denomBid,
 		AmountBid: amountBid,
-		QuoteAsk:  quoteAsk,
 		Slippage:  slippage,
 	}
 }
@@ -58,11 +57,6 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 	}
 
 	_, ok := sdk.NewIntFromString(msg.AmountBid)
-	if !ok {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
-	}
-
-	_, ok = sdk.NewIntFromString(msg.QuoteAsk)
 	if !ok {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
