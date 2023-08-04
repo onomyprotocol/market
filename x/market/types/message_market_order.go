@@ -56,13 +56,19 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bid denom")
 	}
 
-	_, ok := sdk.NewIntFromString(msg.AmountBid)
+	amount, ok := sdk.NewIntFromString(msg.AmountBid)
 	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+	if amount.LTE(sdk.ZeroInt()) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
 	slippage, ok := sdk.NewIntFromString(msg.Slippage)
 	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
+	}
+	if slippage.IsNegative() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
 	}
 	if slippage.GT(sdk.NewInt(9999)) {

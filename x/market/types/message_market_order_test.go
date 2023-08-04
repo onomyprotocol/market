@@ -20,7 +20,8 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "valid address",
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
@@ -29,6 +30,71 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 				AmountBid: "40",
 				Slippage:  "20",
 			},
+		},
+		{
+			name: "max slippage",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "40",
+				Slippage:  "9999",
+			},
+		},
+		{
+			name: "too large slippage",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "40",
+				Slippage:  "10000",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "negative slippage",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "40",
+				Slippage:  "-1",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "negative bid",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "-1",
+				Slippage:  "20",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "zero bid",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "0",
+				Slippage:  "20",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "invalid ask",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "-20CoinA",
+				DenomBid:  "30CoinB",
+				AmountBid: "40",
+				Slippage:  "20",
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
