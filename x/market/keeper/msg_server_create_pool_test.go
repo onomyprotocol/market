@@ -81,6 +81,8 @@ func TestCreatePool_PoolAlreadyExist(t *testing.T) {
 	}{
 		{coinAStr: "20CoinA", coinBStr: "20CoinB", RateAstrArray: []string{"10", "20"}, RateBstrArray: []string{"20", "30"}},
 		{coinAStr: "20CoinA", coinBStr: "20CoinB", RateAstrArray: []string{"10", "20"}, RateBstrArray: []string{"20", "30"}},
+		// check reversed
+		{coinAStr: "20CoinB", coinBStr: "20CoinA", RateAstrArray: []string{"20", "30"}, RateBstrArray: []string{"10", "20"}},
 	}
 	for _, s := range scenarios {
 		coinPair, _ := sample.SampleCoins("20CoinA", "20CoinB")
