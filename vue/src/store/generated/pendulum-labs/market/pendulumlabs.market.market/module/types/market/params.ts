@@ -14,7 +14,7 @@ export interface Params {
   burn_rate: string;
   /** burn coin */
   burn_coin: string;
-  /** market_fee (parameter / 1000), 9999 representing as 99.99% */
+  /** market_fee (parameter / 10000), 9999 representing as 99.99% */
   market_fee: string;
 }
 

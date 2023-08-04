@@ -76,7 +76,7 @@ func CmdHistory() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "history [pair] [length]",
 		Short: "pool trade history",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 

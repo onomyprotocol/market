@@ -32,7 +32,7 @@ type Params struct {
 	BurnRate string `protobuf:"bytes,2,opt,name=burn_rate,json=burnRate,proto3" json:"burn_rate,omitempty"`
 	// burn coin
 	BurnCoin string `protobuf:"bytes,3,opt,name=burn_coin,json=burnCoin,proto3" json:"burn_coin,omitempty"`
-	// market_fee (parameter / 1000), 9999 representing as 99.99%
+	// market_fee (parameter / 10000), 9999 representing as 99.99%
 	MarketFee string `protobuf:"bytes,4,opt,name=market_fee,json=marketFee,proto3" json:"market_fee,omitempty"`
 }
 

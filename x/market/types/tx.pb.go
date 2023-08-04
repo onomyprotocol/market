@@ -536,7 +536,7 @@ type MsgMarketOrder struct {
 	DenomAsk  string `protobuf:"bytes,2,opt,name=denomAsk,proto3" json:"denomAsk,omitempty"`
 	DenomBid  string `protobuf:"bytes,3,opt,name=denomBid,proto3" json:"denomBid,omitempty"`
 	AmountBid string `protobuf:"bytes,4,opt,name=amountBid,proto3" json:"amountBid,omitempty"`
-	//Slippage is percentage based on (parameter / 1000), 9999 representing as 99.99%
+	//Slippage is percentage based on (parameter / 10000), 9999 representing as 99.99%
 	Slippage string `protobuf:"bytes,5,opt,name=slippage,proto3" json:"slippage,omitempty"`
 }
 

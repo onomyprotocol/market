@@ -159,6 +159,7 @@ func (k Keeper) GetBook(
 			Rate:      []string{order.Rate[0].String(), order.Rate[1].String()},
 			Prev:      order.Prev,
 			Next:      order.Next,
+			BegTime:   order.BegTime,
 		}
 		list = append(list, orderResponse)
 		uid = order.Next

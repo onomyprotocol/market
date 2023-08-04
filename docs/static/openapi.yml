@@ -29944,7 +29944,9 @@ paths:
                     title: burn coin
                   market_fee:
                     type: string
-                    title: 'market_fee (parameter / 1000), 9999 representing as 99.99%'
+                    title: >-
+                      market_fee (parameter / 10000), 9999 representing as
+                      99.99%
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -49480,7 +49482,7 @@ definitions:
         title: burn coin
       market_fee:
         type: string
-        title: 'market_fee (parameter / 1000), 9999 representing as 99.99%'
+        title: 'market_fee (parameter / 10000), 9999 representing as 99.99%'
     description: Params defines the parameters for the module.
   pendulumlabs.market.market.Pool:
     type: object
@@ -50035,5 +50037,5 @@ definitions:
             title: burn coin
           market_fee:
             type: string
-            title: 'market_fee (parameter / 1000), 9999 representing as 99.99%'
+            title: 'market_fee (parameter / 10000), 9999 representing as 99.99%'
     description: QueryParamsResponse is response type for the Query/Params RPC method.

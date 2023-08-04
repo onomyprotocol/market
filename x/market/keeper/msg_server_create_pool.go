@@ -64,6 +64,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Denom1:  coinPair.GetDenomByIndex(0),
 		Denom2:  coinPair.GetDenomByIndex(1),
 		Drops:   drops,
+		History: uint64(0),
 	}
 
 	// Create the uid

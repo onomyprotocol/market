@@ -377,14 +377,15 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
 		limitHead.Prev = 0
-		pool.History = limitHead.Uid
 
 		if pool.History == 0 {
 			limitHead.Next = 0
+			pool.History = limitHead.Uid
 		} else {
 			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
 			prevFilledOrder.Prev = limitHead.Uid
 			limitHead.Next = prevFilledOrder.Uid
+			pool.History = limitHead.Uid
 			k.SetOrder(ctx, prevFilledOrder)
 		}
 	} else {
