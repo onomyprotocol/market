@@ -46,13 +46,13 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	coinAsk, _ := sdk.ParseCoinNormalized(msg.DenomAsk)
-	if !coinAsk.IsValid() {
+	err = sdk.ValidateDenom(msg.DenomAsk)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid ask denom")
 	}
 
-	coinBid, _ := sdk.ParseCoinNormalized(msg.DenomBid)
-	if !coinBid.IsValid() {
+	err = sdk.ValidateDenom(msg.DenomBid)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bid denom")
 	}
 

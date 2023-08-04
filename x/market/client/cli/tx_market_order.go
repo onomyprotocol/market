@@ -14,9 +14,9 @@ var _ = strconv.Itoa(0)
 
 func CmdMarketOrder() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "market-order [denom-ask] [denom-bid] [amount-bid] [quote-ask] [slippage]",
+		Use:   "market-order [denom-ask] [denom-bid] [amount-bid] [slippage]",
 		Short: "Broadcast message market-order",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argDenomAsk := args[0]
 			argDenomBid := args[1]
