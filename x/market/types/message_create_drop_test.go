@@ -20,9 +20,50 @@ func TestMsgCreateDrop_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "valid address",
-			msg:  MsgCreateDrop{Creator: sample.AccAddress(), Pair: "CoinA,CoinB", Drops: "70"},
+			msg: MsgCreateDrop{
+				Creator: sample.AccAddress(),
+				Pair:    "CoinA,CoinB",
+				Drops:   "70",
+			},
+		},
+		{
+			name: "not a pair",
+			msg: MsgCreateDrop{
+				Creator: sample.AccAddress(),
+				Pair:    "CoinACoinB",
+				Drops:   "70",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "not a pair",
+			msg: MsgCreateDrop{
+				Creator: sample.AccAddress(),
+				Pair:    "CoinA,CoinB,CoinC",
+				Drops:   "70",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "negative drops",
+			msg: MsgCreateDrop{
+				Creator: sample.AccAddress(),
+				Pair:    "CoinA,CoinB",
+				Drops:   "-1",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "zero drops",
+			msg: MsgCreateDrop{
+				Creator: sample.AccAddress(),
+				Pair:    "CoinA,CoinB",
+				Drops:   "0",
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
