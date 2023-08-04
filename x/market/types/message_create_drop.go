@@ -59,7 +59,7 @@ func (msg *MsgCreateDrop) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not a valid integer")
 	}
 
-	if !drops.GT(sdk.NewInt(0)) {
+	if !drops.GT(sdk.ZeroInt()) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not >0")
 	}
 

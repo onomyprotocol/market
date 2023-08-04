@@ -20,9 +20,41 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "valid address",
-			msg:  MsgCreatePool{CoinA: "20CoinA", CoinB: "20CoinB", Creator: sample.AccAddress()},
+			msg: MsgCreatePool{
+				CoinA:   "20CoinA",
+				CoinB:   "20CoinB",
+				Creator: sample.AccAddress(),
+			},
+		},
+		{
+			name: "equal denoms",
+			msg: MsgCreatePool{
+				CoinA:   "20CoinA",
+				CoinB:   "20CoinA",
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "invalid coin A",
+			msg: MsgCreatePool{
+				CoinA:   "-20CoinA",
+				CoinB:   "20CoinV",
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "invalid coin B",
+			msg: MsgCreatePool{
+				CoinA:   "20CoinA",
+				CoinB:   "-20CoinV",
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {

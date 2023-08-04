@@ -108,7 +108,7 @@ func (k Keeper) GetDropsSum(
 		pair,
 	))
 	if b == nil {
-		return sdk.NewInt(0), false
+		return sdk.ZeroInt(), false
 	}
 
 	var val types.DropsSum

@@ -47,7 +47,7 @@ func (msg *MsgRedeemDrop) ValidateBasic() error {
 
 	_, err = strconv.ParseUint(msg.Uid, 10, 64)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "drop uid is not an integer")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "drop uid is not an integer or is negative")
 	}
 
 	return nil

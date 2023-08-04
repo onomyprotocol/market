@@ -46,23 +46,29 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	coinAsk, _ := sdk.ParseCoinNormalized(msg.DenomAsk)
-	if !coinAsk.IsValid() {
+	err = sdk.ValidateDenom(msg.DenomAsk)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid ask denom")
 	}
 
-	coinBid, _ := sdk.ParseCoinNormalized(msg.DenomBid)
-	if !coinBid.IsValid() {
+	err = sdk.ValidateDenom(msg.DenomBid)
+	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bid denom")
 	}
 
-	_, ok := sdk.NewIntFromString(msg.AmountBid)
+	amount, ok := sdk.NewIntFromString(msg.AmountBid)
 	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+	if amount.LTE(sdk.ZeroInt()) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
 	slippage, ok := sdk.NewIntFromString(msg.Slippage)
 	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
+	}
+	if slippage.IsNegative() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
 	}
 	if slippage.GT(sdk.NewInt(9999)) {

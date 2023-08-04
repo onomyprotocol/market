@@ -36,7 +36,7 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	// Inactive pool will be dry or have no drops
 	pool, found := k.GetPool(ctx, pair)
 	if found {
-		if !pool.Drops.Equal(sdk.NewInt(0)) {
+		if !pool.Drops.Equal(sdk.ZeroInt()) {
 			return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
 		}
 	}

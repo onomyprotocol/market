@@ -27,7 +27,7 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "%s", pair)
 	}
 
-	if pool.Drops.Equal(sdk.NewInt(0)) {
+	if pool.Drops.Equal(sdk.ZeroInt()) {
 		return nil, sdkerrors.Wrapf(types.ErrPoolInactive, "%s", pair)
 	}
 
@@ -48,13 +48,13 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	dropAmtMember1 := (drops.Mul(member1.Balance)).Quo(pool.Drops)
 
-	if !dropAmtMember1.GT(sdk.NewInt(0)) {
+	if !dropAmtMember1.GT(sdk.ZeroInt()) {
 		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "%s", denom1)
 	}
 
 	dropAmtMember2 := (drops.Mul(member2.Balance)).Quo(pool.Drops)
 
-	if !dropAmtMember2.GT(sdk.NewInt(0)) {
+	if !dropAmtMember2.GT(sdk.ZeroInt()) {
 		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "%s", denom2)
 	}
 

@@ -20,12 +20,21 @@ func TestMsgRedeemDrop_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "valid address",
 			msg: MsgRedeemDrop{
 				Creator: sample.AccAddress(),
 				Uid:     "0",
 			},
+		},
+		{
+			name: "negative uid",
+			msg: MsgRedeemDrop{
+				Creator: sample.AccAddress(),
+				Uid:     "-1",
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {

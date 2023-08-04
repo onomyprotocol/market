@@ -111,7 +111,7 @@ func validateEarnRates(i interface{}) error {
 		if !ok {
 			return fmt.Errorf("invalid string number format: %q", v)
 		}
-		if earnRates[i].LTE(sdk.NewInt(0)) {
+		if earnRates[i].LTE(sdk.ZeroInt()) {
 			return fmt.Errorf("earn rate numerator must be positive and greater than zero: %d", earnRates[i])
 		}
 		if earnRates[i].GTE(sdk.NewInt(10000)) {
@@ -137,7 +137,7 @@ func validateBurnRate(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid string number format: %q", value)
 	}
-	if burnRate.LTE(sdk.NewInt(0)) {
+	if burnRate.LTE(sdk.ZeroInt()) {
 		return fmt.Errorf("burn rate numerator must be positive and greater than zero: %d", burnRate)
 	}
 	if burnRate.GTE(sdk.NewInt(10000)) {
@@ -166,7 +166,7 @@ func validateMarketFee(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid string number format: %q", value)
 	}
-	if marketFee.LTE(sdk.NewInt(0)) {
+	if marketFee.LTE(sdk.ZeroInt()) {
 		return fmt.Errorf("market fee numerator must be positive and greater than zero: %d", marketFee)
 	}
 	if marketFee.GTE(sdk.NewInt(10000)) {
