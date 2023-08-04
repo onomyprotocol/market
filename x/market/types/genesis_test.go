@@ -31,7 +31,7 @@ func TestGenesisState_Validate(t *testing.T) {
 						Leaders: []*types.Leader{
 							{
 								Address: "0",
-								Drops:   sdk.NewInt(0),
+								Drops:   sdk.ZeroInt(),
 							},
 						},
 						Drops: sdk.NewIntFromUint64(uint64(0)),
@@ -138,7 +138,7 @@ func TestGenesisState_Validate(t *testing.T) {
 						Leaders: []*types.Leader{
 							{
 								Address: "0",
-								Drops:   sdk.NewInt(0),
+								Drops:   sdk.ZeroInt(),
 							},
 						},
 						Drops: sdk.NewIntFromUint64(uint64(0)),
@@ -150,7 +150,7 @@ func TestGenesisState_Validate(t *testing.T) {
 						Leaders: []*types.Leader{
 							{
 								Address: "0",
-								Drops:   sdk.NewInt(0),
+								Drops:   sdk.ZeroInt(),
 							},
 						},
 						Drops: sdk.NewIntFromUint64(uint64(0)),

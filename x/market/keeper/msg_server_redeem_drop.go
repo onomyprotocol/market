@@ -62,9 +62,9 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRate sdk.Int
 	var earnings1 sdk.Int
-	earnings1Total := sdk.NewInt(0)
+	earnings1Total := sdk.ZeroInt()
 	var earnings2 sdk.Int
-	earnings2Total := sdk.NewInt(0)
+	earnings2Total := sdk.ZeroInt()
 	var coinLeader1 sdk.Coin
 	var coinLeader2 sdk.Coin
 	var coinsLeader sdk.Coins
@@ -116,7 +116,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	// Re-order leader board to reflect new rankings
 	if flag {
-		if sumDropRedeemer.GT(sdk.NewInt(0)) {
+		if sumDropRedeemer.GT(sdk.ZeroInt()) {
 			if numLeaders > 1 {
 				for i := index + 1; i < numLeaders; i++ {
 					if sumDropRedeemer.LT(pool.Leaders[i].Drops) {

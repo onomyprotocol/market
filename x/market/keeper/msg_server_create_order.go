@@ -15,7 +15,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	amount, _ := sdk.NewIntFromString(msg.Amount)
-	if amount == sdk.NewInt(0) {
+	if amount == sdk.ZeroInt() {
 		sdkerrors.Wrapf(types.ErrInvalidOrderAmount, "Amount must be greater than zero")
 	}
 
@@ -368,7 +368,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
-	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+	if strikeAmountAsk.Equal(sdk.ZeroInt()) {
 		return false, nil
 	}
 
@@ -465,7 +465,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
-	if strikeAmountAsk.Equal(sdk.NewInt(0)) {
+	if strikeAmountAsk.Equal(sdk.ZeroInt()) {
 		return false, nil
 	}
 

@@ -45,7 +45,7 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
-	if amountAsk.Equal(sdk.NewInt(0)) {
+	if amountAsk.Equal(sdk.ZeroInt()) {
 		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal to zero")
 	}
 
