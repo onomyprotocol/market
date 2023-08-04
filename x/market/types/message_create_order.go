@@ -55,13 +55,26 @@ func (msg *MsgCreateOrder) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid order type")
 	}
 
+	err = sdk.ValidateDenom(msg.DenomAsk)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "denomAsk is not a valid denom")
+	}
+
+	err = sdk.ValidateDenom(msg.DenomBid)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "denomBid is not a valid denom")
+	}
+
 	amount, ok := sdk.NewIntFromString(msg.Amount)
 	if !ok {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
-
 	if amount.LTE(sdk.NewInt(0)) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+
+	if len(msg.Rate) != 2 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid rate that is not a ratio of two integers")
 	}
 
 	// Rate[0] needs to fit into uint64 to avoid numerical errors
