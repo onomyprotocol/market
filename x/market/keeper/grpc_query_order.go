@@ -68,7 +68,7 @@ func (k Keeper) Book(goCtx context.Context, req *types.QueryBookRequest) (*types
 	return &types.QueryBookResponse{Book: book}, nil
 }
 
-func (k Keeper) OrderOwned(c context.Context, req *types.QueryOrderOwnedRequest) (*types.QueryOrderOwnedResponse, error) {
+func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrderOwnerResponse, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -76,12 +76,12 @@ func (k Keeper) OrderOwned(c context.Context, req *types.QueryOrderOwnedRequest)
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	orders := k.GetOwnedOrders(ctx, req.Address)
+	orders := k.GetOwnerOrders(ctx, req.Address)
 
-	return &types.QueryOrderOwnedResponse{Order: orders}, nil
+	return &types.QueryOrderOwnerResponse{Order: orders}, nil
 }
 
-func (k Keeper) OrderOwnedPair(c context.Context, req *types.QueryOrderOwnedPairRequest) (*types.QueryOrderOwnedPairResponse, error) {
+func (k Keeper) OrderOwnerPair(c context.Context, req *types.QueryOrderOwnerPairRequest) (*types.QueryOrderOwnerPairResponse, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -89,7 +89,7 @@ func (k Keeper) OrderOwnedPair(c context.Context, req *types.QueryOrderOwnedPair
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	orders := k.GetOwnedPairOrders(ctx, req.Address, req.Pair)
+	orders := k.GetOwnerPairOrders(ctx, req.Address, req.Pair)
 
-	return &types.QueryOrderOwnedPairResponse{Order: orders}, nil
+	return &types.QueryOrderOwnerPairResponse{Order: orders}, nil
 }

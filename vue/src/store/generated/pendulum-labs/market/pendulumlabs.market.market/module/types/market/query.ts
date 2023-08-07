@@ -109,23 +109,23 @@ export interface QueryAllOrderResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryOrderOwnedRequest {
+export interface QueryOrderOwnerRequest {
   address: string;
   pagination: PageRequest | undefined;
 }
 
-export interface QueryOrderOwnedResponse {
+export interface QueryOrderOwnerResponse {
   order: Order[];
   pagination: PageResponse | undefined;
 }
 
-export interface QueryOrderOwnedPairRequest {
+export interface QueryOrderOwnerPairRequest {
   address: string;
   pair: string;
   pagination: PageRequest | undefined;
 }
 
-export interface QueryOrderOwnedPairResponse {
+export interface QueryOrderOwnerPairResponse {
   order: Order[];
   pagination: PageResponse | undefined;
 }
@@ -1669,11 +1669,11 @@ export const QueryAllOrderResponse = {
   },
 };
 
-const baseQueryOrderOwnedRequest: object = { address: "" };
+const baseQueryOrderOwnerRequest: object = { address: "" };
 
-export const QueryOrderOwnedRequest = {
+export const QueryOrderOwnerRequest = {
   encode(
-    message: QueryOrderOwnedRequest,
+    message: QueryOrderOwnerRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.address !== "") {
@@ -1685,10 +1685,10 @@ export const QueryOrderOwnedRequest = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryOrderOwnedRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryOrderOwnerRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryOrderOwnedRequest } as QueryOrderOwnedRequest;
+    const message = { ...baseQueryOrderOwnerRequest } as QueryOrderOwnerRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1706,8 +1706,8 @@ export const QueryOrderOwnedRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryOrderOwnedRequest {
-    const message = { ...baseQueryOrderOwnedRequest } as QueryOrderOwnedRequest;
+  fromJSON(object: any): QueryOrderOwnerRequest {
+    const message = { ...baseQueryOrderOwnerRequest } as QueryOrderOwnerRequest;
     if (object.address !== undefined && object.address !== null) {
       message.address = String(object.address);
     } else {
@@ -1721,7 +1721,7 @@ export const QueryOrderOwnedRequest = {
     return message;
   },
 
-  toJSON(message: QueryOrderOwnedRequest): unknown {
+  toJSON(message: QueryOrderOwnerRequest): unknown {
     const obj: any = {};
     message.address !== undefined && (obj.address = message.address);
     message.pagination !== undefined &&
@@ -1732,9 +1732,9 @@ export const QueryOrderOwnedRequest = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryOrderOwnedRequest>
-  ): QueryOrderOwnedRequest {
-    const message = { ...baseQueryOrderOwnedRequest } as QueryOrderOwnedRequest;
+    object: DeepPartial<QueryOrderOwnerRequest>
+  ): QueryOrderOwnerRequest {
+    const message = { ...baseQueryOrderOwnerRequest } as QueryOrderOwnerRequest;
     if (object.address !== undefined && object.address !== null) {
       message.address = object.address;
     } else {
@@ -1749,11 +1749,11 @@ export const QueryOrderOwnedRequest = {
   },
 };
 
-const baseQueryOrderOwnedResponse: object = {};
+const baseQueryOrderOwnerResponse: object = {};
 
-export const QueryOrderOwnedResponse = {
+export const QueryOrderOwnerResponse = {
   encode(
-    message: QueryOrderOwnedResponse,
+    message: QueryOrderOwnerResponse,
     writer: Writer = Writer.create()
   ): Writer {
     for (const v of message.order) {
@@ -1768,12 +1768,12 @@ export const QueryOrderOwnedResponse = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryOrderOwnedResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryOrderOwnerResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryOrderOwnedResponse,
-    } as QueryOrderOwnedResponse;
+      ...baseQueryOrderOwnerResponse,
+    } as QueryOrderOwnerResponse;
     message.order = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -1792,10 +1792,10 @@ export const QueryOrderOwnedResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryOrderOwnedResponse {
+  fromJSON(object: any): QueryOrderOwnerResponse {
     const message = {
-      ...baseQueryOrderOwnedResponse,
-    } as QueryOrderOwnedResponse;
+      ...baseQueryOrderOwnerResponse,
+    } as QueryOrderOwnerResponse;
     message.order = [];
     if (object.order !== undefined && object.order !== null) {
       for (const e of object.order) {
@@ -1810,7 +1810,7 @@ export const QueryOrderOwnedResponse = {
     return message;
   },
 
-  toJSON(message: QueryOrderOwnedResponse): unknown {
+  toJSON(message: QueryOrderOwnerResponse): unknown {
     const obj: any = {};
     if (message.order) {
       obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
@@ -1825,11 +1825,11 @@ export const QueryOrderOwnedResponse = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryOrderOwnedResponse>
-  ): QueryOrderOwnedResponse {
+    object: DeepPartial<QueryOrderOwnerResponse>
+  ): QueryOrderOwnerResponse {
     const message = {
-      ...baseQueryOrderOwnedResponse,
-    } as QueryOrderOwnedResponse;
+      ...baseQueryOrderOwnerResponse,
+    } as QueryOrderOwnerResponse;
     message.order = [];
     if (object.order !== undefined && object.order !== null) {
       for (const e of object.order) {
@@ -1845,11 +1845,11 @@ export const QueryOrderOwnedResponse = {
   },
 };
 
-const baseQueryOrderOwnedPairRequest: object = { address: "", pair: "" };
+const baseQueryOrderOwnerPairRequest: object = { address: "", pair: "" };
 
-export const QueryOrderOwnedPairRequest = {
+export const QueryOrderOwnerPairRequest = {
   encode(
-    message: QueryOrderOwnedPairRequest,
+    message: QueryOrderOwnerPairRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.address !== "") {
@@ -1867,12 +1867,12 @@ export const QueryOrderOwnedPairRequest = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryOrderOwnedPairRequest {
+  ): QueryOrderOwnerPairRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryOrderOwnedPairRequest,
-    } as QueryOrderOwnedPairRequest;
+      ...baseQueryOrderOwnerPairRequest,
+    } as QueryOrderOwnerPairRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1893,10 +1893,10 @@ export const QueryOrderOwnedPairRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryOrderOwnedPairRequest {
+  fromJSON(object: any): QueryOrderOwnerPairRequest {
     const message = {
-      ...baseQueryOrderOwnedPairRequest,
-    } as QueryOrderOwnedPairRequest;
+      ...baseQueryOrderOwnerPairRequest,
+    } as QueryOrderOwnerPairRequest;
     if (object.address !== undefined && object.address !== null) {
       message.address = String(object.address);
     } else {
@@ -1915,7 +1915,7 @@ export const QueryOrderOwnedPairRequest = {
     return message;
   },
 
-  toJSON(message: QueryOrderOwnedPairRequest): unknown {
+  toJSON(message: QueryOrderOwnerPairRequest): unknown {
     const obj: any = {};
     message.address !== undefined && (obj.address = message.address);
     message.pair !== undefined && (obj.pair = message.pair);
@@ -1927,11 +1927,11 @@ export const QueryOrderOwnedPairRequest = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryOrderOwnedPairRequest>
-  ): QueryOrderOwnedPairRequest {
+    object: DeepPartial<QueryOrderOwnerPairRequest>
+  ): QueryOrderOwnerPairRequest {
     const message = {
-      ...baseQueryOrderOwnedPairRequest,
-    } as QueryOrderOwnedPairRequest;
+      ...baseQueryOrderOwnerPairRequest,
+    } as QueryOrderOwnerPairRequest;
     if (object.address !== undefined && object.address !== null) {
       message.address = object.address;
     } else {
@@ -1951,11 +1951,11 @@ export const QueryOrderOwnedPairRequest = {
   },
 };
 
-const baseQueryOrderOwnedPairResponse: object = {};
+const baseQueryOrderOwnerPairResponse: object = {};
 
-export const QueryOrderOwnedPairResponse = {
+export const QueryOrderOwnerPairResponse = {
   encode(
-    message: QueryOrderOwnedPairResponse,
+    message: QueryOrderOwnerPairResponse,
     writer: Writer = Writer.create()
   ): Writer {
     for (const v of message.order) {
@@ -1973,12 +1973,12 @@ export const QueryOrderOwnedPairResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryOrderOwnedPairResponse {
+  ): QueryOrderOwnerPairResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryOrderOwnedPairResponse,
-    } as QueryOrderOwnedPairResponse;
+      ...baseQueryOrderOwnerPairResponse,
+    } as QueryOrderOwnerPairResponse;
     message.order = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -1997,10 +1997,10 @@ export const QueryOrderOwnedPairResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryOrderOwnedPairResponse {
+  fromJSON(object: any): QueryOrderOwnerPairResponse {
     const message = {
-      ...baseQueryOrderOwnedPairResponse,
-    } as QueryOrderOwnedPairResponse;
+      ...baseQueryOrderOwnerPairResponse,
+    } as QueryOrderOwnerPairResponse;
     message.order = [];
     if (object.order !== undefined && object.order !== null) {
       for (const e of object.order) {
@@ -2015,7 +2015,7 @@ export const QueryOrderOwnedPairResponse = {
     return message;
   },
 
-  toJSON(message: QueryOrderOwnedPairResponse): unknown {
+  toJSON(message: QueryOrderOwnerPairResponse): unknown {
     const obj: any = {};
     if (message.order) {
       obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
@@ -2030,11 +2030,11 @@ export const QueryOrderOwnedPairResponse = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryOrderOwnedPairResponse>
-  ): QueryOrderOwnedPairResponse {
+    object: DeepPartial<QueryOrderOwnerPairResponse>
+  ): QueryOrderOwnerPairResponse {
     const message = {
-      ...baseQueryOrderOwnedPairResponse,
-    } as QueryOrderOwnedPairResponse;
+      ...baseQueryOrderOwnerPairResponse,
+    } as QueryOrderOwnerPairResponse;
     message.order = [];
     if (object.order !== undefined && object.order !== null) {
       for (const e of object.order) {
@@ -2738,11 +2738,11 @@ export interface Query {
   /** Queries a list of Order items. */
   OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse>;
   /** Queries a list of Order items. */
-  OrderOwned(request: QueryOrderOwnedRequest): Promise<QueryOrderOwnedResponse>;
+  OrderOwner(request: QueryOrderOwnerRequest): Promise<QueryOrderOwnerResponse>;
   /** Queries a list of Order items. */
-  OrderOwnedPair(
-    request: QueryOrderOwnedPairRequest
-  ): Promise<QueryOrderOwnedPairResponse>;
+  OrderOwnerPair(
+    request: QueryOrderOwnerPairRequest
+  ): Promise<QueryOrderOwnerPairResponse>;
   /** Queries a list of Book items. */
   Book(request: QueryBookRequest): Promise<QueryBookResponse>;
   /** Queries a list of Bookends items. */
@@ -2890,31 +2890,31 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  OrderOwned(
-    request: QueryOrderOwnedRequest
-  ): Promise<QueryOrderOwnedResponse> {
-    const data = QueryOrderOwnedRequest.encode(request).finish();
+  OrderOwner(
+    request: QueryOrderOwnerRequest
+  ): Promise<QueryOrderOwnerResponse> {
+    const data = QueryOrderOwnerRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulumlabs.market.market.Query",
-      "OrderOwned",
+      "OrderOwner",
       data
     );
     return promise.then((data) =>
-      QueryOrderOwnedResponse.decode(new Reader(data))
+      QueryOrderOwnerResponse.decode(new Reader(data))
     );
   }
 
-  OrderOwnedPair(
-    request: QueryOrderOwnedPairRequest
-  ): Promise<QueryOrderOwnedPairResponse> {
-    const data = QueryOrderOwnedPairRequest.encode(request).finish();
+  OrderOwnerPair(
+    request: QueryOrderOwnerPairRequest
+  ): Promise<QueryOrderOwnerPairResponse> {
+    const data = QueryOrderOwnerPairRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulumlabs.market.market.Query",
-      "OrderOwnedPair",
+      "OrderOwnerPair",
       data
     );
     return promise.then((data) =>
-      QueryOrderOwnedPairResponse.decode(new Reader(data))
+      QueryOrderOwnerPairResponse.decode(new Reader(data))
     );
   }
 

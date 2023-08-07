@@ -58,8 +58,8 @@ func (k Keeper) GetOrder(
 	return val, true
 }
 
-// GetOwnedOrders returns orders from a single owner
-func (k Keeper) GetOwnedOrders(
+// GetOwnerOrders returns orders from a single owner
+func (k Keeper) GetOwnerOrders(
 	ctx sdk.Context,
 	owner string,
 ) (list []types.Order) {
@@ -94,8 +94,8 @@ func (k Keeper) GetOwnedOrders(
 	return
 }
 
-// GetOwnedOrders returns orders from a single owner
-func (k Keeper) GetOwnedPairOrders(
+// GetOwnerOrders returns orders from a single owner
+func (k Keeper) GetOwnerPairOrders(
 	ctx sdk.Context,
 	owner string,
 	pair string,

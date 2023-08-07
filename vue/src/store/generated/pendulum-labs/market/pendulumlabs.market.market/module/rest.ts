@@ -262,7 +262,7 @@ export interface MarketQueryHistoryResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryOrderOwnedPairResponse {
+export interface MarketQueryOrderOwnerPairResponse {
   order?: MarketOrder[];
 
   /**
@@ -277,7 +277,7 @@ export interface MarketQueryOrderOwnedPairResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryOrderOwnedResponse {
+export interface MarketQueryOrderOwnerResponse {
   order?: MarketOrder[];
 
   /**
@@ -799,11 +799,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryOrderOwned
+   * @name QueryOrderOwner
    * @summary Queries a list of Order items.
    * @request GET:/pendulum-labs/market/market/order/{address}
    */
-  queryOrderOwned = (
+  queryOrderOwner = (
     address: string,
     query?: {
       "pagination.key"?: string;
@@ -814,7 +814,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryOrderOwnedResponse, RpcStatus>({
+    this.request<MarketQueryOrderOwnerResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order/${address}`,
       method: "GET",
       query: query,
@@ -826,11 +826,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryOrderOwnedPair
+   * @name QueryOrderOwnerPair
    * @summary Queries a list of Order items.
    * @request GET:/pendulum-labs/market/market/order/{address}/{pair}
    */
-  queryOrderOwnedPair = (
+  queryOrderOwnerPair = (
     address: string,
     pair: string,
     query?: {
@@ -842,7 +842,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryOrderOwnedPairResponse, RpcStatus>({
+    this.request<MarketQueryOrderOwnerPairResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order/${address}/${pair}`,
       method: "GET",
       query: query,

@@ -29850,7 +29850,7 @@ paths:
   '/pendulum-labs/market/market/order/{address}':
     get:
       summary: Queries a list of Order items.
-      operationId: PendulumlabsMarketMarketOrderOwned
+      operationId: PendulumlabsMarketMarketOrderOwner
       responses:
         '200':
           description: A successful response.
@@ -30004,7 +30004,7 @@ paths:
   '/pendulum-labs/market/market/order/{address}/{pair}':
     get:
       summary: Queries a list of Order items.
-      operationId: PendulumlabsMarketMarketOrderOwnedPair
+      operationId: PendulumlabsMarketMarketOrderOwnerPair
       responses:
         '200':
           description: A successful response.
@@ -50329,7 +50329,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryOrderOwnedPairResponse:
+  pendulumlabs.market.market.QueryOrderOwnerPairResponse:
     type: object
     properties:
       order:
@@ -50393,7 +50393,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryOrderOwnedResponse:
+  pendulumlabs.market.market.QueryOrderOwnerResponse:
     type: object
     properties:
       order:

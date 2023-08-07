@@ -62,8 +62,8 @@ const getDefaultState = () => {
 				BurningsAll: {},
 				Order: {},
 				OrderAll: {},
-				OrderOwned: {},
-				OrderOwnedPair: {},
+				OrderOwner: {},
+				OrderOwnerPair: {},
 				Book: {},
 				Bookends: {},
 				History: {},
@@ -174,17 +174,17 @@ export default {
 					}
 			return state.OrderAll[JSON.stringify(params)] ?? {}
 		},
-				getOrderOwned: (state) => (params = { params: {}}) => {
+				getOrderOwner: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
 						(<any> params).query=null
 					}
-			return state.OrderOwned[JSON.stringify(params)] ?? {}
+			return state.OrderOwner[JSON.stringify(params)] ?? {}
 		},
-				getOrderOwnedPair: (state) => (params = { params: {}}) => {
+				getOrderOwnerPair: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
 						(<any> params).query=null
 					}
-			return state.OrderOwnedPair[JSON.stringify(params)] ?? {}
+			return state.OrderOwnerPair[JSON.stringify(params)] ?? {}
 		},
 				getBook: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -505,22 +505,22 @@ export default {
 		 		
 		
 		
-		async QueryOrderOwned({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+		async QueryOrderOwner({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryOrderOwned( key.address, query)).data
+				let value= (await queryClient.queryOrderOwner( key.address, query)).data
 				
 					
 				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
-					let next_values=(await queryClient.queryOrderOwned( key.address, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					let next_values=(await queryClient.queryOrderOwner( key.address, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
 					value = mergeResults(value, next_values);
 				}
-				commit('QUERY', { query: 'OrderOwned', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryOrderOwned', payload: { options: { all }, params: {...key},query }})
-				return getters['getOrderOwned']( { params: {...key}, query}) ?? {}
+				commit('QUERY', { query: 'OrderOwner', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryOrderOwner', payload: { options: { all }, params: {...key},query }})
+				return getters['getOrderOwner']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryOrderOwned API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryOrderOwner API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -531,22 +531,22 @@ export default {
 		 		
 		
 		
-		async QueryOrderOwnedPair({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+		async QueryOrderOwnerPair({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryOrderOwnedPair( key.address,  key.pair, query)).data
+				let value= (await queryClient.queryOrderOwnerPair( key.address,  key.pair, query)).data
 				
 					
 				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
-					let next_values=(await queryClient.queryOrderOwnedPair( key.address,  key.pair, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					let next_values=(await queryClient.queryOrderOwnerPair( key.address,  key.pair, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
 					value = mergeResults(value, next_values);
 				}
-				commit('QUERY', { query: 'OrderOwnedPair', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryOrderOwnedPair', payload: { options: { all }, params: {...key},query }})
-				return getters['getOrderOwnedPair']( { params: {...key}, query}) ?? {}
+				commit('QUERY', { query: 'OrderOwnerPair', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryOrderOwnerPair', payload: { options: { all }, params: {...key},query }})
+				return getters['getOrderOwnerPair']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryOrderOwnedPair API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryOrderOwnerPair API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -641,6 +641,21 @@ export default {
 				}
 			}
 		},
+		async sendMsgCreateDrop({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateDrop(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateDrop:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgCreateOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -686,21 +701,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgCreateDrop({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateDrop(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateDrop:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -727,6 +727,19 @@ export default {
 					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateDrop({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateDrop(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateDrop:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -766,19 +779,6 @@ export default {
 					throw new Error('TxClient:MsgMarketOrder:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgMarketOrder:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreateDrop({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateDrop(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateDrop:Create Could not create message: ' + e.message)
 				}
 			}
 		},
