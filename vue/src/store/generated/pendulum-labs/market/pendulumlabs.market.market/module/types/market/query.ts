@@ -109,6 +109,27 @@ export interface QueryAllOrderResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryOrderOwnedRequest {
+  address: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryOrderOwnedResponse {
+  order: Order[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryOrderOwnedPairRequest {
+  address: string;
+  pair: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryOrderOwnedPairResponse {
+  order: Order[];
+  pagination: PageResponse | undefined;
+}
+
 export interface QueryBookRequest {
   denomA: string;
   denomB: string;
@@ -1648,6 +1669,387 @@ export const QueryAllOrderResponse = {
   },
 };
 
+const baseQueryOrderOwnedRequest: object = { address: "" };
+
+export const QueryOrderOwnedRequest = {
+  encode(
+    message: QueryOrderOwnedRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryOrderOwnedRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryOrderOwnedRequest } as QueryOrderOwnedRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        case 2:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOrderOwnedRequest {
+    const message = { ...baseQueryOrderOwnedRequest } as QueryOrderOwnedRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryOrderOwnedRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryOrderOwnedRequest>
+  ): QueryOrderOwnedRequest {
+    const message = { ...baseQueryOrderOwnedRequest } as QueryOrderOwnedRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryOrderOwnedResponse: object = {};
+
+export const QueryOrderOwnedResponse = {
+  encode(
+    message: QueryOrderOwnedResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.order) {
+      Order.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryOrderOwnedResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryOrderOwnedResponse,
+    } as QueryOrderOwnedResponse;
+    message.order = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.order.push(Order.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOrderOwnedResponse {
+    const message = {
+      ...baseQueryOrderOwnedResponse,
+    } as QueryOrderOwnedResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryOrderOwnedResponse): unknown {
+    const obj: any = {};
+    if (message.order) {
+      obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
+    } else {
+      obj.order = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryOrderOwnedResponse>
+  ): QueryOrderOwnedResponse {
+    const message = {
+      ...baseQueryOrderOwnedResponse,
+    } as QueryOrderOwnedResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryOrderOwnedPairRequest: object = { address: "", pair: "" };
+
+export const QueryOrderOwnedPairRequest = {
+  encode(
+    message: QueryOrderOwnedPairRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.pair !== "") {
+      writer.uint32(18).string(message.pair);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryOrderOwnedPairRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryOrderOwnedPairRequest,
+    } as QueryOrderOwnedPairRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        case 2:
+          message.pair = reader.string();
+          break;
+        case 3:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOrderOwnedPairRequest {
+    const message = {
+      ...baseQueryOrderOwnedPairRequest,
+    } as QueryOrderOwnedPairRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryOrderOwnedPairRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryOrderOwnedPairRequest>
+  ): QueryOrderOwnedPairRequest {
+    const message = {
+      ...baseQueryOrderOwnedPairRequest,
+    } as QueryOrderOwnedPairRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryOrderOwnedPairResponse: object = {};
+
+export const QueryOrderOwnedPairResponse = {
+  encode(
+    message: QueryOrderOwnedPairResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.order) {
+      Order.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryOrderOwnedPairResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryOrderOwnedPairResponse,
+    } as QueryOrderOwnedPairResponse;
+    message.order = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.order.push(Order.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOrderOwnedPairResponse {
+    const message = {
+      ...baseQueryOrderOwnedPairResponse,
+    } as QueryOrderOwnedPairResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryOrderOwnedPairResponse): unknown {
+    const obj: any = {};
+    if (message.order) {
+      obj.order = message.order.map((e) => (e ? Order.toJSON(e) : undefined));
+    } else {
+      obj.order = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryOrderOwnedPairResponse>
+  ): QueryOrderOwnedPairResponse {
+    const message = {
+      ...baseQueryOrderOwnedPairResponse,
+    } as QueryOrderOwnedPairResponse;
+    message.order = [];
+    if (object.order !== undefined && object.order !== null) {
+      for (const e of object.order) {
+        message.order.push(Order.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 const baseQueryBookRequest: object = { denomA: "", denomB: "", orderType: "" };
 
 export const QueryBookRequest = {
@@ -2335,6 +2737,12 @@ export interface Query {
   Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse>;
   /** Queries a list of Order items. */
   OrderAll(request: QueryAllOrderRequest): Promise<QueryAllOrderResponse>;
+  /** Queries a list of Order items. */
+  OrderOwned(request: QueryOrderOwnedRequest): Promise<QueryOrderOwnedResponse>;
+  /** Queries a list of Order items. */
+  OrderOwnedPair(
+    request: QueryOrderOwnedPairRequest
+  ): Promise<QueryOrderOwnedPairResponse>;
   /** Queries a list of Book items. */
   Book(request: QueryBookRequest): Promise<QueryBookResponse>;
   /** Queries a list of Bookends items. */
@@ -2479,6 +2887,34 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllOrderResponse.decode(new Reader(data))
+    );
+  }
+
+  OrderOwned(
+    request: QueryOrderOwnedRequest
+  ): Promise<QueryOrderOwnedResponse> {
+    const data = QueryOrderOwnedRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "OrderOwned",
+      data
+    );
+    return promise.then((data) =>
+      QueryOrderOwnedResponse.decode(new Reader(data))
+    );
+  }
+
+  OrderOwnedPair(
+    request: QueryOrderOwnedPairRequest
+  ): Promise<QueryOrderOwnedPairResponse> {
+    const data = QueryOrderOwnedPairRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "OrderOwnedPair",
+      data
+    );
+    return promise.then((data) =>
+      QueryOrderOwnedPairResponse.decode(new Reader(data))
     );
   }
 

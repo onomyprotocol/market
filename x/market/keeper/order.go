@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pendulum-labs/market/x/market/types"
@@ -56,8 +58,8 @@ func (k Keeper) GetOrder(
 	return val, true
 }
 
-// GetOwnerOrders returns orders from a single owner
-func (k Keeper) GetOrders(
+// GetOwnedOrders returns orders from a single owner
+func (k Keeper) GetOwnedOrders(
 	ctx sdk.Context,
 	owner string,
 ) (list []types.Order) {
@@ -86,6 +88,50 @@ func (k Keeper) GetOrders(
 		if b != nil {
 			k.cdc.MustUnmarshal(b, &order)
 			list = append(list, order)
+		}
+	}
+
+	return
+}
+
+// GetOwnedOrders returns orders from a single owner
+func (k Keeper) GetOwnedPairOrders(
+	ctx sdk.Context,
+	owner string,
+	pair string,
+) (list []types.Order) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
+
+	b := store1.Get(types.OrdersKey(
+		owner,
+	))
+	if b == nil {
+		return list
+	}
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	var orders types.Orders
+	var order types.Order
+
+	k.cdc.MustUnmarshal(b, &orders)
+
+	prePair := []string{"", ""}
+	orderPair := ""
+
+	for _, uid := range orders.Uids {
+
+		b := store2.Get(types.OrderKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &order)
+			prePair = []string{order.DenomAsk, order.DenomBid}
+			orderPair = strings.Join(prePair, ",")
+			if orderPair == pair {
+				list = append(list, order)
+			}
 		}
 	}
 

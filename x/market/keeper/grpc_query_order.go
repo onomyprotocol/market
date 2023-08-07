@@ -67,3 +67,29 @@ func (k Keeper) Book(goCtx context.Context, req *types.QueryBookRequest) (*types
 
 	return &types.QueryBookResponse{Book: book}, nil
 }
+
+func (k Keeper) OrderOwned(c context.Context, req *types.QueryOrderOwnedRequest) (*types.QueryOrderOwnedResponse, error) {
+
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	orders := k.GetOwnedOrders(ctx, req.Address)
+
+	return &types.QueryOrderOwnedResponse{Order: orders}, nil
+}
+
+func (k Keeper) OrderOwnedPair(c context.Context, req *types.QueryOrderOwnedPairRequest) (*types.QueryOrderOwnedPairResponse, error) {
+
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	orders := k.GetOwnedPairOrders(ctx, req.Address, req.Pair)
+
+	return &types.QueryOrderOwnedPairResponse{Order: orders}, nil
+}
