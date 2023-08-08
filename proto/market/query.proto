@@ -77,8 +77,8 @@ service Query {
 	}
 
 	// Queries a list of Order items.
-	rpc OrderOwnerPair(QueryOrderOwnerPairRequest) returns (QueryOrderOwnerPairResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/order/{address}/{pair}";
+	rpc OrderOwnerUids(QueryOrderOwnerRequest) returns (QueryOrderOwnerUidsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order/uids/{address}";
 	}
 
 	// Queries a list of Book items.
@@ -201,6 +201,11 @@ message QueryOrderOwnerRequest {
 }
 
 message QueryOrderOwnerResponse {
+	repeated Order orders = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOrderOwnerUidsResponse {
 	Orders orders = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

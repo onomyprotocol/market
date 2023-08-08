@@ -310,7 +310,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		}
 	}
 
-	return &types.MsgCreateOrderResponse{}, nil
+	return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
 }
 
 func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
@@ -408,11 +408,12 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		// Add partially filled order to history
 		// Keep remainder of order into book
 		partialFillOrder := limitHead
+
 		partialFillOrder.Uid = k.GetUidCount(ctx)
+		k.SetUidCount(ctx, partialFillOrder.Uid+1)
+
 		partialFillOrder.Amount = strikeAmountBid
 		partialFillOrder.Status = "filled"
-
-		k.SetUidCount(ctx, partialFillOrder.Uid+1)
 
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
@@ -429,12 +430,12 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		}
 
 		k.SetOrder(ctx, partialFillOrder)
+		k.SetOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 	}
 
 	limitHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, limitHead)
-	k.SetOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 	k.SetPool(ctx, pool)
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
@@ -489,6 +490,8 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 
 	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
+	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
+
 	// Set Next Position as Head of Stop Book
 	memberBid.Stop = stopHead.Next
 
@@ -517,8 +520,6 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// Update pool order history
 	pool, _ := k.GetPool(ctx, memberAsk.Pair)
 	pool.History = stopHead.Uid
-	stopHead.Status = "filled"
-	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 
 	// order filled
 	// just add the order to history
@@ -531,12 +532,12 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		stopHead.Prev = 0
 		stopHead.Next = prevFilledOrder.Uid
 		k.SetOrder(ctx, prevFilledOrder)
+		k.SetOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 	}
 
 	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, stopHead)
-	k.SetOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 	k.SetPool(ctx, pool)
 
 	memberBid.Previous = memberBid.Balance

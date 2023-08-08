@@ -81,7 +81,7 @@ func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest)
 	return &types.QueryOrderOwnerResponse{Orders: orders}, nil
 }
 
-func (k Keeper) OrderOwnerPair(c context.Context, req *types.QueryOrderOwnerPairRequest) (*types.QueryOrderOwnerPairResponse, error) {
+func (k Keeper) OrderOwnerUids(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrderOwnerUidsResponse, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -89,7 +89,7 @@ func (k Keeper) OrderOwnerPair(c context.Context, req *types.QueryOrderOwnerPair
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	orders := k.GetOwnerPairOrders(ctx, req.Address, req.Pair)
+	orders := k.GetOrderOwnerUids(ctx, req.Address)
 
-	return &types.QueryOrderOwnerPairResponse{Order: orders}, nil
+	return &types.QueryOrderOwnerUidsResponse{Orders: orders}, nil
 }

@@ -54,6 +54,7 @@ message MsgCreateOrder {
 }
 
 message MsgCreateOrderResponse {
+  uint64 uid = 1;
 }
 
 message MsgCancelOrder {

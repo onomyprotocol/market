@@ -29847,10 +29847,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/order/{address}':
+  '/pendulum-labs/market/market/order/uids/{address}':
     get:
       summary: Queries a list of Order items.
-      operationId: PendulumlabsMarketMarketOrderOwner
+      operationId: PendulumlabsMarketMarketOrderOwnerUids
       responses:
         '200':
           description: A successful response.
@@ -29973,17 +29973,17 @@ paths:
           type: boolean
       tags:
         - Query
-  '/pendulum-labs/market/market/order/{address}/{pair}':
+  '/pendulum-labs/market/market/order/{address}':
     get:
       summary: Queries a list of Order items.
-      operationId: PendulumlabsMarketMarketOrderOwnerPair
+      operationId: PendulumlabsMarketMarketOrderOwner
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              order:
+              orders:
                 type: array
                 items:
                   type: object
@@ -30066,10 +30066,6 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: address
-          in: path
-          required: true
-          type: string
-        - name: pair
           in: path
           required: true
           type: string
@@ -49676,6 +49672,10 @@ definitions:
     type: object
   pendulumlabs.market.market.MsgCreateOrderResponse:
     type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
   pendulumlabs.market.market.MsgCreatePoolResponse:
     type: object
   pendulumlabs.market.market.MsgMarketOrderResponse:
@@ -50309,10 +50309,10 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryOrderOwnerPairResponse:
+  pendulumlabs.market.market.QueryOrderOwnerResponse:
     type: object
     properties:
-      order:
+      orders:
         type: array
         items:
           type: object
@@ -50373,7 +50373,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryOrderOwnerResponse:
+  pendulumlabs.market.market.QueryOrderOwnerUidsResponse:
     type: object
     properties:
       orders:

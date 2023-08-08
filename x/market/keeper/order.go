@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pendulum-labs/market/x/market/types"
@@ -16,6 +14,17 @@ func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
 	store1.Set(types.OrderKey(
 		order.Uid,
 	), b)
+}
+
+// RemoveOrder removes a order from the store
+func (k Keeper) RemoveOrder(
+	ctx sdk.Context,
+	uid uint64,
+) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+	store.Delete(types.OrderKey(
+		uid,
+	))
 }
 
 // GetOrder returns a order from its index
@@ -36,78 +45,91 @@ func (k Keeper) GetOrder(
 	return val, true
 }
 
-// GetOrderOwner returns orders from a single owner
-func (k Keeper) GetOrderOwner(
-	ctx sdk.Context,
-	owner string,
-) (orders types.Orders) {
-	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
-
-	b := store1.Get(types.OrdersKey(
-		owner,
-	))
-	if b == nil {
-		return orders
-	}
-
-	// var orders types.Orders
-	// var order types.Order
-
-	k.cdc.MustUnmarshal(b, &orders)
-
-	/*
-		store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
-
-
-		for _, uid := range orders.Uids {
-
-			b := store2.Get(types.OrderKey(
-				uid,
-			))
-
-			if b != nil {
-				k.cdc.MustUnmarshal(b, &order)
-				list = append(list, order)
-			}
-		}
-	*/
-	return
-}
-
 // SetOrderOwner adds an order to owner's open orders
 func (k Keeper) SetOrderOwner(
 	ctx sdk.Context,
 	owner string,
 	uid uint64,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderOwnerKeyPrefix))
 
 	var orders types.Orders
 
-	a := store.Get(types.OrdersKey(
+	a := store.Get(types.OrderOwnerKey(
 		owner,
 	))
 	if a == nil {
 		orders.Uids = []uint64{uid}
 		b := k.cdc.MustMarshal(&orders)
-		store.Set(types.OrdersKey(owner), b)
+		store.Set(types.OrderOwnerKey(owner), b)
 		return
 	}
 
-	index := 0
 	k.cdc.MustUnmarshal(a, &orders)
 
-	for index < len(orders.Uids) {
-		if orders.Uids[index] == uid {
-			orders.Uids = append(orders.Uids[:index], orders.Uids[index+1:]...)
-			break
-		}
-		index++
-	}
+	// First remove uid if present
+	// Allows the order, if changed, to be at top of list
+	orders.Uids = removeUid(orders.Uids, uid)
 
+	// Append uid in the front
 	orders.Uids = append(orders.Uids, uid)
 	b := k.cdc.MustMarshal(&orders)
-	store.Set(types.OrdersKey(owner), b)
+	store.Set(types.OrderOwnerKey(owner), b)
+}
+
+// GetOrderOwner returns order uids from a single owner
+func (k Keeper) GetOrderOwnerUids(
+	ctx sdk.Context,
+	owner string,
+) (orders types.Orders) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderOwnerKeyPrefix))
+
+	a := store1.Get(types.OrderOwnerKey(
+		owner,
+	))
+	if a == nil {
+		return orders
+	}
+
+	k.cdc.MustUnmarshal(a, &orders)
+
+	return orders
+}
+
+// GetOrderOwner returns orders from a single owner
+func (k Keeper) GetOrderOwner(
+	ctx sdk.Context,
+	owner string,
+) (list []types.Order) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderOwnerKeyPrefix))
+
+	a := store1.Get(types.OrderOwnerKey(
+		owner,
+	))
+	if a == nil {
+		return list
+	}
+
+	var orders types.Orders
+
+	k.cdc.MustUnmarshal(a, &orders)
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
+
+	for _, uid := range orders.Uids {
+		var order types.Order
+
+		b := store2.Get(types.OrderKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &order)
+			list = append(list, order)
+		}
+	}
+
+	return
 }
 
 // RemoveOrderOwner removes an order from owner's open orders
@@ -116,9 +138,9 @@ func (k Keeper) RemoveOrderOwner(
 	owner string,
 	uid uint64,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderOwnerKeyPrefix))
 
-	a := store.Get(types.OrdersKey(
+	a := store.Get(types.OrderOwnerKey(
 		owner,
 	))
 	if a == nil {
@@ -126,73 +148,12 @@ func (k Keeper) RemoveOrderOwner(
 	}
 
 	var orders types.Orders
-	index := 0
 	k.cdc.MustUnmarshal(a, &orders)
 
-	for index < len(orders.Uids) {
-		if orders.Uids[index] == uid {
-			orders.Uids = append(orders.Uids[:index], orders.Uids[index+1:]...)
-			b := k.cdc.MustMarshal(&orders)
-			store.Set(types.OrdersKey(owner), b)
-			return
-		}
-		index++
-	}
-}
+	orders.Uids = removeUid(orders.Uids, uid)
 
-// GetOwnerPairOrders returns orders from a single owner
-func (k Keeper) GetOwnerPairOrders(
-	ctx sdk.Context,
-	owner string,
-	pair string,
-) (list []types.Order) {
-	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrdersKeyPrefix))
-
-	b := store1.Get(types.OrdersKey(
-		owner,
-	))
-	if b == nil {
-		return list
-	}
-
-	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
-
-	var orders types.Orders
-	var order types.Order
-
-	k.cdc.MustUnmarshal(b, &orders)
-
-	prePair := []string{"", ""}
-	orderPair := ""
-
-	for _, uid := range orders.Uids {
-
-		b := store2.Get(types.OrderKey(
-			uid,
-		))
-
-		if b != nil {
-			k.cdc.MustUnmarshal(b, &order)
-			prePair = []string{order.DenomAsk, order.DenomBid}
-			orderPair = strings.Join(prePair, ",")
-			if orderPair == pair {
-				list = append(list, order)
-			}
-		}
-	}
-
-	return
-}
-
-// RemoveOrder removes a order from the store
-func (k Keeper) RemoveOrder(
-	ctx sdk.Context,
-	uid uint64,
-) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
-	store.Delete(types.OrderKey(
-		uid,
-	))
+	b := k.cdc.MustMarshal(&orders)
+	store.Set(types.OrderOwnerKey(owner), b)
 }
 
 // GetAllOrder returns all order

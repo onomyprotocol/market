@@ -23,8 +23,8 @@ func common(t *testing.T, testInput keepertest.TestInput) (
 ) {
 
 	// TestData
-	testdata = testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
-	coinPair, _ = sample.SampleCoins("140CoinA", "140CoinB")
+	testdata = testData{coinAStr: "4000CoinA", coinBStr: "4000CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
+	coinPair, _ = sample.SampleCoins("140000CoinA", "140000CoinB")
 	denomA, denomB = sample.SampleDenoms(coinPair)
 	pair = strings.Join([]string{denomA, denomB}, ",")
 
@@ -42,7 +42,7 @@ func common(t *testing.T, testInput keepertest.TestInput) (
 	require.NoError(t, err)
 
 	// CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "12000"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -235,15 +235,30 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
 	scenarios := []types.MsgCreateOrder{
-		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"60", "70"}, OrderType: "stop", Amount: "10", Prev: "0", Next: "0"},
-		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"60", "70"}, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"},
+		//{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"60", "70"}, OrderType: "stop", Amount: "10", Prev: "0", Next: "0"},
+		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"1", "2"}, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"},
 	}
+
+	var uid uint64
 
 	for _, s := range scenarios {
 
-		_, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &s)
+		orderresponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &s)
 		require.NoError(t, err)
-		// require.ErrorContains(t, err, "insufficient balance")
+		uid = orderresponse.Uid
 	}
+
+	allorders := testInput.MarketKeeper.GetAllOrder(testInput.Context)
+	require.Truef(t, allorders[0].Uid == 3, allorders[0].Status)
+
+	require.True(t, len(allorders) == 1)
+
+	order, found := testInput.MarketKeeper.GetOrder(testInput.Context, uid)
+	require.True(t, found)
+	require.True(t, order.Status == "filled")
+
+	// Validate Order
+	orderowner := testInput.MarketKeeper.GetOrderOwner(testInput.Context, addr)
+	require.Truef(t, len(orderowner.Uids) == 0, orderowner.String())
 
 }
