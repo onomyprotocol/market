@@ -201,7 +201,7 @@ message QueryOrderOwnerRequest {
 }
 
 message QueryOrderOwnerResponse {
-	repeated Order order = 1 [(gogoproto.nullable) = false];
+	Orders orders = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

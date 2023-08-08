@@ -103,6 +103,10 @@ export interface MarketOrderResponse {
   end_time?: string;
 }
 
+export interface MarketOrders {
+  uids?: string[];
+}
+
 /**
  * Params defines the parameters for the module.
  */
@@ -278,7 +282,7 @@ export interface MarketQueryOrderOwnerPairResponse {
 }
 
 export interface MarketQueryOrderOwnerResponse {
-  order?: MarketOrder[];
+  orders?: MarketOrders;
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the

@@ -76,9 +76,9 @@ func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest)
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	orders := k.GetOwnerOrders(ctx, req.Address)
+	orders := k.GetOrderOwner(ctx, req.Address)
 
-	return &types.QueryOrderOwnerResponse{Order: orders}, nil
+	return &types.QueryOrderOwnerResponse{Orders: orders}, nil
 }
 
 func (k Keeper) OrderOwnerPair(c context.Context, req *types.QueryOrderOwnerPairRequest) (*types.QueryOrderOwnerPairResponse, error) {

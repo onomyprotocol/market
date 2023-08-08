@@ -127,6 +127,9 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if !(nextOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
 		}
+		if !(nextOrder.DenomAsk == order.DenomAsk && nextOrder.DenomBid == order.DenomBid) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Incorrect book")
+		}
 		if nextOrder.Prev != 0 {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not currently head of book")
 		}
@@ -175,6 +178,9 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if prevOrder.Next != 0 {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not currently tail of book")
 		}
+		if !(prevOrder.DenomAsk == order.DenomAsk && prevOrder.DenomBid == order.DenomBid) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Incorrect book")
+		}
 
 		if msg.OrderType == "stop" {
 
@@ -208,8 +214,15 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if !(prevOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Prev order not active")
 		}
+		if !(prevOrder.DenomAsk == order.DenomAsk && prevOrder.DenomBid == order.DenomBid) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Incorrect book")
+		}
+
 		if !(nextOrder.Status == "active") {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Next order not active")
+		}
+		if !(nextOrder.DenomAsk == order.DenomAsk && nextOrder.DenomBid == order.DenomBid) {
+			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "Incorrect book")
 		}
 
 		if !(nextOrder.Prev == prevOrder.Uid && prevOrder.Next == nextOrder.Uid) {
@@ -263,6 +276,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	k.SetUidCount(ctx, uid+1)
 
 	k.SetOrder(ctx, order)
+	k.SetOrderOwner(ctx, order.Owner, order.Uid)
 
 	// create order event
 	ctx.EventManager().EmitEvent(
@@ -377,17 +391,19 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
 		limitHead.Prev = 0
+		k.RemoveOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 
 		if pool.History == 0 {
 			limitHead.Next = 0
-			pool.History = limitHead.Uid
 		} else {
 			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
 			prevFilledOrder.Prev = limitHead.Uid
 			limitHead.Next = prevFilledOrder.Uid
-			pool.History = limitHead.Uid
 			k.SetOrder(ctx, prevFilledOrder)
 		}
+
+		pool.History = limitHead.Uid
+
 	} else {
 		// Add partially filled order to history
 		// Keep remainder of order into book
@@ -418,6 +434,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	limitHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, limitHead)
+	k.SetOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 	k.SetPool(ctx, pool)
 
 	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
@@ -501,6 +518,8 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	pool, _ := k.GetPool(ctx, memberAsk.Pair)
 	pool.History = stopHead.Uid
 	stopHead.Status = "filled"
+	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
+
 	// order filled
 	// just add the order to history
 	if pool.History == 0 {
@@ -517,6 +536,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, stopHead)
+	k.SetOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 	k.SetPool(ctx, pool)
 
 	memberBid.Previous = memberBid.Balance

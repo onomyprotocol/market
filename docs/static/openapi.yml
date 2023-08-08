@@ -29857,42 +29857,14 @@ paths:
           schema:
             type: object
             properties:
-              order:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    uid:
+              orders:
+                type: object
+                properties:
+                  uids:
+                    type: array
+                    items:
                       type: string
                       format: uint64
-                    owner:
-                      type: string
-                    status:
-                      type: string
-                    orderType:
-                      type: string
-                    denomAsk:
-                      type: string
-                    denomBid:
-                      type: string
-                    amount:
-                      type: string
-                    rate:
-                      type: array
-                      items:
-                        type: string
-                    prev:
-                      type: string
-                      format: uint64
-                    next:
-                      type: string
-                      format: uint64
-                    beg_time:
-                      type: string
-                      format: int64
-                    end_time:
-                      type: string
-                      format: int64
               pagination:
                 type: object
                 properties:
@@ -49778,6 +49750,14 @@ definitions:
       end_time:
         type: string
         format: int64
+  pendulumlabs.market.market.Orders:
+    type: object
+    properties:
+      uids:
+        type: array
+        items:
+          type: string
+          format: uint64
   pendulumlabs.market.market.Params:
     type: object
     properties:
@@ -50396,42 +50376,14 @@ definitions:
   pendulumlabs.market.market.QueryOrderOwnerResponse:
     type: object
     properties:
-      order:
-        type: array
-        items:
-          type: object
-          properties:
-            uid:
+      orders:
+        type: object
+        properties:
+          uids:
+            type: array
+            items:
               type: string
               format: uint64
-            owner:
-              type: string
-            status:
-              type: string
-            orderType:
-              type: string
-            denomAsk:
-              type: string
-            denomBid:
-              type: string
-            amount:
-              type: string
-            rate:
-              type: array
-              items:
-                type: string
-            prev:
-              type: string
-              format: uint64
-            next:
-              type: string
-              format: uint64
-            beg_time:
-              type: string
-              format: int64
-            end_time:
-              type: string
-              format: int64
       pagination:
         type: object
         properties:
