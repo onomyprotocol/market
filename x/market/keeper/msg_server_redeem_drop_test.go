@@ -181,3 +181,44 @@ func TestRedeemDrop_WithBurnCoin(t *testing.T) {
 	require.Equal(t, rst1.Pair, pair)
 	require.Equal(t, "70000", rst1.Drops.String())
 }
+
+func TestRedeemDrop_NumericalLimits(t *testing.T) {
+	testInput := keepertest.CreateTestEnvironment(t)
+
+	require.Equal(t, testInput.MarketKeeper.BurnCoin(testInput.Context), "stake")
+
+	// TestData
+	testdata := testData{coinAStr: keepertest.MaxSupportedCoin("stake"), coinBStr: keepertest.MaxSupportedCoin("CoinB")}
+	coinPair, _ := sample.SampleCoins(keepertest.FundMaxSupported("stake"), keepertest.FundMaxSupported("CoinB"))
+	denomA, denomB := sample.SampleDenoms(coinPair)
+	pair := strings.Join([]string{denomA, denomB}, ",")
+
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress, err := sdk.AccAddressFromBech32(addr)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
+
+	// Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	require.NoError(t, err)
+
+	// Create Drop
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: keepertest.MaxSupportedCoin("")}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
+	require.NoError(t, err)
+
+	// redeem the drop
+	Uid := strconv.FormatUint(2, 10)
+	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
+	_, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
+	require.NoError(t, redeemdropErr)
+
+	rst1, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst1.Pair, pair)
+	require.Equal(t, "26959946667150639794667015087019620289043427352885315420110951809025", rst1.Drops.String())
+}
