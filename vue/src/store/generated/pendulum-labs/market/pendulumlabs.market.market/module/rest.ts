@@ -47,7 +47,10 @@ export type MarketMsgCancelOrderResponse = object;
 
 export type MarketMsgCreateDropResponse = object;
 
-export type MarketMsgCreateOrderResponse = object;
+export interface MarketMsgCreateOrderResponse {
+  /** @format uint64 */
+  uid?: string;
+}
 
 export type MarketMsgCreatePoolResponse = object;
 
@@ -101,6 +104,10 @@ export interface MarketOrderResponse {
 
   /** @format int64 */
   end_time?: string;
+}
+
+export interface MarketOrders {
+  uids?: string[];
 }
 
 /**
@@ -249,6 +256,36 @@ export interface MarketQueryGetPoolResponse {
 
 export interface MarketQueryHistoryResponse {
   history?: MarketOrderResponse[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryOrderOwnerResponse {
+  orders?: MarketOrder[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryOrderOwnerUidsResponse {
+  orders?: MarketOrders;
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -759,6 +796,60 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   ) =>
     this.request<MarketQueryAllOrderResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrderOwnerUids
+   * @summary Queries a list of Order items.
+   * @request GET:/pendulum-labs/market/market/order/uids/{address}
+   */
+  queryOrderOwnerUids = (
+    address: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryOrderOwnerUidsResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/order/uids/${address}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrderOwner
+   * @summary Queries a list of Order items.
+   * @request GET:/pendulum-labs/market/market/order/{address}
+   */
+  queryOrderOwner = (
+    address: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryOrderOwnerResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/order/${address}`,
       method: "GET",
       query: query,
       format: "json",

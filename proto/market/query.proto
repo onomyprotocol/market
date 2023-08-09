@@ -71,6 +71,16 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/order";
 	}
 
+	// Queries a list of Order items.
+	rpc OrderOwner(QueryOrderOwnerRequest) returns (QueryOrderOwnerResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order/{address}";
+	}
+
+	// Queries a list of Order items.
+	rpc OrderOwnerUids(QueryOrderOwnerRequest) returns (QueryOrderOwnerUidsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order/uids/{address}";
+	}
+
 	// Queries a list of Book items.
 	rpc Book(QueryBookRequest) returns (QueryBookResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}";
@@ -181,6 +191,32 @@ message QueryAllOrderRequest {
 }
 
 message QueryAllOrderResponse {
+	repeated Order order = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOrderOwnerRequest {
+	string address = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryOrderOwnerResponse {
+	repeated Order orders = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOrderOwnerUidsResponse {
+	Orders orders = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOrderOwnerPairRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryOrderOwnerPairResponse {
 	repeated Order order = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

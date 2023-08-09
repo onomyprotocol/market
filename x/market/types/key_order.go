@@ -6,8 +6,8 @@ var _ binary.ByteOrder
 
 const (
 	// OrderKeyPrefix is the prefix to retrieve all Order
-	OrderKeyPrefix  = "Order/value/"
-	OrdersKeyPrefix = "Order/owner/"
+	OrderKeyPrefix      = "Order/value/"
+	OrderOwnerKeyPrefix = "Order/owner/"
 )
 
 // OrderKey returns the store key to retrieve a Order from the index fields
@@ -25,7 +25,7 @@ func OrderKey(
 }
 
 // OrdersKey returns the store key to retrieve and Owner's Active Orders
-func OrdersKey(
+func OrderOwnerKey(
 	owner string,
 ) []byte {
 	var key []byte

@@ -61,3 +61,12 @@ func (k Keeper) validateSenderBalance(ctx sdk.Context, senderAddress sdk.AccAddr
 
 	return nil
 }
+
+func removeUid(s []uint64, r uint64) []uint64 {
+	for i, v := range s {
+		if v == r {
+			return append(s[:i], s[i+1:]...)
+		}
+	}
+	return s
+}

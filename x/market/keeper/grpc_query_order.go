@@ -67,3 +67,29 @@ func (k Keeper) Book(goCtx context.Context, req *types.QueryBookRequest) (*types
 
 	return &types.QueryBookResponse{Book: book}, nil
 }
+
+func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrderOwnerResponse, error) {
+
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	orders := k.GetOrderOwner(ctx, req.Address)
+
+	return &types.QueryOrderOwnerResponse{Orders: orders}, nil
+}
+
+func (k Keeper) OrderOwnerUids(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrderOwnerUidsResponse, error) {
+
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	orders := k.GetOrderOwnerUids(ctx, req.Address)
+
+	return &types.QueryOrderOwnerUidsResponse{Orders: orders}, nil
+}
