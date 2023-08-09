@@ -343,15 +343,16 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// A(i)*B(i)=B(f)*Exch(f)*B(f) -> A(i)*B(i)=Exch(f)*B(f)^2
 	// (A(i)*B(i))/Exch(f)=B(f)^2
 	// B(f)=SQRT((A(i)*B(i))/Exch(f))
-	bigInt := &big.Int{}
-	maxMemberBidBalance :=
-		sdk.NewIntFromBigInt(
-			bigInt.Sqrt(
-				sdk.Int.BigInt(
-					(limitHead.Rate[1].Mul(memberAsk.Balance.Mul(memberBid.Balance))).Quo(limitHead.Rate[0]),
-				),
-			),
-		)
+	// `maxMemberBidBalance = sqrt(((memberAsk.Balance * memberBid.Balance) * limitHead.Rate[1])
+	// / limitHead.Rate[0])`
+	// `memberAsk.Balance.Mul(memberBid.Balance)` is allowed, but multiplying further
+	// by the rate would be a limiting factor on orders, use a bigint multiplication for
+	// that step. The `Rate`s are limited to 64 bits by the `ValidateBasic`.
+	tmp := big.NewInt(0)
+	tmp.Mul(memberAsk.Balance.Mul(memberBid.Balance).BigInt(), limitHead.Rate[1].BigInt())
+	tmp.Quo(tmp, limitHead.Rate[0].BigInt())
+	tmp.Sqrt(tmp)
+	maxMemberBidBalance := sdk.NewIntFromBigInt(tmp)
 
 	// Maximum amountBid of the Bid Coin that the AMM may accept at Limit Order Exchange Rate
 	maxAmountBid := maxMemberBidBalance.Sub(memberBid.Balance)
