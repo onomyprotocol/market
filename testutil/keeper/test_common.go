@@ -223,6 +223,11 @@ func MaxSupportedCoin(denom string) string {
 	return fmt.Sprintf("5192296858534827628530496329220095%s", denom)
 }
 
+// Equal to `MaxSupportedCoin` squared
+func MaxSupportedDrop(denom string) string {
+	return fmt.Sprintf("26959946667150639794667015087019620289043427352885315420110951809025%s", denom)
+}
+
 // This is for funding an account capable of `MaxSupportedCoin`
 func FundMaxSupported(denom string) string {
 	return fmt.Sprintf("5192296858534827628530496329220095000000%s", denom)

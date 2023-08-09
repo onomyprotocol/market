@@ -207,7 +207,7 @@ func TestRedeemDrop_NumericalLimits(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create Drop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: keepertest.MaxSupportedCoin("")}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: keepertest.MaxSupportedDrop("")}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -220,5 +220,5 @@ func TestRedeemDrop_NumericalLimits(t *testing.T) {
 	rst1, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
 	require.Equal(t, rst1.Pair, pair)
-	require.Equal(t, "26959946667150639794667015087019620289043427352885315420110951809025", rst1.Drops.String())
+	require.Equal(t, keepertest.MaxSupportedDrop(""), rst1.Drops.String())
 }
