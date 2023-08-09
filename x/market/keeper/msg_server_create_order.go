@@ -15,9 +15,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	amount, _ := sdk.NewIntFromString(msg.Amount)
-	if amount == sdk.ZeroInt() {
-		sdkerrors.Wrapf(types.ErrInvalidOrderAmount, "Amount must be greater than zero")
-	}
 
 	coinBid := sdk.NewCoin(msg.DenomBid, amount)
 
