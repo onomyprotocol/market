@@ -23,8 +23,8 @@ func common(t *testing.T, testInput keepertest.TestInput) (
 ) {
 
 	// TestData
-	testdata = testData{coinAStr: "4000CoinA", coinBStr: "4000CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
-	coinPair, _ = sample.SampleCoins("140000CoinA", "140000CoinB")
+	testdata = testData{coinAStr: "30CoinA", coinBStr: "40CoinB", RateAstrArray: []string{"60", "70"}, RateBstrArray: []string{"80", "90"}}
+	coinPair, _ = sample.SampleCoins("140CoinA", "140CoinB")
 	denomA, denomB = sample.SampleDenoms(coinPair)
 	pair = strings.Join([]string{denomA, denomB}, ",")
 
@@ -42,7 +42,7 @@ func common(t *testing.T, testInput keepertest.TestInput) (
 	require.NoError(t, err)
 
 	// CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "12000"}
+	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -251,14 +251,18 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 	allorders := testInput.MarketKeeper.GetAllOrder(testInput.Context)
 	require.Truef(t, allorders[0].Uid == 3, allorders[0].Status)
 
-	require.True(t, len(allorders) == 1)
+	require.True(t, len(allorders) == 2)
 
 	order, found := testInput.MarketKeeper.GetOrder(testInput.Context, uid)
 	require.True(t, found)
-	require.True(t, order.Status == "filled")
+	require.True(t, order.Status == "active")
+
+	order, found = testInput.MarketKeeper.GetOrder(testInput.Context, uid)
+	require.True(t, found)
+	require.True(t, order.Status == "active")
 
 	// Validate Order
 	orderowner := testInput.MarketKeeper.GetOrderOwner(testInput.Context, addr)
-	require.Truef(t, len(orderowner.Uids) == 0, orderowner.String())
+	require.True(t, len(orderowner) == 1)
 
 }
