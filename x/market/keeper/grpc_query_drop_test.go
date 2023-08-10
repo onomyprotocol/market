@@ -24,27 +24,27 @@ func TestDropQuerySingle(t *testing.T) {
 	msgs := createNDrop(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetDropRequest
+		request  *types.QueryDropRequest
 		response *types.QueryDropResponse
 		err      error
 	}{
 		{
 			desc: "First",
-			request: &types.QueryGetDropRequest{
+			request: &types.QueryDropRequest{
 				Uid: msgs[0].Uid,
 			},
 			response: &types.QueryDropResponse{Drop: msgs[0]},
 		},
 		{
 			desc: "Second",
-			request: &types.QueryGetDropRequest{
+			request: &types.QueryDropRequest{
 				Uid: msgs[1].Uid,
 			},
 			response: &types.QueryDropResponse{Drop: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.QueryGetDropRequest{
+			request: &types.QueryDropRequest{
 				Uid: 100000,
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),

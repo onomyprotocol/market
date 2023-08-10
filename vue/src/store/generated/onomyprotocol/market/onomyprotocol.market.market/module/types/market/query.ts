@@ -44,7 +44,7 @@ export interface QueryAllPoolResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryGetDropRequest {
+export interface QueryDropRequest {
   uid: number;
   owner: string;
   pair: string;
@@ -570,11 +570,11 @@ export const QueryAllPoolResponse = {
   },
 };
 
-const baseQueryGetDropRequest: object = { uid: 0, owner: "", pair: "" };
+const baseQueryDropRequest: object = { uid: 0, owner: "", pair: "" };
 
-export const QueryGetDropRequest = {
+export const QueryDropRequest = {
   encode(
-    message: QueryGetDropRequest,
+    message: QueryDropRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.uid !== 0) {
@@ -589,10 +589,10 @@ export const QueryGetDropRequest = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetDropRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryDropRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetDropRequest } as QueryGetDropRequest;
+    const message = { ...baseQueryDropRequest } as QueryDropRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -613,8 +613,8 @@ export const QueryGetDropRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetDropRequest {
-    const message = { ...baseQueryGetDropRequest } as QueryGetDropRequest;
+  fromJSON(object: any): QueryDropRequest {
+    const message = { ...baseQueryDropRequest } as QueryDropRequest;
     if (object.uid !== undefined && object.uid !== null) {
       message.uid = Number(object.uid);
     } else {
@@ -633,7 +633,7 @@ export const QueryGetDropRequest = {
     return message;
   },
 
-  toJSON(message: QueryGetDropRequest): unknown {
+  toJSON(message: QueryDropRequest): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     message.owner !== undefined && (obj.owner = message.owner);
@@ -641,8 +641,8 @@ export const QueryGetDropRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetDropRequest>): QueryGetDropRequest {
-    const message = { ...baseQueryGetDropRequest } as QueryGetDropRequest;
+  fromPartial(object: DeepPartial<QueryDropRequest>): QueryDropRequest {
+    const message = { ...baseQueryDropRequest } as QueryDropRequest;
     if (object.uid !== undefined && object.uid !== null) {
       message.uid = object.uid;
     } else {
@@ -2350,7 +2350,7 @@ export interface Query {
   /** Queries a list of Pool items. */
   PoolAll(request: QueryAllPoolRequest): Promise<QueryAllPoolResponse>;
   /** Queries a Drop by index. */
-  Drop(request: QueryGetDropRequest): Promise<QueryDropResponse>;
+  Drop(request: QueryDropRequest): Promise<QueryDropResponse>;
   /** Queries a list of Drop items. */
   DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse>;
   /** Queries a Member by index. */
@@ -2414,8 +2414,8 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Drop(request: QueryGetDropRequest): Promise<QueryDropResponse> {
-    const data = QueryGetDropRequest.encode(request).finish();
+  Drop(request: QueryDropRequest): Promise<QueryDropResponse> {
+    const data = QueryDropRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulum-labs.market.market.Query",
       "Drop",

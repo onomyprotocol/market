@@ -58,7 +58,7 @@ func CmdShowDrop() *cobra.Command {
 				return err
 			}
 
-			params := &types.QueryGetDropRequest{
+			params := &types.QueryDropRequest{
 				Uid: argUid,
 			}
 

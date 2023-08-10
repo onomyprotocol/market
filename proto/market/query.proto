@@ -32,7 +32,7 @@ service Query {
 	}
 
 	// Queries a Drop by index.
-	rpc Drop(QueryGetDropRequest) returns (QueryDropResponse) {
+	rpc Drop(QueryDropRequest) returns (QueryDropResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
 	}
 
@@ -125,7 +125,7 @@ message QueryAllPoolResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetDropRequest {
+message QueryDropRequest {
 	uint64 uid = 1;
 }
 

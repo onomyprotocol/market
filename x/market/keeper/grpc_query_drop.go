@@ -39,7 +39,7 @@ func (k Keeper) DropAll(c context.Context, req *types.QueryAllDropRequest) (*typ
 	return &types.QueryDropsResponse{Drops: drops, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Drop(c context.Context, req *types.QueryGetDropRequest) (*types.QueryDropResponse, error) {
+func (k Keeper) Drop(c context.Context, req *types.QueryDropRequest) (*types.QueryDropResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
