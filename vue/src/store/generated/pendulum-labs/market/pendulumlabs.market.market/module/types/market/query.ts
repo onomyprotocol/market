@@ -96,7 +96,7 @@ export interface QueryOrderRequest {
   uid: number;
 }
 
-export interface QueryGetOrderResponse {
+export interface QueryOrderResponse {
   order: Order | undefined;
 }
 
@@ -1448,11 +1448,11 @@ export const QueryOrderRequest = {
   },
 };
 
-const baseQueryGetOrderResponse: object = {};
+const baseQueryOrderResponse: object = {};
 
-export const QueryGetOrderResponse = {
+export const QueryOrderResponse = {
   encode(
-    message: QueryGetOrderResponse,
+    message: QueryOrderResponse,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.order !== undefined) {
@@ -1461,10 +1461,10 @@ export const QueryGetOrderResponse = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetOrderResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryOrderResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetOrderResponse } as QueryGetOrderResponse;
+    const message = { ...baseQueryOrderResponse } as QueryOrderResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1479,8 +1479,8 @@ export const QueryGetOrderResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetOrderResponse {
-    const message = { ...baseQueryGetOrderResponse } as QueryGetOrderResponse;
+  fromJSON(object: any): QueryOrderResponse {
+    const message = { ...baseQueryOrderResponse } as QueryOrderResponse;
     if (object.order !== undefined && object.order !== null) {
       message.order = Order.fromJSON(object.order);
     } else {
@@ -1489,17 +1489,15 @@ export const QueryGetOrderResponse = {
     return message;
   },
 
-  toJSON(message: QueryGetOrderResponse): unknown {
+  toJSON(message: QueryOrderResponse): unknown {
     const obj: any = {};
     message.order !== undefined &&
       (obj.order = message.order ? Order.toJSON(message.order) : undefined);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryGetOrderResponse>
-  ): QueryGetOrderResponse {
-    const message = { ...baseQueryGetOrderResponse } as QueryGetOrderResponse;
+  fromPartial(object: DeepPartial<QueryOrderResponse>): QueryOrderResponse {
+    const message = { ...baseQueryOrderResponse } as QueryOrderResponse;
     if (object.order !== undefined && object.order !== null) {
       message.order = Order.fromPartial(object.order);
     } else {
@@ -2720,7 +2718,7 @@ export interface Query {
     request: QueryAllBurningsRequest
   ): Promise<QueryAllBurningsResponse>;
   /** Queries a Order by index. */
-  Order(request: QueryOrderRequest): Promise<QueryGetOrderResponse>;
+  Order(request: QueryOrderRequest): Promise<QueryOrderResponse>;
   /** Queries a list of Order items. */
   OrderAll(request: QueryAllOrderRequest): Promise<QueryOrdersResponse>;
   /** Queries a list of Order items. */
@@ -2848,16 +2846,14 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Order(request: QueryOrderRequest): Promise<QueryGetOrderResponse> {
+  Order(request: QueryOrderRequest): Promise<QueryOrderResponse> {
     const data = QueryOrderRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulumlabs.market.market.Query",
       "Order",
       data
     );
-    return promise.then((data) =>
-      QueryGetOrderResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => QueryOrderResponse.decode(new Reader(data)));
   }
 
   OrderAll(request: QueryAllOrderRequest): Promise<QueryOrdersResponse> {

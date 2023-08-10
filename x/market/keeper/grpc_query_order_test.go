@@ -25,7 +25,7 @@ func TestOrderQuerySingle(t *testing.T) {
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryOrderRequest
-		response *types.QueryGetOrderResponse
+		response *types.QueryOrderResponse
 		err      error
 	}{
 		{
@@ -33,14 +33,14 @@ func TestOrderQuerySingle(t *testing.T) {
 			request: &types.QueryOrderRequest{
 				Uid: msgs[0].Uid,
 			},
-			response: &types.QueryGetOrderResponse{Order: msgs[0]},
+			response: &types.QueryOrderResponse{Order: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryOrderRequest{
 				Uid: msgs[1].Uid,
 			},
-			response: &types.QueryGetOrderResponse{Order: msgs[1]},
+			response: &types.QueryOrderResponse{Order: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",

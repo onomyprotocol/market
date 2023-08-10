@@ -50118,43 +50118,6 @@ definitions:
           stop:
             type: string
             format: uint64
-  pendulumlabs.market.market.QueryGetOrderResponse:
-    type: object
-    properties:
-      order:
-        type: object
-        properties:
-          uid:
-            type: string
-            format: uint64
-          owner:
-            type: string
-          status:
-            type: string
-          orderType:
-            type: string
-          denomAsk:
-            type: string
-          denomBid:
-            type: string
-          amount:
-            type: string
-          rate:
-            type: array
-            items:
-              type: string
-          prev:
-            type: string
-            format: uint64
-          next:
-            type: string
-            format: uint64
-          beg_time:
-            type: string
-            format: int64
-          end_time:
-            type: string
-            format: int64
   pendulumlabs.market.market.QueryGetPoolResponse:
     type: object
     properties:
@@ -50281,6 +50244,43 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  pendulumlabs.market.market.QueryOrderResponse:
+    type: object
+    properties:
+      order:
+        type: object
+        properties:
+          uid:
+            type: string
+            format: uint64
+          owner:
+            type: string
+          status:
+            type: string
+          orderType:
+            type: string
+          denomAsk:
+            type: string
+          denomBid:
+            type: string
+          amount:
+            type: string
+          rate:
+            type: array
+            items:
+              type: string
+          prev:
+            type: string
+            format: uint64
+          next:
+            type: string
+            format: uint64
+          beg_time:
+            type: string
+            format: int64
+          end_time:
+            type: string
+            format: int64
   pendulumlabs.market.market.QueryOrdersResponse:
     type: object
     properties:

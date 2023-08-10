@@ -39,7 +39,7 @@ func (k Keeper) OrderAll(c context.Context, req *types.QueryAllOrderRequest) (*t
 	return &types.QueryOrdersResponse{Orders: orders, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Order(c context.Context, req *types.QueryOrderRequest) (*types.QueryGetOrderResponse, error) {
+func (k Keeper) Order(c context.Context, req *types.QueryOrderRequest) (*types.QueryOrderResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -53,7 +53,7 @@ func (k Keeper) Order(c context.Context, req *types.QueryOrderRequest) (*types.Q
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.QueryGetOrderResponse{Order: val}, nil
+	return &types.QueryOrderResponse{Order: val}, nil
 }
 
 func (k Keeper) Book(goCtx context.Context, req *types.QueryBookRequest) (*types.QueryBookResponse, error) {

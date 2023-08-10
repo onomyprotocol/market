@@ -62,7 +62,7 @@ service Query {
 	}
 
 	// Queries a Order by index.
-	rpc Order(QueryOrderRequest) returns (QueryGetOrderResponse) {
+	rpc Order(QueryOrderRequest) returns (QueryOrderResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/order/{uid}";
 	}
 
@@ -182,7 +182,7 @@ message QueryOrderRequest {
 	uint64 uid = 1;
 }
 
-message QueryGetOrderResponse {
+message QueryOrderResponse {
 	Order order = 1 [(gogoproto.nullable) = false];
 }
 

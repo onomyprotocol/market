@@ -231,10 +231,6 @@ export interface MarketQueryGetMemberResponse {
   member?: MarketMember;
 }
 
-export interface MarketQueryGetOrderResponse {
-  order?: MarketOrder;
-}
-
 export interface MarketQueryGetPoolResponse {
   pool?: MarketPool;
 }
@@ -267,6 +263,10 @@ export interface MarketQueryOrderOwnerUidsResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryOrderResponse {
+  order?: MarketOrder;
 }
 
 export interface MarketQueryOrdersResponse {
@@ -850,7 +850,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/pendulum-labs/market/market/order/{uid}
    */
   queryOrder = (uid: string, params: RequestParams = {}) =>
-    this.request<MarketQueryGetOrderResponse, RpcStatus>({
+    this.request<MarketQueryOrderResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order/${uid}`,
       method: "GET",
       format: "json",
