@@ -150,12 +150,12 @@ func TestListOrder(t *testing.T) {
 			args := request(nil, uint64(i), uint64(step), false)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListOrder(), args)
 			require.NoError(t, err)
-			var resp types.QueryAllOrderResponse
+			var resp types.QueryOrdersResponse
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-			require.LessOrEqual(t, len(resp.Order), step)
+			require.LessOrEqual(t, len(resp.Orders), step)
 			require.Subset(t,
 				nullify.Fill(objs),
-				nullify.Fill(resp.Order),
+				nullify.Fill(resp.Orders),
 			)
 		}
 	})
@@ -166,12 +166,12 @@ func TestListOrder(t *testing.T) {
 			args := request(next, 0, uint64(step), false)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListOrder(), args)
 			require.NoError(t, err)
-			var resp types.QueryAllOrderResponse
+			var resp types.QueryOrdersResponse
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-			require.LessOrEqual(t, len(resp.Order), step)
+			require.LessOrEqual(t, len(resp.Orders), step)
 			require.Subset(t,
 				nullify.Fill(objs),
-				nullify.Fill(resp.Order),
+				nullify.Fill(resp.Orders),
 			)
 			next = resp.Pagination.NextKey
 		}
@@ -180,13 +180,13 @@ func TestListOrder(t *testing.T) {
 		args := request(nil, 0, uint64(len(objs)), true)
 		out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListOrder(), args)
 		require.NoError(t, err)
-		var resp types.QueryAllOrderResponse
+		var resp types.QueryOrdersResponse
 		require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 		require.NoError(t, err)
 		require.Equal(t, len(objs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(objs),
-			nullify.Fill(resp.Order),
+			nullify.Fill(resp.Orders),
 		)
 	})
 }

@@ -243,7 +243,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		drop,
 	)
 
-	k.RemoveDropFromList(
+	k.RemoveDropOwner(
 		ctx,
 		drop.Uid,
 		drop.Owner,

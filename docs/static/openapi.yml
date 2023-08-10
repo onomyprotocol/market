@@ -29707,7 +29707,7 @@ paths:
           schema:
             type: object
             properties:
-              order:
+              orders:
                 type: array
                 items:
                   type: object
@@ -49931,70 +49931,6 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryAllOrderResponse:
-    type: object
-    properties:
-      order:
-        type: array
-        items:
-          type: object
-          properties:
-            uid:
-              type: string
-              format: uint64
-            owner:
-              type: string
-            status:
-              type: string
-            orderType:
-              type: string
-            denomAsk:
-              type: string
-            denomBid:
-              type: string
-            amount:
-              type: string
-            rate:
-              type: array
-              items:
-                type: string
-            prev:
-              type: string
-              format: uint64
-            next:
-              type: string
-              format: uint64
-            beg_time:
-              type: string
-              format: int64
-            end_time:
-              type: string
-              format: int64
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
   pendulumlabs.market.market.QueryAllPoolResponse:
     type: object
     properties:
@@ -50309,7 +50245,43 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  pendulumlabs.market.market.QueryOrderOwnerResponse:
+  pendulumlabs.market.market.QueryOrderOwnerUidsResponse:
+    type: object
+    properties:
+      orders:
+        type: object
+        properties:
+          uids:
+            type: array
+            items:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryOrdersResponse:
     type: object
     properties:
       orders:
@@ -50348,42 +50320,6 @@ definitions:
             end_time:
               type: string
               format: int64
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  pendulumlabs.market.market.QueryOrderOwnerUidsResponse:
-    type: object
-    properties:
-      orders:
-        type: object
-        properties:
-          uids:
-            type: array
-            items:
-              type: string
-              format: uint64
       pagination:
         type: object
         properties:

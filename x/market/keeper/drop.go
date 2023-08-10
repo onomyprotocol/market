@@ -156,7 +156,7 @@ func (k Keeper) RemoveDrop(
 }
 
 // RemoveDrop removes a drop from the store
-func (k Keeper) RemoveDropFromList(
+func (k Keeper) RemoveDropOwner(
 	ctx sdk.Context,
 	dropUid uint64,
 	owner string,

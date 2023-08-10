@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) OrderAll(c context.Context, req *types.QueryAllOrderRequest) (*types.QueryAllOrderResponse, error) {
+func (k Keeper) OrderAll(c context.Context, req *types.QueryAllOrderRequest) (*types.QueryOrdersResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -36,7 +36,7 @@ func (k Keeper) OrderAll(c context.Context, req *types.QueryAllOrderRequest) (*t
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllOrderResponse{Order: orders, Pagination: pageRes}, nil
+	return &types.QueryOrdersResponse{Orders: orders, Pagination: pageRes}, nil
 }
 
 func (k Keeper) Order(c context.Context, req *types.QueryGetOrderRequest) (*types.QueryGetOrderResponse, error) {
@@ -68,7 +68,7 @@ func (k Keeper) Book(goCtx context.Context, req *types.QueryBookRequest) (*types
 	return &types.QueryBookResponse{Book: book}, nil
 }
 
-func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrderOwnerResponse, error) {
+func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrdersResponse, error) {
 
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -78,7 +78,7 @@ func (k Keeper) OrderOwner(c context.Context, req *types.QueryOrderOwnerRequest)
 
 	orders := k.GetOrderOwner(ctx, req.Address)
 
-	return &types.QueryOrderOwnerResponse{Orders: orders}, nil
+	return &types.QueryOrdersResponse{Orders: orders}, nil
 }
 
 func (k Keeper) OrderOwnerUids(c context.Context, req *types.QueryOrderOwnerRequest) (*types.QueryOrderOwnerUidsResponse, error) {

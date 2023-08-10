@@ -89,10 +89,10 @@ func TestOrderQueryPaginated(t *testing.T) {
 		for i := 0; i < len(msgs); i += step {
 			resp, err := keeper.MarketKeeper.OrderAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
-			require.LessOrEqual(t, len(resp.Order), step)
+			require.LessOrEqual(t, len(resp.Orders), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-				nullify.Fill(resp.Order),
+				nullify.Fill(resp.Orders),
 			)
 		}
 	})
@@ -102,10 +102,10 @@ func TestOrderQueryPaginated(t *testing.T) {
 		for i := 0; i < len(msgs); i += step {
 			resp, err := keeper.MarketKeeper.OrderAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
-			require.LessOrEqual(t, len(resp.Order), step)
+			require.LessOrEqual(t, len(resp.Orders), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-				nullify.Fill(resp.Order),
+				nullify.Fill(resp.Orders),
 			)
 			next = resp.Pagination.NextKey
 		}
@@ -116,7 +116,7 @@ func TestOrderQueryPaginated(t *testing.T) {
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(msgs),
-			nullify.Fill(resp.Order),
+			nullify.Fill(resp.Orders),
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {

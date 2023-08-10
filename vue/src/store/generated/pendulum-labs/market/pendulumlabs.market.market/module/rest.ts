@@ -176,21 +176,6 @@ export interface MarketQueryAllMemberResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryAllOrderResponse {
-  order?: MarketOrder[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
 export interface MarketQueryAllPoolResponse {
   pool?: MarketPool[];
 
@@ -269,8 +254,8 @@ export interface MarketQueryHistoryResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryOrderOwnerResponse {
-  orders?: MarketOrder[];
+export interface MarketQueryOrderOwnerUidsResponse {
+  orders?: MarketOrders;
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -284,8 +269,8 @@ export interface MarketQueryOrderOwnerResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryOrderOwnerUidsResponse {
-  orders?: MarketOrders;
+export interface MarketQueryOrdersResponse {
+  orders?: MarketOrder[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -794,7 +779,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryAllOrderResponse, RpcStatus>({
+    this.request<MarketQueryOrdersResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order`,
       method: "GET",
       query: query,
@@ -848,7 +833,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryOrderOwnerResponse, RpcStatus>({
+    this.request<MarketQueryOrdersResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order/${address}`,
       method: "GET",
       query: query,

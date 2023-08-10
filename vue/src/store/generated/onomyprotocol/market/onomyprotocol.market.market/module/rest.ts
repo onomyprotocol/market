@@ -188,7 +188,7 @@ export interface MarketQueryAllMemberResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryAllOrderResponse {
+export interface MarketQueryOrdersResponse {
   order?: MarketOrder[];
 
   /**
@@ -739,7 +739,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryAllOrderResponse, RpcStatus>({
+    this.request<MarketQueryOrdersResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/order`,
       method: "GET",
       query: query,
