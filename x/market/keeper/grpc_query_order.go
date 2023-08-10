@@ -39,7 +39,7 @@ func (k Keeper) OrderAll(c context.Context, req *types.QueryAllOrderRequest) (*t
 	return &types.QueryOrdersResponse{Orders: orders, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Order(c context.Context, req *types.QueryGetOrderRequest) (*types.QueryGetOrderResponse, error) {
+func (k Keeper) Order(c context.Context, req *types.QueryOrderRequest) (*types.QueryGetOrderResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}

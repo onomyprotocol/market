@@ -62,7 +62,7 @@ service Query {
 	}
 
 	// Queries a Order by index.
-	rpc Order(QueryGetOrderRequest) returns (QueryGetOrderResponse) {
+	rpc Order(QueryOrderRequest) returns (QueryGetOrderResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/order/{uid}";
 	}
 
@@ -178,7 +178,7 @@ message QueryAllBurningsResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetOrderRequest {
+message QueryOrderRequest {
 	uint64 uid = 1;
 }
 

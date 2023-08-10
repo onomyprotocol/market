@@ -92,7 +92,7 @@ export interface QueryAllBurningsResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryGetOrderRequest {
+export interface QueryOrderRequest {
   uid: number;
 }
 
@@ -1393,23 +1393,20 @@ export const QueryAllBurningsResponse = {
   },
 };
 
-const baseQueryGetOrderRequest: object = { uid: 0 };
+const baseQueryOrderRequest: object = { uid: 0 };
 
-export const QueryGetOrderRequest = {
-  encode(
-    message: QueryGetOrderRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+export const QueryOrderRequest = {
+  encode(message: QueryOrderRequest, writer: Writer = Writer.create()): Writer {
     if (message.uid !== 0) {
       writer.uint32(8).uint64(message.uid);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetOrderRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryOrderRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetOrderRequest } as QueryGetOrderRequest;
+    const message = { ...baseQueryOrderRequest } as QueryOrderRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1424,8 +1421,8 @@ export const QueryGetOrderRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetOrderRequest {
-    const message = { ...baseQueryGetOrderRequest } as QueryGetOrderRequest;
+  fromJSON(object: any): QueryOrderRequest {
+    const message = { ...baseQueryOrderRequest } as QueryOrderRequest;
     if (object.uid !== undefined && object.uid !== null) {
       message.uid = Number(object.uid);
     } else {
@@ -1434,14 +1431,14 @@ export const QueryGetOrderRequest = {
     return message;
   },
 
-  toJSON(message: QueryGetOrderRequest): unknown {
+  toJSON(message: QueryOrderRequest): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetOrderRequest>): QueryGetOrderRequest {
-    const message = { ...baseQueryGetOrderRequest } as QueryGetOrderRequest;
+  fromPartial(object: DeepPartial<QueryOrderRequest>): QueryOrderRequest {
+    const message = { ...baseQueryOrderRequest } as QueryOrderRequest;
     if (object.uid !== undefined && object.uid !== null) {
       message.uid = object.uid;
     } else {
@@ -2723,7 +2720,7 @@ export interface Query {
     request: QueryAllBurningsRequest
   ): Promise<QueryAllBurningsResponse>;
   /** Queries a Order by index. */
-  Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse>;
+  Order(request: QueryOrderRequest): Promise<QueryGetOrderResponse>;
   /** Queries a list of Order items. */
   OrderAll(request: QueryAllOrderRequest): Promise<QueryOrdersResponse>;
   /** Queries a list of Order items. */
@@ -2851,8 +2848,8 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Order(request: QueryGetOrderRequest): Promise<QueryGetOrderResponse> {
-    const data = QueryGetOrderRequest.encode(request).finish();
+  Order(request: QueryOrderRequest): Promise<QueryGetOrderResponse> {
+    const data = QueryOrderRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulumlabs.market.market.Query",
       "Order",

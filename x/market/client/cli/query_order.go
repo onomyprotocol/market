@@ -58,7 +58,7 @@ func CmdShowOrder() *cobra.Command {
 				return err
 			}
 
-			params := &types.QueryGetOrderRequest{
+			params := &types.QueryOrderRequest{
 				Uid: argUid,
 			}
 

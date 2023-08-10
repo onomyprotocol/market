@@ -24,27 +24,27 @@ func TestOrderQuerySingle(t *testing.T) {
 	msgs := createNOrder(keeper.MarketKeeper, keeper.Context, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetOrderRequest
+		request  *types.QueryOrderRequest
 		response *types.QueryGetOrderResponse
 		err      error
 	}{
 		{
 			desc: "First",
-			request: &types.QueryGetOrderRequest{
+			request: &types.QueryOrderRequest{
 				Uid: msgs[0].Uid,
 			},
 			response: &types.QueryGetOrderResponse{Order: msgs[0]},
 		},
 		{
 			desc: "Second",
-			request: &types.QueryGetOrderRequest{
+			request: &types.QueryOrderRequest{
 				Uid: msgs[1].Uid,
 			},
 			response: &types.QueryGetOrderResponse{Order: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.QueryGetOrderRequest{
+			request: &types.QueryOrderRequest{
 				Uid: 100000,
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),
