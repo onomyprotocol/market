@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) DropAll(c context.Context, req *types.QueryAllDropRequest) (*types.QueryAllDropResponse, error) {
+func (k Keeper) DropAll(c context.Context, req *types.QueryAllDropRequest) (*types.QueryDropsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -36,10 +36,10 @@ func (k Keeper) DropAll(c context.Context, req *types.QueryAllDropRequest) (*typ
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllDropResponse{Drop: drops, Pagination: pageRes}, nil
+	return &types.QueryDropsResponse{Drops: drops, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Drop(c context.Context, req *types.QueryGetDropRequest) (*types.QueryGetDropResponse, error) {
+func (k Keeper) Drop(c context.Context, req *types.QueryGetDropRequest) (*types.QueryDropResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -53,5 +53,5 @@ func (k Keeper) Drop(c context.Context, req *types.QueryGetDropRequest) (*types.
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.QueryGetDropResponse{Drop: val}, nil
+	return &types.QueryDropResponse{Drop: val}, nil
 }

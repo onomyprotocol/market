@@ -50,7 +50,7 @@ export interface QueryGetDropRequest {
   pair: string;
 }
 
-export interface QueryGetDropResponse {
+export interface QueryDropResponse {
   drop: Drop | undefined;
 }
 
@@ -58,7 +58,7 @@ export interface QueryAllDropRequest {
   pagination: PageRequest | undefined;
 }
 
-export interface QueryAllDropResponse {
+export interface QueryDropsResponse {
   drop: Drop[];
   pagination: PageResponse | undefined;
 }
@@ -662,11 +662,11 @@ export const QueryGetDropRequest = {
   },
 };
 
-const baseQueryGetDropResponse: object = {};
+const baseQueryDropResponse: object = {};
 
-export const QueryGetDropResponse = {
+export const QueryDropResponse = {
   encode(
-    message: QueryGetDropResponse,
+    message: QueryDropResponse,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.drop !== undefined) {
@@ -675,10 +675,10 @@ export const QueryGetDropResponse = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetDropResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryDropResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGetDropResponse } as QueryGetDropResponse;
+    const message = { ...baseQueryDropResponse } as QueryDropResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -693,8 +693,8 @@ export const QueryGetDropResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetDropResponse {
-    const message = { ...baseQueryGetDropResponse } as QueryGetDropResponse;
+  fromJSON(object: any): QueryDropResponse {
+    const message = { ...baseQueryDropResponse } as QueryDropResponse;
     if (object.drop !== undefined && object.drop !== null) {
       message.drop = Drop.fromJSON(object.drop);
     } else {
@@ -703,15 +703,15 @@ export const QueryGetDropResponse = {
     return message;
   },
 
-  toJSON(message: QueryGetDropResponse): unknown {
+  toJSON(message: QueryDropResponse): unknown {
     const obj: any = {};
     message.drop !== undefined &&
       (obj.drop = message.drop ? Drop.toJSON(message.drop) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGetDropResponse>): QueryGetDropResponse {
-    const message = { ...baseQueryGetDropResponse } as QueryGetDropResponse;
+  fromPartial(object: DeepPartial<QueryDropResponse>): QueryDropResponse {
+    const message = { ...baseQueryDropResponse } as QueryDropResponse;
     if (object.drop !== undefined && object.drop !== null) {
       message.drop = Drop.fromPartial(object.drop);
     } else {
@@ -782,11 +782,11 @@ export const QueryAllDropRequest = {
   },
 };
 
-const baseQueryAllDropResponse: object = {};
+const baseQueryDropsResponse: object = {};
 
-export const QueryAllDropResponse = {
+export const QueryDropsResponse = {
   encode(
-    message: QueryAllDropResponse,
+    message: QueryDropsResponse,
     writer: Writer = Writer.create()
   ): Writer {
     for (const v of message.drop) {
@@ -801,10 +801,10 @@ export const QueryAllDropResponse = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryAllDropResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryDropsResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryAllDropResponse } as QueryAllDropResponse;
+    const message = { ...baseQueryDropsResponse } as QueryDropsResponse;
     message.drop = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -823,8 +823,8 @@ export const QueryAllDropResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllDropResponse {
-    const message = { ...baseQueryAllDropResponse } as QueryAllDropResponse;
+  fromJSON(object: any): QueryDropsResponse {
+    const message = { ...baseQueryDropsResponse } as QueryDropsResponse;
     message.drop = [];
     if (object.drop !== undefined && object.drop !== null) {
       for (const e of object.drop) {
@@ -839,7 +839,7 @@ export const QueryAllDropResponse = {
     return message;
   },
 
-  toJSON(message: QueryAllDropResponse): unknown {
+  toJSON(message: QueryDropsResponse): unknown {
     const obj: any = {};
     if (message.drop) {
       obj.drop = message.drop.map((e) => (e ? Drop.toJSON(e) : undefined));
@@ -853,8 +853,8 @@ export const QueryAllDropResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryAllDropResponse>): QueryAllDropResponse {
-    const message = { ...baseQueryAllDropResponse } as QueryAllDropResponse;
+  fromPartial(object: DeepPartial<QueryDropsResponse>): QueryDropsResponse {
+    const message = { ...baseQueryDropsResponse } as QueryDropsResponse;
     message.drop = [];
     if (object.drop !== undefined && object.drop !== null) {
       for (const e of object.drop) {
@@ -2350,9 +2350,9 @@ export interface Query {
   /** Queries a list of Pool items. */
   PoolAll(request: QueryAllPoolRequest): Promise<QueryAllPoolResponse>;
   /** Queries a Drop by index. */
-  Drop(request: QueryGetDropRequest): Promise<QueryGetDropResponse>;
+  Drop(request: QueryGetDropRequest): Promise<QueryDropResponse>;
   /** Queries a list of Drop items. */
-  DropAll(request: QueryAllDropRequest): Promise<QueryAllDropResponse>;
+  DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse>;
   /** Queries a Member by index. */
   Member(request: QueryGetMemberRequest): Promise<QueryGetMemberResponse>;
   /** Queries a list of Member items. */
@@ -2414,7 +2414,7 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Drop(request: QueryGetDropRequest): Promise<QueryGetDropResponse> {
+  Drop(request: QueryGetDropRequest): Promise<QueryDropResponse> {
     const data = QueryGetDropRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulum-labs.market.market.Query",
@@ -2422,11 +2422,11 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) =>
-      QueryGetDropResponse.decode(new Reader(data))
+      QueryDropResponse.decode(new Reader(data))
     );
   }
 
-  DropAll(request: QueryAllDropRequest): Promise<QueryAllDropResponse> {
+  DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse> {
     const data = QueryAllDropRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulum-labs.market.market.Query",
@@ -2434,7 +2434,7 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) =>
-      QueryAllDropResponse.decode(new Reader(data))
+      QueryDropsResponse.decode(new Reader(data))
     );
   }
 

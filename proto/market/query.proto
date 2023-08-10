@@ -32,12 +32,12 @@ service Query {
 	}
 
 	// Queries a Drop by index.
-	rpc Drop(QueryGetDropRequest) returns (QueryGetDropResponse) {
+	rpc Drop(QueryGetDropRequest) returns (QueryDropResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
 	}
 
 	// Queries a list of Drop items.
-	rpc DropAll(QueryAllDropRequest) returns (QueryAllDropResponse) {
+	rpc DropAll(QueryAllDropRequest) returns (QueryDropsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop";
 	}
 
@@ -129,7 +129,7 @@ message QueryGetDropRequest {
 	uint64 uid = 1;
 }
 
-message QueryGetDropResponse {
+message QueryDropResponse {
 	Drop drop = 1 [(gogoproto.nullable) = false];
 }
 
@@ -137,8 +137,8 @@ message QueryAllDropRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryAllDropResponse {
-	repeated Drop drop = 1 [(gogoproto.nullable) = false];
+message QueryDropsResponse {
+	repeated Drop drops = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

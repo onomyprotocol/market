@@ -146,21 +146,6 @@ export interface MarketQueryAllBurningsResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryAllDropResponse {
-  drop?: MarketDrop[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
 export interface MarketQueryAllMemberResponse {
   member?: MarketMember[];
 
@@ -219,12 +204,27 @@ export interface MarketQueryBookendsResponse {
   next?: string;
 }
 
-export interface MarketQueryGetBurningsResponse {
-  burnings?: MarketBurnings;
+export interface MarketQueryDropResponse {
+  drop?: MarketDrop;
 }
 
-export interface MarketQueryGetDropResponse {
-  drop?: MarketDrop;
+export interface MarketQueryDropsResponse {
+  drops?: MarketDrop[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface MarketQueryGetBurningsResponse {
+  burnings?: MarketBurnings;
 }
 
 export interface MarketQueryGetMemberResponse {
@@ -667,7 +667,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryAllDropResponse, RpcStatus>({
+    this.request<MarketQueryDropsResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop`,
       method: "GET",
       query: query,
@@ -684,7 +684,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/pendulum-labs/market/market/drop/{uid}
    */
   queryDrop = (uid: string, params: RequestParams = {}) =>
-    this.request<MarketQueryGetDropResponse, RpcStatus>({
+    this.request<MarketQueryDropResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop/${uid}`,
       method: "GET",
       format: "json",

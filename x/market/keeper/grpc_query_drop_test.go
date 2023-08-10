@@ -25,7 +25,7 @@ func TestDropQuerySingle(t *testing.T) {
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetDropRequest
-		response *types.QueryGetDropResponse
+		response *types.QueryDropResponse
 		err      error
 	}{
 		{
@@ -33,14 +33,14 @@ func TestDropQuerySingle(t *testing.T) {
 			request: &types.QueryGetDropRequest{
 				Uid: msgs[0].Uid,
 			},
-			response: &types.QueryGetDropResponse{Drop: msgs[0]},
+			response: &types.QueryDropResponse{Drop: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetDropRequest{
 				Uid: msgs[1].Uid,
 			},
-			response: &types.QueryGetDropResponse{Drop: msgs[1]},
+			response: &types.QueryDropResponse{Drop: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
@@ -89,10 +89,10 @@ func TestDropQueryPaginated(t *testing.T) {
 		for i := 0; i < len(msgs); i += step {
 			resp, err := keeper.MarketKeeper.DropAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
-			require.LessOrEqual(t, len(resp.Drop), step)
+			require.LessOrEqual(t, len(resp.Drops), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-				nullify.Fill(resp.Drop),
+				nullify.Fill(resp.Drops),
 			)
 		}
 	})
@@ -102,10 +102,10 @@ func TestDropQueryPaginated(t *testing.T) {
 		for i := 0; i < len(msgs); i += step {
 			resp, err := keeper.MarketKeeper.DropAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
-			require.LessOrEqual(t, len(resp.Drop), step)
+			require.LessOrEqual(t, len(resp.Drops), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-				nullify.Fill(resp.Drop),
+				nullify.Fill(resp.Drops),
 			)
 			next = resp.Pagination.NextKey
 		}
@@ -116,7 +116,7 @@ func TestDropQueryPaginated(t *testing.T) {
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(msgs),
-			nullify.Fill(resp.Drop),
+			nullify.Fill(resp.Drops),
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {

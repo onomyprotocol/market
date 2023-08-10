@@ -94,7 +94,7 @@ func TestShowDrop(t *testing.T) {
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetDropResponse
+				var resp types.QueryDropResponse
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 				require.NotNil(t, resp.Drop)
 				require.Equal(t,
@@ -131,12 +131,12 @@ func TestListDrop(t *testing.T) {
 			args := request(nil, uint64(i), uint64(step), false)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListDrop(), args)
 			require.NoError(t, err)
-			var resp types.QueryAllDropResponse
+			var resp types.QueryDropsResponse
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-			require.LessOrEqual(t, len(resp.Drop), step)
+			require.LessOrEqual(t, len(resp.Drops), step)
 			require.Subset(t,
 				nullify.Fill(objs),
-				nullify.Fill(resp.Drop),
+				nullify.Fill(resp.Drops),
 			)
 		}
 	})
@@ -147,12 +147,12 @@ func TestListDrop(t *testing.T) {
 			args := request(next, 0, uint64(step), false)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListDrop(), args)
 			require.NoError(t, err)
-			var resp types.QueryAllDropResponse
+			var resp types.QueryDropsResponse
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-			require.LessOrEqual(t, len(resp.Drop), step)
+			require.LessOrEqual(t, len(resp.Drops), step)
 			require.Subset(t,
 				nullify.Fill(objs),
-				nullify.Fill(resp.Drop),
+				nullify.Fill(resp.Drops),
 			)
 			next = resp.Pagination.NextKey
 		}
@@ -161,13 +161,13 @@ func TestListDrop(t *testing.T) {
 		args := request(nil, 0, uint64(len(objs)), true)
 		out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListDrop(), args)
 		require.NoError(t, err)
-		var resp types.QueryAllDropResponse
+		var resp types.QueryDropsResponse
 		require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 		require.NoError(t, err)
 		require.Equal(t, len(objs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(objs),
-			nullify.Fill(resp.Drop),
+			nullify.Fill(resp.Drops),
 		)
 	})
 }

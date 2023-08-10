@@ -158,7 +158,7 @@ export interface MarketQueryAllBurningsResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MarketQueryAllDropResponse {
+export interface MarketQueryDropsResponse {
   drop?: MarketDrop[];
 
   /**
@@ -230,7 +230,7 @@ export interface MarketQueryGetBurningsResponse {
   burnings?: MarketBurnings;
 }
 
-export interface MarketQueryGetDropResponse {
+export interface MarketQueryDropResponse {
   drop?: MarketDrop;
 }
 
@@ -626,7 +626,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<MarketQueryAllDropResponse, RpcStatus>({
+    this.request<MarketQueryDropsResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop`,
       method: "GET",
       query: query,
@@ -643,7 +643,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/pendulum-labs/market/market/drop/{uid}/{owner}/{pair}
    */
   queryDrop = (uid: string, owner: string, pair: string, params: RequestParams = {}) =>
-    this.request<MarketQueryGetDropResponse, RpcStatus>({
+    this.request<MarketQueryDropResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop/${uid}/${owner}/${pair}`,
       method: "GET",
       format: "json",
