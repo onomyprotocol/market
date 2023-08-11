@@ -79,6 +79,10 @@ func TestCreateDrop(t *testing.T) {
 	require.Equal(t, members1.DenomB, denomB)
 	require.Equal(t, "44", members1.Balance.String())
 
+	owner, ok := testInput.MarketKeeper.GetDropsOwnerPair(testInput.Context, addr, pair)
+	require.True(t, ok)
+	require.Truef(t, owner.Sum.Equal(sdk.NewInt(1320)), owner.Sum.String())
+
 	// Validate GetPool
 	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)

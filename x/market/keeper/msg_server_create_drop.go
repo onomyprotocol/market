@@ -107,10 +107,10 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	)
 
 	sumDropCreator := drops
-	prevSum, ok := k.GetDropsSum(ctx, msg.Creator, pair)
+	dropOwner, ok := k.GetDropsOwnerPair(ctx, msg.Creator, pair)
 
 	if ok {
-		sumDropCreator = sumDropCreator.Add(prevSum)
+		sumDropCreator = sumDropCreator.Add(dropOwner.Sum)
 	}
 
 	numLeaders := len(pool.Leaders)
@@ -200,11 +200,12 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		drop,
 	)
 
-	k.SetDropsSum(
+	k.SetDrops(
 		ctx,
 		drop.Owner,
 		drop.Pair,
 		sumDropCreator,
+		append(dropOwner.Uids, uid),
 	)
 
 	// create drop event

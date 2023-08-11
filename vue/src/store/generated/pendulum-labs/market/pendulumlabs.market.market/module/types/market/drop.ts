@@ -15,9 +15,6 @@ export interface Drop {
 
 export interface Drops {
   uids: number[];
-}
-
-export interface DropsSum {
   sum: string;
 }
 
@@ -168,7 +165,7 @@ export const Drop = {
   },
 };
 
-const baseDrops: object = { uids: 0 };
+const baseDrops: object = { uids: 0, sum: "" };
 
 export const Drops = {
   encode(message: Drops, writer: Writer = Writer.create()): Writer {
@@ -177,6 +174,9 @@ export const Drops = {
       writer.uint64(v);
     }
     writer.ldelim();
+    if (message.sum !== "") {
+      writer.uint32(18).string(message.sum);
+    }
     return writer;
   },
 
@@ -198,6 +198,9 @@ export const Drops = {
             message.uids.push(longToNumber(reader.uint64() as Long));
           }
           break;
+        case 2:
+          message.sum = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -214,6 +217,11 @@ export const Drops = {
         message.uids.push(Number(e));
       }
     }
+    if (object.sum !== undefined && object.sum !== null) {
+      message.sum = String(object.sum);
+    } else {
+      message.sum = "";
+    }
     return message;
   },
 
@@ -224,6 +232,7 @@ export const Drops = {
     } else {
       obj.uids = [];
     }
+    message.sum !== undefined && (obj.sum = message.sum);
     return obj;
   },
 
@@ -235,56 +244,6 @@ export const Drops = {
         message.uids.push(e);
       }
     }
-    return message;
-  },
-};
-
-const baseDropsSum: object = { sum: "" };
-
-export const DropsSum = {
-  encode(message: DropsSum, writer: Writer = Writer.create()): Writer {
-    if (message.sum !== "") {
-      writer.uint32(10).string(message.sum);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): DropsSum {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseDropsSum } as DropsSum;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.sum = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DropsSum {
-    const message = { ...baseDropsSum } as DropsSum;
-    if (object.sum !== undefined && object.sum !== null) {
-      message.sum = String(object.sum);
-    } else {
-      message.sum = "";
-    }
-    return message;
-  },
-
-  toJSON(message: DropsSum): unknown {
-    const obj: any = {};
-    message.sum !== undefined && (obj.sum = message.sum);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<DropsSum>): DropsSum {
-    const message = { ...baseDropsSum } as DropsSum;
     if (object.sum !== undefined && object.sum !== null) {
       message.sum = object.sum;
     } else {

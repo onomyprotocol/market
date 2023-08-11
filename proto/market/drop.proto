@@ -24,10 +24,7 @@ message Drop {
 
 message Drops {
   repeated uint64 uids = 1;
-}
-
-message DropsSum {
-  string sum = 1 [
+  string sum = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ]; 

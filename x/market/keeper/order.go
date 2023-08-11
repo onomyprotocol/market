@@ -69,7 +69,7 @@ func (k Keeper) SetOrderOwner(
 
 	// First remove uid if present
 	// Allows the order, if changed, to be at top of list
-	orders.Uids = removeUid(orders.Uids, uid)
+	orders.Uids, _ = removeUid(orders.Uids, uid)
 
 	// Append uid in the front
 	orders.Uids = append(orders.Uids, uid)
@@ -150,7 +150,7 @@ func (k Keeper) RemoveOrderOwner(
 	var orders types.Orders
 	k.cdc.MustUnmarshal(a, &orders)
 
-	orders.Uids = removeUid(orders.Uids, uid)
+	orders.Uids, _ = removeUid(orders.Uids, uid)
 
 	b := k.cdc.MustMarshal(&orders)
 	store.Set(types.OrderOwnerKey(owner), b)

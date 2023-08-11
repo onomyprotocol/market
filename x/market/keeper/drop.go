@@ -58,7 +58,7 @@ func (k Keeper) GetDrop(
 }
 
 // GetOwnerDrops returns drops from a single owner
-func (k Keeper) GetDrops(
+func (k Keeper) GetDropsOwnerPairDetail(
 	ctx sdk.Context,
 	owner string,
 	pair string,
@@ -96,36 +96,35 @@ func (k Keeper) GetDrops(
 }
 
 // GetOwnerDrops returns drops from a single owner
-func (k Keeper) GetDropsSum(
+func (k Keeper) GetDropsOwnerPair(
 	ctx sdk.Context,
 	owner string,
 	pair string,
-) (sdk.Int, bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsSumKeyPrefix))
+) (drops types.Drops, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
 
-	b := store.Get(types.DropsSumKey(
+	b := store.Get(types.DropsKey(
 		owner,
 		pair,
 	))
 	if b == nil {
-		return sdk.ZeroInt(), false
+		return drops, false
 	}
 
-	var val types.DropsSum
+	k.cdc.MustUnmarshal(b, &drops)
 
-	k.cdc.MustUnmarshal(b, &val)
-
-	return val.Sum, true
+	return drops, true
 }
 
 // SetDrop set a specific drop in the store from its index
-func (k Keeper) SetDropsSum(ctx sdk.Context, owner string, pair string, drops sdk.Int) {
-	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsSumKeyPrefix))
-	dropsSum := types.DropsSum{
-		Sum: drops,
+func (k Keeper) SetDrops(ctx sdk.Context, owner string, pair string, sum sdk.Int, uids []uint64) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+	drops := types.Drops{
+		Uids: uids,
+		Sum:  sum,
 	}
-	b := k.cdc.MustMarshal(&dropsSum)
-	store1.Set(types.DropsSumKey(
+	b := k.cdc.MustMarshal(&drops)
+	store1.Set(types.DropsKey(
 		owner,
 		pair,
 	), b)

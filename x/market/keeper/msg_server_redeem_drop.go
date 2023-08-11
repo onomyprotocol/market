@@ -91,13 +91,17 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		}
 	}
 
-	sumDropRedeemer, ok := k.GetDropsSum(ctx, msg.Creator, drop.Pair)
-
+	dropRedeemer, ok := k.GetDropsOwnerPair(ctx, msg.Creator, drop.Pair)
+	var sumDropRedeemer sdk.Int
 	if ok {
-		sumDropRedeemer = sumDropRedeemer.Sub(drop.Drops)
+		sumDropRedeemer = dropRedeemer.Sum
 	} else {
 		return nil, sdkerrors.Wrapf(types.ErrDropSumNotFound, "%s", msg.Creator)
 	}
+
+	sumDropRedeemer = sumDropRedeemer.Sub(drop.Drops)
+
+	uidsDropRedeemer, _ := removeUid(dropRedeemer.Uids, uid)
 
 	numLeaders := len(pool.Leaders)
 
@@ -250,11 +254,12 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		drop.Pair,
 	)
 
-	k.SetDropsSum(
+	k.SetDrops(
 		ctx,
 		drop.Owner,
 		drop.Pair,
 		sumDropRedeemer,
+		uidsDropRedeemer,
 	)
 
 	k.SetPool(
