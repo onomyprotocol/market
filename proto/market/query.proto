@@ -41,6 +41,11 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/pairs/{address}";
 	}
 
+	// Queries a Drop by index.
+	rpc DropOwnerPair(QueryDropOwnerPairRequest) returns (QueryDropsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/{address}/{pair}";
+	}
+
 	// Queries a list of Drop items.
 	rpc DropAll(QueryAllDropRequest) returns (QueryDropsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop";
@@ -144,6 +149,38 @@ message QueryDropPairsRequest {
 
 message QueryDropPairsResponse {
 	repeated string pairs = 1;
+}
+
+message QueryDropOwnerPairRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryDropOwnerPairSumRequest {
+	string address = 1;
+	string pair = 2;
+}
+
+message QueryDropOwnerPairSumResponse {
+	string sum = 1;
+}
+
+message QueryDropOwnerPairUidsRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryUidsResponse {
+	repeated uint64 uids = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryDropOwnerPairDetailRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 message QueryAllDropRequest {

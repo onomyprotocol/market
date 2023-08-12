@@ -72,3 +72,21 @@ func (k Keeper) DropPairs(c context.Context, req *types.QueryDropPairsRequest) (
 
 	return &types.QueryDropPairsResponse{Pairs: val.Pairs}, nil
 }
+
+func (k Keeper) DropOwnerPair(c context.Context, req *types.QueryDropOwnerPairRequest) (*types.QueryDropsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	drops, found := k.GetDropOwnerPair(
+		ctx,
+		req.Address,
+		req.Pair,
+	)
+	if !found {
+		return nil, status.Error(codes.InvalidArgument, "not found")
+	}
+
+	return &types.QueryDropsResponse{Drops: drops}, nil
+}

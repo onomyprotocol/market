@@ -273,3 +273,41 @@ func (k Keeper) GetPairs(
 
 	return pairs, true
 }
+
+// GetOrderOwner returns orders from a single owner
+func (k Keeper) GetDropOwnerPair(
+	ctx sdk.Context,
+	owner string,
+	pair string,
+) (list []types.Drop, found bool) {
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+
+	a := store1.Get(types.DropsKey(
+		owner,
+		pair,
+	))
+	if a == nil {
+		return list, false
+	}
+
+	var drops types.Drops
+
+	k.cdc.MustUnmarshal(a, &drops)
+
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	for _, uid := range drops.Uids {
+		var drop types.Drop
+
+		b := store2.Get(types.DropKey(
+			uid,
+		))
+
+		if b != nil {
+			k.cdc.MustUnmarshal(b, &drop)
+			list = append(list, drop)
+		}
+	}
+
+	return list, true
+}

@@ -56,6 +56,38 @@ export interface QueryDropPairsResponse {
   pairs: string[];
 }
 
+export interface QueryDropOwnerPairRequest {
+  address: string;
+  pair: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryDropOwnerPairSumRequest {
+  address: string;
+  pair: string;
+}
+
+export interface QueryDropOwnerPairSumResponse {
+  sum: string;
+}
+
+export interface QueryDropOwnerPairUidsRequest {
+  address: string;
+  pair: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryUidsResponse {
+  uids: number[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryDropOwnerPairDetailRequest {
+  address: string;
+  pair: string;
+  pagination: PageRequest | undefined;
+}
+
 export interface QueryAllDropRequest {
   pagination: PageRequest | undefined;
 }
@@ -773,6 +805,573 @@ export const QueryDropPairsResponse = {
       for (const e of object.pairs) {
         message.pairs.push(e);
       }
+    }
+    return message;
+  },
+};
+
+const baseQueryDropOwnerPairRequest: object = { address: "", pair: "" };
+
+export const QueryDropOwnerPairRequest = {
+  encode(
+    message: QueryDropOwnerPairRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.pair !== "") {
+      writer.uint32(18).string(message.pair);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropOwnerPairRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropOwnerPairRequest,
+    } as QueryDropOwnerPairRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        case 2:
+          message.pair = reader.string();
+          break;
+        case 3:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropOwnerPairRequest {
+    const message = {
+      ...baseQueryDropOwnerPairRequest,
+    } as QueryDropOwnerPairRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropOwnerPairRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropOwnerPairRequest>
+  ): QueryDropOwnerPairRequest {
+    const message = {
+      ...baseQueryDropOwnerPairRequest,
+    } as QueryDropOwnerPairRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryDropOwnerPairSumRequest: object = { address: "", pair: "" };
+
+export const QueryDropOwnerPairSumRequest = {
+  encode(
+    message: QueryDropOwnerPairSumRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.pair !== "") {
+      writer.uint32(18).string(message.pair);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropOwnerPairSumRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropOwnerPairSumRequest,
+    } as QueryDropOwnerPairSumRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        case 2:
+          message.pair = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropOwnerPairSumRequest {
+    const message = {
+      ...baseQueryDropOwnerPairSumRequest,
+    } as QueryDropOwnerPairSumRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropOwnerPairSumRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    message.pair !== undefined && (obj.pair = message.pair);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropOwnerPairSumRequest>
+  ): QueryDropOwnerPairSumRequest {
+    const message = {
+      ...baseQueryDropOwnerPairSumRequest,
+    } as QueryDropOwnerPairSumRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryDropOwnerPairSumResponse: object = { sum: "" };
+
+export const QueryDropOwnerPairSumResponse = {
+  encode(
+    message: QueryDropOwnerPairSumResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.sum !== "") {
+      writer.uint32(10).string(message.sum);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropOwnerPairSumResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropOwnerPairSumResponse,
+    } as QueryDropOwnerPairSumResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.sum = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropOwnerPairSumResponse {
+    const message = {
+      ...baseQueryDropOwnerPairSumResponse,
+    } as QueryDropOwnerPairSumResponse;
+    if (object.sum !== undefined && object.sum !== null) {
+      message.sum = String(object.sum);
+    } else {
+      message.sum = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropOwnerPairSumResponse): unknown {
+    const obj: any = {};
+    message.sum !== undefined && (obj.sum = message.sum);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropOwnerPairSumResponse>
+  ): QueryDropOwnerPairSumResponse {
+    const message = {
+      ...baseQueryDropOwnerPairSumResponse,
+    } as QueryDropOwnerPairSumResponse;
+    if (object.sum !== undefined && object.sum !== null) {
+      message.sum = object.sum;
+    } else {
+      message.sum = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryDropOwnerPairUidsRequest: object = { address: "", pair: "" };
+
+export const QueryDropOwnerPairUidsRequest = {
+  encode(
+    message: QueryDropOwnerPairUidsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.pair !== "") {
+      writer.uint32(18).string(message.pair);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropOwnerPairUidsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropOwnerPairUidsRequest,
+    } as QueryDropOwnerPairUidsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        case 2:
+          message.pair = reader.string();
+          break;
+        case 3:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropOwnerPairUidsRequest {
+    const message = {
+      ...baseQueryDropOwnerPairUidsRequest,
+    } as QueryDropOwnerPairUidsRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropOwnerPairUidsRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropOwnerPairUidsRequest>
+  ): QueryDropOwnerPairUidsRequest {
+    const message = {
+      ...baseQueryDropOwnerPairUidsRequest,
+    } as QueryDropOwnerPairUidsRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryUidsResponse: object = { uids: 0 };
+
+export const QueryUidsResponse = {
+  encode(message: QueryUidsResponse, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).fork();
+    for (const v of message.uids) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryUidsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryUidsResponse } as QueryUidsResponse;
+    message.uids = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.uids.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.uids.push(longToNumber(reader.uint64() as Long));
+          }
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryUidsResponse {
+    const message = { ...baseQueryUidsResponse } as QueryUidsResponse;
+    message.uids = [];
+    if (object.uids !== undefined && object.uids !== null) {
+      for (const e of object.uids) {
+        message.uids.push(Number(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryUidsResponse): unknown {
+    const obj: any = {};
+    if (message.uids) {
+      obj.uids = message.uids.map((e) => e);
+    } else {
+      obj.uids = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryUidsResponse>): QueryUidsResponse {
+    const message = { ...baseQueryUidsResponse } as QueryUidsResponse;
+    message.uids = [];
+    if (object.uids !== undefined && object.uids !== null) {
+      for (const e of object.uids) {
+        message.uids.push(e);
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryDropOwnerPairDetailRequest: object = { address: "", pair: "" };
+
+export const QueryDropOwnerPairDetailRequest = {
+  encode(
+    message: QueryDropOwnerPairDetailRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.pair !== "") {
+      writer.uint32(18).string(message.pair);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropOwnerPairDetailRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropOwnerPairDetailRequest,
+    } as QueryDropOwnerPairDetailRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        case 2:
+          message.pair = reader.string();
+          break;
+        case 3:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropOwnerPairDetailRequest {
+    const message = {
+      ...baseQueryDropOwnerPairDetailRequest,
+    } as QueryDropOwnerPairDetailRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropOwnerPairDetailRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropOwnerPairDetailRequest>
+  ): QueryDropOwnerPairDetailRequest {
+    const message = {
+      ...baseQueryDropOwnerPairDetailRequest,
+    } as QueryDropOwnerPairDetailRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
     }
     return message;
   },
@@ -2842,6 +3441,10 @@ export interface Query {
   Drop(request: QueryDropRequest): Promise<QueryDropResponse>;
   /** Queries a Drop by index. */
   DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse>;
+  /** Queries a Drop by index. */
+  DropOwnerPair(
+    request: QueryDropOwnerPairRequest
+  ): Promise<QueryDropsResponse>;
   /** Queries a list of Drop items. */
   DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse>;
   /** Queries a Member by index. */
@@ -2931,6 +3534,18 @@ export class QueryClientImpl implements Query {
     return promise.then((data) =>
       QueryDropPairsResponse.decode(new Reader(data))
     );
+  }
+
+  DropOwnerPair(
+    request: QueryDropOwnerPairRequest
+  ): Promise<QueryDropsResponse> {
+    const data = QueryDropOwnerPairRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "DropOwnerPair",
+      data
+    );
+    return promise.then((data) => QueryDropsResponse.decode(new Reader(data)));
   }
 
   DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse> {

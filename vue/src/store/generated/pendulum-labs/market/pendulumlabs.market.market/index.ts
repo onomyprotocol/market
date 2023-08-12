@@ -11,11 +11,16 @@ import { OrderResponse } from "./module/types/market/order"
 import { Params } from "./module/types/market/params"
 import { Pool } from "./module/types/market/pool"
 import { Leader } from "./module/types/market/pool"
+import { QueryDropOwnerPairSumRequest } from "./module/types/market/query"
+import { QueryDropOwnerPairSumResponse } from "./module/types/market/query"
+import { QueryDropOwnerPairUidsRequest } from "./module/types/market/query"
+import { QueryUidsResponse } from "./module/types/market/query"
+import { QueryDropOwnerPairDetailRequest } from "./module/types/market/query"
 import { QueryOrderOwnerPairRequest } from "./module/types/market/query"
 import { QueryOrderOwnerPairResponse } from "./module/types/market/query"
 
 
-export { Burnings, Drop, Drops, DropPairs, Member, Order, Orders, OrderResponse, Params, Pool, Leader, QueryOrderOwnerPairRequest, QueryOrderOwnerPairResponse };
+export { Burnings, Drop, Drops, DropPairs, Member, Order, Orders, OrderResponse, Params, Pool, Leader, QueryDropOwnerPairSumRequest, QueryDropOwnerPairSumResponse, QueryDropOwnerPairUidsRequest, QueryUidsResponse, QueryDropOwnerPairDetailRequest, QueryOrderOwnerPairRequest, QueryOrderOwnerPairResponse };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -58,6 +63,7 @@ const getDefaultState = () => {
 				PoolAll: {},
 				Drop: {},
 				DropPairs: {},
+				DropOwnerPair: {},
 				DropAll: {},
 				Member: {},
 				MemberAll: {},
@@ -83,6 +89,11 @@ const getDefaultState = () => {
 						Params: getStructure(Params.fromPartial({})),
 						Pool: getStructure(Pool.fromPartial({})),
 						Leader: getStructure(Leader.fromPartial({})),
+						QueryDropOwnerPairSumRequest: getStructure(QueryDropOwnerPairSumRequest.fromPartial({})),
+						QueryDropOwnerPairSumResponse: getStructure(QueryDropOwnerPairSumResponse.fromPartial({})),
+						QueryDropOwnerPairUidsRequest: getStructure(QueryDropOwnerPairUidsRequest.fromPartial({})),
+						QueryUidsResponse: getStructure(QueryUidsResponse.fromPartial({})),
+						QueryDropOwnerPairDetailRequest: getStructure(QueryDropOwnerPairDetailRequest.fromPartial({})),
 						QueryOrderOwnerPairRequest: getStructure(QueryOrderOwnerPairRequest.fromPartial({})),
 						QueryOrderOwnerPairResponse: getStructure(QueryOrderOwnerPairResponse.fromPartial({})),
 						
@@ -142,6 +153,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.DropPairs[JSON.stringify(params)] ?? {}
+		},
+				getDropOwnerPair: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.DropOwnerPair[JSON.stringify(params)] ?? {}
 		},
 				getDropAll: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -358,6 +375,32 @@ export default {
 				return getters['getDropPairs']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryDropPairs API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryDropOwnerPair({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryDropOwnerPair( key.address,  key.pair, query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryDropOwnerPair( key.address,  key.pair, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'DropOwnerPair', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDropOwnerPair', payload: { options: { all }, params: {...key},query }})
+				return getters['getDropOwnerPair']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryDropOwnerPair API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -659,18 +702,18 @@ export default {
 		},
 		
 		
-		async sendMsgMarketOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgMarketOrder(value)
+				const msg = await txClient.msgCancelOrder(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMarketOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgMarketOrder:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -704,21 +747,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgCreatePool({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreatePool(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreatePool:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgCreateOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -734,32 +762,47 @@ export default {
 				}
 			}
 		},
-		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgCreatePool({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
+				const msg = await txClient.msgCreatePool(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCreatePool:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgMarketOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgMarketOrder(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgMarketOrder:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgMarketOrder:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgMarketOrder({ rootGetters }, { value }) {
+		async MsgCancelOrder({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgMarketOrder(value)
+				const msg = await txClient.msgCancelOrder(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMarketOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgMarketOrder:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -789,19 +832,6 @@ export default {
 				}
 			}
 		},
-		async MsgCreatePool({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreatePool(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgCreateOrder({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -815,16 +845,29 @@ export default {
 				}
 			}
 		},
-		async MsgCancelOrder({ rootGetters }, { value }) {
+		async MsgCreatePool({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
+				const msg = await txClient.msgCreatePool(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgMarketOrder({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgMarketOrder(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgMarketOrder:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgMarketOrder:Create Could not create message: ' + e.message)
 				}
 			}
 		},

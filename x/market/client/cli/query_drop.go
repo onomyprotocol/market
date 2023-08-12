@@ -105,3 +105,49 @@ func CmdShowDropPairs() *cobra.Command {
 
 	return cmd
 }
+
+func CmdDropOwnerPair() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "drop-owner-pair [address] [pair]",
+		Short: "shows all drops owned for pair",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			argAddress, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+
+			argPair, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			params := &types.QueryDropOwnerPairRequest{
+				Address:    argAddress,
+				Pair:       argPair,
+				Pagination: pageReq,
+			}
+
+			res, err := queryClient.DropOwnerPair(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
