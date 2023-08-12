@@ -48,6 +48,14 @@ export interface QueryDropResponse {
   drop: Drop | undefined;
 }
 
+export interface QueryDropPairsRequest {
+  address: string;
+}
+
+export interface QueryDropPairsResponse {
+  pairs: string[];
+}
+
 export interface QueryAllDropRequest {
   pagination: PageRequest | undefined;
 }
@@ -638,6 +646,133 @@ export const QueryDropResponse = {
       message.drop = Drop.fromPartial(object.drop);
     } else {
       message.drop = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryDropPairsRequest: object = { address: "" };
+
+export const QueryDropPairsRequest = {
+  encode(
+    message: QueryDropPairsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryDropPairsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryDropPairsRequest } as QueryDropPairsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropPairsRequest {
+    const message = { ...baseQueryDropPairsRequest } as QueryDropPairsRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropPairsRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropPairsRequest>
+  ): QueryDropPairsRequest {
+    const message = { ...baseQueryDropPairsRequest } as QueryDropPairsRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryDropPairsResponse: object = { pairs: "" };
+
+export const QueryDropPairsResponse = {
+  encode(
+    message: QueryDropPairsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.pairs) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryDropPairsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryDropPairsResponse } as QueryDropPairsResponse;
+    message.pairs = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pairs.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropPairsResponse {
+    const message = { ...baseQueryDropPairsResponse } as QueryDropPairsResponse;
+    message.pairs = [];
+    if (object.pairs !== undefined && object.pairs !== null) {
+      for (const e of object.pairs) {
+        message.pairs.push(String(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropPairsResponse): unknown {
+    const obj: any = {};
+    if (message.pairs) {
+      obj.pairs = message.pairs.map((e) => e);
+    } else {
+      obj.pairs = [];
+    }
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropPairsResponse>
+  ): QueryDropPairsResponse {
+    const message = { ...baseQueryDropPairsResponse } as QueryDropPairsResponse;
+    message.pairs = [];
+    if (object.pairs !== undefined && object.pairs !== null) {
+      for (const e of object.pairs) {
+        message.pairs.push(e);
+      }
     }
     return message;
   },
@@ -2705,6 +2840,8 @@ export interface Query {
   PoolAll(request: QueryAllPoolRequest): Promise<QueryAllPoolResponse>;
   /** Queries a Drop by index. */
   Drop(request: QueryDropRequest): Promise<QueryDropResponse>;
+  /** Queries a Drop by index. */
+  DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse>;
   /** Queries a list of Drop items. */
   DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse>;
   /** Queries a Member by index. */
@@ -2782,6 +2919,18 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) => QueryDropResponse.decode(new Reader(data)));
+  }
+
+  DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse> {
+    const data = QueryDropPairsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "DropPairs",
+      data
+    );
+    return promise.then((data) =>
+      QueryDropPairsResponse.decode(new Reader(data))
+    );
   }
 
   DropAll(request: QueryAllDropRequest): Promise<QueryDropsResponse> {

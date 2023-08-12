@@ -36,6 +36,11 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
 	}
 
+	// Queries a Drop by index.
+	rpc DropPairs(QueryDropPairsRequest) returns (QueryDropPairsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/pairs/{address}";
+	}
+
 	// Queries a list of Drop items.
 	rpc DropAll(QueryAllDropRequest) returns (QueryDropsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop";
@@ -131,6 +136,14 @@ message QueryDropRequest {
 
 message QueryDropResponse {
 	Drop drop = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryDropPairsRequest {
+	string address = 1;
+}
+
+message QueryDropPairsResponse {
+	repeated string pairs = 1;
 }
 
 message QueryAllDropRequest {

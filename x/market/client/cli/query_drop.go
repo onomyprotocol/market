@@ -75,3 +75,33 @@ func CmdShowDrop() *cobra.Command {
 
 	return cmd
 }
+
+func CmdShowDropPairs() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "show-drop-pairs [address]",
+		Short: "show pairs owner has drops",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			argAddr := args[0]
+
+			params := &types.QueryDropPairsRequest{
+				Address: argAddr,
+			}
+
+			res, err := queryClient.DropPairs(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}

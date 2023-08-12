@@ -33,6 +33,24 @@ func (k Keeper) GetDrop(
 	return val, true
 }
 
+// GetDrop returns a drop from its index
+func (k Keeper) GetDropPairs(
+	ctx sdk.Context,
+	address string,
+) (val types.DropPairs, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropPairsKeyPrefix))
+
+	a := store.Get(types.DropPairsKey(
+		address,
+	))
+	if a == nil {
+		return val, false
+	}
+
+	k.cdc.MustUnmarshal(a, &val)
+	return val, true
+}
+
 // GetOwnerDrops returns drops from a single owner
 func (k Keeper) GetDropsOwnerPairDetail(
 	ctx sdk.Context,
@@ -146,7 +164,7 @@ func (k Keeper) SetDropOwner(
 		drop.Pair,
 	), b)
 
-	// Remove uid from owner drop list
+	// Add drop pair to owner
 	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropPairsKeyPrefix))
 
 	var dropPairs types.DropPairs

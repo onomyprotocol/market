@@ -70,6 +70,10 @@ func TestCreateDrop(t *testing.T) {
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
+	pairs, ok := testInput.MarketKeeper.GetDropPairs(testInput.Context, addr)
+	require.True(t, ok)
+	require.Truef(t, pairs.Pairs[0] == pair, pairs.String())
+
 	// Validate GetMember
 	members, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
 	members1, memberfound1 := testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
