@@ -8,35 +8,11 @@ import (
 
 // SetDrop set a specific drop in the store from its index
 func (k Keeper) SetDrop(ctx sdk.Context, drop types.Drop) {
-	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
-	b := k.cdc.MustMarshal(&drop)
-	store1.Set(types.DropKey(
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+	a := k.cdc.MustMarshal(&drop)
+	store.Set(types.DropKey(
 		drop.Uid,
-	), b)
-
-	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
-
-	c := store2.Get(types.DropsKey(
-		drop.Owner,
-		drop.Pair,
-	))
-
-	var drops types.Drops
-
-	if c == nil {
-		drops = types.Drops{
-			Uids: []uint64{drop.Uid},
-		}
-	} else {
-		k.cdc.MustUnmarshal(c, &drops)
-		drops.Uids = append(drops.Uids, drop.Uid)
-	}
-
-	d := k.cdc.MustMarshal(&drops)
-	store2.Set(types.DropsKey(
-		drop.Owner,
-		drop.Pair,
-	), d)
+	), a)
 }
 
 // GetDrop returns a drop from its index
@@ -116,20 +92,6 @@ func (k Keeper) GetDropsOwnerPair(
 	return drops, true
 }
 
-// SetDrop set a specific drop in the store from its index
-func (k Keeper) SetDrops(ctx sdk.Context, owner string, pair string, sum sdk.Int, uids []uint64) {
-	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
-	drops := types.Drops{
-		Uids: uids,
-		Sum:  sum,
-	}
-	b := k.cdc.MustMarshal(&drops)
-	store1.Set(types.DropsKey(
-		owner,
-		pair,
-	), b)
-}
-
 // RemoveDrop removes a drop from the store
 func (k Keeper) RemoveDrop(
 	ctx sdk.Context,
@@ -145,55 +107,118 @@ func (k Keeper) RemoveDrop(
 		return
 	}
 
-	var drop types.Drop
-
-	k.cdc.MustUnmarshal(b, &drop)
-
 	store1.Delete(types.DropKey(
 		uid,
 	))
 }
 
-// RemoveDrop removes a drop from the store
-func (k Keeper) RemoveDropOwner(
+// SetDrop set a specific drop in the store from its index
+func (k Keeper) SetDropOwner(
 	ctx sdk.Context,
-	dropUid uint64,
-	owner string,
-	pair string,
+	drop types.Drop,
 ) {
-	// Remove uid from owner drop list
-	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
 
 	var drops types.Drops
 
-	c := store2.Get(types.DropsKey(
-		owner,
-		pair,
+	a := store1.Get(types.DropsKey(
+		drop.Owner,
+		drop.Pair,
 	))
-	if c == nil {
-		return
-	}
+	if a == nil {
+		drops.Sum = drop.Drops
+		drops.Uids = []uint64{drop.Uid}
+	} else {
+		k.cdc.MustUnmarshal(a, &drops)
 
-	k.cdc.MustUnmarshal(c, &drops)
+		uids, _ := addUid(drops.Uids, drop.Uid)
 
-	var list []uint64
-
-	for _, uid := range drops.Uids {
-		if uid != dropUid {
-			list = append(list, uid)
+		drops = types.Drops{
+			Uids: uids,
+			Sum:  drops.Sum.Add(drop.Drops),
 		}
 	}
 
-	drops = types.Drops{
-		Uids: list,
+	b := k.cdc.MustMarshal(&drops)
+
+	store1.Set(types.DropsKey(
+		drop.Owner,
+		drop.Pair,
+	), b)
+
+	// Remove uid from owner drop list
+	store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropPairsKeyPrefix))
+
+	var dropPairs types.DropPairs
+
+	c := store2.Get(types.DropPairsKey(
+		drop.Owner,
+	))
+
+	if c == nil {
+		dropPairs.Pairs = []string{drop.Pair}
+	} else {
+		k.cdc.MustUnmarshal(c, &dropPairs)
+		dropPairs.Pairs, _ = addPair(dropPairs.Pairs, drop.Pair)
 	}
 
-	d := k.cdc.MustMarshal(&drops)
+	d := k.cdc.MustMarshal(&dropPairs)
 
-	store2.Set(types.DropsKey(
-		owner,
-		pair,
+	store2.Set(types.DropPairsKey(
+		drop.Owner,
 	), d)
+}
+
+// RemoveDrop removes a drop from the store
+func (k Keeper) RemoveDropOwner(
+	ctx sdk.Context,
+	drop types.Drop,
+) {
+	// Remove uid from owner drop list
+	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropsKeyPrefix))
+
+	var drops types.Drops
+
+	a := store1.Get(types.DropsKey(
+		drop.Owner,
+		drop.Pair,
+	))
+	if a == nil {
+		return
+	}
+
+	k.cdc.MustUnmarshal(a, &drops)
+
+	drops.Uids, _ = removeUid(drops.Uids, drop.Uid)
+	drops.Sum = drops.Sum.Sub(drop.Drops)
+
+	b := k.cdc.MustMarshal(&drops)
+
+	store1.Set(types.DropsKey(
+		drop.Owner,
+		drop.Pair,
+	), b)
+
+	if !(len(drops.Uids) > 0) {
+		// Remove uid from owner drop list
+		store2 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropPairsKeyPrefix))
+
+		var dropPairs types.DropPairs
+
+		c := store2.Get(types.DropPairsKey(
+			drop.Owner,
+		))
+
+		k.cdc.MustUnmarshal(c, &dropPairs)
+
+		dropPairs.Pairs, _ = removePair(dropPairs.Pairs, drop.Pair)
+
+		d := k.cdc.MustMarshal(&dropPairs)
+
+		store2.Set(types.DropPairsKey(
+			drop.Owner,
+		), d)
+	}
 }
 
 // GetAllDrop returns all drop
@@ -210,4 +235,23 @@ func (k Keeper) GetAllDrop(ctx sdk.Context) (list []types.Drop) {
 	}
 
 	return
+}
+
+// GetOwnerDrops returns drops from a single owner
+func (k Keeper) GetPairs(
+	ctx sdk.Context,
+	owner string,
+) (pairs types.DropPairs, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropPairsKeyPrefix))
+
+	b := store.Get(types.DropPairsKey(
+		owner,
+	))
+	if b == nil {
+		return pairs, false
+	}
+
+	k.cdc.MustUnmarshal(b, &pairs)
+
+	return pairs, true
 }

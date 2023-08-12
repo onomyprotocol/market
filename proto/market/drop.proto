@@ -29,3 +29,7 @@ message Drops {
     (gogoproto.nullable) = false
   ]; 
 }
+
+message DropPairs {
+  repeated string pairs = 1;
+}

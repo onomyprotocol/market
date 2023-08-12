@@ -148,12 +148,9 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		drop,
 	)
 
-	k.SetDrops(
+	k.SetDropOwner(
 		ctx,
-		drop.Owner,
-		drop.Pair,
-		drop.Drops,
-		[]uint64{drop.Uid},
+		drop,
 	)
 
 	// create drop event

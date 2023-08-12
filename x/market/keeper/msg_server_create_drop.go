@@ -200,12 +200,9 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		drop,
 	)
 
-	k.SetDrops(
+	k.SetDropOwner(
 		ctx,
-		drop.Owner,
-		drop.Pair,
-		sumDropCreator,
-		append(dropOwner.Uids, uid),
+		drop,
 	)
 
 	// create drop event

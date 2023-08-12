@@ -101,8 +101,6 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	sumDropRedeemer = sumDropRedeemer.Sub(drop.Drops)
 
-	uidsDropRedeemer, _ := removeUid(dropRedeemer.Uids, uid)
-
 	numLeaders := len(pool.Leaders)
 
 	var index int
@@ -249,17 +247,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	k.RemoveDropOwner(
 		ctx,
-		drop.Uid,
-		drop.Owner,
-		drop.Pair,
-	)
-
-	k.SetDrops(
-		ctx,
-		drop.Owner,
-		drop.Pair,
-		sumDropRedeemer,
-		uidsDropRedeemer,
+		drop,
 	)
 
 	k.SetPool(

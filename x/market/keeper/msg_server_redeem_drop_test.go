@@ -115,6 +115,14 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, "1200", rst.Drops.String())
 	require.Equal(t, "1200", rst.Leaders[0].Drops.String(), rst)
 
+	owner, ok := testInput.MarketKeeper.GetDropsOwnerPair(testInput.Context, addr, pair)
+	require.True(t, ok)
+	require.Truef(t, owner.Sum.Equal(sdk.NewInt(1200)), owner.Sum.String())
+
+	pairs, ok := testInput.MarketKeeper.GetPairs(testInput.Context, addr)
+	require.True(t, ok)
+	require.Truef(t, pairs.Pairs[0] == pair, pairs.String())
+
 	// Validate GetMember After Redeem Drop
 	members, memberfound = testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
 	members1, memberfound1 = testInput.MarketKeeper.GetMember(testInput.Context, denomA, denomB)
@@ -139,6 +147,10 @@ func TestRedeemDrop(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, rst.Drops.String(), "0")
+
+	pairs, ok = testInput.MarketKeeper.GetPairs(testInput.Context, addr)
+	require.True(t, ok)
+	require.Truef(t, len(pairs.Pairs) == 0, pairs.String())
 }
 
 func TestRedeemDrop_WithBurnCoin(t *testing.T) {

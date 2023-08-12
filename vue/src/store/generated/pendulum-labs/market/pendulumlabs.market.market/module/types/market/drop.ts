@@ -18,6 +18,10 @@ export interface Drops {
   sum: string;
 }
 
+export interface DropPairs {
+  pairs: string[];
+}
+
 const baseDrop: object = {
   uid: 0,
   owner: "",
@@ -248,6 +252,68 @@ export const Drops = {
       message.sum = object.sum;
     } else {
       message.sum = "";
+    }
+    return message;
+  },
+};
+
+const baseDropPairs: object = { pairs: "" };
+
+export const DropPairs = {
+  encode(message: DropPairs, writer: Writer = Writer.create()): Writer {
+    for (const v of message.pairs) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): DropPairs {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseDropPairs } as DropPairs;
+    message.pairs = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pairs.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DropPairs {
+    const message = { ...baseDropPairs } as DropPairs;
+    message.pairs = [];
+    if (object.pairs !== undefined && object.pairs !== null) {
+      for (const e of object.pairs) {
+        message.pairs.push(String(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: DropPairs): unknown {
+    const obj: any = {};
+    if (message.pairs) {
+      obj.pairs = message.pairs.map((e) => e);
+    } else {
+      obj.pairs = [];
+    }
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<DropPairs>): DropPairs {
+    const message = { ...baseDropPairs } as DropPairs;
+    message.pairs = [];
+    if (object.pairs !== undefined && object.pairs !== null) {
+      for (const e of object.pairs) {
+        message.pairs.push(e);
+      }
     }
     return message;
   },
