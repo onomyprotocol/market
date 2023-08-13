@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -51,13 +52,40 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// drop_ratio = dropAmount(drop)/dropAmount(pool)
 	// dropProduct(end) = (AMM Bal A * AMM Bal B) * drop_ratio
 	// Profit = total*[(dropProduct(end) - dropProduct(begin))/dropProduct(end)]
-	dropProductEnd := (poolProduct.Mul(drop.Drops)).Quo(pool.Drops)
+	// we need bigints here because this is the second ~128 sized multiplication in a row before division
+	// `dropProductEnd = (poolProduct * drop.Drops) / pool.Drops``
+	dropProductEnd := big.NewInt(0)
+	dropProductEnd.Mul(poolProduct.BigInt(), drop.Drops.BigInt())
+	dropProductEnd.Quo(dropProductEnd, pool.Drops.BigInt())
+	// keep `dropProductEnd` as a bigint because it can be a ~256 sized int and will be used for more multiplications
 
-	total1 := (drop.Drops.Mul(member1.Balance)).Quo(pool.Drops)
-	profit1 := (total1.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total1.Mul(drop.Product)).Quo(dropProductEnd))
+	// multiplications with drops require bigints
+	// `total1 = (drop.Drops * member1.Balance) / pool.Drops`
+	tmp := big.NewInt(0)
+	tmp.Mul(drop.Drops.BigInt(), member1.Balance.BigInt())
+	tmp.Quo(tmp, pool.Drops.BigInt())
+	total1 := sdk.NewIntFromBigInt(tmp)
+	// note: because of https://github.com/cosmos/cosmos-sdk/issues/17342
+	// always run this after a call to `NewIntFromBigInt`
+	tmp = big.NewInt(0)
 
-	total2 := (drop.Drops.Mul(member2.Balance)).Quo(pool.Drops)
-	profit2 := (total2.Mul(dropProductEnd)).Quo(dropProductEnd).Sub((total2.Mul(drop.Product)).Quo(dropProductEnd))
+	// `profit1 = total1 - ((total1 * drop.Product) / dropProductEnd)`
+	tmp.Mul(total1.BigInt(), drop.Product.BigInt())
+	tmp.Quo(tmp, dropProductEnd)
+	profit1 := total1.Sub(sdk.NewIntFromBigInt(tmp))
+	tmp = big.NewInt(0)
+
+	// `total2 = (drop.Drops * member2.Balance) / pool.Drops`
+	tmp.Mul(drop.Drops.BigInt(), member2.Balance.BigInt())
+	tmp.Quo(tmp, pool.Drops.BigInt())
+	total2 := sdk.NewIntFromBigInt(tmp)
+	tmp = big.NewInt(0)
+
+	// `profit2 = total2 - ((total2 * drop.Product) / dropProductEnd)`
+	tmp.Mul(total2.BigInt(), drop.Product.BigInt())
+	tmp.Quo(tmp, dropProductEnd)
+	profit2 := total2.Sub(sdk.NewIntFromBigInt(tmp))
+	//tmp = big.NewInt(0)
 
 	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
 	var earnRate sdk.Int
