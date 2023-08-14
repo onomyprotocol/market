@@ -29,7 +29,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 	}
 
 	if order.Prev == 0 {
-		if memberBid.Stop != order.Uid {
+		if memberBid.Stop != order.Uid && memberBid.Limit != order.Uid {
 			return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "%c", order.Uid)
 		}
 
