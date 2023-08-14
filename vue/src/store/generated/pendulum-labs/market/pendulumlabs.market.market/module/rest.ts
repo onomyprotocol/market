@@ -204,6 +204,13 @@ export interface MarketQueryBookendsResponse {
   next?: string;
 }
 
+export interface MarketQueryDropAmountsResponse {
+  denom1?: string;
+  denom2?: string;
+  amount1?: string;
+  amount2?: string;
+}
+
 export interface MarketQueryDropPairsResponse {
   pairs?: string[];
 }
@@ -675,6 +682,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/pendulum-labs/market/market/drop`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDropAmounts
+   * @summary Queries a Drop by index.
+   * @request GET:/pendulum-labs/market/market/drop/amounts/{uid}
+   */
+  queryDropAmounts = (uid: string, params: RequestParams = {}) =>
+    this.request<MarketQueryDropAmountsResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/drop/amounts/${uid}`,
+      method: "GET",
       format: "json",
       ...params,
     });

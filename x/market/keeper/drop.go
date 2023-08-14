@@ -1,9 +1,14 @@
 package keeper
 
 import (
+	"math/big"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pendulum-labs/market/x/market/types"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // SetDrop set a specific drop in the store from its index
@@ -310,4 +315,98 @@ func (k Keeper) GetDropOwnerPair(
 	}
 
 	return list, true
+}
+
+// GetOrderOwner returns orders from a single owner
+func (k Keeper) GetDropAmounts(
+	ctx sdk.Context,
+	uid uint64,
+) (denom1 string, denom2 string, amount1 sdk.Int, amount2 sdk.Int, found bool) {
+	dropStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DropKeyPrefix))
+
+	a := dropStore.Get(types.DropKey(
+		uid,
+	))
+	if a == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var drop types.Drop
+	k.cdc.MustUnmarshal(a, &drop)
+
+	pair := strings.Split(drop.Pair, ",")
+
+	denom1 = pair[0]
+	denom2 = pair[1]
+
+	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
+
+	b := memberStore.Get(types.MemberKey(
+		denom2,
+		denom1,
+	))
+	if b == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var member1 types.Member
+	k.cdc.MustUnmarshal(b, &member1)
+
+	c := memberStore.Get(types.MemberKey(
+		denom1,
+		denom2,
+	))
+	if c == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var member2 types.Member
+	k.cdc.MustUnmarshal(c, &member2)
+
+	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
+
+	d := poolStore.Get(types.PoolKey(
+		drop.Pair,
+	))
+	if d == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var pool types.Pool
+	k.cdc.MustUnmarshal(d, &pool)
+
+	amount1, amount2, error := dropAmounts(drop.Drops, pool, member1, member2)
+	if error != nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	found = true
+
+	return
+}
+
+func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 types.Member) (sdk.Int, sdk.Int, error) {
+	// see `msg_server_redeem_drop` for our bigint strategy
+	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
+	tmp := big.NewInt(0)
+	tmp.Mul(drops.BigInt(), member1.Balance.BigInt())
+	tmp.Quo(tmp, pool.Drops.BigInt())
+	dropAmtMember1 := sdk.NewIntFromBigInt(tmp)
+	tmp = big.NewInt(0)
+
+	if dropAmtMember1.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
+	}
+
+	// `dropAmtMember2 = (drops * member2.Balance) / pool.Drops`
+	tmp.Mul(drops.BigInt(), member2.Balance.BigInt())
+	tmp.Quo(tmp, pool.Drops.BigInt())
+	dropAmtMember2 := sdk.NewIntFromBigInt(tmp)
+	//tmp = big.NewInt(0)
+
+	if dropAmtMember2.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member2.DenomB)
+	}
+
+	return dropAmtMember1, dropAmtMember2, nil
 }

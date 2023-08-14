@@ -90,3 +90,25 @@ func (k Keeper) DropOwnerPair(c context.Context, req *types.QueryDropOwnerPairRe
 
 	return &types.QueryDropsResponse{Drops: drops}, nil
 }
+
+func (k Keeper) DropAmounts(c context.Context, req *types.QueryDropAmountsRequest) (*types.QueryDropAmountsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	denom1, denom2, amount1, amount2, found := k.GetDropAmounts(
+		ctx,
+		req.Uid,
+	)
+	if !found {
+		return nil, status.Error(codes.InvalidArgument, "not found")
+	}
+
+	return &types.QueryDropAmountsResponse{
+		Denom1:  denom1,
+		Denom2:  denom2,
+		Amount1: amount1.String(),
+		Amount2: amount2.String(),
+	}, nil
+}

@@ -62,6 +62,7 @@ const getDefaultState = () => {
 				Pool: {},
 				PoolAll: {},
 				Drop: {},
+				DropAmounts: {},
 				DropPairs: {},
 				DropOwnerPair: {},
 				DropAll: {},
@@ -147,6 +148,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Drop[JSON.stringify(params)] ?? {}
+		},
+				getDropAmounts: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.DropAmounts[JSON.stringify(params)] ?? {}
 		},
 				getDropPairs: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -353,6 +360,28 @@ export default {
 				return getters['getDrop']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryDrop API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryDropAmounts({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryDropAmounts( key.uid)).data
+				
+					
+				commit('QUERY', { query: 'DropAmounts', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryDropAmounts', payload: { options: { all }, params: {...key},query }})
+				return getters['getDropAmounts']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryDropAmounts API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -702,18 +731,18 @@ export default {
 		},
 		
 		
-		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgCreateOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
+				const msg = await txClient.msgCreateOrder(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreateOrder:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCreateOrder:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -747,18 +776,18 @@ export default {
 				}
 			}
 		},
-		async sendMsgCreateOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateOrder(value)
+				const msg = await txClient.msgCancelOrder(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgCreateOrder:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -793,16 +822,16 @@ export default {
 			}
 		},
 		
-		async MsgCancelOrder({ rootGetters }, { value }) {
+		async MsgCreateOrder({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
+				const msg = await txClient.msgCreateOrder(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreateOrder:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCreateOrder:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -832,16 +861,16 @@ export default {
 				}
 			}
 		},
-		async MsgCreateOrder({ rootGetters }, { value }) {
+		async MsgCancelOrder({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreateOrder(value)
+				const msg = await txClient.msgCancelOrder(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateOrder:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgCreateOrder:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
 				}
 			}
 		},

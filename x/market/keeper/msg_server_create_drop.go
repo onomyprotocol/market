@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"math/big"
 	"sort"
 	"strconv"
 	"strings"
@@ -47,26 +46,9 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	drops, _ := sdk.NewIntFromString(msg.Drops)
 
-	// see `msg_server_redeem_drop` for our bigint strategy
-	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
-	tmp := big.NewInt(0)
-	tmp.Mul(drops.BigInt(), member1.Balance.BigInt())
-	tmp.Quo(tmp, pool.Drops.BigInt())
-	dropAmtMember1 := sdk.NewIntFromBigInt(tmp)
-	tmp = big.NewInt(0)
-
-	if dropAmtMember1.LTE(sdk.ZeroInt()) {
-		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "%s", denom1)
-	}
-
-	// `dropAmtMember2 = (drops * member2.Balance) / pool.Drops`
-	tmp.Mul(drops.BigInt(), member2.Balance.BigInt())
-	tmp.Quo(tmp, pool.Drops.BigInt())
-	dropAmtMember2 := sdk.NewIntFromBigInt(tmp)
-	//tmp = big.NewInt(0)
-
-	if dropAmtMember2.LTE(sdk.ZeroInt()) {
-		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "%s", denom2)
+	dropAmtMember1, dropAmtMember2, error := dropAmounts(drops, pool, member1, member2)
+	if error != nil {
+		return nil, error
 	}
 
 	dropProduct := dropAmtMember1.Mul(dropAmtMember2)

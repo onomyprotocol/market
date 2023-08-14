@@ -48,6 +48,17 @@ export interface QueryDropResponse {
   drop: Drop | undefined;
 }
 
+export interface QueryDropAmountsRequest {
+  uid: number;
+}
+
+export interface QueryDropAmountsResponse {
+  denom1: string;
+  denom2: string;
+  amount1: string;
+  amount2: string;
+}
+
 export interface QueryDropPairsRequest {
   address: string;
 }
@@ -678,6 +689,197 @@ export const QueryDropResponse = {
       message.drop = Drop.fromPartial(object.drop);
     } else {
       message.drop = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryDropAmountsRequest: object = { uid: 0 };
+
+export const QueryDropAmountsRequest = {
+  encode(
+    message: QueryDropAmountsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.uid !== 0) {
+      writer.uint32(8).uint64(message.uid);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryDropAmountsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropAmountsRequest,
+    } as QueryDropAmountsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.uid = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropAmountsRequest {
+    const message = {
+      ...baseQueryDropAmountsRequest,
+    } as QueryDropAmountsRequest;
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = Number(object.uid);
+    } else {
+      message.uid = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropAmountsRequest): unknown {
+    const obj: any = {};
+    message.uid !== undefined && (obj.uid = message.uid);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropAmountsRequest>
+  ): QueryDropAmountsRequest {
+    const message = {
+      ...baseQueryDropAmountsRequest,
+    } as QueryDropAmountsRequest;
+    if (object.uid !== undefined && object.uid !== null) {
+      message.uid = object.uid;
+    } else {
+      message.uid = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryDropAmountsResponse: object = {
+  denom1: "",
+  denom2: "",
+  amount1: "",
+  amount2: "",
+};
+
+export const QueryDropAmountsResponse = {
+  encode(
+    message: QueryDropAmountsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denom1 !== "") {
+      writer.uint32(10).string(message.denom1);
+    }
+    if (message.denom2 !== "") {
+      writer.uint32(18).string(message.denom2);
+    }
+    if (message.amount1 !== "") {
+      writer.uint32(26).string(message.amount1);
+    }
+    if (message.amount2 !== "") {
+      writer.uint32(34).string(message.amount2);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropAmountsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropAmountsResponse,
+    } as QueryDropAmountsResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom1 = reader.string();
+          break;
+        case 2:
+          message.denom2 = reader.string();
+          break;
+        case 3:
+          message.amount1 = reader.string();
+          break;
+        case 4:
+          message.amount2 = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropAmountsResponse {
+    const message = {
+      ...baseQueryDropAmountsResponse,
+    } as QueryDropAmountsResponse;
+    if (object.denom1 !== undefined && object.denom1 !== null) {
+      message.denom1 = String(object.denom1);
+    } else {
+      message.denom1 = "";
+    }
+    if (object.denom2 !== undefined && object.denom2 !== null) {
+      message.denom2 = String(object.denom2);
+    } else {
+      message.denom2 = "";
+    }
+    if (object.amount1 !== undefined && object.amount1 !== null) {
+      message.amount1 = String(object.amount1);
+    } else {
+      message.amount1 = "";
+    }
+    if (object.amount2 !== undefined && object.amount2 !== null) {
+      message.amount2 = String(object.amount2);
+    } else {
+      message.amount2 = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropAmountsResponse): unknown {
+    const obj: any = {};
+    message.denom1 !== undefined && (obj.denom1 = message.denom1);
+    message.denom2 !== undefined && (obj.denom2 = message.denom2);
+    message.amount1 !== undefined && (obj.amount1 = message.amount1);
+    message.amount2 !== undefined && (obj.amount2 = message.amount2);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropAmountsResponse>
+  ): QueryDropAmountsResponse {
+    const message = {
+      ...baseQueryDropAmountsResponse,
+    } as QueryDropAmountsResponse;
+    if (object.denom1 !== undefined && object.denom1 !== null) {
+      message.denom1 = object.denom1;
+    } else {
+      message.denom1 = "";
+    }
+    if (object.denom2 !== undefined && object.denom2 !== null) {
+      message.denom2 = object.denom2;
+    } else {
+      message.denom2 = "";
+    }
+    if (object.amount1 !== undefined && object.amount1 !== null) {
+      message.amount1 = object.amount1;
+    } else {
+      message.amount1 = "";
+    }
+    if (object.amount2 !== undefined && object.amount2 !== null) {
+      message.amount2 = object.amount2;
+    } else {
+      message.amount2 = "";
     }
     return message;
   },
@@ -3440,6 +3642,10 @@ export interface Query {
   /** Queries a Drop by index. */
   Drop(request: QueryDropRequest): Promise<QueryDropResponse>;
   /** Queries a Drop by index. */
+  DropAmounts(
+    request: QueryDropAmountsRequest
+  ): Promise<QueryDropAmountsResponse>;
+  /** Queries a Drop by index. */
   DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse>;
   /** Queries a Drop by index. */
   DropOwnerPair(
@@ -3522,6 +3728,20 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) => QueryDropResponse.decode(new Reader(data)));
+  }
+
+  DropAmounts(
+    request: QueryDropAmountsRequest
+  ): Promise<QueryDropAmountsResponse> {
+    const data = QueryDropAmountsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "DropAmounts",
+      data
+    );
+    return promise.then((data) =>
+      QueryDropAmountsResponse.decode(new Reader(data))
+    );
   }
 
   DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse> {
