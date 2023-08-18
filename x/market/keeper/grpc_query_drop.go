@@ -112,3 +112,29 @@ func (k Keeper) DropAmounts(c context.Context, req *types.QueryDropAmountsReques
 		Amount2: amount2.String(),
 	}, nil
 }
+
+func (k Keeper) DropCoin(c context.Context, req *types.QueryDropCoinRequest) (*types.QueryDropCoinResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	coinA, err := sdk.ParseCoinNormalized(req.CoinA)
+	if err != nil {
+		panic(err)
+	}
+
+	amount2, drops, found := k.GetDropCoin(
+		ctx,
+		coinA,
+		req.DenomB,
+	)
+	if !found {
+		return nil, status.Error(codes.InvalidArgument, "not found")
+	}
+
+	return &types.QueryDropCoinResponse{
+		AmountB: amount2.String(),
+		Drops:   drops.String(),
+	}, nil
+}

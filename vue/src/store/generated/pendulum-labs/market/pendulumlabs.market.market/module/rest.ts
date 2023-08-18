@@ -211,6 +211,11 @@ export interface MarketQueryDropAmountsResponse {
   amount2?: string;
 }
 
+export interface MarketQueryDropCoinResponse {
+  drops?: string;
+  amountB?: string;
+}
+
 export interface MarketQueryDropPairsResponse {
   pairs?: string[];
 }
@@ -697,6 +702,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryDropAmounts = (uid: string, params: RequestParams = {}) =>
     this.request<MarketQueryDropAmountsResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/drop/amounts/${uid}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryDropCoin
+   * @summary Queries a Drop by index.
+   * @request GET:/pendulum-labs/market/market/drop/coin/{coinA}/{denomB}
+   */
+  queryDropCoin = (coinA: string, denomB: string, params: RequestParams = {}) =>
+    this.request<MarketQueryDropCoinResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/drop/coin/${coinA}/${denomB}`,
       method: "GET",
       format: "json",
       ...params,

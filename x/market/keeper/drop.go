@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"math/big"
+	"sort"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -409,4 +410,73 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	}
 
 	return dropAmtMember1, dropAmtMember2, nil
+}
+
+// GetOrderOwner returns orders from a single owner
+func (k Keeper) GetDropCoin(
+	ctx sdk.Context,
+	coin1 sdk.Coin,
+	denom2 string,
+) (amount2 sdk.Int, drops sdk.Int, found bool) {
+
+	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
+
+	b := memberStore.Get(types.MemberKey(
+		denom2,
+		coin1.Denom,
+	))
+	if b == nil {
+		return amount2, drops, false
+	}
+
+	var member1 types.Member
+	k.cdc.MustUnmarshal(b, &member1)
+
+	c := memberStore.Get(types.MemberKey(
+		coin1.Denom,
+		denom2,
+	))
+	if c == nil {
+		return amount2, drops, false
+	}
+
+	var member2 types.Member
+	k.cdc.MustUnmarshal(c, &member2)
+
+	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
+
+	prePair := []string{coin1.Denom, denom2}
+	sort.Strings(prePair)
+	pair := strings.Join(prePair, ",")
+
+	d := poolStore.Get(types.PoolKey(pair))
+	if d == nil {
+		return amount2, drops, false
+	}
+
+	var pool types.Pool
+	k.cdc.MustUnmarshal(d, &pool)
+
+	amount2, drops, error := dropCoin(coin1.Amount, pool, member1, member2)
+	if error != nil {
+		return amount2, drops, false
+	}
+
+	found = true
+
+	return
+}
+
+func dropCoin(amount1 sdk.Int, pool types.Pool, member1 types.Member, member2 types.Member) (sdk.Int, sdk.Int, error) {
+	// see `msg_server_redeem_drop` for our bigint strategy
+	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
+	tmp := big.NewInt(0)
+	tmp.Mul(amount1.BigInt(), pool.Drops.BigInt())
+	tmp.Quo(tmp, member1.Balance.BigInt())
+	drops := sdk.NewIntFromBigInt(tmp)
+	tmp.Mul(tmp, member2.Balance.BigInt())
+	tmp.Quo(tmp, pool.Drops.BigInt())
+	amount2 := sdk.NewIntFromBigInt(tmp)
+
+	return amount2, drops, nil
 }

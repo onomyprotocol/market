@@ -29338,6 +29338,49 @@ paths:
           format: uint64
       tags:
         - Query
+  '/pendulum-labs/market/market/drop/coin/{coinA}/{denomB}':
+    get:
+      summary: Queries a Drop by index.
+      operationId: PendulumlabsMarketMarketDropCoin
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              drops:
+                type: string
+              amountB:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: coinA
+          in: path
+          required: true
+          type: string
+        - name: denomB
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   '/pendulum-labs/market/market/drop/pairs/{address}':
     get:
       summary: Queries a Drop by index.
@@ -50254,6 +50297,13 @@ definitions:
       amount1:
         type: string
       amount2:
+        type: string
+  pendulumlabs.market.market.QueryDropCoinResponse:
+    type: object
+    properties:
+      drops:
+        type: string
+      amountB:
         type: string
   pendulumlabs.market.market.QueryDropPairsResponse:
     type: object
