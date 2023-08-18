@@ -415,29 +415,29 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 // GetOrderOwner returns orders from a single owner
 func (k Keeper) GetDropCoin(
 	ctx sdk.Context,
-	coin1 sdk.Coin,
-	denom2 string,
-) (amount2 sdk.Int, drops sdk.Int, found bool) {
+	coinA sdk.Coin,
+	denomB string,
+) (amountB sdk.Int, drops sdk.Int, found bool) {
 
 	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 
 	b := memberStore.Get(types.MemberKey(
-		denom2,
-		coin1.Denom,
+		denomB,
+		coinA.Denom,
 	))
 	if b == nil {
-		return amount2, drops, false
+		return amountB, drops, false
 	}
 
 	var member1 types.Member
 	k.cdc.MustUnmarshal(b, &member1)
 
 	c := memberStore.Get(types.MemberKey(
-		coin1.Denom,
-		denom2,
+		coinA.Denom,
+		denomB,
 	))
 	if c == nil {
-		return amount2, drops, false
+		return amountB, drops, false
 	}
 
 	var member2 types.Member
@@ -445,21 +445,21 @@ func (k Keeper) GetDropCoin(
 
 	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 
-	prePair := []string{coin1.Denom, denom2}
+	prePair := []string{coinA.Denom, denomB}
 	sort.Strings(prePair)
 	pair := strings.Join(prePair, ",")
 
 	d := poolStore.Get(types.PoolKey(pair))
 	if d == nil {
-		return amount2, drops, false
+		return amountB, drops, false
 	}
 
 	var pool types.Pool
 	k.cdc.MustUnmarshal(d, &pool)
 
-	amount2, drops, error := dropCoin(coin1.Amount, pool, member1, member2)
+	amountB, drops, error := dropCoin(coinA.Amount, pool, member1, member2)
 	if error != nil {
-		return amount2, drops, false
+		return amountB, drops, false
 	}
 
 	found = true
@@ -467,16 +467,17 @@ func (k Keeper) GetDropCoin(
 	return
 }
 
-func dropCoin(amount1 sdk.Int, pool types.Pool, member1 types.Member, member2 types.Member) (sdk.Int, sdk.Int, error) {
+func dropCoin(amountA sdk.Int, pool types.Pool, memberA types.Member, memberB types.Member) (sdk.Int, sdk.Int, error) {
 	// see `msg_server_redeem_drop` for our bigint strategy
 	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
 	tmp := big.NewInt(0)
-	tmp.Mul(amount1.BigInt(), pool.Drops.BigInt())
-	tmp.Quo(tmp, member1.Balance.BigInt())
+	tmp.Mul(amountA.BigInt(), pool.Drops.BigInt())
+	tmp.Quo(tmp, memberA.Balance.BigInt())
 	drops := sdk.NewIntFromBigInt(tmp)
-	tmp.Mul(tmp, member2.Balance.BigInt())
-	tmp.Quo(tmp, pool.Drops.BigInt())
-	amount2 := sdk.NewIntFromBigInt(tmp)
+	tmp2 := big.NewInt(0)
+	tmp2.Mul(tmp, memberB.Balance.BigInt())
+	tmp2.Quo(tmp2, pool.Drops.BigInt())
+	amountB := sdk.NewIntFromBigInt(tmp2)
 
-	return amount2, drops, nil
+	return amountB, drops, nil
 }

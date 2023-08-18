@@ -119,9 +119,9 @@ func (k Keeper) DropCoin(c context.Context, req *types.QueryDropCoinRequest) (*t
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	coinA, err := sdk.ParseCoinNormalized(req.CoinA)
-	if err != nil {
-		panic(err)
+	coinA, _ := sdk.ParseCoinNormalized(req.CoinA)
+	if !coinA.IsValid() {
+		return nil, status.Error(codes.InvalidArgument, "CoinA not CoinString")
 	}
 
 	amount2, drops, found := k.GetDropCoin(
