@@ -29,6 +29,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdPool())
 	cmd.AddCommand(CmdListDrop())
 	cmd.AddCommand(CmdShowDrop())
+	cmd.AddCommand(CmdDropCoin())
 	cmd.AddCommand(CmdShowDropPairs())
 	cmd.AddCommand(CmdDropOwnerPair())
 	cmd.AddCommand(CmdListMember())

@@ -260,15 +260,15 @@ func request_Query_DropCoin_0(ctx context.Context, marshaler runtime.Marshaler, 
 		_   = err
 	)
 
-	val, ok = pathParams["coinA"]
+	val, ok = pathParams["denomA"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "coinA")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "denomA")
 	}
 
-	protoReq.CoinA, err = runtime.String(val)
+	protoReq.DenomA, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "coinA", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denomA", err)
 	}
 
 	val, ok = pathParams["denomB"]
@@ -280,6 +280,17 @@ func request_Query_DropCoin_0(ctx context.Context, marshaler runtime.Marshaler, 
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denomB", err)
+	}
+
+	val, ok = pathParams["amountA"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amountA")
+	}
+
+	protoReq.AmountA, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amountA", err)
 	}
 
 	msg, err := client.DropCoin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -298,15 +309,15 @@ func local_request_Query_DropCoin_0(ctx context.Context, marshaler runtime.Marsh
 		_   = err
 	)
 
-	val, ok = pathParams["coinA"]
+	val, ok = pathParams["denomA"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "coinA")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "denomA")
 	}
 
-	protoReq.CoinA, err = runtime.String(val)
+	protoReq.DenomA, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "coinA", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denomA", err)
 	}
 
 	val, ok = pathParams["denomB"]
@@ -318,6 +329,17 @@ func local_request_Query_DropCoin_0(ctx context.Context, marshaler runtime.Marsh
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denomB", err)
+	}
+
+	val, ok = pathParams["amountA"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amountA")
+	}
+
+	protoReq.AmountA, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amountA", err)
 	}
 
 	msg, err := server.DropCoin(ctx, &protoReq)
@@ -2174,7 +2196,7 @@ var (
 
 	pattern_Query_DropAmounts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"pendulum-labs", "market", "drop", "amounts", "uid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DropCoin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "drop", "coin", "coinA", "denomB"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DropCoin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"pendulum-labs", "market", "drop", "coin", "denomA", "denomB", "amountA"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_DropPairs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"pendulum-labs", "market", "drop", "pairs", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 

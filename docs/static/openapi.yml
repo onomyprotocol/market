@@ -29338,7 +29338,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/pendulum-labs/market/market/drop/coin/{coinA}/{denomB}':
+  '/pendulum-labs/market/market/drop/coin/{denomA}/{denomB}/{amountA}':
     get:
       summary: Queries a Drop by index.
       operationId: PendulumlabsMarketMarketDropCoin
@@ -29371,11 +29371,15 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: coinA
+        - name: denomA
           in: path
           required: true
           type: string
         - name: denomB
+          in: path
+          required: true
+          type: string
+        - name: amountA
           in: path
           required: true
           type: string

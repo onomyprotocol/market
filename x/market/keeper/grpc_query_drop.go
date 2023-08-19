@@ -119,22 +119,36 @@ func (k Keeper) DropCoin(c context.Context, req *types.QueryDropCoinRequest) (*t
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	coinA, _ := sdk.ParseCoinNormalized(req.CoinA)
-	if !coinA.IsValid() {
-		return nil, status.Error(codes.InvalidArgument, "CoinA not CoinString")
+	err := sdk.ValidateDenom(req.DenomA)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid denomA")
 	}
 
-	amount2, drops, found := k.GetDropCoin(
+	err = sdk.ValidateDenom(req.DenomB)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid denomB")
+	}
+
+	amountA, ok := sdk.NewIntFromString(req.AmountA)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "invalid amountA")
+	}
+	if amountA.LTE(sdk.ZeroInt()) {
+		return nil, status.Error(codes.InvalidArgument, "invalid amountA")
+	}
+
+	amountB, drops, found := k.GetDropCoin(
 		ctx,
-		coinA,
+		req.DenomA,
 		req.DenomB,
+		amountA,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
 	return &types.QueryDropCoinResponse{
-		AmountB: amount2.String(),
+		AmountB: amountB.String(),
 		Drops:   drops.String(),
 	}, nil
 }

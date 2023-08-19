@@ -713,11 +713,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDropCoin
    * @summary Queries a Drop by index.
-   * @request GET:/pendulum-labs/market/market/drop/coin/{coinA}/{denomB}
+   * @request GET:/pendulum-labs/market/market/drop/coin/{denomA}/{denomB}/{amountA}
    */
-  queryDropCoin = (coinA: string, denomB: string, params: RequestParams = {}) =>
+  queryDropCoin = (denomA: string, denomB: string, amountA: string, params: RequestParams = {}) =>
     this.request<MarketQueryDropCoinResponse, RpcStatus>({
-      path: `/pendulum-labs/market/market/drop/coin/${coinA}/${denomB}`,
+      path: `/pendulum-labs/market/market/drop/coin/${denomA}/${denomB}/${amountA}`,
       method: "GET",
       format: "json",
       ...params,

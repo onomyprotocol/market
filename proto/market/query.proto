@@ -43,7 +43,7 @@ service Query {
 
 	// Queries a Drop by index.
 	rpc DropCoin(QueryDropCoinRequest) returns (QueryDropCoinResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/drop/coin/{coinA}/{denomB}";
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/coin/{denomA}/{denomB}/{amountA}";
 	}
 
 	// Queries a Drop by index.
@@ -150,8 +150,9 @@ message QueryDropRequest {
 }
 
 message QueryDropCoinRequest {
-	string coinA = 1;
+	string denomA = 1;
 	string denomB = 2;
+	string amountA = 3;
 }
 
 message QueryDropCoinResponse {

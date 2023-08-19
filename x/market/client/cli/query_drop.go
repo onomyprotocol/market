@@ -151,3 +151,49 @@ func CmdDropOwnerPair() *cobra.Command {
 
 	return cmd
 }
+
+func CmdDropCoin() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "drop-coin [denomA] [denomB] [amountA]",
+		Short: "calculate drops and amountB for given denomA and amountA",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			argDenomA, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+
+			argDenomB, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			argAmountA, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			params := &types.QueryDropCoinRequest{
+				DenomA:  argDenomA,
+				DenomB:  argDenomB,
+				AmountA: argAmountA,
+			}
+
+			res, err := queryClient.DropCoin(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
