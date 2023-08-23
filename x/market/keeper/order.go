@@ -195,7 +195,9 @@ func (k Keeper) GetBook(
 		return nil
 	}
 
-	for uid > 0 {
+	i := 0
+
+	for uid > 0 && i < 100 {
 		b := store.Get(types.OrderKey(
 			uid,
 		))
@@ -215,6 +217,7 @@ func (k Keeper) GetBook(
 			BegTime:   order.BegTime,
 		}
 		list = append(list, orderResponse)
+		i++
 		uid = order.Next
 	}
 
