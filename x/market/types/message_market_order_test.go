@@ -107,6 +107,17 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
+		{
+			name: "invalid slippage",
+			msg: MsgMarketOrder{
+				Creator:   sample.AccAddress(),
+				DenomAsk:  "CoinA",
+				DenomBid:  "CoinB",
+				AmountBid: "40",
+				Slippage:  "0999",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

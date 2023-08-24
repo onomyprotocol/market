@@ -64,6 +64,10 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
+	if msg.Slippage[0] == '0' {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
+	}
+
 	slippage, ok := sdk.NewIntFromString(msg.Slippage)
 	if !ok {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
