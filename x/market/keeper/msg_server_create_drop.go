@@ -167,54 +167,39 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 }
 
 func (k msgServer) updateLeaders(ctx sdk.Context, pool types.Pool, dropCreator string, dropCreatorSum sdk.Int) types.Pool {
-	numLeaders := len(pool.Leaders)
 	maxLeaders := len(strings.Split(k.EarnRates(ctx), ","))
 
-	index := numLeaders
-
-	// Check if Drop Creator is already on leader board
-	// If so, make index = drop creator position
-	for i := 0; i < numLeaders; i++ {
+	for i := 0; i < len(pool.Leaders); i++ {
 		if pool.Leaders[i].Address == dropCreator {
-			index = i
-			break
+			pool.Leaders = pool.Leaders[:i+copy(pool.Leaders[i:], pool.Leaders[i+1:])]
 		}
 	}
 
-	if index == 0 {
-		// If drop creator is already top of leader board
-		// Only update number of drops
-		pool.Leaders[0].Drops = dropCreatorSum
+	if len(pool.Leaders) == 0 {
+		pool.Leaders = append(pool.Leaders, &types.Leader{
+			Address: dropCreator,
+			Drops:   dropCreatorSum,
+		})
 	} else {
-		for i := index - 1; i >= 0; i-- {
+		for i := 0; i < len(pool.Leaders); i++ {
 			if dropCreatorSum.GT(pool.Leaders[i].Drops) {
-				// Append
-				if i == index-1 && index == numLeaders && numLeaders < maxLeaders {
-					pool.Leaders = append(pool.Leaders, pool.Leaders[i])
-				} else {
-					// If drop creator has more total drops move
-					// this position down the leader board
-					pool.Leaders[i+1] = pool.Leaders[i]
-					// If at top of the list then place drop creator
-					// as top leader
-					if i == 0 {
-						pool.Leaders[0] = &types.Leader{
-							Address: dropCreator,
-							Drops:   dropCreatorSum,
-						}
-					}
+				if len(pool.Leaders) < maxLeaders {
+					pool.Leaders = append(pool.Leaders, pool.Leaders[len(pool.Leaders)-1])
 				}
+				copy(pool.Leaders[i+1:], pool.Leaders[i:])
+				pool.Leaders[i] = &types.Leader{
+					Address: dropCreator,
+					Drops:   dropCreatorSum,
+				}
+				break
 			} else {
-				if index == numLeaders && numLeaders < maxLeaders {
+				if (i == len(pool.Leaders)-1) && len(pool.Leaders) < maxLeaders {
 					pool.Leaders = append(pool.Leaders, &types.Leader{
 						Address: dropCreator,
 						Drops:   dropCreatorSum,
 					})
-				} else {
-					pool.Leaders[i+1].Address = dropCreator
-					pool.Leaders[i+1].Drops = dropCreatorSum
+					break
 				}
-				break
 			}
 		}
 	}

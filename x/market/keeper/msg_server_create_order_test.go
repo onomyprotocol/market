@@ -230,7 +230,7 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 
 	testInput := keepertest.CreateTestEnvironment(t)
 
-	common(t, testInput)
+	_, _, _, _, pair := common(t, testInput)
 
 	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
@@ -249,7 +249,9 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 	}
 
 	allorders := testInput.MarketKeeper.GetAllOrder(testInput.Context)
-	require.Truef(t, allorders[0].Uid == 3, allorders[0].Status)
+	require.Truef(t, allorders[0].Uid == 3, strconv.FormatUint(allorders[0].Uid, 10))
+	require.Truef(t, allorders[0].Status == "active", allorders[0].Status)
+	require.True(t, allorders[0].Amount.Add(allorders[1].Amount).Equal(sdk.NewInt(10)))
 
 	require.True(t, len(allorders) == 2)
 
@@ -265,4 +267,7 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 	orderowner := testInput.MarketKeeper.GetOrderOwner(testInput.Context, addr)
 	require.True(t, len(orderowner) == 1)
 
+	// Validate GetPool
+	pool, _ := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.Equal(t, pool.History, allorders[1].Uid)
 }

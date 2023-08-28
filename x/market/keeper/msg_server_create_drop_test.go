@@ -31,6 +31,26 @@ func TestCreateDrop(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
 
+	addr2 := sample.AccAddress()
+
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress2, err := sdk.AccAddressFromBech32(addr2)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress2, coinPair))
+
+	addr3 := sample.AccAddress()
+
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress3, err := sdk.AccAddressFromBech32(addr3)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress3, coinPair))
+
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
@@ -65,14 +85,29 @@ func TestCreateDrop(t *testing.T) {
 	require.Equal(t, 1, len(rst1.Leaders))
 	require.Equal(t, "1200", rst1.Leaders[0].Drops.String())
 
+	beforecount = aftercount
+
 	// Validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	var d = types.MsgCreateDrop{Creator: addr2, Pair: pair, Drops: "120"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
+
+	// Validate SetUidCount function.
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
 
 	pairs, ok := testInput.MarketKeeper.GetDropPairs(testInput.Context, addr)
 	require.True(t, ok)
 	require.Truef(t, pairs.Pairs[0] == pair, pairs.String())
+
+	// Validate GetPool
+	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst.Pair, pair)
+	require.Equal(t, "1320", rst.Drops.String())
+	require.Equalf(t, addr, rst.Leaders[0].Address, rst.Leaders[0].Address)
+	require.Equalf(t, 2, len(rst.Leaders), rst.Leaders[1].Address)
+	require.Equal(t, "1200", rst.Leaders[0].Drops.String())
 
 	// Validate GetMember
 	members, memberfound := testInput.MarketKeeper.GetMember(testInput.Context, denomB, denomA)
@@ -89,21 +124,107 @@ func TestCreateDrop(t *testing.T) {
 
 	owner, ok = testInput.MarketKeeper.GetDropsOwnerPair(testInput.Context, addr, pair)
 	require.True(t, ok)
-	require.Truef(t, owner.Sum.Equal(sdk.NewInt(1320)), owner.Sum.String())
+	require.Truef(t, owner.Sum.Equal(sdk.NewInt(1200)), owner.Sum.String())
+
+	// Validate GetDrop
+	drops, dropFound = testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+	require.Equal(t, drops.Drops.String(), d.Drops)
+	require.Contains(t, d.GetCreator(), createDropResponse.String())
+
+	beforecount = aftercount
+
+	// Validate CreateDrop
+	var e = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	createDropResponse, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &e)
+	require.NoError(t, err)
+
+	// Validate SetUidCount function.
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	pairs, ok = testInput.MarketKeeper.GetDropPairs(testInput.Context, addr)
+	require.True(t, ok)
+	require.Truef(t, pairs.Pairs[0] == pair, pairs.String())
 
 	// Validate GetPool
-	rst, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	rst2, found := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst2.Pair, pair)
+	require.Equal(t, "1440", rst2.Drops.String())
+	require.Equal(t, "1320", rst2.Leaders[0].Drops.String())
+	require.Equal(t, rst2.Leaders[0].Address, addr)
+	require.Equal(t, rst2.Leaders[1].Address, addr2)
+	require.Equal(t, 2, len(rst2.Leaders))
+	require.Equal(t, "1320", rst2.Leaders[0].Drops.String())
+
+	// Validate GetDrop
+	drops, dropFound = testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+	require.Equal(t, drops.Drops.String(), e.Drops)
+	require.Contains(t, d.GetCreator(), createDropResponse.String())
+
+	beforecount = aftercount
+
+	// Validate CreateDrop
+	var f = types.MsgCreateDrop{Creator: addr3, Pair: pair, Drops: "1000"}
+	createDropResponse, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &f)
+	require.NoError(t, err)
+
+	// Validate SetUidCount function.
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	pairs, ok = testInput.MarketKeeper.GetDropPairs(testInput.Context, addr3)
+	require.True(t, ok)
+	require.Truef(t, pairs.Pairs[0] == pair, pairs.String())
+
+	// Validate GetPool
+	rst, found = testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
-	require.Equal(t, "1320", rst.Drops.String())
-	require.Equal(t, 1, len(rst.Leaders))
+	require.Equal(t, "2440", rst.Drops.String())
+	require.Equal(t, 3, len(rst.Leaders))
 	require.Equal(t, "1320", rst.Leaders[0].Drops.String())
 
 	// Validate GetDrop
-	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
-	require.True(t, drop1Found)
-	require.Equal(t, drops1.Pair, pair)
-	require.Equal(t, drops1.Drops.String(), d.Drops)
+	drops, dropFound = testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+	require.Equal(t, drops.Drops.String(), f.Drops)
+	require.Contains(t, d.GetCreator(), createDropResponse.String())
+
+	beforecount = aftercount
+
+	// Validate CreateDrop
+	var g = types.MsgCreateDrop{Creator: addr3, Pair: pair, Drops: "400"}
+	createDropResponse, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &g)
+	require.NoError(t, err)
+
+	// Validate SetUidCount function.
+	aftercount = testInput.MarketKeeper.GetUidCount(testInput.Context)
+	require.Equal(t, beforecount+1, aftercount)
+
+	// Validate GetPool
+	rst, found = testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.True(t, found)
+	require.Equal(t, rst.Pair, pair)
+	require.Equal(t, "2840", rst.Drops.String())
+	require.Equal(t, 3, len(rst.Leaders))
+	require.Equal(t, "1400", rst.Leaders[0].Drops.String())
+	require.Equal(t, "1320", rst.Leaders[1].Drops.String())
+	require.Equal(t, "120", rst.Leaders[2].Drops.String())
+	require.Equalf(t, addr3, rst.Leaders[0].Address, rst.Leaders[0].Address)
+	require.Equalf(t, addr, rst.Leaders[1].Address, addr3)
+	require.Equalf(t, addr2, rst.Leaders[2].Address, rst.Leaders[2].Address)
+
+	// Validate GetDrop
+	drops, dropFound = testInput.MarketKeeper.GetDrop(testInput.Context, beforecount)
+	require.True(t, dropFound)
+	require.Equal(t, drops.Pair, pair)
+	require.Equal(t, drops.Drops.String(), g.Drops)
 	require.Contains(t, d.GetCreator(), createDropResponse.String())
 
 }
