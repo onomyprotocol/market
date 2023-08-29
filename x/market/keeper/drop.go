@@ -482,3 +482,66 @@ func dropCoin(amountA sdk.Int, pool types.Pool, memberA types.Member, memberB ty
 
 	return amountB, drops, nil
 }
+
+// GetOrderOwner returns orders from a single owner
+func (k Keeper) GetDropsToCoins(
+	ctx sdk.Context,
+	pair string,
+	drops string,
+) (denom1 string, denom2 string, amount1 sdk.Int, amount2 sdk.Int, found bool) {
+
+	dropsInt, ok := sdk.NewIntFromString(drops)
+	if !ok {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	pairArray := strings.Split(pair, ",")
+
+	denom1 = pairArray[0]
+	denom2 = pairArray[1]
+
+	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
+
+	b := memberStore.Get(types.MemberKey(
+		denom2,
+		denom1,
+	))
+	if b == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var member1 types.Member
+	k.cdc.MustUnmarshal(b, &member1)
+
+	c := memberStore.Get(types.MemberKey(
+		denom1,
+		denom2,
+	))
+	if c == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var member2 types.Member
+	k.cdc.MustUnmarshal(c, &member2)
+
+	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
+
+	d := poolStore.Get(types.PoolKey(
+		pair,
+	))
+	if d == nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	var pool types.Pool
+	k.cdc.MustUnmarshal(d, &pool)
+
+	amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
+	if error != nil {
+		return denom1, denom2, amount1, amount2, false
+	}
+
+	found = true
+
+	return
+}

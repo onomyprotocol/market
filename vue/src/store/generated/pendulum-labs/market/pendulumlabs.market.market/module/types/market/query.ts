@@ -70,6 +70,11 @@ export interface QueryDropAmountsResponse {
   amount2: string;
 }
 
+export interface QueryDropsToCoinsRequest {
+  pair: string;
+  drops: string;
+}
+
 export interface QueryDropPairsRequest {
   address: string;
 }
@@ -1064,6 +1069,92 @@ export const QueryDropAmountsResponse = {
       message.amount2 = object.amount2;
     } else {
       message.amount2 = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryDropsToCoinsRequest: object = { pair: "", drops: "" };
+
+export const QueryDropsToCoinsRequest = {
+  encode(
+    message: QueryDropsToCoinsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pair !== "") {
+      writer.uint32(10).string(message.pair);
+    }
+    if (message.drops !== "") {
+      writer.uint32(18).string(message.drops);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropsToCoinsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropsToCoinsRequest,
+    } as QueryDropsToCoinsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pair = reader.string();
+          break;
+        case 2:
+          message.drops = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropsToCoinsRequest {
+    const message = {
+      ...baseQueryDropsToCoinsRequest,
+    } as QueryDropsToCoinsRequest;
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = String(object.pair);
+    } else {
+      message.pair = "";
+    }
+    if (object.drops !== undefined && object.drops !== null) {
+      message.drops = String(object.drops);
+    } else {
+      message.drops = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropsToCoinsRequest): unknown {
+    const obj: any = {};
+    message.pair !== undefined && (obj.pair = message.pair);
+    message.drops !== undefined && (obj.drops = message.drops);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropsToCoinsRequest>
+  ): QueryDropsToCoinsRequest {
+    const message = {
+      ...baseQueryDropsToCoinsRequest,
+    } as QueryDropsToCoinsRequest;
+    if (object.pair !== undefined && object.pair !== null) {
+      message.pair = object.pair;
+    } else {
+      message.pair = "";
+    }
+    if (object.drops !== undefined && object.drops !== null) {
+      message.drops = object.drops;
+    } else {
+      message.drops = "";
     }
     return message;
   },
@@ -3832,6 +3923,10 @@ export interface Query {
   /** Queries a Drop by index. */
   DropCoin(request: QueryDropCoinRequest): Promise<QueryDropCoinResponse>;
   /** Queries a Drop by index. */
+  DropsToCoins(
+    request: QueryDropsToCoinsRequest
+  ): Promise<QueryDropAmountsResponse>;
+  /** Queries a Drop by index. */
   DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse>;
   /** Queries a Drop by index. */
   DropOwnerPair(
@@ -3939,6 +4034,20 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryDropCoinResponse.decode(new Reader(data))
+    );
+  }
+
+  DropsToCoins(
+    request: QueryDropsToCoinsRequest
+  ): Promise<QueryDropAmountsResponse> {
+    const data = QueryDropsToCoinsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "DropsToCoins",
+      data
+    );
+    return promise.then((data) =>
+      QueryDropAmountsResponse.decode(new Reader(data))
     );
   }
 

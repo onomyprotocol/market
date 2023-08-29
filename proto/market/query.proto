@@ -47,6 +47,11 @@ service Query {
 	}
 
 	// Queries a Drop by index.
+	rpc DropsToCoins(QueryDropsToCoinsRequest) returns (QueryDropAmountsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/coins/{pair}/{drops}";
+	}
+
+	// Queries a Drop by index.
 	rpc DropPairs(QueryDropPairsRequest) returns (QueryDropPairsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/pairs/{address}";
 	}
@@ -173,6 +178,11 @@ message QueryDropAmountsResponse {
 	string denom2 = 2;
 	string amount1 = 3;
 	string amount2 = 4;
+}
+
+message QueryDropsToCoinsRequest {
+	string pair = 1;
+	string drops = 2;
 }
 
 message QueryDropPairsRequest {

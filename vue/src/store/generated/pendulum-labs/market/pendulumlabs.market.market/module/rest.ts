@@ -727,6 +727,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryDropsToCoins
+   * @summary Queries a Drop by index.
+   * @request GET:/pendulum-labs/market/market/drop/coins/{pair}/{drops}
+   */
+  queryDropsToCoins = (pair: string, drops: string, params: RequestParams = {}) =>
+    this.request<MarketQueryDropAmountsResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/drop/coins/${pair}/${drops}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryDropPairs
    * @summary Queries a Drop by index.
    * @request GET:/pendulum-labs/market/market/drop/pairs/{address}
