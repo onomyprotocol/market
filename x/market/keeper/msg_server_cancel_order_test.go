@@ -251,3 +251,66 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	require.Equal(t, orders.Amount.String(), o.Amount)
 	require.Equal(t, orders.OrderType, "stop")
 }
+
+func TestCancelOrderEmptyPool(t *testing.T) {
+	testInput := keepertest.CreateTestEnvironment(t)
+
+	testdata, _, denomA, denomB, _ := common(t, testInput)
+
+	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	//Create Order
+	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
+	rate, _ := types.RateStringToInt(o.Rate)
+	bookends := testInput.MarketKeeper.BookEnds(testInput.Context, o.DenomAsk, o.DenomBid, o.OrderType, rate)
+	o.Prev = strconv.FormatUint(bookends[0], 10)
+	o.Next = strconv.FormatUint(bookends[1], 10)
+	_, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
+	require.NoError(t, err)
+
+	aftercount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	require.Equal(t, beforecount+1, aftercount)
+
+	//Validate Order
+	orders, orderfound := testInput.MarketKeeper.GetOrder(testInput.Context, beforecount)
+	require.True(t, orderfound)
+	require.Equal(t, orders.DenomBid, denomB)
+	require.Equal(t, orders.DenomAsk, denomA)
+	require.Equal(t, orders.Amount.String(), o.Amount)
+
+	// Validate GetMember
+	memberAsk, memberAskfound := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomBid, orders.DenomAsk)
+
+	require.True(t, memberAskfound)
+	require.Equal(t, memberAsk.DenomA, denomB)
+	require.Equal(t, memberAsk.DenomB, denomA)
+	require.Equal(t, "33", memberAsk.Balance.String())
+	require.Equal(t, memberAsk.Stop, uint64(0))
+
+	// Validate RedeemDrop
+	Uid := strconv.FormatUint(1, 10)
+	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
+	createRedeemDropResponse, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
+	require.NoError(t, redeemdropErr)
+	require.Contains(t, rd.GetCreator(), createRedeemDropResponse.String())
+
+	// Validate RedeemDrop
+	Uid = strconv.FormatUint(2, 10)
+	rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
+	createRedeemDropResponse, redeemdropErr = keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
+	require.NoError(t, redeemdropErr)
+	require.Contains(t, rd.GetCreator(), createRedeemDropResponse.String())
+
+	// Create Pool
+	var p = types.MsgCreatePool{CoinA: testdata.coinAStr, CoinB: testdata.coinBStr, Creator: addr}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreatePool(sdk.WrapSDKContext(testInput.Context), &p)
+	require.NoError(t, err)
+
+	// Cancel Order
+	Uid = strconv.FormatUint(beforecount, 10)
+	var co = types.MsgCancelOrder{Creator: addr, Uid: Uid}
+	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
+	require.NoError(t, err)
+
+}

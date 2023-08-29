@@ -34,8 +34,20 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
 	// Test if pool either exists and active or exists and inactive
 	// Inactive pool will be dry or have no drops
+	member1, _ := k.GetMember(ctx, denom2, denom1)
+
+	member2, _ := k.GetMember(ctx, denom1, denom2)
+
 	pool, found := k.GetPool(ctx, pair)
 	if found {
+		if !member1.Balance.Equal(sdk.ZeroInt()) {
+			return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
+		}
+
+		if !member2.Balance.Equal(sdk.ZeroInt()) {
+			return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
+		}
+
 		if !pool.Drops.Equal(sdk.ZeroInt()) {
 			return nil, sdkerrors.Wrapf(types.ErrPoolAlreadyExists, "%s", pair)
 		}
@@ -58,13 +70,38 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Drops:   drops,
 	}
 
-	pool = types.Pool{
-		Pair:    pair,
-		Leaders: []*types.Leader{&leader},
-		Denom1:  coinPair.GetDenomByIndex(0),
-		Denom2:  coinPair.GetDenomByIndex(1),
-		Drops:   drops,
-		History: uint64(0),
+	if found {
+		pool.Drops = drops
+		pool.Leaders = []*types.Leader{&leader}
+		member1.Balance = coinPair.AmountOf(denom1)
+		member2.Balance = coinPair.AmountOf(denom2)
+	} else {
+		pool = types.Pool{
+			Pair:    pair,
+			Leaders: []*types.Leader{&leader},
+			Denom1:  coinPair.GetDenomByIndex(0),
+			Denom2:  coinPair.GetDenomByIndex(1),
+			Drops:   drops,
+			History: uint64(0),
+		}
+
+		member1 = types.Member{
+			Pair:    pair,
+			DenomA:  denom2,
+			DenomB:  denom1,
+			Balance: coinPair.AmountOf(denom1),
+			Limit:   0,
+			Stop:    0,
+		}
+
+		member2 = types.Member{
+			Pair:    pair,
+			DenomA:  denom1,
+			DenomB:  denom2,
+			Balance: coinPair.AmountOf(denom2),
+			Limit:   0,
+			Stop:    0,
+		}
 	}
 
 	// Create the uid
@@ -77,24 +114,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Drops:   drops,
 		Product: drops,
 		Active:  true,
-	}
-
-	var member1 = types.Member{
-		Pair:    pair,
-		DenomA:  denom2,
-		DenomB:  denom1,
-		Balance: coinPair.AmountOf(denom1),
-		Limit:   0,
-		Stop:    0,
-	}
-
-	var member2 = types.Member{
-		Pair:    pair,
-		DenomA:  denom1,
-		DenomB:  denom2,
-		Balance: coinPair.AmountOf(denom2),
-		Limit:   0,
-		Stop:    0,
 	}
 
 	k.SetPool(
