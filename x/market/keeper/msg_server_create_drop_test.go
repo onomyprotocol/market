@@ -31,8 +31,6 @@ func TestCreateDrop(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
 
-	addr2 := sample.AccAddress()
-
 	// MintCoins
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
 
@@ -40,8 +38,6 @@ func TestCreateDrop(t *testing.T) {
 	requestAddress2, err := sdk.AccAddressFromBech32(addr2)
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress2, coinPair))
-
-	addr3 := sample.AccAddress()
 
 	// MintCoins
 	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))

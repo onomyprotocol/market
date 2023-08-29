@@ -21,6 +21,8 @@ type testData struct {
 }
 
 var addr string = sample.AccAddress()
+var addr2 string = sample.AccAddress()
+var addr3 string = sample.AccAddress()
 
 func TestCreatePool(t *testing.T) {
 	testInput := keepertest.CreateTestEnvironment(t)

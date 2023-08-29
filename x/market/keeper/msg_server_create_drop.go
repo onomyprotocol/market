@@ -41,6 +41,14 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", pair)
 	}
 
+	if member1.Balance.Equal(sdk.ZeroInt()) {
+		return nil, sdkerrors.Wrapf(types.ErrMemberBalanceZero, "Member %s", member1.DenomB)
+	}
+
+	if member2.Balance.Equal(sdk.ZeroInt()) {
+		return nil, sdkerrors.Wrapf(types.ErrMemberBalanceZero, "Member %s", member2.DenomB)
+	}
+
 	// Create the uid
 	uid := k.GetUidCount(ctx)
 
@@ -173,6 +181,10 @@ func (k msgServer) updateLeaders(ctx sdk.Context, pool types.Pool, dropCreator s
 		if pool.Leaders[i].Address == dropCreator {
 			pool.Leaders = pool.Leaders[:i+copy(pool.Leaders[i:], pool.Leaders[i+1:])]
 		}
+	}
+
+	if dropCreatorSum.Equal(sdk.ZeroInt()) {
+		return pool
 	}
 
 	if len(pool.Leaders) == 0 {

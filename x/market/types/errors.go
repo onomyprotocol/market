@@ -42,5 +42,6 @@ var (
 	ErrDropSumNotFound = sdkerrors.Register(ModuleName, 16, "drop sum not found") // nolint: gomnd
 	// ErrDropSumNotFound - the drop sum of owner with drop not found
 	ErrAmtZero = sdkerrors.Register(ModuleName, 17, "payment amount equal to zero") // nolint: gomnd
-
+	// ErrMemberBalanceZero - the drop sum of owner with drop not found
+	ErrMemberBalanceZero = sdkerrors.Register(ModuleName, 18, "member balance zero - pool empty") // nolint: gomnd
 )

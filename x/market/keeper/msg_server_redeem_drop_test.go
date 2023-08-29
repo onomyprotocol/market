@@ -30,6 +30,22 @@ func TestRedeemDrop(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress, coinPair))
 
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress2, err := sdk.AccAddressFromBech32(addr2)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress2, coinPair))
+
+	// MintCoins
+	require.NoError(t, testInput.BankKeeper.MintCoins(testInput.Context, types.ModuleName, coinPair))
+
+	// SendCoinsFromModuleToAccount
+	requestAddress3, err := sdk.AccAddressFromBech32(addr3)
+	require.NoError(t, err)
+	require.NoError(t, testInput.BankKeeper.SendCoinsFromModuleToAccount(testInput.Context, types.ModuleName, requestAddress3, coinPair))
+
 	// GetUidCount before CreatePool
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
@@ -61,7 +77,7 @@ func TestRedeemDrop(t *testing.T) {
 	require.Equal(t, "1200", rst1.Leaders[0].Drops.String())
 
 	// Validate CreateDrop
-	var d = types.MsgCreateDrop{Creator: addr, Pair: pair, Drops: "120"}
+	var d = types.MsgCreateDrop{Creator: addr2, Pair: pair, Drops: "120"}
 	createDropResponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateDrop(sdk.WrapSDKContext(testInput.Context), &d)
 	require.NoError(t, err)
 
@@ -83,8 +99,9 @@ func TestRedeemDrop(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, "1320", rst.Drops.String())
-	require.Equal(t, 1, len(rst.Leaders))
-	require.Equal(t, "1320", rst.Leaders[0].Drops.String())
+	require.Equal(t, 2, len(rst.Leaders))
+	require.Equal(t, addr2, rst.Leaders[1].Address)
+	require.Equal(t, "1200", rst.Leaders[0].Drops.String())
 
 	// Validate GetDrop
 	drops1, drop1Found := testInput.MarketKeeper.GetDrop(testInput.Context, aftercount)
@@ -95,7 +112,7 @@ func TestRedeemDrop(t *testing.T) {
 
 	// Validate RedeemDrop
 	Uid := strconv.FormatUint(drops1.Uid, 10)
-	var rd = types.MsgRedeemDrop{Creator: addr, Uid: Uid}
+	var rd = types.MsgRedeemDrop{Creator: addr2, Uid: Uid}
 	createRedeemDropResponse, redeemdropErr := keeper.NewMsgServerImpl(*testInput.MarketKeeper).RedeemDrop(sdk.WrapSDKContext(testInput.Context), &rd)
 	require.NoError(t, redeemdropErr)
 	require.Contains(t, rd.GetCreator(), createRedeemDropResponse.String())
@@ -113,7 +130,9 @@ func TestRedeemDrop(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, "1200", rst.Drops.String())
-	require.Equal(t, "1200", rst.Leaders[0].Drops.String(), rst)
+	require.Equal(t, "1200", rst.Leaders[0].Drops.String())
+	require.Equal(t, 1, len(rst.Leaders))
+	require.Equal(t, addr, rst.Leaders[0].Address)
 
 	owner, ok := testInput.MarketKeeper.GetDropsOwnerPair(testInput.Context, addr, pair)
 	require.True(t, ok)
@@ -147,6 +166,7 @@ func TestRedeemDrop(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, rst.Pair, pair)
 	require.Equal(t, rst.Drops.String(), "0")
+	require.Equal(t, 0, len(rst.Leaders))
 
 	pairs, ok = testInput.MarketKeeper.GetPairs(testInput.Context, addr)
 	require.True(t, ok)

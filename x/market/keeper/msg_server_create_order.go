@@ -311,6 +311,14 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 }
 
 func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
+	if memberAsk.Balance.Equal(sdk.ZeroInt()) {
+		return true, nil
+	}
+
+	if memberBid.Balance.Equal(sdk.ZeroInt()) {
+		return true, nil
+	}
+
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
 	if memberBid.Limit == 0 {
 		_, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
@@ -462,6 +470,14 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 }
 
 func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
+	if memberAsk.Balance.Equal(sdk.ZeroInt()) {
+		return true, nil
+	}
+
+	if memberBid.Balance.Equal(sdk.ZeroInt()) {
+		return true, nil
+	}
+
 	// Checking for existence of stop order at the memberBid head
 	if memberBid.Stop == 0 {
 		return true, nil

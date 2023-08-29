@@ -129,65 +129,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	sumDropRedeemer = sumDropRedeemer.Sub(drop.Drops)
 
-	numLeaders := len(pool.Leaders)
-
-	var index int
-	flag := false
-
-	// Check if Drop Redeemer is on leader board
-	// If so, make index = drop creator position
-	for i := 0; i < numLeaders; i++ {
-		if pool.Leaders[i].Address == msg.Creator {
-			index = i
-			flag = true
-			break
-		}
-	}
-
-	// Re-order leader board to reflect new rankings
-	if flag {
-		if sumDropRedeemer.GT(sdk.ZeroInt()) {
-			if numLeaders > 1 {
-				for i := index + 1; i < numLeaders; i++ {
-					if sumDropRedeemer.LT(pool.Leaders[i].Drops) {
-						// If drop reedemer has less total drops move
-						// this position down the leader board
-						pool.Leaders[i-1].Address = pool.Leaders[i].Address
-						pool.Leaders[i-1].Drops = pool.Leaders[i].Drops
-						// Remove redeemer from bottom of list
-						// Prevents someone from liquidating all drops
-						// yet still receive leader rewards
-						if i == numLeaders-1 {
-							break
-						}
-						pool.Leaders[i].Address = msg.Creator
-						pool.Leaders[i].Drops = sumDropRedeemer
-					} else {
-						break
-					}
-				}
-			} else {
-				pool.Leaders[0].Drops = sumDropRedeemer
-			}
-		} else {
-			// If drop redeemer is the only leader and has zero drops
-			// set pool.Leaders to nil
-			if numLeaders == 1 {
-				pool.Leaders = nil
-			}
-			for i := index + 1; i < numLeaders; i++ {
-				pool.Leaders[i-1].Address = pool.Leaders[i].Address
-				pool.Leaders[i-1].Drops = pool.Leaders[i].Drops
-				// Remove redeemer from bottom of list
-				// Prevents someone from liquidating all drops
-				// yet still receive leader rewards
-				if i == numLeaders-1 {
-					pool.Leaders[i] = nil
-					break
-				}
-			}
-		}
-	}
+	pool = k.updateLeaders(ctx, pool, msg.Creator, sumDropRedeemer)
 
 	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
 
