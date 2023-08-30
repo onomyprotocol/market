@@ -300,8 +300,16 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if error != nil {
 			return nil, error
 		}
+		_, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if error != nil {
+			return nil, error
+		}
 	} else if msg.OrderType == "limit" {
 		_, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if error != nil {
+			return nil, error
+		}
+		_, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if error != nil {
 			return nil, error
 		}

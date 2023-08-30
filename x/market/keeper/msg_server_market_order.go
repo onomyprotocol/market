@@ -107,7 +107,14 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	k.SetUidCount(ctx, uid+1)
 	k.SetOrder(ctx, order)
 
-	ExecuteLimit(k, ctx, coinBid.Denom, coinAsk.Denom, memberBid, memberAsk)
+	_, error := ExecuteLimit(k, ctx, coinBid.Denom, coinAsk.Denom, memberBid, memberAsk)
+	if error != nil {
+		return nil, error
+	}
+	_, error = ExecuteLimit(k, ctx, coinAsk.Denom, coinBid.Denom, memberAsk, memberBid)
+	if error != nil {
+		return nil, error
+	}
 
 	return &types.MsgMarketOrderResponse{}, nil
 }
