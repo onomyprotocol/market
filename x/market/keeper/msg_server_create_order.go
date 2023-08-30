@@ -296,20 +296,20 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		// guard in the case there is a stop run.
 		// Stop run would potentially take place if
 		// stop book is checked first repeatedly during price fall
-		_, error := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		memberBid, memberAsk, error := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if error != nil {
 			return nil, error
 		}
-		_, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		_, _, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		if error != nil {
 			return nil, error
 		}
 	} else if msg.OrderType == "limit" {
-		_, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		memberAsk, memberBid, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		if error != nil {
 			return nil, error
 		}
-		_, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		_, _, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if error != nil {
 			return nil, error
 		}
@@ -318,32 +318,36 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
 }
 
-func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
+func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member, error) {
+	// Added for error reversion
+	memberAskInit := memberAsk
+	memberBidInit := memberBid
+
 	if memberAsk.Balance.Equal(sdk.ZeroInt()) {
-		return true, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	if memberBid.Balance.Equal(sdk.ZeroInt()) {
-		return true, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
 	if memberBid.Limit == 0 {
-		_, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+		memberBid, memberAsk, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
 		if sdkError != nil {
-			return false, sdkError
+			return memberAskInit, memberBidInit, sdkError
 		}
-		return true, nil
+		return memberAsk, memberBid, nil
 	}
 
 	limitHead, _ := k.GetOrder(ctx, memberBid.Limit)
 
 	if types.LTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, limitHead.Rate) {
-		_, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
+		memberBid, memberAsk, sdkError := ExecuteStop(k, ctx, denomBid, denomAsk, memberBid, memberAsk)
 		if sdkError != nil {
-			return false, sdkError
+			return memberAskInit, memberBidInit, sdkError
 		}
-		return true, nil
+		return memberAsk, memberBid, nil
 	}
 
 	// Execute Head Limit
@@ -397,7 +401,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
 	if strikeAmountAsk.Equal(sdk.ZeroInt()) {
-		return false, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	pool, _ := k.GetPool(ctx, memberAsk.Pair)
@@ -463,7 +467,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	// Transfer ask order amount to owner account
 	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsAsk)
 	if sdkError != nil {
-		return false, sdkError
+		return memberAskInit, memberBidInit, sdkError
 	}
 
 	memberBid.Previous = memberBid.Balance
@@ -474,27 +478,31 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
-	return true, nil
+	return memberAsk, memberBid, nil
 }
 
-func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (bool, error) {
+func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member, error) {
+	// Added for error reversion
+	memberAskInit := memberAsk
+	memberBidInit := memberBid
+
 	if memberAsk.Balance.Equal(sdk.ZeroInt()) {
-		return true, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	if memberBid.Balance.Equal(sdk.ZeroInt()) {
-		return true, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	// Checking for existence of stop order at the memberBid head
 	if memberBid.Stop == 0 {
-		return true, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	stopHead, _ := k.GetOrder(ctx, memberBid.Stop)
 
 	if types.GTE([]sdk.Int{memberAsk.Balance, memberBid.Balance}, stopHead.Rate) {
-		return true, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	// Strike Bid Amount: The amountBid of the bid coin exchanged
@@ -508,7 +516,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
 	if strikeAmountAsk.Equal(sdk.ZeroInt()) {
-		return false, nil
+		return memberAskInit, memberBidInit, nil
 	}
 
 	// THEN set Head(Stop).Status to filled as entire order will be filled
@@ -537,7 +545,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// Transfer ask order amount to owner account
 	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsAsk)
 	if sdkError != nil {
-		return false, sdkError
+		return memberAskInit, memberBidInit, sdkError
 	}
 
 	// Update pool order history
@@ -570,10 +578,10 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
 	if sdkError != nil {
-		return false, sdkError
+		return memberAskInit, memberBidInit, sdkError
 	}
 
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
-	return true, nil
+	return memberAsk, memberBid, nil
 }
