@@ -135,6 +135,41 @@
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
+        },
+				{
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy156kc3u6l6rvcuct7dvj2nlkc4zfl8qyl8krfrv",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+				{
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy14sypqzham0q7mk3ckcm9l0l3395l8vhumw6v7z",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+				{
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy18nun9hk2q7k5ngkl7vpsmsn4cwl4c5fg3r4lpj",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+				{
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy1nlmyyy8k5wz8tg2q9lj6cau3klw7alk8z4sqk6",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+				{
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy1f56hvp29rnrhlev6czgg930uycykht2nmja4a3",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
         }
       ]
     },
@@ -179,7 +214,132 @@
           ]
         },
 				{
+          "address": "onomy156kc3u6l6rvcuct7dvj2nlkc4zfl8qyl8krfrv",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "100000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "10000000000000000000000000"
+            },
+            {
+              "denom": "stake",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "1000000000000000000000"
+            }
+          ]
+        },
+				{
           "address": "onomy1ynathdvs8mjkrnauhtz7sqgcvt6hh9u6e8rt82",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "100000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "10000000000000000000000000"
+            },
+            {
+              "denom": "stake",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "1000000000000000000000"
+            }
+          ]
+        },
+				{
+          "address": "onomy1nlmyyy8k5wz8tg2q9lj6cau3klw7alk8z4sqk6",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "100000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "10000000000000000000000000"
+            },
+            {
+              "denom": "stake",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "1000000000000000000000"
+            }
+          ]
+        },
+				{
+          "address": "onomy14sypqzham0q7mk3ckcm9l0l3395l8vhumw6v7z",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "100000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "10000000000000000000000000"
+            },
+            {
+              "denom": "stake",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "1000000000000000000000"
+            }
+          ]
+        },
+				{
+          "address": "onomy1f56hvp29rnrhlev6czgg930uycykht2nmja4a3",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "100000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "10000000000000000000000000"
+            },
+            {
+              "denom": "stake",
+              "amount": "1000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "1000000000000000000000"
+            }
+          ]
+        },
+				{
+          "address": "onomy18nun9hk2q7k5ngkl7vpsmsn4cwl4c5fg3r4lpj",
           "coins": [
             {
               "denom": "abtc",
