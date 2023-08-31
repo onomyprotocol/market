@@ -300,7 +300,11 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if error != nil {
 			return nil, error
 		}
-		_, _, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		memberAsk, memberBid, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if error != nil {
+			return nil, error
+		}
+		_, _, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if error != nil {
 			return nil, error
 		}
@@ -309,13 +313,232 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if error != nil {
 			return nil, error
 		}
-		_, _, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		memberBid, memberAsk, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if error != nil {
+			return nil, error
+		}
+		_, _, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if error != nil {
 			return nil, error
 		}
 	}
 
 	return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
+}
+
+func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member, error) {
+	// Added for error reversion
+	memberAskInit := memberAsk
+	memberBidInit := memberBid
+
+	if memberAsk.Balance.Equal(sdk.ZeroInt()) {
+		return memberAskInit, memberBidInit, nil
+	}
+
+	if memberBid.Balance.Equal(sdk.ZeroInt()) {
+		return memberAskInit, memberBidInit, nil
+	}
+
+	// IF Limit Head is equal to 0 THEN the Limit Book is EMPTY
+	if memberBid.Limit == 0 || memberAsk.Limit == 0 {
+		return memberAsk, memberBid, nil
+	}
+
+	limitHeadBid, _ := k.GetOrder(ctx, memberBid.Limit)
+	limitHeadAsk, _ := k.GetOrder(ctx, memberAsk.Limit)
+
+	if types.GT(limitHeadBid.Rate, []sdk.Int{limitHeadAsk.Rate[1], limitHeadAsk.Rate[0]}) {
+		return memberAskInit, memberBidInit, nil
+	}
+
+	pool, _ := k.GetPool(ctx, memberAsk.Pair)
+
+	amountDenomBidAskOrder := (limitHeadAsk.Amount.Mul(limitHeadAsk.Rate[0])).Quo(limitHeadAsk.Rate[1])
+	amountDenomAskBidOrder := (limitHeadBid.Amount.Mul(limitHeadBid.Rate[0])).Quo(limitHeadBid.Rate[1])
+
+	if limitHeadBid.Amount.GTE(amountDenomBidAskOrder) && limitHeadAsk.Amount.GTE(amountDenomAskBidOrder) {
+		// Both orders may be filled
+		limitHeadAsk.Status = "filled"
+		memberAsk.Limit = limitHeadAsk.Next
+		limitHeadBid.Status = "filled"
+		memberBid.Limit = limitHeadBid.Next
+
+		limitHeadBid.Prev = uint64(0)
+		limitHeadBid.Next = limitHeadAsk.Uid
+		limitHeadAsk.Prev = limitHeadBid.Uid
+		limitHeadAsk.Next = pool.History
+		pool.History = limitHeadBid.Uid
+
+		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
+		ownerBid, _ := sdk.AccAddressFromBech32(limitHeadBid.Owner)
+
+		coinAskOrder := sdk.NewCoin(denomBid, amountDenomBidAskOrder)
+		coinsAskOrder := sdk.NewCoins(coinAskOrder)
+
+		coinBidOrder := sdk.NewCoin(denomAsk, amountDenomAskBidOrder)
+		coinsBidOrder := sdk.NewCoins(coinBidOrder)
+
+		profitAskCoin := limitHeadAsk.Amount.Sub(amountDenomAskBidOrder)
+		memberAsk.Balance = memberAsk.Balance.Add(profitAskCoin)
+
+		profitBidCoin := limitHeadBid.Amount.Sub(amountDenomBidAskOrder)
+		memberBid.Balance = memberBid.Balance.Add(profitBidCoin)
+
+		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ownerAsk, coinsAskOrder)
+		if sdkError != nil {
+			return memberAskInit, memberBidInit, sdkError
+		}
+
+		sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ownerBid, coinsBidOrder)
+		if sdkError != nil {
+			return memberAskInit, memberBidInit, sdkError
+		}
+
+		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
+		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+
+		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
+		k.RemoveOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
+
+		k.SetOrder(ctx, limitHeadBid)
+		k.SetOrder(ctx, limitHeadAsk)
+
+		k.SetPool(ctx, pool)
+
+		k.SetMember(ctx, memberAsk)
+		k.SetMember(ctx, memberBid)
+
+		return memberAsk, memberBid, nil
+	}
+
+	if limitHeadBid.Amount.GTE(amountDenomBidAskOrder) {
+
+		// Add partially filled order to history
+		// Keep remainder of order into book
+		partialFillOrder := limitHeadBid
+
+		partialFillOrder.Uid = k.GetUidCount(ctx)
+		k.SetUidCount(ctx, partialFillOrder.Uid+1)
+
+		partialFillOrder.Amount = amountDenomBidAskOrder
+		partialFillOrder.Status = "filled"
+		partialFillOrder.Next = limitHeadAsk.Uid
+		partialFillOrder.Prev = uint64(0)
+
+		// Complete fill of Ask Order
+		limitHeadAsk.Status = "filled"
+		memberAsk.Limit = limitHeadAsk.Next
+		limitHeadAsk.Prev = partialFillOrder.Uid
+		limitHeadAsk.Next = pool.History
+
+		pool.History = partialFillOrder.Uid
+
+		limitHeadBid.Amount = limitHeadBid.Amount.Sub(amountDenomBidAskOrder)
+
+		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
+		ownerBid, _ := sdk.AccAddressFromBech32(limitHeadBid.Owner)
+
+		coinAskOrder := sdk.NewCoin(denomBid, amountDenomBidAskOrder)
+		coinsAskOrder := sdk.NewCoins(coinAskOrder)
+
+		amountDenomAskBidPartialOrder := (amountDenomBidAskOrder.Mul(limitHeadBid.Rate[0])).Quo(limitHeadBid.Rate[1])
+
+		coinBidOrder := sdk.NewCoin(denomAsk, amountDenomAskBidPartialOrder)
+		coinsBidOrder := sdk.NewCoins(coinBidOrder)
+
+		profitAskCoin := limitHeadAsk.Amount.Sub(amountDenomAskBidPartialOrder)
+		memberAsk.Balance = memberAsk.Balance.Add(profitAskCoin)
+
+		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ownerAsk, coinsAskOrder)
+		if sdkError != nil {
+			return memberAskInit, memberBidInit, sdkError
+		}
+
+		sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ownerBid, coinsBidOrder)
+		if sdkError != nil {
+			return memberAskInit, memberBidInit, sdkError
+		}
+
+		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
+
+		k.SetOrder(ctx, limitHeadBid)
+		k.SetOrder(ctx, limitHeadAsk)
+		k.SetOrder(ctx, partialFillOrder)
+
+		k.SetPool(ctx, pool)
+
+		k.SetMember(ctx, memberAsk)
+		k.SetMember(ctx, memberBid)
+		return memberAsk, memberBid, nil
+	}
+
+	if limitHeadAsk.Amount.GTE(amountDenomAskBidOrder) {
+		// Add partially filled order to history
+		// Keep remainder of order into book
+		partialFillOrder := limitHeadAsk
+
+		partialFillOrder.Uid = k.GetUidCount(ctx)
+		k.SetUidCount(ctx, partialFillOrder.Uid+1)
+
+		partialFillOrder.Amount = amountDenomAskBidOrder
+		partialFillOrder.Status = "filled"
+		partialFillOrder.Next = limitHeadBid.Uid
+		partialFillOrder.Prev = uint64(0)
+
+		// Complete fill of Bid Order
+		limitHeadBid.Status = "filled"
+		memberBid.Limit = limitHeadBid.Next
+		limitHeadBid.Prev = partialFillOrder.Uid
+		limitHeadBid.Next = pool.History
+
+		pool.History = partialFillOrder.Uid
+
+		limitHeadAsk.Amount = limitHeadAsk.Amount.Sub(amountDenomAskBidOrder)
+
+		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
+		ownerBid, _ := sdk.AccAddressFromBech32(limitHeadBid.Owner)
+
+		amountDenomBidAskPartialOrder := (amountDenomAskBidOrder.Mul(limitHeadAsk.Rate[0])).Quo(limitHeadAsk.Rate[1])
+
+		coinAskOrder := sdk.NewCoin(denomBid, amountDenomBidAskPartialOrder)
+		coinsAskOrder := sdk.NewCoins(coinAskOrder)
+
+		coinBidOrder := sdk.NewCoin(denomAsk, amountDenomAskBidOrder)
+		coinsBidOrder := sdk.NewCoins(coinBidOrder)
+
+		profitBidCoin := limitHeadBid.Amount.Sub(amountDenomBidAskPartialOrder)
+		memberBid.Balance = memberBid.Balance.Add(profitBidCoin)
+
+		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ownerAsk, coinsAskOrder)
+		if sdkError != nil {
+			return memberAskInit, memberBidInit, sdkError
+		}
+
+		sdkError = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ownerBid, coinsBidOrder)
+		if sdkError != nil {
+			return memberAskInit, memberBidInit, sdkError
+		}
+
+		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		k.RemoveOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
+
+		k.SetOrder(ctx, limitHeadBid)
+		k.SetOrder(ctx, limitHeadAsk)
+		k.SetOrder(ctx, partialFillOrder)
+
+		k.SetPool(ctx, pool)
+
+		k.SetMember(ctx, memberAsk)
+		k.SetMember(ctx, memberBid)
+		return memberAsk, memberBid, nil
+	}
+
+	return memberAskInit, memberBidInit, nil
 }
 
 func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string, memberAsk types.Member, memberBid types.Member) (types.Member, types.Member, error) {

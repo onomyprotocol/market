@@ -226,7 +226,7 @@ func TestBookEnds(t *testing.T) {
 
 }
 
-func TestCreateOrder_Scenarios(t *testing.T) {
+func TestCreateOrder_BothFillOverlap(t *testing.T) {
 
 	testInput := keepertest.CreateTestEnvironment(t)
 
@@ -235,8 +235,8 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
 	scenarios := []types.MsgCreateOrder{
-		//{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"60", "70"}, OrderType: "stop", Amount: "10", Prev: "0", Next: "0"},
-		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"1", "2"}, OrderType: "limit", Amount: "10", Prev: "0", Next: "0"},
+		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"3", "4"}, OrderType: "limit", Amount: "40", Prev: "0", Next: "0"},
+		{Creator: addr, DenomAsk: "CoinB", DenomBid: "CoinA", Rate: []string{"4", "3"}, OrderType: "limit", Amount: "30", Prev: "0", Next: "0"},
 	}
 
 	var uid uint64
@@ -248,20 +248,66 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 		uid = orderresponse.Uid
 	}
 
+	order, found := testInput.MarketKeeper.GetOrder(testInput.Context, uid)
+	require.True(t, found)
+	require.True(t, order.Status == "filled")
+
 	allorders := testInput.MarketKeeper.GetAllOrder(testInput.Context)
 	require.Truef(t, allorders[0].Uid == 3, strconv.FormatUint(allorders[0].Uid, 10))
-	require.Truef(t, allorders[0].Status == "active", allorders[0].Status)
-	require.True(t, allorders[0].Amount.Add(allorders[1].Amount).Equal(sdk.NewInt(10)))
+	require.Truef(t, allorders[0].Status == "filled", allorders[0].Status)
+	require.Equal(t, sdk.NewInt(70).String(), allorders[0].Amount.Add(allorders[1].Amount).String())
+
+	history, _ := testInput.MarketKeeper.GetHistory(testInput.Context, "CoinA,CoinB", "10")
+	require.Equal(t, "40", history[0].Amount)
+	require.Equal(t, "30", history[1].Amount)
 
 	require.True(t, len(allorders) == 2)
 
+	// Validate Order
+	orderowner := testInput.MarketKeeper.GetOrderOwner(testInput.Context, addr)
+	require.True(t, len(orderowner) == 0)
+
+	// Validate GetPool
+	pool, _ := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.Equal(t, strconv.FormatUint(pool.History, 10), strconv.FormatUint(allorders[0].Uid, 10))
+}
+
+func TestCreateOrder_OneSide1FillOverlap(t *testing.T) {
+
+	testInput := keepertest.CreateTestEnvironment(t)
+
+	_, _, _, _, pair := common(t, testInput)
+
+	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	scenarios := []types.MsgCreateOrder{
+		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"3", "4"}, OrderType: "limit", Amount: "50", Prev: "0", Next: "0"},
+		{Creator: addr, DenomAsk: "CoinB", DenomBid: "CoinA", Rate: []string{"4", "3"}, OrderType: "limit", Amount: "30", Prev: "0", Next: "0"},
+	}
+
+	var uid uint64
+
+	for _, s := range scenarios {
+
+		orderresponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &s)
+		require.NoError(t, err)
+		uid = orderresponse.Uid
+	}
+
 	order, found := testInput.MarketKeeper.GetOrder(testInput.Context, uid)
 	require.True(t, found)
-	require.True(t, order.Status == "active")
+	require.True(t, order.Status == "filled")
 
-	order, found = testInput.MarketKeeper.GetOrder(testInput.Context, uid)
-	require.True(t, found)
-	require.True(t, order.Status == "active")
+	allorders := testInput.MarketKeeper.GetAllOrder(testInput.Context)
+	require.Truef(t, allorders[0].Uid == 3, strconv.FormatUint(allorders[0].Uid, 10))
+	require.Truef(t, allorders[0].Status == "active", allorders[0].Status)
+	require.Equal(t, sdk.NewInt(10).String(), allorders[0].Amount.String())
+
+	history, _ := testInput.MarketKeeper.GetHistory(testInput.Context, "CoinA,CoinB", "10")
+	require.Equal(t, "40", history[0].Amount)
+	require.Equal(t, "30", history[1].Amount)
+
+	require.Equal(t, 3, len(allorders))
 
 	// Validate Order
 	orderowner := testInput.MarketKeeper.GetOrderOwner(testInput.Context, addr)
@@ -269,5 +315,51 @@ func TestCreateOrder_Scenarios(t *testing.T) {
 
 	// Validate GetPool
 	pool, _ := testInput.MarketKeeper.GetPool(testInput.Context, pair)
-	require.Equal(t, pool.History, allorders[1].Uid)
+	require.Equal(t, strconv.FormatUint(pool.History, 10), strconv.FormatUint(allorders[2].Uid, 10))
+}
+
+func TestCreateOrder_OneSide2FillOverlap(t *testing.T) {
+
+	testInput := keepertest.CreateTestEnvironment(t)
+
+	_, _, _, _, pair := common(t, testInput)
+
+	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	scenarios := []types.MsgCreateOrder{
+		{Creator: addr, DenomAsk: "CoinA", DenomBid: "CoinB", Rate: []string{"3", "4"}, OrderType: "limit", Amount: "40", Prev: "0", Next: "0"},
+		{Creator: addr, DenomAsk: "CoinB", DenomBid: "CoinA", Rate: []string{"4", "3"}, OrderType: "limit", Amount: "40", Prev: "0", Next: "0"},
+	}
+
+	var uid uint64
+
+	for _, s := range scenarios {
+
+		orderresponse, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &s)
+		require.NoError(t, err)
+		uid = orderresponse.Uid
+	}
+
+	order, found := testInput.MarketKeeper.GetOrder(testInput.Context, uid)
+	require.True(t, found)
+	require.True(t, order.Status == "active")
+
+	allorders := testInput.MarketKeeper.GetAllOrder(testInput.Context)
+	require.Truef(t, allorders[0].Uid == 3, strconv.FormatUint(allorders[0].Uid, 10))
+	require.Truef(t, allorders[1].Status == "active", allorders[1].Status)
+	require.Equal(t, sdk.NewInt(10).String(), allorders[1].Amount.String())
+
+	history, _ := testInput.MarketKeeper.GetHistory(testInput.Context, "CoinA,CoinB", "10")
+	require.Equal(t, "30", history[0].Amount)
+	require.Equal(t, "40", history[1].Amount)
+
+	require.Equal(t, 3, len(allorders))
+
+	// Validate Order
+	orderowner := testInput.MarketKeeper.GetOrderOwner(testInput.Context, addr)
+	require.True(t, len(orderowner) == 1)
+
+	// Validate GetPool
+	pool, _ := testInput.MarketKeeper.GetPool(testInput.Context, pair)
+	require.Equal(t, strconv.FormatUint(pool.History, 10), strconv.FormatUint(allorders[2].Uid, 10))
 }
