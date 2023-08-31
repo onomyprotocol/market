@@ -316,6 +316,10 @@ func TestCreateOrder_OneSide1FillOverlap(t *testing.T) {
 	// Validate GetPool
 	pool, _ := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.Equal(t, strconv.FormatUint(pool.History, 10), strconv.FormatUint(allorders[2].Uid, 10))
+
+	member, found := testInput.MarketKeeper.GetMember(testInput.Context, "CoinA", "CoinB")
+	require.True(t, found)
+	require.Equal(t, member.Limit, allorders[0].Uid)
 }
 
 func TestCreateOrder_OneSide2FillOverlap(t *testing.T) {
@@ -362,4 +366,11 @@ func TestCreateOrder_OneSide2FillOverlap(t *testing.T) {
 	// Validate GetPool
 	pool, _ := testInput.MarketKeeper.GetPool(testInput.Context, pair)
 	require.Equal(t, strconv.FormatUint(pool.History, 10), strconv.FormatUint(allorders[2].Uid, 10))
+
+	member, found := testInput.MarketKeeper.GetMember(testInput.Context, "CoinB", "CoinA")
+	require.True(t, found)
+	require.Equal(t, member.Limit, allorders[1].Uid)
+
+	bookends := testInput.MarketKeeper.BookEnds(testInput.Context, "CoinB", "CoinA", "limit", []sdk.Int{sdk.NewInt(3), sdk.NewInt(3)})
+	require.Equal(t, strconv.FormatUint(uint64(0), 10), strconv.FormatUint(bookends[0], 10))
 }

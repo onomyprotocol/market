@@ -360,8 +360,21 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		// Both orders may be filled
 		limitHeadAsk.Status = "filled"
 		memberAsk.Limit = limitHeadAsk.Next
+
+		if limitHeadAsk.Next != 0 {
+			limitHeadAskNext, _ := k.GetOrder(ctx, limitHeadAsk.Next)
+			limitHeadAskNext.Prev = 0
+			k.SetOrder(ctx, limitHeadAskNext)
+		}
+
 		limitHeadBid.Status = "filled"
 		memberBid.Limit = limitHeadBid.Next
+
+		if limitHeadBid.Next != 0 {
+			limitHeadBidNext, _ := k.GetOrder(ctx, limitHeadBid.Next)
+			limitHeadBidNext.Prev = 0
+			k.SetOrder(ctx, limitHeadBidNext)
+		}
 
 		limitHeadBid.Prev = uint64(0)
 		limitHeadBid.Next = limitHeadAsk.Uid
@@ -428,6 +441,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		// Complete fill of Ask Order
 		limitHeadAsk.Status = "filled"
 		memberAsk.Limit = limitHeadAsk.Next
+
+		if limitHeadAsk.Next != 0 {
+			limitHeadAskNext, _ := k.GetOrder(ctx, limitHeadAsk.Next)
+			limitHeadAskNext.Prev = 0
+			k.SetOrder(ctx, limitHeadAskNext)
+		}
+
 		limitHeadAsk.Prev = partialFillOrder.Uid
 		limitHeadAsk.Next = pool.History
 
@@ -463,6 +483,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 
 		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
+		k.SetOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
 		k.SetOrder(ctx, limitHeadBid)
 		k.SetOrder(ctx, limitHeadAsk)
@@ -491,6 +512,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		// Complete fill of Bid Order
 		limitHeadBid.Status = "filled"
 		memberBid.Limit = limitHeadBid.Next
+
+		if limitHeadBid.Next != 0 {
+			limitHeadBidNext, _ := k.GetOrder(ctx, limitHeadBid.Next)
+			limitHeadBidNext.Prev = 0
+			k.SetOrder(ctx, limitHeadBidNext)
+		}
+
 		limitHeadBid.Prev = partialFillOrder.Uid
 		limitHeadBid.Next = pool.History
 
