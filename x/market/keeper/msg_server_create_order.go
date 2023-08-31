@@ -309,6 +309,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			return nil, error
 		}
 	} else if msg.OrderType == "limit" {
+
 		memberAsk, memberBid, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
 		if error != nil {
 			return nil, error
@@ -317,9 +318,44 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if error != nil {
 			return nil, error
 		}
-		_, _, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		memberBid, memberAsk, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if error != nil {
 			return nil, error
+		}
+
+		if memberBid.Limit != 0 && memberAsk.Limit != 0 {
+			limitHeadBid, _ := k.GetOrder(ctx, memberBid.Limit)
+			limitHeadAsk, _ := k.GetOrder(ctx, memberAsk.Limit)
+
+			for types.LTE(limitHeadBid.Rate, []sdk.Int{limitHeadAsk.Rate[1], limitHeadAsk.Rate[0]}) {
+
+				memberAsk, memberBid, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+				if error != nil {
+					return nil, error
+				}
+				memberBid, memberAsk, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+				if error != nil {
+					return nil, error
+				}
+				memberBid, memberAsk, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+				if error != nil {
+					return nil, error
+				}
+
+				if memberBid.Limit == 0 || memberAsk.Limit == 0 {
+					break
+				}
+
+				limitHeadBid, found = k.GetOrder(ctx, memberBid.Limit)
+				if !found {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "No order found")
+				}
+
+				limitHeadAsk, found = k.GetOrder(ctx, memberAsk.Limit)
+				if !found {
+					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "No order found")
+				}
+			}
 		}
 	}
 
