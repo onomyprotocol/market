@@ -29387,7 +29387,7 @@ paths:
         - Query
   '/pendulum-labs/market/market/drop/coins/{pair}/{drops}':
     get:
-      summary: Queries a Drop by index.
+      summary: Converts drops to coin amounts
       operationId: PendulumlabsMarketMarketDropsToCoins
       responses:
         '200':
@@ -30759,6 +30759,57 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: pair
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/pendulum-labs/market/market/quote/{denomBid}/{denomAsk}/{denomAmount}/{amount}':
+    get:
+      summary: Queries pool trade history.
+      operationId: PendulumlabsMarketMarketQuote
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomBid
+          in: path
+          required: true
+          type: string
+        - name: denomAsk
+          in: path
+          required: true
+          type: string
+        - name: denomAmount
+          in: path
+          required: true
+          type: string
+        - name: amount
           in: path
           required: true
           type: string
@@ -50709,3 +50760,10 @@ definitions:
             type: string
             title: 'market_fee (parameter / 10000), 9999 representing as 99.99%'
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  pendulumlabs.market.market.QueryQuoteResponse:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string

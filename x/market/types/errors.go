@@ -44,4 +44,6 @@ var (
 	ErrAmtZero = sdkerrors.Register(ModuleName, 17, "payment amount equal to zero") // nolint: gomnd
 	// ErrMemberBalanceZero - the drop sum of owner with drop not found
 	ErrMemberBalanceZero = sdkerrors.Register(ModuleName, 18, "member balance zero - pool empty") // nolint: gomnd
+	// ErrDenomMismatch - mismatch of denoms entered
+	ErrDenomMismatch = sdkerrors.Register(ModuleName, 19, "denoms are not matching") // nolint: gomnd
 )

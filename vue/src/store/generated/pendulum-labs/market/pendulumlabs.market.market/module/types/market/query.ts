@@ -236,6 +236,19 @@ export interface QueryHistoryResponse {
   pagination: PageResponse | undefined;
 }
 
+/** Market Quote: denom is the denom that is input for quote */
+export interface QueryQuoteRequest {
+  denomAsk: string;
+  denomBid: string;
+  denomAmount: string;
+  amount: string;
+}
+
+export interface QueryQuoteResponse {
+  denom: string;
+  amount: string;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -3906,6 +3919,193 @@ export const QueryHistoryResponse = {
   },
 };
 
+const baseQueryQuoteRequest: object = {
+  denomAsk: "",
+  denomBid: "",
+  denomAmount: "",
+  amount: "",
+};
+
+export const QueryQuoteRequest = {
+  encode(message: QueryQuoteRequest, writer: Writer = Writer.create()): Writer {
+    if (message.denomAsk !== "") {
+      writer.uint32(10).string(message.denomAsk);
+    }
+    if (message.denomBid !== "") {
+      writer.uint32(18).string(message.denomBid);
+    }
+    if (message.denomAmount !== "") {
+      writer.uint32(26).string(message.denomAmount);
+    }
+    if (message.amount !== "") {
+      writer.uint32(34).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryQuoteRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryQuoteRequest } as QueryQuoteRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denomAsk = reader.string();
+          break;
+        case 2:
+          message.denomBid = reader.string();
+          break;
+        case 3:
+          message.denomAmount = reader.string();
+          break;
+        case 4:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryQuoteRequest {
+    const message = { ...baseQueryQuoteRequest } as QueryQuoteRequest;
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = String(object.denomAsk);
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = String(object.denomBid);
+    } else {
+      message.denomBid = "";
+    }
+    if (object.denomAmount !== undefined && object.denomAmount !== null) {
+      message.denomAmount = String(object.denomAmount);
+    } else {
+      message.denomAmount = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryQuoteRequest): unknown {
+    const obj: any = {};
+    message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
+    message.denomBid !== undefined && (obj.denomBid = message.denomBid);
+    message.denomAmount !== undefined &&
+      (obj.denomAmount = message.denomAmount);
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryQuoteRequest>): QueryQuoteRequest {
+    const message = { ...baseQueryQuoteRequest } as QueryQuoteRequest;
+    if (object.denomAsk !== undefined && object.denomAsk !== null) {
+      message.denomAsk = object.denomAsk;
+    } else {
+      message.denomAsk = "";
+    }
+    if (object.denomBid !== undefined && object.denomBid !== null) {
+      message.denomBid = object.denomBid;
+    } else {
+      message.denomBid = "";
+    }
+    if (object.denomAmount !== undefined && object.denomAmount !== null) {
+      message.denomAmount = object.denomAmount;
+    } else {
+      message.denomAmount = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryQuoteResponse: object = { denom: "", amount: "" };
+
+export const QueryQuoteResponse = {
+  encode(
+    message: QueryQuoteResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denom !== "") {
+      writer.uint32(10).string(message.denom);
+    }
+    if (message.amount !== "") {
+      writer.uint32(18).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryQuoteResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryQuoteResponse } as QueryQuoteResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom = reader.string();
+          break;
+        case 2:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryQuoteResponse {
+    const message = { ...baseQueryQuoteResponse } as QueryQuoteResponse;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = String(object.denom);
+    } else {
+      message.denom = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryQuoteResponse): unknown {
+    const obj: any = {};
+    message.denom !== undefined && (obj.denom = message.denom);
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryQuoteResponse>): QueryQuoteResponse {
+    const message = { ...baseQueryQuoteResponse } as QueryQuoteResponse;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = object.denom;
+    } else {
+      message.denom = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -3922,7 +4122,7 @@ export interface Query {
   ): Promise<QueryDropAmountsResponse>;
   /** Queries a Drop by index. */
   DropCoin(request: QueryDropCoinRequest): Promise<QueryDropCoinResponse>;
-  /** Queries a Drop by index. */
+  /** Converts drops to coin amounts */
   DropsToCoins(
     request: QueryDropsToCoinsRequest
   ): Promise<QueryDropAmountsResponse>;
@@ -3960,6 +4160,8 @@ export interface Query {
   Bookends(request: QueryBookendsRequest): Promise<QueryBookendsResponse>;
   /** Queries pool trade history. */
   History(request: QueryHistoryRequest): Promise<QueryHistoryResponse>;
+  /** Queries pool trade history. */
+  Quote(request: QueryQuoteRequest): Promise<QueryQuoteResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -4213,6 +4415,16 @@ export class QueryClientImpl implements Query {
     return promise.then((data) =>
       QueryHistoryResponse.decode(new Reader(data))
     );
+  }
+
+  Quote(request: QueryQuoteRequest): Promise<QueryQuoteResponse> {
+    const data = QueryQuoteRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "Quote",
+      data
+    );
+    return promise.then((data) => QueryQuoteResponse.decode(new Reader(data)));
   }
 }
 
