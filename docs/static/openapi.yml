@@ -50048,6 +50048,13 @@ definitions:
     type: object
   pendulumlabs.market.market.MsgMarketOrderResponse:
     type: object
+    properties:
+      amountBid:
+        type: string
+      amountAsk:
+        type: string
+      slippage:
+        type: string
   pendulumlabs.market.market.MsgRedeemDropResponse:
     type: object
   pendulumlabs.market.market.Order:

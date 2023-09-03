@@ -70,11 +70,15 @@ message MsgMarketOrder {
   string denomAsk = 2;
   string denomBid = 3;
   string amountBid = 4;
+	string amountAsk = 5;
   //Slippage is percentage based on (parameter / 10000), 9999 representing as 99.99%
-  string slippage = 5;
+  string slippage = 6;
 }
 
 message MsgMarketOrderResponse {
+	string amountBid = 1;
+	string amountAsk = 2;
+	string slippage = 3;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

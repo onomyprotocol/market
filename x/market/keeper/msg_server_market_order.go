@@ -49,13 +49,20 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal to zero")
 	}
 
-	// Slippage includes Market Order Fee
-	// (A1*B2 - A2*B1)/(A1*B2)
-	slippage :=
-		((memberAsk.Balance.Mul(amountBid).Sub(amountAsk.Mul(memberBid.Balance))).Mul(sdk.NewInt(10000))).Quo(memberAsk.Balance.Mul(amountBid))
-	slipLimit, _ := sdk.NewIntFromString(msg.Slippage)
-	if slippage.GT(slipLimit) {
-		return nil, sdkerrors.Wrapf(types.ErrSlippageTooGreat, "Slippage %s", slippage)
+	// Slippage is initialized at zero
+	slippage := sdk.ZeroInt()
+
+	amountAskExpected, _ := sdk.NewIntFromString(msg.AmountAsk)
+
+	// Slippage is only updated if amount expected is greater than received
+	if amountAskExpected.GT(amountAsk) {
+		slippage = (amountAskExpected.Sub(amountAsk)).Quo(amountAskExpected)
+
+		slipLimit, _ := sdk.NewIntFromString(msg.Slippage)
+
+		if slippage.GT(slipLimit) {
+			return nil, sdkerrors.Wrapf(types.ErrSlippageTooGreat, "Slippage %s", slippage)
+		}
 	}
 
 	// Transfer bid amount from trader account to module
@@ -116,5 +123,5 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 		return nil, error
 	}
 
-	return &types.MsgMarketOrderResponse{}, nil
+	return &types.MsgMarketOrderResponse{AmountBid: msg.AmountBid, AmountAsk: amountAsk.String(), Slippage: slippage.String()}, nil
 }

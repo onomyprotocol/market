@@ -54,7 +54,11 @@ export interface MarketMsgCreateOrderResponse {
 
 export type MarketMsgCreatePoolResponse = object;
 
-export type MarketMsgMarketOrderResponse = object;
+export interface MarketMsgMarketOrderResponse {
+  amountBid?: string;
+  amountAsk?: string;
+  slippage?: string;
+}
 
 export type MarketMsgRedeemDropResponse = object;
 

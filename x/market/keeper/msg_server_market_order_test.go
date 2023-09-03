@@ -18,7 +18,7 @@ func TestMarketOrder(t *testing.T) {
 	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
 	//Create Order
-	var o = types.MsgMarketOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, AmountBid: "10", Slippage: "700"}
+	var o = types.MsgMarketOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, AmountBid: "10", AmountAsk: "8", Slippage: "700"}
 
 	_, err := keeper.NewMsgServerImpl(*testInput.MarketKeeper).MarketOrder(sdk.WrapSDKContext(testInput.Context), &o)
 	require.NoError(t, err)
