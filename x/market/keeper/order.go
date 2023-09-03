@@ -300,7 +300,7 @@ func (k Keeper) GetQuote(
 	amount sdk.Int,
 ) (string, sdk.Int, error) {
 
-	denom := memberBid.DenomB
+	denom := memberAsk.DenomB
 	var amountResp sdk.Int
 
 	if denomAmount == memberBid.DenomB {
@@ -321,12 +321,12 @@ func (k Keeper) GetQuote(
 		}
 
 	} else {
-		denom = memberAsk.DenomB
+		denom = memberBid.DenomB
 
 		// A(i)*B(i) = A(f)*B(f)
 		// B(f) = A(i)*B(i)/A(f)
-		// amountBid = B(f) - B(i) = A(i)*B(i)/A(f) - B(i)
-		amountResp = ((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberAsk.Balance.Add(amount))).Sub(memberBid.Balance)
+		// amountBid = B(f) - B(i) = A(i)*B(i)/A(f) - B(i) = A(i)*B(i)/(A(i) - amountAsk) - B(i)
+		amountResp = ((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberAsk.Balance.Sub(amount))).Sub(memberBid.Balance)
 
 		// Market Order Fee
 		fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
@@ -334,8 +334,8 @@ func (k Keeper) GetQuote(
 
 		// Edge case where strikeAskAmount rounds to 0
 		// Rounding favors AMM vs Order
-		if amountResp.Equal(sdk.ZeroInt()) {
-			return denom, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal to zero")
+		if amountResp.LTE(sdk.ZeroInt()) {
+			return denom, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrLiquidityLow, "not enough liquidity")
 		}
 
 	}
