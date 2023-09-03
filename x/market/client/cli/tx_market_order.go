@@ -19,9 +19,9 @@ func CmdMarketOrder() *cobra.Command {
 		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argDenomAsk := args[0]
-			argDenomBid := args[1]
-			argAmountBid := args[2]
-			argAmountAsk := args[3]
+			argAmountAsk := args[1]
+			argDenomBid := args[2]
+			argAmountBid := args[3]
 			argSlippage := args[4]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -32,9 +32,9 @@ func CmdMarketOrder() *cobra.Command {
 			msg := types.NewMsgMarketOrder(
 				clientCtx.GetFromAddress().String(),
 				argDenomAsk,
+				argAmountAsk,
 				argDenomBid,
 				argAmountBid,
-				argAmountAsk,
 				argSlippage,
 			)
 			if err := msg.ValidateBasic(); err != nil {

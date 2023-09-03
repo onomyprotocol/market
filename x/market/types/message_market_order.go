@@ -9,13 +9,13 @@ const TypeMsgMarketOrder = "market_order"
 
 var _ sdk.Msg = &MsgMarketOrder{}
 
-func NewMsgMarketOrder(creator string, denomAsk string, denomBid string, amountBid string, amountAsk string, slippage string) *MsgMarketOrder {
+func NewMsgMarketOrder(creator string, denomAsk string, amountAsk string, denomBid string, amountBid string, slippage string) *MsgMarketOrder {
 	return &MsgMarketOrder{
 		Creator:   creator,
 		DenomAsk:  denomAsk,
+		AmountAsk: amountAsk,
 		DenomBid:  denomBid,
 		AmountBid: amountBid,
-		AmountAsk: amountAsk,
 		Slippage:  slippage,
 	}
 }
