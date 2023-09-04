@@ -323,14 +323,14 @@ func (k Keeper) GetQuote(
 	} else {
 		denom = memberBid.DenomB
 
-		// A(i)*B(i) = A(f)*B(f)
-		// B(f) = A(i)*B(i)/A(f)
-		// amountBid = B(f) - B(i) = A(i)*B(i)/A(f) - B(i) = A(i)*B(i)/(A(i) - amountAsk) - B(i)
-		amountResp = ((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberAsk.Balance.Sub(amount))).Sub(memberBid.Balance)
-
 		// Market Order Fee
 		fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
-		amountResp = amountResp.Add((amountResp.Mul(fee)).Quo(sdk.NewInt(10000)))
+		amountPlusFee := amount.Add((amount.Mul(fee)).Quo(sdk.NewInt(10000)))
+
+		// A(i)*B(i) = A(f)*B(f)
+		// B(f) = A(i)*B(i)/A(f)
+		// amountBid = B(f) - B(i) = A(i)*B(i)/A(f) - B(i) = A(i)*B(i)/(A(i) - amountAskPlusFee) - B(i)
+		amountResp = ((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberAsk.Balance.Sub(amountPlusFee))).Sub(memberBid.Balance)
 
 		// Edge case where strikeAskAmount rounds to 0
 		// Rounding favors AMM vs Order
