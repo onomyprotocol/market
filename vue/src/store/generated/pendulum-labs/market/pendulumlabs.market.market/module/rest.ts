@@ -54,7 +54,11 @@ export interface MarketMsgCreateOrderResponse {
 
 export type MarketMsgCreatePoolResponse = object;
 
-export type MarketMsgMarketOrderResponse = object;
+export interface MarketMsgMarketOrderResponse {
+  amountBid?: string;
+  amountAsk?: string;
+  slippage?: string;
+}
 
 export type MarketMsgRedeemDropResponse = object;
 
@@ -306,6 +310,11 @@ export interface MarketQueryOrdersResponse {
 export interface MarketQueryParamsResponse {
   /** params holds all the parameters of this module. */
   params?: MarketParams;
+}
+
+export interface MarketQueryQuoteResponse {
+  denom?: string;
+  amount?: string;
 }
 
 export interface ProtobufAny {
@@ -728,7 +737,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryDropsToCoins
-   * @summary Queries a Drop by index.
+   * @summary Converts drops to coin amounts
    * @request GET:/pendulum-labs/market/market/drop/coins/{pair}/{drops}
    */
   queryDropsToCoins = (pair: string, drops: string, params: RequestParams = {}) =>
@@ -1018,6 +1027,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryPool = (pair: string, params: RequestParams = {}) =>
     this.request<MarketQueryGetPoolResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/pool/${pair}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryQuote
+   * @summary Queries pool trade history.
+   * @request GET:/pendulum-labs/market/market/quote/{denomBid}/{denomAsk}/{denomAmount}/{amount}
+   */
+  queryQuote = (denomBid: string, denomAsk: string, denomAmount: string, amount: string, params: RequestParams = {}) =>
+    this.request<MarketQueryQuoteResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/quote/${denomBid}/${denomAsk}/${denomAmount}/${amount}`,
       method: "GET",
       format: "json",
       ...params,

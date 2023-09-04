@@ -40,8 +40,12 @@ var (
 	ErrPoolInactive = sdkerrors.Register(ModuleName, 15, "the pool is inactive") // nolint: gomnd
 	// ErrDropSumNotFound - the drop sum of owner with drop not found
 	ErrDropSumNotFound = sdkerrors.Register(ModuleName, 16, "drop sum not found") // nolint: gomnd
-	// ErrDropSumNotFound - the drop sum of owner with drop not found
+	// ErrAmtZero - Not greater than zero
 	ErrAmtZero = sdkerrors.Register(ModuleName, 17, "payment amount equal to zero") // nolint: gomnd
 	// ErrMemberBalanceZero - the drop sum of owner with drop not found
 	ErrMemberBalanceZero = sdkerrors.Register(ModuleName, 18, "member balance zero - pool empty") // nolint: gomnd
+	// ErrDenomMismatch - mismatch of denoms entered
+	ErrDenomMismatch = sdkerrors.Register(ModuleName, 19, "denoms are not matching") // nolint: gomnd
+	// ErrLiquidityLow - liquidity is too low
+	ErrLiquidityLow = sdkerrors.Register(ModuleName, 20, "liquidity too low") // nolint: gomnd
 )

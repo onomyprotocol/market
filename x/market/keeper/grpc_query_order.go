@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/pendulum-labs/market/x/market/types"
 	"google.golang.org/grpc/codes"
@@ -92,4 +93,38 @@ func (k Keeper) OrderOwnerUids(c context.Context, req *types.QueryOrderOwnerRequ
 	orders := k.GetOrderOwnerUids(ctx, req.Address)
 
 	return &types.QueryOrderOwnerUidsResponse{Orders: orders}, nil
+}
+
+func (k Keeper) Quote(goCtx context.Context, req *types.QueryQuoteRequest) (*types.QueryQuoteResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if req.DenomAsk != req.DenomAmount && req.DenomBid != req.DenomAmount {
+		return nil, sdkerrors.Wrapf(types.ErrDenomMismatch, "Denom %s not ask or bid", req.DenomAmount)
+	}
+
+	amount, ok := sdk.NewIntFromString(req.Amount)
+	if !ok {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+
+	memberAsk, found := k.GetMember(ctx, req.DenomBid, req.DenomAsk)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", req.DenomAsk)
+	}
+
+	memberBid, found := k.GetMember(ctx, req.DenomAsk, req.DenomBid)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", req.DenomBid)
+	}
+
+	denomResp, amountResp, error := k.GetQuote(ctx, memberAsk, memberBid, req.DenomAmount, amount)
+	if error != nil {
+		return nil, error
+	}
+
+	return &types.QueryQuoteResponse{Denom: denomResp, Amount: amountResp.String()}, nil
 }

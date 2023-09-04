@@ -26,6 +26,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "40",
 				DenomBid:  "CoinB",
 				AmountBid: "40",
 				Slippage:  "20",
@@ -36,6 +37,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "40",
 				DenomBid:  "CoinB",
 				AmountBid: "40",
 				Slippage:  "9999",
@@ -46,6 +48,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "40",
 				DenomBid:  "CoinB",
 				AmountBid: "40",
 				Slippage:  "10000",
@@ -57,6 +60,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "40",
 				DenomBid:  "CoinB",
 				AmountBid: "40",
 				Slippage:  "-1",
@@ -68,6 +72,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "0",
 				DenomBid:  "CoinB",
 				AmountBid: "-1",
 				Slippage:  "20",
@@ -79,6 +84,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "0",
 				DenomBid:  "CoinB",
 				AmountBid: "0",
 				Slippage:  "20",
@@ -90,6 +96,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "20CoinA",
+				AmountAsk: "40",
 				DenomBid:  "CoinB",
 				AmountBid: "40",
 				Slippage:  "20",
@@ -101,6 +108,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "40",
 				DenomBid:  "20CoinB",
 				AmountBid: "40",
 				Slippage:  "20",
@@ -112,6 +120,7 @@ func TestMsgMarketOrder_ValidateBasic(t *testing.T) {
 			msg: MsgMarketOrder{
 				Creator:   sample.AccAddress(),
 				DenomAsk:  "CoinA",
+				AmountAsk: "40",
 				DenomBid:  "CoinB",
 				AmountBid: "40",
 				Slippage:  "0999",

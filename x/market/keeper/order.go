@@ -3,6 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/pendulum-labs/market/x/market/types"
 )
 
@@ -288,4 +289,56 @@ func (k Keeper) BookEnds(
 
 		return [2]uint64{order.Prev, order.Uid}
 	}
+}
+
+// BookEnds returns adjacent orders determined by rate
+func (k Keeper) GetQuote(
+	ctx sdk.Context,
+	memberAsk types.Member,
+	memberBid types.Member,
+	denomAmount string,
+	amount sdk.Int,
+) (string, sdk.Int, error) {
+
+	denom := memberAsk.DenomB
+	var amountResp sdk.Int
+
+	if denomAmount == memberBid.DenomB {
+
+		// A(i)*B(i) = A(f)*B(f)
+		// A(f) = A(i)*B(i)/B(f)
+		// amountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
+		amountResp = memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amount)))
+
+		// Market Order Fee
+		fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
+		amountResp = amountResp.Sub((amountResp.Mul(fee)).Quo(sdk.NewInt(10000)))
+
+		// Edge case where strikeAskAmount rounds to 0
+		// Rounding favors AMM vs Order
+		if amountResp.Equal(sdk.ZeroInt()) {
+			return denom, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal to zero")
+		}
+
+	} else {
+		denom = memberBid.DenomB
+
+		// Market Order Fee
+		fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
+		amountPlusFee := amount.Add((amount.Mul(fee)).Quo(sdk.NewInt(10000)))
+
+		// A(i)*B(i) = A(f)*B(f)
+		// B(f) = A(i)*B(i)/A(f)
+		// amountBid = B(f) - B(i) = A(i)*B(i)/A(f) - B(i) = A(i)*B(i)/(A(i) - amountAskPlusFee) - B(i)
+		amountResp = ((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberAsk.Balance.Sub(amountPlusFee))).Sub(memberBid.Balance)
+
+		// Edge case where strikeAskAmount rounds to 0
+		// Rounding favors AMM vs Order
+		if amountResp.LTE(sdk.ZeroInt()) {
+			return denom, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrLiquidityLow, "not enough liquidity")
+		}
+
+	}
+
+	return denom, amountResp, nil
 }

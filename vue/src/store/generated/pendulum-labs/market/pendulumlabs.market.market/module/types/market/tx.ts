@@ -52,13 +52,18 @@ export interface MsgCancelOrderResponse {}
 export interface MsgMarketOrder {
   creator: string;
   denomAsk: string;
+  amountAsk: string;
   denomBid: string;
   amountBid: string;
   /** Slippage is percentage based on (parameter / 10000), 9999 representing as 99.99% */
   slippage: string;
 }
 
-export interface MsgMarketOrderResponse {}
+export interface MsgMarketOrderResponse {
+  amountBid: string;
+  amountAsk: string;
+  slippage: string;
+}
 
 const baseMsgCreatePool: object = { creator: "", coinA: "", coinB: "" };
 
@@ -787,6 +792,7 @@ export const MsgCancelOrderResponse = {
 const baseMsgMarketOrder: object = {
   creator: "",
   denomAsk: "",
+  amountAsk: "",
   denomBid: "",
   amountBid: "",
   slippage: "",
@@ -800,14 +806,17 @@ export const MsgMarketOrder = {
     if (message.denomAsk !== "") {
       writer.uint32(18).string(message.denomAsk);
     }
+    if (message.amountAsk !== "") {
+      writer.uint32(26).string(message.amountAsk);
+    }
     if (message.denomBid !== "") {
-      writer.uint32(26).string(message.denomBid);
+      writer.uint32(34).string(message.denomBid);
     }
     if (message.amountBid !== "") {
-      writer.uint32(34).string(message.amountBid);
+      writer.uint32(42).string(message.amountBid);
     }
     if (message.slippage !== "") {
-      writer.uint32(42).string(message.slippage);
+      writer.uint32(50).string(message.slippage);
     }
     return writer;
   },
@@ -826,12 +835,15 @@ export const MsgMarketOrder = {
           message.denomAsk = reader.string();
           break;
         case 3:
-          message.denomBid = reader.string();
+          message.amountAsk = reader.string();
           break;
         case 4:
-          message.amountBid = reader.string();
+          message.denomBid = reader.string();
           break;
         case 5:
+          message.amountBid = reader.string();
+          break;
+        case 6:
           message.slippage = reader.string();
           break;
         default:
@@ -853,6 +865,11 @@ export const MsgMarketOrder = {
       message.denomAsk = String(object.denomAsk);
     } else {
       message.denomAsk = "";
+    }
+    if (object.amountAsk !== undefined && object.amountAsk !== null) {
+      message.amountAsk = String(object.amountAsk);
+    } else {
+      message.amountAsk = "";
     }
     if (object.denomBid !== undefined && object.denomBid !== null) {
       message.denomBid = String(object.denomBid);
@@ -876,6 +893,7 @@ export const MsgMarketOrder = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.denomAsk !== undefined && (obj.denomAsk = message.denomAsk);
+    message.amountAsk !== undefined && (obj.amountAsk = message.amountAsk);
     message.denomBid !== undefined && (obj.denomBid = message.denomBid);
     message.amountBid !== undefined && (obj.amountBid = message.amountBid);
     message.slippage !== undefined && (obj.slippage = message.slippage);
@@ -893,6 +911,11 @@ export const MsgMarketOrder = {
       message.denomAsk = object.denomAsk;
     } else {
       message.denomAsk = "";
+    }
+    if (object.amountAsk !== undefined && object.amountAsk !== null) {
+      message.amountAsk = object.amountAsk;
+    } else {
+      message.amountAsk = "";
     }
     if (object.denomBid !== undefined && object.denomBid !== null) {
       message.denomBid = object.denomBid;
@@ -913,10 +936,26 @@ export const MsgMarketOrder = {
   },
 };
 
-const baseMsgMarketOrderResponse: object = {};
+const baseMsgMarketOrderResponse: object = {
+  amountBid: "",
+  amountAsk: "",
+  slippage: "",
+};
 
 export const MsgMarketOrderResponse = {
-  encode(_: MsgMarketOrderResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: MsgMarketOrderResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.amountBid !== "") {
+      writer.uint32(10).string(message.amountBid);
+    }
+    if (message.amountAsk !== "") {
+      writer.uint32(18).string(message.amountAsk);
+    }
+    if (message.slippage !== "") {
+      writer.uint32(26).string(message.slippage);
+    }
     return writer;
   },
 
@@ -927,6 +966,15 @@ export const MsgMarketOrderResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.amountBid = reader.string();
+          break;
+        case 2:
+          message.amountAsk = reader.string();
+          break;
+        case 3:
+          message.slippage = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -935,18 +983,53 @@ export const MsgMarketOrderResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgMarketOrderResponse {
+  fromJSON(object: any): MsgMarketOrderResponse {
     const message = { ...baseMsgMarketOrderResponse } as MsgMarketOrderResponse;
+    if (object.amountBid !== undefined && object.amountBid !== null) {
+      message.amountBid = String(object.amountBid);
+    } else {
+      message.amountBid = "";
+    }
+    if (object.amountAsk !== undefined && object.amountAsk !== null) {
+      message.amountAsk = String(object.amountAsk);
+    } else {
+      message.amountAsk = "";
+    }
+    if (object.slippage !== undefined && object.slippage !== null) {
+      message.slippage = String(object.slippage);
+    } else {
+      message.slippage = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgMarketOrderResponse): unknown {
+  toJSON(message: MsgMarketOrderResponse): unknown {
     const obj: any = {};
+    message.amountBid !== undefined && (obj.amountBid = message.amountBid);
+    message.amountAsk !== undefined && (obj.amountAsk = message.amountAsk);
+    message.slippage !== undefined && (obj.slippage = message.slippage);
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgMarketOrderResponse>): MsgMarketOrderResponse {
+  fromPartial(
+    object: DeepPartial<MsgMarketOrderResponse>
+  ): MsgMarketOrderResponse {
     const message = { ...baseMsgMarketOrderResponse } as MsgMarketOrderResponse;
+    if (object.amountBid !== undefined && object.amountBid !== null) {
+      message.amountBid = object.amountBid;
+    } else {
+      message.amountBid = "";
+    }
+    if (object.amountAsk !== undefined && object.amountAsk !== null) {
+      message.amountAsk = object.amountAsk;
+    } else {
+      message.amountAsk = "";
+    }
+    if (object.slippage !== undefined && object.slippage !== null) {
+      message.slippage = object.slippage;
+    } else {
+      message.slippage = "";
+    }
     return message;
   },
 };

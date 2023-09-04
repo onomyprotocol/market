@@ -14,14 +14,15 @@ var _ = strconv.Itoa(0)
 
 func CmdMarketOrder() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "market-order [denom-ask] [denom-bid] [amount-bid] [slippage]",
+		Use:   "market-order [denom-ask] [denom-bid] [amount-bid] [amount-ask] [slippage]",
 		Short: "Broadcast message market-order",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argDenomAsk := args[0]
-			argDenomBid := args[1]
-			argAmountBid := args[2]
-			argSlippage := args[3]
+			argAmountAsk := args[1]
+			argDenomBid := args[2]
+			argAmountBid := args[3]
+			argSlippage := args[4]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -31,6 +32,7 @@ func CmdMarketOrder() *cobra.Command {
 			msg := types.NewMsgMarketOrder(
 				clientCtx.GetFromAddress().String(),
 				argDenomAsk,
+				argAmountAsk,
 				argDenomBid,
 				argAmountBid,
 				argSlippage,

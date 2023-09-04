@@ -9,10 +9,11 @@ const TypeMsgMarketOrder = "market_order"
 
 var _ sdk.Msg = &MsgMarketOrder{}
 
-func NewMsgMarketOrder(creator string, denomAsk string, denomBid string, amountBid string, slippage string) *MsgMarketOrder {
+func NewMsgMarketOrder(creator string, denomAsk string, amountAsk string, denomBid string, amountBid string, slippage string) *MsgMarketOrder {
 	return &MsgMarketOrder{
 		Creator:   creator,
 		DenomAsk:  denomAsk,
+		AmountAsk: amountAsk,
 		DenomBid:  denomBid,
 		AmountBid: amountBid,
 		Slippage:  slippage,
@@ -64,8 +65,12 @@ func (msg *MsgMarketOrder) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
-	if msg.Slippage[0] == '0' {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid slippage integer")
+	amount, ok = sdk.NewIntFromString(msg.AmountAsk)
+	if !ok {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
+	}
+	if amount.LTE(sdk.ZeroInt()) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount integer")
 	}
 
 	slippage, ok := sdk.NewIntFromString(msg.Slippage)
