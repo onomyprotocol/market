@@ -56,7 +56,7 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 
 	// Slippage is only updated if amount expected is greater than received
 	if amountAskExpected.GT(amountAsk) {
-		slippage = (amountAskExpected.Sub(amountAsk)).Quo(amountAskExpected)
+		slippage = ((amountAskExpected.Sub(amountAsk)).Mul(sdk.NewInt(10000))).Quo(amountAskExpected)
 
 		slipLimit, _ := sdk.NewIntFromString(msg.Slippage)
 
