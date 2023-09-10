@@ -8,6 +8,10 @@ export interface Burnings {
   amount: string;
 }
 
+export interface Burned {
+  amount: string;
+}
+
 const baseBurnings: object = { denom: "", amount: "" };
 
 export const Burnings = {
@@ -71,6 +75,61 @@ export const Burnings = {
     } else {
       message.denom = "";
     }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+};
+
+const baseBurned: object = { amount: "" };
+
+export const Burned = {
+  encode(message: Burned, writer: Writer = Writer.create()): Writer {
+    if (message.amount !== "") {
+      writer.uint32(10).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): Burned {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseBurned } as Burned;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Burned {
+    const message = { ...baseBurned } as Burned;
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: Burned): unknown {
+    const obj: any = {};
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<Burned>): Burned {
+    const message = { ...baseBurned } as Burned;
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = object.amount;
     } else {

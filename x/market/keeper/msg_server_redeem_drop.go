@@ -269,6 +269,8 @@ func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings
 		return burnings, sdkError
 	}
 
+	k.AddBurned(ctx, coinsAsk.AmountOf(burnCoin))
+
 	memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
 	memberBid.Balance = memberBid.Balance.Add(amountBid)
 

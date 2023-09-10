@@ -61,3 +61,44 @@ func (k Keeper) GetAllBurnings(ctx sdk.Context) (list []types.Burnings) {
 
 	return
 }
+
+// GetBurned get the amount of NOM Burned by ONEX
+func (k Keeper) GetBurned(ctx sdk.Context) (burned types.Burned) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
+	byteKey := types.KeyPrefix(types.BurnedKey)
+	a := store.Get(byteKey)
+
+	// Burned doesn't exist return zero int
+	if a == nil {
+		return types.Burned{
+			Amount: sdk.ZeroInt(),
+		}
+	}
+
+	k.cdc.MustUnmarshal(a, &burned)
+
+	return
+}
+
+// SetBurned set the amount of NOM Burned by ONEX
+func (k Keeper) AddBurned(ctx sdk.Context, amount sdk.Int) (burned types.Burned) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
+	byteKey := types.KeyPrefix(types.BurnedKey)
+
+	a := store.Get(byteKey)
+
+	// Burned doesn't exist then initialize with amount
+	if a == nil {
+		burned = types.Burned{
+			Amount: amount,
+		}
+	} else {
+		k.cdc.MustUnmarshal(a, &burned)
+		burned.Amount = burned.Amount.Add(amount)
+	}
+
+	b := k.cdc.MustMarshal(&burned)
+	store.Set(byteKey, b)
+
+	return
+}
