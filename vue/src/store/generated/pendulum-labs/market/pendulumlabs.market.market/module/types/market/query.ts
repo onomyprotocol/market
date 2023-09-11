@@ -40,6 +40,13 @@ export interface QueryAllPoolResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryBurnedRequest {}
+
+export interface QueryBurnedResponse {
+  denom: string;
+  amount: string;
+}
+
 export interface QueryDropRequest {
   uid: number;
 }
@@ -607,6 +614,119 @@ export const QueryAllPoolResponse = {
       message.pagination = PageResponse.fromPartial(object.pagination);
     } else {
       message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryBurnedRequest: object = {};
+
+export const QueryBurnedRequest = {
+  encode(_: QueryBurnedRequest, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryBurnedRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryBurnedRequest } as QueryBurnedRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryBurnedRequest {
+    const message = { ...baseQueryBurnedRequest } as QueryBurnedRequest;
+    return message;
+  },
+
+  toJSON(_: QueryBurnedRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<QueryBurnedRequest>): QueryBurnedRequest {
+    const message = { ...baseQueryBurnedRequest } as QueryBurnedRequest;
+    return message;
+  },
+};
+
+const baseQueryBurnedResponse: object = { denom: "", amount: "" };
+
+export const QueryBurnedResponse = {
+  encode(
+    message: QueryBurnedResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denom !== "") {
+      writer.uint32(10).string(message.denom);
+    }
+    if (message.amount !== "") {
+      writer.uint32(18).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryBurnedResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryBurnedResponse } as QueryBurnedResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom = reader.string();
+          break;
+        case 2:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryBurnedResponse {
+    const message = { ...baseQueryBurnedResponse } as QueryBurnedResponse;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = String(object.denom);
+    } else {
+      message.denom = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryBurnedResponse): unknown {
+    const obj: any = {};
+    message.denom !== undefined && (obj.denom = message.denom);
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryBurnedResponse>): QueryBurnedResponse {
+    const message = { ...baseQueryBurnedResponse } as QueryBurnedResponse;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = object.denom;
+    } else {
+      message.denom = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
     }
     return message;
   },
@@ -4110,6 +4230,8 @@ export const QueryQuoteResponse = {
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
+  /** Queries total burned. */
+  Burned(request: QueryBurnedRequest): Promise<QueryBurnedResponse>;
   /** Queries a Pool by index. */
   Pool(request: QueryGetPoolRequest): Promise<QueryGetPoolResponse>;
   /** Queries a list of Pool items. */
@@ -4177,6 +4299,16 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+  }
+
+  Burned(request: QueryBurnedRequest): Promise<QueryBurnedResponse> {
+    const data = QueryBurnedRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "Burned",
+      data
+    );
+    return promise.then((data) => QueryBurnedResponse.decode(new Reader(data)));
   }
 
   Pool(request: QueryGetPoolRequest): Promise<QueryGetPoolResponse> {

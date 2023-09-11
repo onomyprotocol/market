@@ -208,6 +208,11 @@ export interface MarketQueryBookendsResponse {
   next?: string;
 }
 
+export interface MarketQueryBurnedResponse {
+  denom?: string;
+  amount?: string;
+}
+
 export interface MarketQueryDropAmountsResponse {
   denom1?: string;
   denom2?: string;
@@ -627,6 +632,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryBookends = (coinA: string, coinB: string, orderType: string, rate: string[], params: RequestParams = {}) =>
     this.request<MarketQueryBookendsResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/bookends/${coinA}/${coinB}/${orderType}/${rate}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBurned
+   * @summary Queries total burned.
+   * @request GET:/pendulum-labs/market/market/burned
+   */
+  queryBurned = (params: RequestParams = {}) =>
+    this.request<MarketQueryBurnedResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/burned`,
       method: "GET",
       format: "json",
       ...params,

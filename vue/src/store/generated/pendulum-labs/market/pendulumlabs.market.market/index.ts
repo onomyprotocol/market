@@ -60,6 +60,7 @@ function getStructure(template) {
 const getDefaultState = () => {
 	return {
 				Params: {},
+				Burned: {},
 				Pool: {},
 				PoolAll: {},
 				Drop: {},
@@ -135,6 +136,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Params[JSON.stringify(params)] ?? {}
+		},
+				getBurned: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Burned[JSON.stringify(params)] ?? {}
 		},
 				getPool: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -313,6 +320,28 @@ export default {
 				return getters['getParams']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryBurned({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryBurned()).data
+				
+					
+				commit('QUERY', { query: 'Burned', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryBurned', payload: { options: { all }, params: {...key},query }})
+				return getters['getBurned']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryBurned API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -835,6 +864,21 @@ export default {
 				}
 			}
 		},
+		async sendMsgCreatePool({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreatePool(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreatePool:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgCreateOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -895,21 +939,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgCreatePool({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreatePool(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreatePool:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		
 		async MsgRedeemDrop({ rootGetters }, { value }) {
 			try {
@@ -921,6 +950,19 @@ export default {
 					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgRedeemDrop:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreatePool({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreatePool(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -973,19 +1015,6 @@ export default {
 					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreatePool({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCreatePool(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
 				}
 			}
 		},

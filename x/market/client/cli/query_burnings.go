@@ -71,3 +71,29 @@ func CmdShowBurnings() *cobra.Command {
 
 	return cmd
 }
+
+func CmdShowBurned() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "show-burned",
+		Short: "shows amount burned",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			params := &types.QueryBurnedRequest{}
+
+			res, err := queryClient.Burned(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}

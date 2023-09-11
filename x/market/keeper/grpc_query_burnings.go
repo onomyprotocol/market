@@ -55,3 +55,19 @@ func (k Keeper) Burnings(c context.Context, req *types.QueryGetBurningsRequest) 
 
 	return &types.QueryGetBurningsResponse{Burnings: val}, nil
 }
+
+func (k Keeper) Burned(c context.Context, req *types.QueryBurnedRequest) (*types.QueryBurnedResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	// Coin that will be burned
+	burnCoin := k.BurnCoin(ctx)
+
+	val := k.GetBurned(
+		ctx,
+	)
+
+	return &types.QueryBurnedResponse{Denom: burnCoin, Amount: val.Amount.String()}, nil
+}
