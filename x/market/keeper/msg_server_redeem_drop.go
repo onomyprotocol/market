@@ -199,57 +199,52 @@ func Payout(k msgServer, ctx sdk.Context, profit sdk.Coins) {
 	}
 }
 
-func Burn(k msgServer, ctx sdk.Context, profits sdk.Coins) (types.Burnings, error) {
+func Burn(k msgServer, ctx sdk.Context, profits sdk.Coins) error {
 
 	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
 
 	denominator, _ := sdk.NewIntFromString("10000")
 
-	for i, profit := range profits {
-		// Update burnings
+	for _, profit := range profits {
+		burningsAmount := (profit.Amount.Mul(burnRate)).Quo(denominator)
+
 		burnings, found := k.GetBurnings(ctx, profit.Denom)
-		if !found {
-			burnings = types.Burnings{
-				Denom:  denom1,
-				Amount: burn1,
-			}
-			burnings, sdkError = BurnTrade(k, ctx, burnings)
-			if sdkError != nil {
-				return nil, sdkError
-			}
+		if found {
+			burnings.Amount = burnings.Amount.Add(burningsAmount)
 		} else {
-			burnings1.Amount = burnings1.Amount.Add(burn1)
-			burnings1, sdkError = Burn(k, ctx, burnings1)
-			if sdkError != nil {
-				return nil, sdkError
-			}
+			burnings.Denom = profit.Denom
+			burnings.Amount = burningsAmount
 		}
-		burn := (profit.Amount.Mul(burnRate)).Quo(denominator)
 
+		burnings, sdkError := BurnTrade(k, ctx, burnings)
+		if sdkError != nil {
+			return sdkError
+		}
+
+		if found && burnings.Amount == sdk.ZeroInt() {
+			k.RemoveBurnings(ctx, burnings.Denom)
+			continue
+		}
+
+		if burnings.Amount.GT(sdk.ZeroInt()) {
+			k.SetBurnings(ctx, burnings)
+		}
 	}
 
-	// Coin that will be burned
-	burnCoin := k.BurnCoin(ctx)
-	coinBurn := sdk.NewCoin(burnCoin, burnings.Amount)
-
-	coinsBurn := sdk.NewCoins(coinBurn)
-
-	// Burn Ask Amount of Burn Coin
-	sdkError := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coinsBurn)
-	if sdkError != nil {
-		return burnings, sdkError
-	}
-
-	k.AddBurned(ctx, coinsBurn.AmountOf(burnCoin))
-
-	burnings.Amount = burnings.Amount.Sub(amountBid)
-
-	return burnings, nil
+	return nil
 }
 
-func BurnTrade(k msgServer, ctx sdk.Context, burnings types.Burnings) (coinBurn sdk.Coin) {
+// Input Burnings - Output New Burnings
+func BurnTrade(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings, error) {
+
+	burnCoin := k.BurnCoin(ctx)
+
+	coinBurn := sdk.NewCoin(burnCoin, burnings.Amount)
 
 	if burnings.Denom != burnCoin {
+
+		// Ask -> Burn Coin, Bid -> Coin traded for Burn Coin
+		amountBid := burnings.Amount
 
 		memberAsk, found := k.GetMember(ctx, burnings.Denom, burnCoin)
 		if !found {
@@ -261,6 +256,7 @@ func BurnTrade(k msgServer, ctx sdk.Context, burnings types.Burnings) (coinBurn 
 			return burnings, nil
 		}
 
+		// Market Order
 		// A(i)*B(i) = A(f)*B(f)
 		// A(f) = A(i)*B(i)/B(f)
 		// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
@@ -272,7 +268,53 @@ func BurnTrade(k msgServer, ctx sdk.Context, burnings types.Burnings) (coinBurn 
 		k.SetMember(ctx, memberAsk)
 		k.SetMember(ctx, memberBid)
 
+		uid := k.GetUidCount(ctx)
+
+		pool, _ := k.GetPool(ctx, memberBid.Pair)
+		prevOrder, _ := k.GetOrder(ctx, pool.History)
+
+		prevOrder.Prev = uid
+
+		var order = types.Order{
+			Uid:       uid,
+			Owner:     "system",
+			Status:    "filled",
+			DenomAsk:  burnCoin,
+			DenomBid:  burnings.Denom,
+			OrderType: "market",
+			Amount:    amountBid,
+			Rate:      []sdk.Int{amountAsk, amountBid},
+			Prev:      0,
+			Next:      pool.History,
+			BegTime:   ctx.BlockHeader().Time.Unix(),
+			EndTime:   ctx.BlockHeader().Time.Unix(),
+		}
+
+		pool.History = uid
+
+		k.SetPool(ctx, pool)
+		k.SetUidCount(ctx, uid+1)
+		k.SetOrder(ctx, order)
+
 		coinBurn = sdk.NewCoin(burnCoin, amountAsk)
 
 	}
+
+	if coinBurn.Amount.GT(sdk.ZeroInt()) {
+
+		coinsBurn := sdk.NewCoins(coinBurn)
+
+		// Burn Ask Amount of Burn Coin
+		sdkError := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coinsBurn)
+		if sdkError != nil {
+			return burnings, sdkError
+		}
+
+		k.AddBurned(ctx, coinsBurn.AmountOf(burnCoin))
+
+		burnings.Amount = burnings.Amount.Sub(coinBurn.Amount)
+
+	}
+
+	return burnings, nil
 }
