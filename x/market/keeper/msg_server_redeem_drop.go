@@ -72,55 +72,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	pool = k.updateLeaders(ctx, pool, msg.Creator, sumDropRedeemer)
 
-	// Redemption value in coin 1
-	redeem1 := sdk.NewIntFromBigInt(total1).Sub(earnings1Total.Add(burn1))
-
-	burn2 := (profit2.Mul(burnRate)).Quo(denominator)
-
-	// Redemption value in coin 2
-	redeem2 := sdk.NewIntFromBigInt(total2).Sub(earnings2Total.Add(burn2))
-
 	var sdkError error
-
-	// Update burnings
-	burnings1, found := k.GetBurnings(ctx, denom1)
-	if !found {
-		burnings1 = types.Burnings{
-			Denom:  denom1,
-			Amount: burn1,
-		}
-		burnings1, sdkError = Burn(k, ctx, burnings1)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	} else {
-		burnings1.Amount = burnings1.Amount.Add(burn1)
-		burnings1, sdkError = Burn(k, ctx, burnings1)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	}
-	k.SetBurnings(ctx, burnings1)
-
-	burnings2, found := k.GetBurnings(ctx, denom2)
-	if !found {
-		burnings2 = types.Burnings{
-			Denom:  denom2,
-			Amount: burn2,
-		}
-		burnings2, sdkError = Burn(k, ctx, burnings2)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	} else {
-		burnings2.Amount = burnings2.Amount.Add(burn2)
-		burnings2, sdkError = Burn(k, ctx, burnings2)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	}
-
-	k.SetBurnings(ctx, burnings2)
 
 	// Update Pool Total Drops
 	pool.Drops = pool.Drops.Sub(drop.Drops)
@@ -133,8 +85,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	coinOwner1 := sdk.NewCoin(denom1, redeem1)
-	coinOwner2 := sdk.NewCoin(denom2, redeem2)
+	coinOwner1 := sdk.NewCoin(denom1, total1)
+	coinOwner2 := sdk.NewCoin(denom2, total2)
 	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
 	// Payout Owner
@@ -175,19 +127,23 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	return &types.MsgRedeemDropResponse{}, nil
 }
 
-func Payout(k msgServer, ctx sdk.Context, profit sdk.Coins) {
+func Payout(k msgServer, ctx sdk.Context, profits sdk.Coins, pool types.Pool) (totalEarnings sdk.Coins, error error) {
+	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
+	var earnRate sdk.Int
+	var earnings sdk.Int
+	var coinLeader sdk.Coin
+	var coinsLeader sdk.Coins
+
 	for i, v := range pool.Leaders {
-		earnRate, _ = sdk.NewIntFromString(earnRatesStringSlice[i])
+		for _, profit := range profits {
+			earnRate, _ = sdk.NewIntFromString(earnRatesStringSlice[i])
 
-		earnings1 = (profit1.Mul(earnRate)).Quo(sdk.NewInt(10000))
-		earnings1Total = earnings1Total.Add(earnings1)
+			earnings = (profit.Amount.Mul(earnRate)).Quo(sdk.NewInt(10000))
 
-		earnings2 = (profit2.Mul(earnRate)).Quo(sdk.NewInt(10000))
-		earnings2Total = earnings2Total.Add(earnings2)
+			coinLeader = sdk.NewCoin(profit.Denom, earnings)
 
-		coinLeader1 = sdk.NewCoin(denom1, earnings1)
-		coinLeader2 = sdk.NewCoin(denom2, earnings2)
-		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
+			coinsLeader = coinsLeader.Add(coinLeader)
+		}
 
 		leader, _ := sdk.AccAddressFromBech32(v.Address)
 
@@ -196,7 +152,11 @@ func Payout(k msgServer, ctx sdk.Context, profit sdk.Coins) {
 		if sdkError != nil {
 			return nil, sdkError
 		}
+
+		totalEarnings = totalEarnings.Add(coinsLeader...)
 	}
+
+	return
 }
 
 func Burn(k msgServer, ctx sdk.Context, profits sdk.Coins) error {
