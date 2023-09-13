@@ -37,6 +37,8 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
+	productBeg := memberAsk.Balance.Mul(memberBid.Balance)
+
 	rate, err := types.RateStringToInt(msg.Rate)
 	if err != nil {
 		return nil, err
@@ -296,27 +298,27 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		// guard in the case there is a stop run.
 		// Stop run would potentially take place if
 		// stop book is checked first repeatedly during price fall
-		memberBid, memberAsk, error := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-		if error != nil {
-			return nil, error
+		memberBid, memberAsk, err := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if err != nil {
+			return nil, err
 		}
-		memberAsk, memberBid, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-		if error != nil {
-			return nil, error
+		memberAsk, memberBid, err = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if err != nil {
+			return nil, err
 		}
-		_, _, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-		if error != nil {
-			return nil, error
+		memberAsk, memberBid, err = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if err != nil {
+			return nil, err
 		}
 	} else if msg.OrderType == "limit" {
 
-		memberAsk, memberBid, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-		if error != nil {
-			return nil, error
+		memberAsk, memberBid, err := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if err != nil {
+			return nil, err
 		}
-		memberBid, memberAsk, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-		if error != nil {
-			return nil, error
+		memberBid, memberAsk, err = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if err != nil {
+			return nil, err
 		}
 
 		if memberBid.Limit != 0 && memberAsk.Limit != 0 {
@@ -325,19 +327,19 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 			for types.LTE(limitHeadBid.Rate, []sdk.Int{limitHeadAsk.Rate[1], limitHeadAsk.Rate[0]}) {
 
-				memberBid, memberAsk, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-				if error != nil {
-					return nil, error
+				memberBid, memberAsk, err = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+				if err != nil {
+					return nil, err
 				}
 
-				memberAsk, memberBid, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-				if error != nil {
-					return nil, error
+				memberAsk, memberBid, err = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+				if err != nil {
+					return nil, err
 				}
 
-				memberBid, memberAsk, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-				if error != nil {
-					return nil, error
+				memberBid, memberAsk, err = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+				if err != nil {
+					return nil, err
 				}
 
 				if memberBid.Limit == 0 || memberAsk.Limit == 0 {
@@ -354,6 +356,34 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 					return nil, sdkerrors.Wrapf(types.ErrInvalidOrder, "No order found")
 				}
 			}
+		}
+	}
+
+	memberAsk, found = k.GetMember(ctx, msg.DenomBid, msg.DenomAsk)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomAsk)
+	}
+
+	memberBid, found = k.GetMember(ctx, msg.DenomAsk, msg.DenomBid)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
+	}
+
+	productEnd := memberAsk.Balance.Mul(memberBid.Balance)
+
+	if productEnd.GT(productBeg) {
+		profits := k.Profit(productBeg, productEnd, memberAsk, memberBid)
+
+		pool, _ := k.GetPool(ctx, memberAsk.Pair)
+
+		_, err = k.Payout(ctx, profits, pool)
+		if err != nil {
+			return nil, err
+		}
+
+		err = k.Burn(ctx, profits)
+		if err != nil {
+			return nil, err
 		}
 	}
 
