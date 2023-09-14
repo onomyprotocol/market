@@ -125,7 +125,8 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 		// A(i)*B(i) = A(f)*B(f)
 		// A(f) = A(i)*B(i)/B(f)
 		// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
-		amountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid)))
+		// Compensate for rounding: strikeAmountAsk = A(i) - A(f) = A(i) - [A(i)*B(i)/B(f)+1]
+		amountAsk := memberAsk.Balance.Sub(((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid))).Add(sdk.NewInt(1)))
 
 		// Market Order Fee
 		marketRate, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)

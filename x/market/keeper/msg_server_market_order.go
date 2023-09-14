@@ -39,7 +39,8 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	// A(i)*B(i) = A(f)*B(f)
 	// A(f) = A(i)*B(i)/B(f)
 	// amountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
-	amountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid)))
+	// Compensate for rounding: strikeAmountAsk = A(i) - A(f) = A(i) - [A(i)*B(i)/B(f)+1]
+	amountAsk := memberAsk.Balance.Sub(((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid))).Add(sdk.NewInt(1)))
 
 	// Market Order Fee
 	fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
