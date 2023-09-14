@@ -86,6 +86,7 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 	}
 
 	order.Status = "canceled"
+	order.EndTime = ctx.BlockHeader().Time.Unix()
 	k.RemoveOrderOwner(ctx, order.Owner, order.Uid)
 	k.SetOrder(ctx, order)
 

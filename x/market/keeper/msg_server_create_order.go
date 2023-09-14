@@ -306,7 +306,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		if err != nil {
 			return nil, err
 		}
-		memberAsk, memberBid, err = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		_, _, err = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
 		if err != nil {
 			return nil, err
 		}
@@ -369,23 +369,43 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
-	productEnd := memberAsk.Balance.Mul(memberBid.Balance)
-
-	if productEnd.GT(productBeg) {
-		profits := k.Profit(productBeg, productEnd, memberAsk, memberBid)
-
-		pool, _ := k.GetPool(ctx, memberAsk.Pair)
-
-		_, err = k.Payout(ctx, profits, pool)
-		if err != nil {
-			return nil, err
-		}
-
-		err = k.Burn(ctx, profits)
-		if err != nil {
-			return nil, err
-		}
+	if memberAsk.Balance.Mul(memberBid.Balance).Equal(productBeg) {
+		return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
 	}
+
+	if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool error %s", memberAsk.Pair)
+	}
+
+	profitAsk, profitBid := k.Profit(productBeg, memberAsk, memberBid)
+
+	pool, _ := k.GetPool(ctx, memberAsk.Pair)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "Pool %s", memberAsk.Pair)
+	}
+
+	memberAsk, err = k.Payout(ctx, profitAsk, memberAsk, pool)
+	if err != nil {
+		return nil, err
+	}
+
+	memberBid, err = k.Payout(ctx, profitBid, memberBid, pool)
+	if err != nil {
+		return nil, err
+	}
+
+	memberAsk, err = k.Burn(ctx, profitAsk, memberAsk)
+	if err != nil {
+		return nil, err
+	}
+
+	memberBid, err = k.Burn(ctx, profitBid, memberBid)
+	if err != nil {
+		return nil, err
+	}
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
 
 	return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
 }

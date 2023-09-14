@@ -48,4 +48,6 @@ var (
 	ErrDenomMismatch = sdkerrors.Register(ModuleName, 19, "denoms are not matching") // nolint: gomnd
 	// ErrLiquidityLow - liquidity is too low
 	ErrLiquidityLow = sdkerrors.Register(ModuleName, 20, "liquidity too low") // nolint: gomnd
+	// ErrProductInvalid - liquidity is too low
+	ErrProductInvalid = sdkerrors.Register(ModuleName, 21, "product less than beg") // nolint: gomnd
 )

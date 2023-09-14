@@ -34,6 +34,8 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
+	productBeg := memberAsk.Balance.Mul(memberBid.Balance)
+
 	// A(i)*B(i) = A(f)*B(f)
 	// A(f) = A(i)*B(i)/B(f)
 	// amountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
@@ -118,10 +120,43 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 	if error != nil {
 		return nil, error
 	}
-	_, _, error = ExecuteLimit(k, ctx, coinAsk.Denom, coinBid.Denom, memberAsk, memberBid)
+	memberBid, memberAsk, error = ExecuteLimit(k, ctx, coinAsk.Denom, coinBid.Denom, memberAsk, memberBid)
 	if error != nil {
 		return nil, error
 	}
+
+	if memberAsk.Balance.Mul(memberBid.Balance).Equal(productBeg) {
+		return &types.MsgMarketOrderResponse{AmountBid: msg.AmountBid, AmountAsk: amountAsk.String(), Slippage: slippage.String()}, nil
+	}
+
+	if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool error %s", memberAsk.Pair)
+	}
+
+	profitAsk, profitBid := k.Profit(productBeg, memberAsk, memberBid)
+
+	memberAsk, error = k.Payout(ctx, profitAsk, memberAsk, pool)
+	if error != nil {
+		return nil, error
+	}
+
+	memberBid, error = k.Payout(ctx, profitBid, memberBid, pool)
+	if error != nil {
+		return nil, error
+	}
+
+	memberAsk, error = k.Burn(ctx, profitAsk, memberAsk)
+	if error != nil {
+		return nil, error
+	}
+
+	memberBid, error = k.Burn(ctx, profitBid, memberBid)
+	if error != nil {
+		return nil, error
+	}
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
 
 	return &types.MsgMarketOrderResponse{AmountBid: msg.AmountBid, AmountAsk: amountAsk.String(), Slippage: slippage.String()}, nil
 }
