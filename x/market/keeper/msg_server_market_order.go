@@ -48,8 +48,8 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
-	if amountAsk.Equal(sdk.ZeroInt()) {
-		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal to zero")
+	if amountAsk.LTE(sdk.ZeroInt()) {
+		return nil, sdkerrors.Wrapf(types.ErrAmtZero, "amount ask equal or less than zero")
 	}
 
 	// Slippage is initialized at zero

@@ -443,6 +443,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 	if limitHeadBid.Amount.GTE(amountDenomBidAskOrder) && limitHeadAsk.Amount.GTE(amountDenomAskBidOrder) {
 		// Both orders may be filled
 		limitHeadAsk.Status = "filled"
+		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -452,6 +453,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		}
 
 		limitHeadBid.Status = "filled"
+		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -491,9 +493,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 			return memberAskInit, memberBidInit, sdkError
 		}
 
-		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
-		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
-
 		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
 		k.RemoveOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
@@ -519,11 +518,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		partialFillOrder.Amount = amountDenomBidAskOrder
 		partialFillOrder.Status = "filled"
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 		partialFillOrder.Next = limitHeadAsk.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Ask Order
 		limitHeadAsk.Status = "filled"
+		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -563,9 +564,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 			return memberAskInit, memberBidInit, sdkError
 		}
 
-		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
-
 		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
 		k.SetOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
@@ -590,11 +588,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		partialFillOrder.Amount = amountDenomAskBidOrder
 		partialFillOrder.Status = "filled"
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 		partialFillOrder.Next = limitHeadBid.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Bid Order
 		limitHeadBid.Status = "filled"
+		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -633,9 +633,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		if sdkError != nil {
 			return memberAskInit, memberBidInit, sdkError
 		}
-
-		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 
 		k.RemoveOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
@@ -743,6 +740,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
+		limitHead.EndTime = ctx.BlockHeader().Time.Unix()
 		limitHead.Prev = 0
 		k.RemoveOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 
@@ -767,6 +765,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 		partialFillOrder.Amount = strikeAmountBid
 		partialFillOrder.Status = "filled"
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
@@ -786,8 +785,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		k.SetOrder(ctx, partialFillOrder)
 		k.SetOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 	}
-
-	limitHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, limitHead)
 	k.SetPool(ctx, pool)
@@ -846,16 +843,18 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// A(i)*B(i) = A(f)*B(f)
 	// A(f) = A(i)*B(i)/B(f)
 	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
-	strikeAmountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(strikeAmountBid)))
+	// Compensate for rounding: strikeAmountAsk = A(i) - A(f) = A(i) - [A(i)*B(i)/B(f)+1]
+	strikeAmountAsk := memberAsk.Balance.Sub(((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(strikeAmountBid))).Add(sdk.NewInt(1)))
 
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
-	if strikeAmountAsk.Equal(sdk.ZeroInt()) {
+	if strikeAmountAsk.LTE(sdk.ZeroInt()) {
 		return memberAskInit, memberBidInit, nil
 	}
 
 	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
+	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 
 	// Set Next Position as Head of Stop Book
@@ -900,8 +899,6 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		k.SetOrder(ctx, prevFilledOrder)
 		k.SetOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 	}
-
-	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, stopHead)
 	k.SetPool(ctx, pool)
