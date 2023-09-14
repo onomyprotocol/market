@@ -45,21 +45,6 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "%s", drop.Pair)
 	}
 
-	poolProduct := member1.Balance.Mul(member2.Balance)
-
-	// Each Drop is a proportional rite to the AMM balances
-	// % total drops in pool = dropAmount(drop)/dropAmount(pool)*100%
-	// drop_ratio = dropAmount(drop)/dropAmount(pool)
-	// dropProduct(end) = (AMM Bal A * AMM Bal B) * drop_ratio
-	// Profit = total*[(dropProduct(end) - dropProduct(begin))/dropProduct(end)]
-	// we need bigints here because this is the second ~128 sized multiplication in a row before division
-	// `dropProductEnd = (poolProduct * drop.Drops) / pool.Drops``
-	dropProductEnd := big.NewInt(0)
-	dropProductEnd.Mul(poolProduct.BigInt(), drop.Drops.BigInt())
-	dropProductEnd.Quo(dropProductEnd, pool.Drops.BigInt())
-	// keep `dropProductEnd` as a bigint because it can be a ~256 sized int and will be used for more multiplications
-
-	// multiplications with drops require bigints
 	// `total1 = (drop.Drops * member1.Balance) / pool.Drops`
 	tmp := big.NewInt(0)
 	tmp.Mul(drop.Drops.BigInt(), member1.Balance.BigInt())
@@ -69,55 +54,11 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// always run this after a call to `NewIntFromBigInt`
 	tmp = big.NewInt(0)
 
-	// `profit1 = total1 - ((total1 * drop.Product) / dropProductEnd)`
-	tmp.Mul(total1.BigInt(), drop.Product.BigInt())
-	tmp.Quo(tmp, dropProductEnd)
-	profit1 := total1.Sub(sdk.NewIntFromBigInt(tmp))
-	tmp = big.NewInt(0)
-
 	// `total2 = (drop.Drops * member2.Balance) / pool.Drops`
 	tmp.Mul(drop.Drops.BigInt(), member2.Balance.BigInt())
 	tmp.Quo(tmp, pool.Drops.BigInt())
 	total2 := sdk.NewIntFromBigInt(tmp)
-	tmp = big.NewInt(0)
-
-	// `profit2 = total2 - ((total2 * drop.Product) / dropProductEnd)`
-	tmp.Mul(total2.BigInt(), drop.Product.BigInt())
-	tmp.Quo(tmp, dropProductEnd)
-	profit2 := total2.Sub(sdk.NewIntFromBigInt(tmp))
-	//tmp = big.NewInt(0)
-
-	earnRatesStringSlice := strings.Split(k.EarnRates(ctx), ",")
-	var earnRate sdk.Int
-	var earnings1 sdk.Int
-	earnings1Total := sdk.ZeroInt()
-	var earnings2 sdk.Int
-	earnings2Total := sdk.ZeroInt()
-	var coinLeader1 sdk.Coin
-	var coinLeader2 sdk.Coin
-	var coinsLeader sdk.Coins
-
-	for i, v := range pool.Leaders {
-		earnRate, _ = sdk.NewIntFromString(earnRatesStringSlice[i])
-
-		earnings1 = (profit1.Mul(earnRate)).Quo(sdk.NewInt(10000))
-		earnings1Total = earnings1Total.Add(earnings1)
-
-		earnings2 = (profit2.Mul(earnRate)).Quo(sdk.NewInt(10000))
-		earnings2Total = earnings2Total.Add(earnings2)
-
-		coinLeader1 = sdk.NewCoin(denom1, earnings1)
-		coinLeader2 = sdk.NewCoin(denom2, earnings2)
-		coinsLeader = sdk.NewCoins(coinLeader1, coinLeader2)
-
-		leader, _ := sdk.AccAddressFromBech32(v.Address)
-
-		// Payout Leader
-		sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, leader, coinsLeader)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	}
+	// tmp = big.NewInt(0)
 
 	dropRedeemer, ok := k.GetDropsOwnerPair(ctx, msg.Creator, drop.Pair)
 	var sumDropRedeemer sdk.Int
@@ -131,59 +72,7 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 
 	pool = k.updateLeaders(ctx, pool, msg.Creator, sumDropRedeemer)
 
-	burnRate, _ := sdk.NewIntFromString(k.BurnRate(ctx))
-
-	burn1 := (profit1.Mul(burnRate)).Quo(sdk.NewInt(10000))
-
-	// Redemption value in coin 1
-	redeem1 := total1.Sub(earnings1Total.Add(burn1))
-
-	burn2 := (profit2.Mul(burnRate)).Quo(sdk.NewInt(10000))
-
-	// Redemption value in coin 2
-	redeem2 := total2.Sub(earnings2Total.Add(burn2))
-
 	var sdkError error
-
-	// Update burnings
-	burnings1, found := k.GetBurnings(ctx, denom1)
-	if !found {
-		burnings1 = types.Burnings{
-			Denom:  denom1,
-			Amount: burn1,
-		}
-		burnings1, sdkError = Burn(k, ctx, burnings1)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	} else {
-		burnings1.Amount = burnings1.Amount.Add(burn1)
-		burnings1, sdkError = Burn(k, ctx, burnings1)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	}
-	k.SetBurnings(ctx, burnings1)
-
-	burnings2, found := k.GetBurnings(ctx, denom2)
-	if !found {
-		burnings2 = types.Burnings{
-			Denom:  denom2,
-			Amount: burn2,
-		}
-		burnings2, sdkError = Burn(k, ctx, burnings2)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	} else {
-		burnings2.Amount = burnings2.Amount.Add(burn2)
-		burnings2, sdkError = Burn(k, ctx, burnings2)
-		if sdkError != nil {
-			return nil, sdkError
-		}
-	}
-
-	k.SetBurnings(ctx, burnings2)
 
 	// Update Pool Total Drops
 	pool.Drops = pool.Drops.Sub(drop.Drops)
@@ -196,8 +85,8 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	// Get the borrower address
 	owner, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	coinOwner1 := sdk.NewCoin(denom1, redeem1)
-	coinOwner2 := sdk.NewCoin(denom2, redeem2)
+	coinOwner1 := sdk.NewCoin(denom1, total1)
+	coinOwner2 := sdk.NewCoin(denom2, total2)
 	coinsOwner := sdk.NewCoins(coinOwner1, coinOwner2)
 
 	// Payout Owner
@@ -236,48 +125,4 @@ func (k msgServer) RedeemDrop(goCtx context.Context, msg *types.MsgRedeemDrop) (
 	)
 
 	return &types.MsgRedeemDropResponse{}, nil
-}
-
-func Burn(k msgServer, ctx sdk.Context, burnings types.Burnings) (types.Burnings, error) {
-
-	amountBid := burnings.Amount
-
-	// Coin that will be burned
-	burnCoin := k.BurnCoin(ctx)
-
-	memberAsk, found := k.GetMember(ctx, burnings.Denom, burnCoin)
-	if !found {
-		return burnings, nil
-	}
-
-	memberBid, found := k.GetMember(ctx, burnCoin, burnings.Denom)
-	if !found {
-		return burnings, nil
-	}
-
-	// A(i)*B(i) = A(f)*B(f)
-	// A(f) = A(i)*B(i)/B(f)
-	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
-	amountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amountBid)))
-
-	coinAsk := sdk.NewCoin(burnCoin, amountAsk)
-	coinsAsk := sdk.NewCoins(coinAsk)
-
-	// Burn Ask Amount of Stake Coin
-	sdkError := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coinsAsk)
-	if sdkError != nil {
-		return burnings, sdkError
-	}
-
-	k.AddBurned(ctx, coinsAsk.AmountOf(burnCoin))
-
-	memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
-	memberBid.Balance = memberBid.Balance.Add(amountBid)
-
-	k.SetMember(ctx, memberAsk)
-	k.SetMember(ctx, memberBid)
-
-	burnings.Amount = burnings.Amount.Sub(amountBid)
-
-	return burnings, nil
 }
