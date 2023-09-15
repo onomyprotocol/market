@@ -135,6 +135,12 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 		fee := (amountAsk.Mul(marketRate)).Quo(sdk.NewInt(10000))
 		amountAsk = amountAsk.Sub(fee)
 
+		// Edge case where strikeAskAmount rounds to 0
+		// Rounding favors AMM vs Order
+		if amountAsk.LTE(sdk.ZeroInt()) {
+			return burnings, nil
+		}
+
 		pool, found := k.GetPool(ctx, memberAsk.Pair)
 		if !found {
 			return burnings, nil
