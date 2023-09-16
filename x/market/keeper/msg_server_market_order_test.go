@@ -19,7 +19,7 @@ func TestMarketOrder(t *testing.T) {
 	// beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
 	//Create Order
-	var o = types.MsgMarketOrder{Creator: addr, DenomAsk: denomA, AmountAsk: "18", DenomBid: denomB, AmountBid: "10", Slippage: "700"}
+	var o = types.MsgMarketOrder{Creator: addr, DenomAsk: denomA, AmountAsk: "15", DenomBid: denomB, AmountBid: "10", Slippage: "700"}
 
 	quoteBid, error := testInput.MarketKeeper.Quote(wctx, &types.QueryQuoteRequest{
 		DenomAsk:    o.DenomAsk,
@@ -54,7 +54,7 @@ func TestMarketOrder(t *testing.T) {
 	require.True(t, memberAskfound)
 	require.Equal(t, memberAsk.DenomA, denomB)
 	require.Equal(t, memberAsk.DenomB, denomA)
-	require.Equal(t, "15", memberAsk.Balance.String())
+	require.Equal(t, "18", memberAsk.Balance.String())
 	require.Equal(t, memberAsk.Stop, uint64(0))
 
 	// Validate order estimation

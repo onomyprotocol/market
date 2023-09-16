@@ -21,3 +21,7 @@ func BurningsKey(
 
 	return key
 }
+
+const (
+	BurnedKey = "Burned-value-"
+)

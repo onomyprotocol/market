@@ -308,7 +308,7 @@ func (k Keeper) GetQuote(
 		// A(i)*B(i) = A(f)*B(f)
 		// A(f) = A(i)*B(i)/B(f)
 		// amountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
-		amountResp = memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amount)))
+		amountResp = memberAsk.Balance.Sub(((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(amount))).Add(sdk.NewInt(1)))
 
 		// Market Order Fee
 		fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
@@ -325,7 +325,7 @@ func (k Keeper) GetQuote(
 
 		// Market Order Fee
 		fee, _ := sdk.NewIntFromString(k.getParams(ctx).MarketFee)
-		amountPlusFee := amount.Add((amount.Mul(fee)).Quo(sdk.NewInt(10000)))
+		amountPlusFee := amount.Add((amount.Mul(fee)).Quo(sdk.NewInt(10000))).Add(sdk.NewInt(1))
 
 		// A(i)*B(i) = A(f)*B(f)
 		// B(f) = A(i)*B(i)/A(f)

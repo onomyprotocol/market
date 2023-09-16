@@ -28997,6 +28997,40 @@ paths:
           minItems: 1
       tags:
         - Query
+  /pendulum-labs/market/market/burned:
+    get:
+      summary: Queries total burned.
+      operationId: PendulumlabsMarketMarketBurned
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /pendulum-labs/market/market/burnings:
     get:
       summary: Queries a list of Burnings items.
@@ -50396,6 +50430,13 @@ definitions:
       next:
         type: string
         format: uint64
+  pendulumlabs.market.market.QueryBurnedResponse:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
   pendulumlabs.market.market.QueryDropAmountsResponse:
     type: object
     properties:

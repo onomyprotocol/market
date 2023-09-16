@@ -37,6 +37,8 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
 	}
 
+	productBeg := memberAsk.Balance.Mul(memberBid.Balance)
+
 	rate, err := types.RateStringToInt(msg.Rate)
 	if err != nil {
 		return nil, err
@@ -296,27 +298,27 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		// guard in the case there is a stop run.
 		// Stop run would potentially take place if
 		// stop book is checked first repeatedly during price fall
-		memberBid, memberAsk, error := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-		if error != nil {
-			return nil, error
+		memberBid, memberAsk, err := ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if err != nil {
+			return nil, err
 		}
-		memberAsk, memberBid, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-		if error != nil {
-			return nil, error
+		memberAsk, memberBid, err = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if err != nil {
+			return nil, err
 		}
-		_, _, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-		if error != nil {
-			return nil, error
+		_, _, err = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if err != nil {
+			return nil, err
 		}
 	} else if msg.OrderType == "limit" {
 
-		memberAsk, memberBid, error := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-		if error != nil {
-			return nil, error
+		memberAsk, memberBid, err := ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+		if err != nil {
+			return nil, err
 		}
-		memberBid, memberAsk, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-		if error != nil {
-			return nil, error
+		memberBid, memberAsk, err = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+		if err != nil {
+			return nil, err
 		}
 
 		if memberBid.Limit != 0 && memberAsk.Limit != 0 {
@@ -325,19 +327,19 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 			for types.LTE(limitHeadBid.Rate, []sdk.Int{limitHeadAsk.Rate[1], limitHeadAsk.Rate[0]}) {
 
-				memberBid, memberAsk, error = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-				if error != nil {
-					return nil, error
+				memberBid, memberAsk, err = ExecuteOverlap(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+				if err != nil {
+					return nil, err
 				}
 
-				memberAsk, memberBid, error = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
-				if error != nil {
-					return nil, error
+				memberAsk, memberBid, err = ExecuteLimit(k, ctx, msg.DenomAsk, msg.DenomBid, memberAsk, memberBid)
+				if err != nil {
+					return nil, err
 				}
 
-				memberBid, memberAsk, error = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
-				if error != nil {
-					return nil, error
+				memberBid, memberAsk, err = ExecuteLimit(k, ctx, msg.DenomBid, msg.DenomAsk, memberBid, memberAsk)
+				if err != nil {
+					return nil, err
 				}
 
 				if memberBid.Limit == 0 || memberAsk.Limit == 0 {
@@ -356,6 +358,54 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 			}
 		}
 	}
+
+	memberAsk, found = k.GetMember(ctx, msg.DenomBid, msg.DenomAsk)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomAsk)
+	}
+
+	memberBid, found = k.GetMember(ctx, msg.DenomAsk, msg.DenomBid)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrMemberNotFound, "Member %s", msg.DenomBid)
+	}
+
+	if memberAsk.Balance.Mul(memberBid.Balance).Equal(productBeg) {
+		return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
+	}
+
+	if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool error %s", memberAsk.Pair)
+	}
+
+	profitAsk, profitBid := k.Profit(productBeg, memberAsk, memberBid)
+
+	pool, _ := k.GetPool(ctx, memberAsk.Pair)
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrPoolNotFound, "Pool %s", memberAsk.Pair)
+	}
+
+	memberAsk, err = k.Payout(ctx, profitAsk, memberAsk, pool)
+	if err != nil {
+		return nil, err
+	}
+
+	memberBid, err = k.Payout(ctx, profitBid, memberBid, pool)
+	if err != nil {
+		return nil, err
+	}
+
+	memberAsk, err = k.Burn(ctx, profitAsk, memberAsk)
+	if err != nil {
+		return nil, err
+	}
+
+	memberBid, err = k.Burn(ctx, profitBid, memberBid)
+	if err != nil {
+		return nil, err
+	}
+
+	k.SetMember(ctx, memberAsk)
+	k.SetMember(ctx, memberBid)
 
 	return &types.MsgCreateOrderResponse{Uid: order.Uid}, nil
 }
@@ -393,6 +443,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 	if limitHeadBid.Amount.GTE(amountDenomBidAskOrder) && limitHeadAsk.Amount.GTE(amountDenomAskBidOrder) {
 		// Both orders may be filled
 		limitHeadAsk.Status = "filled"
+		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -402,6 +453,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		}
 
 		limitHeadBid.Status = "filled"
+		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -441,9 +493,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 			return memberAskInit, memberBidInit, sdkError
 		}
 
-		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
-		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
-
 		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
 		k.RemoveOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
@@ -469,11 +518,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		partialFillOrder.Amount = amountDenomBidAskOrder
 		partialFillOrder.Status = "filled"
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 		partialFillOrder.Next = limitHeadAsk.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Ask Order
 		limitHeadAsk.Status = "filled"
+		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -513,9 +564,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 			return memberAskInit, memberBidInit, sdkError
 		}
 
-		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
-
 		k.RemoveOrderOwner(ctx, limitHeadAsk.Owner, limitHeadAsk.Uid)
 		k.SetOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
@@ -540,11 +588,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		partialFillOrder.Amount = amountDenomAskBidOrder
 		partialFillOrder.Status = "filled"
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 		partialFillOrder.Next = limitHeadBid.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Bid Order
 		limitHeadBid.Status = "filled"
+		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -583,9 +633,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		if sdkError != nil {
 			return memberAskInit, memberBidInit, sdkError
 		}
-
-		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 
 		k.RemoveOrderOwner(ctx, limitHeadBid.Owner, limitHeadBid.Uid)
 
@@ -693,6 +740,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
+		limitHead.EndTime = ctx.BlockHeader().Time.Unix()
 		limitHead.Prev = 0
 		k.RemoveOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 
@@ -717,6 +765,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 		partialFillOrder.Amount = strikeAmountBid
 		partialFillOrder.Status = "filled"
+		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
 
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
@@ -736,8 +785,6 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		k.SetOrder(ctx, partialFillOrder)
 		k.SetOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 	}
-
-	limitHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, limitHead)
 	k.SetPool(ctx, pool)
@@ -796,16 +843,18 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// A(i)*B(i) = A(f)*B(f)
 	// A(f) = A(i)*B(i)/B(f)
 	// strikeAmountAsk = A(i) - A(f) = A(i) - A(i)*B(i)/B(f)
-	strikeAmountAsk := memberAsk.Balance.Sub((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(strikeAmountBid)))
+	// Compensate for rounding: strikeAmountAsk = A(i) - A(f) = A(i) - [A(i)*B(i)/B(f)+1]
+	strikeAmountAsk := memberAsk.Balance.Sub(((memberAsk.Balance.Mul(memberBid.Balance)).Quo(memberBid.Balance.Add(strikeAmountBid))).Add(sdk.NewInt(1)))
 
 	// Edge case where strikeAskAmount rounds to 0
 	// Rounding favors AMM vs Order
-	if strikeAmountAsk.Equal(sdk.ZeroInt()) {
+	if strikeAmountAsk.LTE(sdk.ZeroInt()) {
 		return memberAskInit, memberBidInit, nil
 	}
 
 	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
+	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 
 	// Set Next Position as Head of Stop Book
@@ -850,8 +899,6 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 		k.SetOrder(ctx, prevFilledOrder)
 		k.SetOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 	}
-
-	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
 
 	k.SetOrder(ctx, stopHead)
 	k.SetPool(ctx, pool)
