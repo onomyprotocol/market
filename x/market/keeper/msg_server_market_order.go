@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -158,6 +159,20 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
+
+	// execute order event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeExecuteOrder,
+			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(order.Uid, 10)),
+			sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(ctx.BlockHeader().Time.Unix(), 10)),
+			sdk.NewAttribute(types.AttributeKeyOrderType, order.OrderType),
+			sdk.NewAttribute(types.AttributeKeyDenomAsk, order.DenomAsk),
+			sdk.NewAttribute(types.AttributeKeyDenomBid, order.DenomBid),
+			sdk.NewAttribute(types.AttributeKeyAmountAsk, amountAsk.String()),
+			sdk.NewAttribute(types.AttributeKeyAmountBid, amountBid.String()),
+		),
+	)
 
 	return &types.MsgMarketOrderResponse{AmountBid: msg.AmountBid, AmountAsk: amountAsk.String(), Slippage: slippage.String()}, nil
 }
