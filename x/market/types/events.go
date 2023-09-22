@@ -21,10 +21,12 @@ const (
 	EventTypeRemoveOrder  = "remove_order"
 	EventTypeUpdateOrder  = "update_order"
 
-	AttributeKeyActive  = "active"
-	AttributeKeyAmount  = "amount"
-	AttributeKeyBalance = "balance"
-	AttributeKeyDenom   = "denom"
+	AttributeKeyActive    = "active"
+	AttributeKeyAmount    = "amount"
+	AttributeKeyAmountAsk = "amount_ask"
+	AttributeKeyAmountBid = "amount_bid"
+	AttributeKeyBalance   = "balance"
+	AttributeKeyDenom     = "denom"
 	// Alpha-numeric ordered denom for pool pair
 	AttributeKeyDenom1 = "denom_1"
 	AttributeKeyDenom2 = "denom_2"
@@ -43,7 +45,8 @@ const (
 	AttributeKeyPrev      = "prev"
 	AttributeKeyProduct   = "product"
 	AttributeKeyRate      = "rate"
-	AttributeKeyStatus      = "status"
+	AttributeKeyStatus    = "status"
 	AttributeKeyStop      = "stop"
 	AttributeKeyUid       = "uid"
+	AttributeKeyTime      = "time"
 )

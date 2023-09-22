@@ -444,6 +444,21 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		// Both orders may be filled
 		limitHeadAsk.Status = "filled"
 		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHeadAsk.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHeadAsk.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHeadAsk.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHeadAsk.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHeadAsk.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomBidAskOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHeadAsk.Amount.String()),
+			),
+		)
+
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -454,6 +469,21 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		limitHeadBid.Status = "filled"
 		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHeadBid.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHeadBid.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHeadBid.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHeadBid.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHeadBid.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomAskBidOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHeadBid.Amount.String()),
+			),
+		)
+
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -517,14 +547,45 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		k.SetUidCount(ctx, partialFillOrder.Uid+1)
 
 		partialFillOrder.Amount = amountDenomBidAskOrder
+		amountDenomAskBidPartialOrder := (amountDenomBidAskOrder.Mul(limitHeadBid.Rate[0])).Quo(limitHeadBid.Rate[1])
 		partialFillOrder.Status = "filled"
 		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(partialFillOrder.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(partialFillOrder.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, partialFillOrder.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, partialFillOrder.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, partialFillOrder.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomAskBidPartialOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, partialFillOrder.Amount.String()),
+			),
+		)
+
 		partialFillOrder.Next = limitHeadAsk.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Ask Order
 		limitHeadAsk.Status = "filled"
 		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHeadAsk.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHeadAsk.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHeadAsk.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHeadAsk.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHeadAsk.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomBidAskOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHeadAsk.Amount.String()),
+			),
+		)
+
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -545,8 +606,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		coinAskOrder := sdk.NewCoin(denomBid, amountDenomBidAskOrder)
 		coinsAskOrder := sdk.NewCoins(coinAskOrder)
-
-		amountDenomAskBidPartialOrder := (amountDenomBidAskOrder.Mul(limitHeadBid.Rate[0])).Quo(limitHeadBid.Rate[1])
 
 		coinBidOrder := sdk.NewCoin(denomAsk, amountDenomAskBidPartialOrder)
 		coinsBidOrder := sdk.NewCoins(coinBidOrder)
@@ -587,14 +646,45 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		k.SetUidCount(ctx, partialFillOrder.Uid+1)
 
 		partialFillOrder.Amount = amountDenomAskBidOrder
+		amountDenomBidAskPartialOrder := (amountDenomAskBidOrder.Mul(limitHeadAsk.Rate[0])).Quo(limitHeadAsk.Rate[1])
 		partialFillOrder.Status = "filled"
 		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(partialFillOrder.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(partialFillOrder.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, partialFillOrder.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, partialFillOrder.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, partialFillOrder.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomBidAskPartialOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, partialFillOrder.Amount.String()),
+			),
+		)
+
 		partialFillOrder.Next = limitHeadBid.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Bid Order
 		limitHeadBid.Status = "filled"
 		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHeadBid.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHeadBid.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHeadBid.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHeadBid.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHeadBid.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomAskBidOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHeadBid.Amount.String()),
+			),
+		)
+
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -612,8 +702,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
 		ownerBid, _ := sdk.AccAddressFromBech32(limitHeadBid.Owner)
-
-		amountDenomBidAskPartialOrder := (amountDenomAskBidOrder.Mul(limitHeadAsk.Rate[0])).Quo(limitHeadAsk.Rate[1])
 
 		coinAskOrder := sdk.NewCoin(denomBid, amountDenomBidAskPartialOrder)
 		coinsAskOrder := sdk.NewCoins(coinAskOrder)
@@ -741,6 +829,21 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
 		limitHead.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHead.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHead.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHead.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHead.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHead.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, strikeAmountAsk.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHead.Amount.String()),
+			),
+		)
+
 		limitHead.Prev = 0
 		k.RemoveOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 
@@ -766,6 +869,20 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		partialFillOrder.Amount = strikeAmountBid
 		partialFillOrder.Status = "filled"
 		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(partialFillOrder.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(partialFillOrder.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, partialFillOrder.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, partialFillOrder.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, partialFillOrder.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, strikeAmountAsk.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, partialFillOrder.Amount.String()),
+			),
+		)
 
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
@@ -855,6 +972,21 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
 	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
+
+	// execute order event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeExecuteOrder,
+			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(stopHead.Uid, 10)),
+			sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(stopHead.EndTime, 10)),
+			sdk.NewAttribute(types.AttributeKeyOrderType, stopHead.OrderType),
+			sdk.NewAttribute(types.AttributeKeyDenomAsk, stopHead.DenomAsk),
+			sdk.NewAttribute(types.AttributeKeyDenomBid, stopHead.DenomBid),
+			sdk.NewAttribute(types.AttributeKeyAmountAsk, strikeAmountAsk.String()),
+			sdk.NewAttribute(types.AttributeKeyAmountBid, stopHead.Amount.String()),
+		),
+	)
+
 	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 
 	// Set Next Position as Head of Stop Book
