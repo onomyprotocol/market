@@ -561,7 +561,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 				sdk.NewAttribute(types.AttributeKeyDenomAsk, partialFillOrder.DenomAsk),
 				sdk.NewAttribute(types.AttributeKeyDenomBid, partialFillOrder.DenomBid),
 				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomAskBidPartialOrder.String()),
-				sdk.NewAttribute(types.AttributeKeyAmountBid, amountDenomBidAskOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, partialFillOrder.Amount.String()),
 			),
 		)
 
@@ -646,14 +646,45 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		k.SetUidCount(ctx, partialFillOrder.Uid+1)
 
 		partialFillOrder.Amount = amountDenomAskBidOrder
+		amountDenomBidAskPartialOrder := (amountDenomAskBidOrder.Mul(limitHeadAsk.Rate[0])).Quo(limitHeadAsk.Rate[1])
 		partialFillOrder.Status = "filled"
 		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(partialFillOrder.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(partialFillOrder.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, partialFillOrder.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, partialFillOrder.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, partialFillOrder.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomBidAskPartialOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, partialFillOrder.Amount.String()),
+			),
+		)
+
 		partialFillOrder.Next = limitHeadBid.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Bid Order
 		limitHeadBid.Status = "filled"
 		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHeadBid.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHeadBid.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHeadBid.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHeadBid.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHeadBid.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, amountDenomAskBidOrder.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHeadBid.Amount.String()),
+			),
+		)
+
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -671,8 +702,6 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
 		ownerBid, _ := sdk.AccAddressFromBech32(limitHeadBid.Owner)
-
-		amountDenomBidAskPartialOrder := (amountDenomAskBidOrder.Mul(limitHeadAsk.Rate[0])).Quo(limitHeadAsk.Rate[1])
 
 		coinAskOrder := sdk.NewCoin(denomBid, amountDenomBidAskPartialOrder)
 		coinsAskOrder := sdk.NewCoins(coinAskOrder)
