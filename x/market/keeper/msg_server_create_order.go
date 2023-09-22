@@ -829,6 +829,21 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
 		limitHead.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(limitHead.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(limitHead.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, limitHead.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, limitHead.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, limitHead.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, strikeAmountAsk.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, limitHead.Amount.String()),
+			),
+		)
+
 		limitHead.Prev = 0
 		k.RemoveOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 
@@ -854,6 +869,20 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		partialFillOrder.Amount = strikeAmountBid
 		partialFillOrder.Status = "filled"
 		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+
+		// execute order event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeExecuteOrder,
+				sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(partialFillOrder.Uid, 10)),
+				sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(partialFillOrder.EndTime, 10)),
+				sdk.NewAttribute(types.AttributeKeyOrderType, partialFillOrder.OrderType),
+				sdk.NewAttribute(types.AttributeKeyDenomAsk, partialFillOrder.DenomAsk),
+				sdk.NewAttribute(types.AttributeKeyDenomBid, partialFillOrder.DenomBid),
+				sdk.NewAttribute(types.AttributeKeyAmountAsk, strikeAmountAsk.String()),
+				sdk.NewAttribute(types.AttributeKeyAmountBid, partialFillOrder.Amount.String()),
+			),
+		)
 
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
@@ -943,6 +972,21 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
 	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
+
+	// execute order event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeExecuteOrder,
+			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(stopHead.Uid, 10)),
+			sdk.NewAttribute(types.AttributeKeyTime, strconv.FormatInt(stopHead.EndTime, 10)),
+			sdk.NewAttribute(types.AttributeKeyOrderType, stopHead.OrderType),
+			sdk.NewAttribute(types.AttributeKeyDenomAsk, stopHead.DenomAsk),
+			sdk.NewAttribute(types.AttributeKeyDenomBid, stopHead.DenomBid),
+			sdk.NewAttribute(types.AttributeKeyAmountAsk, strikeAmountAsk.String()),
+			sdk.NewAttribute(types.AttributeKeyAmountBid, stopHead.Amount.String()),
+		),
+	)
+
 	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 
 	// Set Next Position as Head of Stop Book
