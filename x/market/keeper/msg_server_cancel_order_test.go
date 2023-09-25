@@ -118,6 +118,8 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
+	balanceBefore := testInput.BankKeeper.GetBalance(testInput.Context, sdk.AccAddress(addr), denomB)
+
 	// Create Order
 	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "limit", Amount: "0", Prev: "0", Next: "0"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
@@ -149,6 +151,9 @@ func TestCancelOrder_case1_limit(t *testing.T) {
 	var co = types.MsgCancelOrder{Creator: addr, Uid: Uid}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
 	require.NoError(t, err)
+
+	balanceAfter := testInput.BankKeeper.GetBalance(testInput.Context, sdk.AccAddress(addr), denomB)
+	require.True(t, balanceBefore.Amount.Equal(balanceAfter.Amount))
 
 	memberBid, memberfoundBid = testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
 	require.True(t, memberfoundBid)
@@ -197,6 +202,8 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
 
+	balanceBefore := testInput.BankKeeper.GetBalance(testInput.Context, sdk.AccAddress(addr), denomB)
+
 	//Create Order
 	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CreateOrder(sdk.WrapSDKContext(testInput.Context), &o)
@@ -235,6 +242,9 @@ func TestCancelOrder_case2_stop(t *testing.T) {
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
 	require.NoError(t, err)
 
+	balanceAfter := testInput.BankKeeper.GetBalance(testInput.Context, sdk.AccAddress(addr), denomB)
+	require.True(t, balanceBefore.Amount.Equal(balanceAfter.Amount))
+
 	memberBid, memberBidfound := testInput.MarketKeeper.GetMember(testInput.Context, orders.DenomAsk, orders.DenomBid)
 	require.True(t, memberBidfound)
 	require.Equal(t, memberBid.DenomA, denomA)
@@ -258,6 +268,8 @@ func TestCancelOrderEmptyPool(t *testing.T) {
 	testdata, _, denomA, denomB, _ := common(t, testInput)
 
 	beforecount := testInput.MarketKeeper.GetUidCount(testInput.Context)
+
+	balanceBefore := testInput.BankKeeper.GetBalance(testInput.Context, sdk.AccAddress(addr), denomB)
 
 	//Create Order
 	var o = types.MsgCreateOrder{Creator: addr, DenomAsk: denomA, DenomBid: denomB, Rate: testdata.RateAstrArray, OrderType: "stop", Amount: "0", Prev: "0", Next: "0"}
@@ -312,5 +324,8 @@ func TestCancelOrderEmptyPool(t *testing.T) {
 	var co = types.MsgCancelOrder{Creator: addr, Uid: Uid}
 	_, err = keeper.NewMsgServerImpl(*testInput.MarketKeeper).CancelOrder(sdk.WrapSDKContext(testInput.Context), &co)
 	require.NoError(t, err)
+
+	balanceAfter := testInput.BankKeeper.GetBalance(testInput.Context, sdk.AccAddress(addr), denomB)
+	require.True(t, balanceBefore.Amount.Equal(balanceAfter.Amount))
 
 }

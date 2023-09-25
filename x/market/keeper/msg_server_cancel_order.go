@@ -88,8 +88,13 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 	coinBid := sdk.NewCoin(order.DenomBid, order.Amount)
 	coinsBid := sdk.NewCoins(coinBid)
 
+	owner, err := sdk.AccAddressFromBech32(order.Owner)
+	if err != nil {
+		return nil, err
+	}
+
 	// Transfer order amount to module
-	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(msg.Creator), coinsBid)
+	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, owner, coinsBid)
 	if sdkError != nil {
 		return nil, sdkError
 	}
