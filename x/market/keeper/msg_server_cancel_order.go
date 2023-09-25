@@ -85,6 +85,15 @@ func (k msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder)
 		}
 	}
 
+	coinBid := sdk.NewCoin(order.DenomBid, order.Amount)
+	coinsBid := sdk.NewCoins(coinBid)
+
+	// Transfer order amount to module
+	sdkError := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(msg.Creator), coinsBid)
+	if sdkError != nil {
+		return nil, sdkError
+	}
+
 	order.Status = "canceled"
 	order.UpdTime = ctx.BlockHeader().Time.Unix()
 	k.RemoveOrderOwner(ctx, order.Owner, order.Uid)
