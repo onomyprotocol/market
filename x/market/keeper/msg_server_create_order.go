@@ -4,7 +4,6 @@ import (
 	"context"
 	"math/big"
 	"strconv"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -63,7 +62,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		Prev:      prev,
 		Next:      next,
 		BegTime:   ctx.BlockHeader().Time.Unix(),
-		EndTime:   0,
+		UpdTime:   0,
 	}
 
 	// Case 1
@@ -81,17 +80,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 			// Update MemberBid Stop Head
 			memberBid.Stop = uid
-
-			// update memberBid event
-			ctx.EventManager().EmitEvent(
-				sdk.NewEvent(
-					types.EventTypeUpdateMember,
-					sdk.NewAttribute(types.AttributeKeyDenomA, memberBid.DenomA),
-					sdk.NewAttribute(types.AttributeKeyDenomB, memberBid.DenomB),
-					sdk.NewAttribute(types.AttributeKeyStop, strconv.FormatUint(memberBid.Stop, 10)),
-				),
-			)
-
 		}
 
 		if msg.OrderType == "limit" {
@@ -101,17 +89,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 
 			// Update MemberBid Limit Head
 			memberBid.Limit = uid
-
-			// update memberBid event
-			ctx.EventManager().EmitEvent(
-				sdk.NewEvent(
-					types.EventTypeUpdateMember,
-					sdk.NewAttribute(types.AttributeKeyDenomA, memberBid.DenomA),
-					sdk.NewAttribute(types.AttributeKeyDenomB, memberBid.DenomB),
-					sdk.NewAttribute(types.AttributeKeyStop, strconv.FormatUint(memberBid.Limit, 10)),
-				),
-			)
-
 		}
 
 		k.SetMember(ctx, memberBid)
@@ -277,21 +254,6 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	k.SetOrder(ctx, order)
 	k.SetOrderOwner(ctx, order.Owner, order.Uid)
 
-	// create order event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateOrder,
-			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(order.Uid, 10)),
-			sdk.NewAttribute(types.AttributeKeyDenomA, memberBid.DenomA),
-			sdk.NewAttribute(types.AttributeKeyDenomB, memberBid.DenomB),
-			sdk.NewAttribute(types.AttributeKeyOrderType, order.OrderType),
-			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount),
-			sdk.NewAttribute(types.AttributeKeyRate, strings.Join(msg.Rate, ",")),
-			sdk.NewAttribute(types.AttributeKeyPrev, msg.Prev),
-			sdk.NewAttribute(types.AttributeKeyNext, msg.Next),
-		),
-	)
-
 	if msg.OrderType == "stop" {
 		// Execute Ask Limit first which will check stops
 		// if there are no Ask Limits enabled.  This is a safe
@@ -443,7 +405,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 	if limitHeadBid.Amount.GTE(amountDenomBidAskOrder) && limitHeadAsk.Amount.GTE(amountDenomAskBidOrder) {
 		// Both orders may be filled
 		limitHeadAsk.Status = "filled"
-		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
+		limitHeadAsk.UpdTime = ctx.BlockHeader().Time.Unix()
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -453,7 +415,7 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		}
 
 		limitHeadBid.Status = "filled"
-		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+		limitHeadBid.UpdTime = ctx.BlockHeader().Time.Unix()
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -518,13 +480,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		partialFillOrder.Amount = amountDenomBidAskOrder
 		partialFillOrder.Status = "filled"
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+		partialFillOrder.UpdTime = ctx.BlockHeader().Time.Unix()
 		partialFillOrder.Next = limitHeadAsk.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Ask Order
 		limitHeadAsk.Status = "filled"
-		limitHeadAsk.EndTime = ctx.BlockHeader().Time.Unix()
+		limitHeadAsk.UpdTime = ctx.BlockHeader().Time.Unix()
 		memberAsk.Limit = limitHeadAsk.Next
 
 		if limitHeadAsk.Next != 0 {
@@ -588,13 +550,13 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		partialFillOrder.Amount = amountDenomAskBidOrder
 		partialFillOrder.Status = "filled"
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+		partialFillOrder.UpdTime = ctx.BlockHeader().Time.Unix()
 		partialFillOrder.Next = limitHeadBid.Uid
 		partialFillOrder.Prev = uint64(0)
 
 		// Complete fill of Bid Order
 		limitHeadBid.Status = "filled"
-		limitHeadBid.EndTime = ctx.BlockHeader().Time.Unix()
+		limitHeadBid.UpdTime = ctx.BlockHeader().Time.Unix()
 		memberBid.Limit = limitHeadBid.Next
 
 		if limitHeadBid.Next != 0 {
@@ -740,7 +702,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 	if limitHead.Amount.Equal(strikeAmountBid) {
 		limitHead.Status = "filled"
-		limitHead.EndTime = ctx.BlockHeader().Time.Unix()
+		limitHead.UpdTime = ctx.BlockHeader().Time.Unix()
 		limitHead.Prev = 0
 		k.RemoveOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
 
@@ -765,7 +727,7 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 		partialFillOrder.Amount = strikeAmountBid
 		partialFillOrder.Status = "filled"
-		partialFillOrder.EndTime = ctx.BlockHeader().Time.Unix()
+		partialFillOrder.UpdTime = ctx.BlockHeader().Time.Unix()
 
 		limitHead.Amount = limitHead.Amount.Sub(strikeAmountBid)
 
@@ -854,7 +816,7 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 
 	// THEN set Head(Stop).Status to filled as entire order will be filled
 	stopHead.Status = "filled"
-	stopHead.EndTime = ctx.BlockHeader().Time.Unix()
+	stopHead.UpdTime = ctx.BlockHeader().Time.Unix()
 	k.RemoveOrderOwner(ctx, stopHead.Owner, stopHead.Uid)
 
 	// Set Next Position as Head of Stop Book

@@ -108,7 +108,7 @@ func (k Keeper) GetHistory(
 			Prev:      order.Prev,
 			Next:      order.Next,
 			BegTime:   order.BegTime,
-			EndTime:   order.EndTime,
+			UpdTime:   order.UpdTime,
 		}
 		list = append(list, orderResponse)
 		counter = counter + 1

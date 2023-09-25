@@ -25,7 +25,7 @@ message Order {
   uint64 prev = 9;
   uint64 next = 10;
   int64 beg_time = 11;
-  int64 end_time = 12;
+  int64 upd_time = 12;
 }
 
 message Orders {
@@ -44,5 +44,5 @@ message OrderResponse {
   uint64 prev = 9;
   uint64 next = 10;
   int64 beg_time = 11;
-  int64 end_time = 12;
+  int64 upd_time = 12;
 }

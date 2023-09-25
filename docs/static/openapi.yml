@@ -28811,7 +28811,7 @@ paths:
                     beg_time:
                       type: string
                       format: int64
-                    end_time:
+                    upd_time:
                       type: string
                       format: int64
               pagination:
@@ -29740,7 +29740,7 @@ paths:
                     beg_time:
                       type: string
                       format: int64
-                    end_time:
+                    upd_time:
                       type: string
                       format: int64
               pagination:
@@ -30091,7 +30091,7 @@ paths:
                     beg_time:
                       type: string
                       format: int64
-                    end_time:
+                    upd_time:
                       type: string
                       format: int64
               pagination:
@@ -30367,7 +30367,7 @@ paths:
                     beg_time:
                       type: string
                       format: int64
-                    end_time:
+                    upd_time:
                       type: string
                       format: int64
               pagination:
@@ -30519,7 +30519,7 @@ paths:
                   beg_time:
                     type: string
                     format: int64
-                  end_time:
+                  upd_time:
                     type: string
                     format: int64
         default:
@@ -50122,7 +50122,7 @@ definitions:
       beg_time:
         type: string
         format: int64
-      end_time:
+      upd_time:
         type: string
         format: int64
   pendulumlabs.market.market.OrderResponse:
@@ -50156,7 +50156,7 @@ definitions:
       beg_time:
         type: string
         format: int64
-      end_time:
+      upd_time:
         type: string
         format: int64
   pendulumlabs.market.market.Orders:
@@ -50383,7 +50383,7 @@ definitions:
             beg_time:
               type: string
               format: int64
-            end_time:
+            upd_time:
               type: string
               format: int64
       pagination:
@@ -50621,7 +50621,7 @@ definitions:
             beg_time:
               type: string
               format: int64
-            end_time:
+            upd_time:
               type: string
               format: int64
       pagination:
@@ -50719,7 +50719,7 @@ definitions:
           beg_time:
             type: string
             format: int64
-          end_time:
+          upd_time:
             type: string
             format: int64
   pendulumlabs.market.market.QueryOrdersResponse:
@@ -50758,7 +50758,7 @@ definitions:
             beg_time:
               type: string
               format: int64
-            end_time:
+            upd_time:
               type: string
               format: int64
       pagination:

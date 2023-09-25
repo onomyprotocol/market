@@ -177,7 +177,7 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 			Prev:      0,
 			Next:      pool.History,
 			BegTime:   ctx.BlockHeader().Time.Unix(),
-			EndTime:   ctx.BlockHeader().Time.Unix(),
+			UpdTime:   ctx.BlockHeader().Time.Unix(),
 		}
 
 		pool.History = uid

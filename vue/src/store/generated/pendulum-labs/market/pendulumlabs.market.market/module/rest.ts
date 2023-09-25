@@ -83,7 +83,7 @@ export interface MarketOrder {
   beg_time?: string;
 
   /** @format int64 */
-  end_time?: string;
+  upd_time?: string;
 }
 
 export interface MarketOrderResponse {
@@ -107,7 +107,7 @@ export interface MarketOrderResponse {
   beg_time?: string;
 
   /** @format int64 */
-  end_time?: string;
+  upd_time?: string;
 }
 
 export interface MarketOrders {

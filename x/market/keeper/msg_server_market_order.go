@@ -108,7 +108,7 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 		Prev:      0,
 		Next:      pool.History,
 		BegTime:   ctx.BlockHeader().Time.Unix(),
-		EndTime:   ctx.BlockHeader().Time.Unix(),
+		UpdTime:   ctx.BlockHeader().Time.Unix(),
 	}
 
 	pool.History = uid

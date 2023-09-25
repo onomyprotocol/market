@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -121,44 +120,14 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		pool,
 	)
 
-	// create pool event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreatePool,
-			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeaders, msg.Creator),
-			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-		),
-	)
-
 	k.SetMember(
 		ctx,
 		member1,
 	)
 
-	// create member1 event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateMember,
-			sdk.NewAttribute(types.AttributeKeyDenomA, denom2),
-			sdk.NewAttribute(types.AttributeKeyDenomB, denom1),
-			sdk.NewAttribute(types.AttributeKeyBalance, coinPair.AmountOf(denom1).String()),
-		),
-	)
-
 	k.SetMember(
 		ctx,
 		member2,
-	)
-
-	// create member2 event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateMember,
-			sdk.NewAttribute(types.AttributeKeyDenomA, denom1),
-			sdk.NewAttribute(types.AttributeKeyDenomB, denom2),
-			sdk.NewAttribute(types.AttributeKeyBalance, coinPair.AmountOf(denom2).String()),
-		),
 	)
 
 	// Add the drop to the keeper
@@ -170,18 +139,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	k.SetDropOwner(
 		ctx,
 		drop,
-	)
-
-	// create drop event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateDrop,
-			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(count, 10)),
-			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
-			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-			sdk.NewAttribute(types.AttributeKeyProduct, drops.String()),
-		),
 	)
 
 	// Update drop uid count
