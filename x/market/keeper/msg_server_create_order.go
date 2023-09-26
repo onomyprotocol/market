@@ -336,7 +336,7 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	}
 
 	if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
-		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool error %s", memberAsk.Pair)
+		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool product lower after Trade %s", memberAsk.Pair)
 	}
 
 	profitAsk, profitBid := k.Profit(productBeg, memberAsk, memberBid)
@@ -356,6 +356,10 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 		return nil, err
 	}
 
+	if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool product lower after Payout %s", memberAsk.Pair)
+	}
+
 	memberAsk, err = k.Burn(ctx, profitAsk, memberAsk)
 	if err != nil {
 		return nil, err
@@ -364,6 +368,10 @@ func (k msgServer) CreateOrder(goCtx context.Context, msg *types.MsgCreateOrder)
 	memberBid, err = k.Burn(ctx, profitBid, memberBid)
 	if err != nil {
 		return nil, err
+	}
+
+	if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+		return nil, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool product lower after Burn %s", memberAsk.Pair)
 	}
 
 	k.SetMember(ctx, memberAsk)

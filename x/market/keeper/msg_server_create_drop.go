@@ -99,12 +99,6 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 
 	k.SetPool(ctx, pool)
 
-	var leaders []string
-
-	for i := 0; i < len(pool.Leaders); i++ {
-		leaders = append(leaders, "{"+strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ")+"}")
-	}
-
 	var drop = types.Drop{
 		Uid:     uid,
 		Owner:   msg.Creator,
