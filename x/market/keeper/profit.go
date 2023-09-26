@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/pendulum-labs/market/x/market/types"
 )
 
@@ -121,6 +122,8 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 			return burnings, nil
 		}
 
+		productBeg := memberAsk.Balance.Mul(memberBid.Balance)
+
 		// Market Order
 		// A(i)*B(i) = A(f)*B(f)
 		// A(f) = A(i)*B(i)/B(f)
@@ -141,6 +144,13 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 			return burnings, nil
 		}
 
+		memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
+		memberBid.Balance = memberBid.Balance.Add(amountBid)
+
+		if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+			return burnings, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool product lower after Burn Trade %s", memberAsk.Pair)
+		}
+
 		pool, found := k.GetPool(ctx, memberAsk.Pair)
 		if !found {
 			return burnings, nil
@@ -153,8 +163,9 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 			return burnings, err
 		}
 
-		memberAsk.Balance = memberAsk.Balance.Sub(amountAsk)
-		memberBid.Balance = memberBid.Balance.Add(amountBid)
+		if memberAsk.Balance.Mul(memberBid.Balance).LT(productBeg) {
+			return burnings, sdkerrors.Wrapf(types.ErrProductInvalid, "Pool product lower after Burn Payout %s", memberAsk.Pair)
+		}
 
 		k.SetMember(ctx, memberAsk)
 		k.SetMember(ctx, memberBid)
@@ -202,7 +213,7 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 
 		k.AddBurned(ctx, burnCoins.AmountOf(burnDenom))
 
-		burnings.Amount = burnings.Amount.Sub(burnCoin.Amount)
+		burnings.Amount = sdk.ZeroInt()
 
 	}
 
