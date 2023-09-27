@@ -80,6 +80,14 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			Leaders: []*types.Leader{&leader},
 			Denom1:  coinPair.GetDenomByIndex(0),
 			Denom2:  coinPair.GetDenomByIndex(1),
+			Volume1: &types.Volume{
+				Denom:  coinPair.GetDenomByIndex(0),
+				Amount: sdk.ZeroInt(),
+			},
+			Volume2: &types.Volume{
+				Denom:  coinPair.GetDenomByIndex(1),
+				Amount: sdk.ZeroInt(),
+			},
 			Drops:   drops,
 			History: uint64(0),
 		}

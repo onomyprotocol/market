@@ -128,6 +128,8 @@ export interface MarketPool {
   pair?: string;
   denom1?: string;
   denom2?: string;
+  volume1?: MarketVolume;
+  volume2?: MarketVolume;
   leaders?: MarketLeader[];
   drops?: string;
 
@@ -318,6 +320,11 @@ export interface MarketQueryParamsResponse {
 }
 
 export interface MarketQueryQuoteResponse {
+  denom?: string;
+  amount?: string;
+}
+
+export interface MarketVolume {
   denom?: string;
   amount?: string;
 }

@@ -10,18 +10,28 @@ option (gogoproto.goproto_getters_all) = false;
 message Pool {
   string pair = 1; 
   string denom1 = 2; 
-  string denom2 = 3; 
-  repeated Leader leaders = 4;
-  string drops = 5 [
+  string denom2 = 3;
+  Volume volume1 = 4;
+  Volume volume2 = 5;
+  repeated Leader leaders = 6;
+  string drops = 7 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
-  uint64 history = 6;
+  uint64 history = 8;
 }
 
 message Leader {
   string address = 1;
   string drops = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message Volume {
+  string denom = 1;
+  string amount = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];

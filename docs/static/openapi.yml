@@ -30622,6 +30622,20 @@ paths:
                       type: string
                     denom2:
                       type: string
+                    volume1:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                    volume2:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
                     leaders:
                       type: array
                       items:
@@ -30759,6 +30773,20 @@ paths:
                     type: string
                   denom2:
                     type: string
+                  volume1:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                  volume2:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
                   leaders:
                     type: array
                     items:
@@ -50194,6 +50222,20 @@ definitions:
         type: string
       denom2:
         type: string
+      volume1:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+      volume2:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
       leaders:
         type: array
         items:
@@ -50308,6 +50350,20 @@ definitions:
               type: string
             denom2:
               type: string
+            volume1:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+            volume2:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
             leaders:
               type: array
               items:
@@ -50571,6 +50627,20 @@ definitions:
             type: string
           denom2:
             type: string
+          volume1:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+          volume2:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
           leaders:
             type: array
             items:
@@ -50809,6 +50879,13 @@ definitions:
             title: 'market_fee (parameter / 10000), 9999 representing as 99.99%'
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   pendulumlabs.market.market.QueryQuoteResponse:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+  pendulumlabs.market.market.Volume:
     type: object
     properties:
       denom:

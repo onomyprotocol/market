@@ -8,6 +8,8 @@ export interface Pool {
   pair: string;
   denom1: string;
   denom2: string;
+  volume1: Volume | undefined;
+  volume2: Volume | undefined;
   leaders: Leader[];
   drops: string;
   history: number;
@@ -16,6 +18,11 @@ export interface Pool {
 export interface Leader {
   address: string;
   drops: string;
+}
+
+export interface Volume {
+  denom: string;
+  amount: string;
 }
 
 const basePool: object = {
@@ -37,14 +44,20 @@ export const Pool = {
     if (message.denom2 !== "") {
       writer.uint32(26).string(message.denom2);
     }
+    if (message.volume1 !== undefined) {
+      Volume.encode(message.volume1, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.volume2 !== undefined) {
+      Volume.encode(message.volume2, writer.uint32(42).fork()).ldelim();
+    }
     for (const v of message.leaders) {
-      Leader.encode(v!, writer.uint32(34).fork()).ldelim();
+      Leader.encode(v!, writer.uint32(50).fork()).ldelim();
     }
     if (message.drops !== "") {
-      writer.uint32(42).string(message.drops);
+      writer.uint32(58).string(message.drops);
     }
     if (message.history !== 0) {
-      writer.uint32(48).uint64(message.history);
+      writer.uint32(64).uint64(message.history);
     }
     return writer;
   },
@@ -67,12 +80,18 @@ export const Pool = {
           message.denom2 = reader.string();
           break;
         case 4:
-          message.leaders.push(Leader.decode(reader, reader.uint32()));
+          message.volume1 = Volume.decode(reader, reader.uint32());
           break;
         case 5:
-          message.drops = reader.string();
+          message.volume2 = Volume.decode(reader, reader.uint32());
           break;
         case 6:
+          message.leaders.push(Leader.decode(reader, reader.uint32()));
+          break;
+        case 7:
+          message.drops = reader.string();
+          break;
+        case 8:
           message.history = longToNumber(reader.uint64() as Long);
           break;
         default:
@@ -101,6 +120,16 @@ export const Pool = {
     } else {
       message.denom2 = "";
     }
+    if (object.volume1 !== undefined && object.volume1 !== null) {
+      message.volume1 = Volume.fromJSON(object.volume1);
+    } else {
+      message.volume1 = undefined;
+    }
+    if (object.volume2 !== undefined && object.volume2 !== null) {
+      message.volume2 = Volume.fromJSON(object.volume2);
+    } else {
+      message.volume2 = undefined;
+    }
     if (object.leaders !== undefined && object.leaders !== null) {
       for (const e of object.leaders) {
         message.leaders.push(Leader.fromJSON(e));
@@ -124,6 +153,14 @@ export const Pool = {
     message.pair !== undefined && (obj.pair = message.pair);
     message.denom1 !== undefined && (obj.denom1 = message.denom1);
     message.denom2 !== undefined && (obj.denom2 = message.denom2);
+    message.volume1 !== undefined &&
+      (obj.volume1 = message.volume1
+        ? Volume.toJSON(message.volume1)
+        : undefined);
+    message.volume2 !== undefined &&
+      (obj.volume2 = message.volume2
+        ? Volume.toJSON(message.volume2)
+        : undefined);
     if (message.leaders) {
       obj.leaders = message.leaders.map((e) =>
         e ? Leader.toJSON(e) : undefined
@@ -153,6 +190,16 @@ export const Pool = {
       message.denom2 = object.denom2;
     } else {
       message.denom2 = "";
+    }
+    if (object.volume1 !== undefined && object.volume1 !== null) {
+      message.volume1 = Volume.fromPartial(object.volume1);
+    } else {
+      message.volume1 = undefined;
+    }
+    if (object.volume2 !== undefined && object.volume2 !== null) {
+      message.volume2 = Volume.fromPartial(object.volume2);
+    } else {
+      message.volume2 = undefined;
     }
     if (object.leaders !== undefined && object.leaders !== null) {
       for (const e of object.leaders) {
@@ -240,6 +287,78 @@ export const Leader = {
       message.drops = object.drops;
     } else {
       message.drops = "";
+    }
+    return message;
+  },
+};
+
+const baseVolume: object = { denom: "", amount: "" };
+
+export const Volume = {
+  encode(message: Volume, writer: Writer = Writer.create()): Writer {
+    if (message.denom !== "") {
+      writer.uint32(10).string(message.denom);
+    }
+    if (message.amount !== "") {
+      writer.uint32(18).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): Volume {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseVolume } as Volume;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom = reader.string();
+          break;
+        case 2:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Volume {
+    const message = { ...baseVolume } as Volume;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = String(object.denom);
+    } else {
+      message.denom = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: Volume): unknown {
+    const obj: any = {};
+    message.denom !== undefined && (obj.denom = message.denom);
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<Volume>): Volume {
+    const message = { ...baseVolume } as Volume;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = object.denom;
+    } else {
+      message.denom = "";
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
     }
     return message;
   },
