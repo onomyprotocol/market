@@ -193,6 +193,17 @@ func (k Keeper) BurnTrade(ctx sdk.Context, burnings types.Burnings) (types.Burni
 
 		pool.History = uid
 
+		if pool.Denom1 == burnings.Denom {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(amountBid)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(amountAsk)
+		} else {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(amountAsk)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(amountBid)
+		}
+
+		k.IncVolume(ctx, burnings.Denom, amountBid)
+		k.IncVolume(ctx, burnDenom, amountAsk)
+
 		k.SetPool(ctx, pool)
 		k.SetUidCount(ctx, uid+1)
 		k.SetOrder(ctx, order)

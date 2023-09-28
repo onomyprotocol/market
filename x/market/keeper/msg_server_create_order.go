@@ -436,7 +436,18 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		limitHeadBid.Next = limitHeadAsk.Uid
 		limitHeadAsk.Prev = limitHeadBid.Uid
 		limitHeadAsk.Next = pool.History
+
 		pool.History = limitHeadBid.Uid
+		if pool.Denom1 == limitHeadBid.DenomBid {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(limitHeadBid.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(limitHeadAsk.Amount)
+		} else {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(limitHeadAsk.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(limitHeadBid.Amount)
+		}
+
+		k.IncVolume(ctx, limitHeadBid.DenomBid, limitHeadBid.Amount)
+		k.IncVolume(ctx, limitHeadAsk.DenomBid, limitHeadAsk.Amount)
 
 		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
 		ownerBid, _ := sdk.AccAddressFromBech32(limitHeadBid.Owner)
@@ -508,6 +519,17 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 
 		pool.History = partialFillOrder.Uid
 
+		if pool.Denom1 == partialFillOrder.DenomBid {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(partialFillOrder.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(limitHeadAsk.Amount)
+		} else {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(limitHeadAsk.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(partialFillOrder.Amount)
+		}
+
+		k.IncVolume(ctx, partialFillOrder.DenomBid, partialFillOrder.Amount)
+		k.IncVolume(ctx, limitHeadAsk.DenomBid, limitHeadAsk.Amount)
+
 		limitHeadBid.Amount = limitHeadBid.Amount.Sub(amountDenomBidAskOrder)
 
 		ownerAsk, _ := sdk.AccAddressFromBech32(limitHeadAsk.Owner)
@@ -577,6 +599,17 @@ func ExecuteOverlap(k msgServer, ctx sdk.Context, denomAsk string, denomBid stri
 		limitHeadBid.Next = pool.History
 
 		pool.History = partialFillOrder.Uid
+
+		if pool.Denom1 == limitHeadBid.DenomBid {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(limitHeadBid.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(partialFillOrder.Amount)
+		} else {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(partialFillOrder.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(limitHeadBid.Amount)
+		}
+
+		k.IncVolume(ctx, limitHeadBid.DenomBid, limitHeadBid.Amount)
+		k.IncVolume(ctx, partialFillOrder.DenomBid, partialFillOrder.Amount)
 
 		limitHeadAsk.Amount = limitHeadAsk.Amount.Sub(amountDenomAskBidOrder)
 
@@ -725,6 +758,17 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 
 		pool.History = limitHead.Uid
 
+		if pool.Denom1 == limitHead.DenomBid {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(limitHead.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(strikeAmountAsk)
+		} else {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(strikeAmountAsk)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(limitHead.Amount)
+		}
+
+		k.IncVolume(ctx, limitHead.DenomBid, limitHead.Amount)
+		k.IncVolume(ctx, limitHead.DenomAsk, strikeAmountAsk)
+
 	} else {
 		// Add partially filled order to history
 		// Keep remainder of order into book
@@ -742,15 +786,26 @@ func ExecuteLimit(k msgServer, ctx sdk.Context, denomAsk string, denomBid string
 		if pool.History == 0 {
 			partialFillOrder.Prev = 0
 			partialFillOrder.Next = 0
-			pool.History = partialFillOrder.Uid
 		} else {
 			prevFilledOrder, _ := k.GetOrder(ctx, pool.History)
 			prevFilledOrder.Prev = partialFillOrder.Uid
 			k.SetOrder(ctx, prevFilledOrder)
 			partialFillOrder.Prev = 0
 			partialFillOrder.Next = prevFilledOrder.Uid
-			pool.History = partialFillOrder.Uid
 		}
+
+		pool.History = partialFillOrder.Uid
+
+		if pool.Denom1 == partialFillOrder.DenomBid {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(partialFillOrder.Amount)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(strikeAmountAsk)
+		} else {
+			pool.Volume1.Amount = pool.Volume1.Amount.Add(strikeAmountAsk)
+			pool.Volume2.Amount = pool.Volume2.Amount.Add(partialFillOrder.Amount)
+		}
+
+		k.IncVolume(ctx, limitHead.DenomBid, limitHead.Amount)
+		k.IncVolume(ctx, limitHead.DenomAsk, strikeAmountAsk)
 
 		k.SetOrder(ctx, partialFillOrder)
 		k.SetOrderOwner(ctx, limitHead.Owner, limitHead.Uid)
@@ -855,6 +910,17 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	// Update pool order history
 	pool, _ := k.GetPool(ctx, memberAsk.Pair)
 	pool.History = stopHead.Uid
+
+	if pool.Denom1 == stopHead.DenomBid {
+		pool.Volume1.Amount = pool.Volume1.Amount.Add(stopHead.Amount)
+		pool.Volume2.Amount = pool.Volume2.Amount.Add(strikeAmountAsk)
+	} else {
+		pool.Volume1.Amount = pool.Volume1.Amount.Add(strikeAmountAsk)
+		pool.Volume2.Amount = pool.Volume2.Amount.Add(stopHead.Amount)
+	}
+
+	k.IncVolume(ctx, stopHead.DenomBid, stopHead.Amount)
+	k.IncVolume(ctx, stopHead.DenomAsk, strikeAmountAsk)
 
 	// order filled
 	// just add the order to history

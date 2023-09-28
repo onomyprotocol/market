@@ -113,6 +113,17 @@ func (k msgServer) MarketOrder(goCtx context.Context, msg *types.MsgMarketOrder)
 
 	pool.History = uid
 
+	if pool.Denom1 == msg.DenomBid {
+		pool.Volume1.Amount = pool.Volume1.Amount.Add(amountBid)
+		pool.Volume2.Amount = pool.Volume2.Amount.Add(amountAsk)
+	} else {
+		pool.Volume1.Amount = pool.Volume1.Amount.Add(amountAsk)
+		pool.Volume2.Amount = pool.Volume2.Amount.Add(amountBid)
+	}
+
+	k.IncVolume(ctx, msg.DenomBid, amountBid)
+	k.IncVolume(ctx, msg.DenomAsk, amountAsk)
+
 	k.SetPool(ctx, pool)
 	k.SetUidCount(ctx, uid+1)
 	k.SetOrder(ctx, order)
