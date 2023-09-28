@@ -182,6 +182,21 @@ export interface MarketQueryAllPoolResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryAllVolumeResponse {
+  volumes?: MarketVolume[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface MarketQueryBookResponse {
   book?: MarketOrderResponse[];
 
@@ -321,6 +336,10 @@ export interface MarketQueryParamsResponse {
 
 export interface MarketQueryQuoteResponse {
   denom?: string;
+  amount?: string;
+}
+
+export interface MarketQueryVolumeResponse {
   amount?: string;
 }
 
@@ -1071,6 +1090,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryQuote = (denomBid: string, denomAsk: string, denomAmount: string, amount: string, params: RequestParams = {}) =>
     this.request<MarketQueryQuoteResponse, RpcStatus>({
       path: `/pendulum-labs/market/market/quote/${denomBid}/${denomAsk}/${denomAmount}/${amount}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryVolumeAll
+   * @summary Queries all Volumes.
+   * @request GET:/pendulum-labs/market/market/volume
+   */
+  queryVolumeAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<MarketQueryAllVolumeResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/volume`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryVolume
+   * @summary Queries a Volume by index.
+   * @request GET:/pendulum-labs/market/market/volume/{denom}
+   */
+  queryVolume = (denom: string, params: RequestParams = {}) =>
+    this.request<MarketQueryVolumeResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/volume/${denom}`,
       method: "GET",
       format: "json",
       ...params,

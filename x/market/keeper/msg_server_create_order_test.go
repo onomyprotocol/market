@@ -261,6 +261,10 @@ func TestCreateOrder_BothFillOverlap(t *testing.T) {
 	require.Equal(t, "40", history[0].Amount)
 	require.Equal(t, "30", history[1].Amount)
 
+	volumes := testInput.MarketKeeper.GetAllVolumes(testInput.Context)
+	require.Equalf(t, "30", volumes[0].Amount.String(), volumes[0].Amount.String())
+	require.Equalf(t, "40", volumes[1].Amount.String(), volumes[0].Amount.String())
+
 	require.True(t, len(allorders) == 2)
 
 	// Validate Order
@@ -306,6 +310,10 @@ func TestCreateOrder_OneSide1FillOverlap(t *testing.T) {
 	history, _ := testInput.MarketKeeper.GetHistory(testInput.Context, "CoinA,CoinB", "10")
 	require.Equal(t, "40", history[0].Amount)
 	require.Equal(t, "30", history[1].Amount)
+
+	volumes := testInput.MarketKeeper.GetAllVolumes(testInput.Context)
+	require.Equalf(t, "30", volumes[0].Amount.String(), volumes[0].Amount.String())
+	require.Equalf(t, "40", volumes[1].Amount.String(), volumes[0].Amount.String())
 
 	require.Equal(t, 3, len(allorders))
 

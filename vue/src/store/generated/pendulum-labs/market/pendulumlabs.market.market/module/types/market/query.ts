@@ -2,7 +2,7 @@
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
 import { Params } from "../market/params";
-import { Pool } from "../market/pool";
+import { Pool, Volume } from "../market/pool";
 import {
   PageRequest,
   PageResponse,
@@ -37,6 +37,23 @@ export interface QueryAllPoolRequest {
 
 export interface QueryAllPoolResponse {
   pool: Pool[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryVolumeRequest {
+  denom: string;
+}
+
+export interface QueryVolumeResponse {
+  amount: string;
+}
+
+export interface QueryAllVolumeRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllVolumeResponse {
+  volumes: Volume[];
   pagination: PageResponse | undefined;
 }
 
@@ -608,6 +625,277 @@ export const QueryAllPoolResponse = {
     if (object.pool !== undefined && object.pool !== null) {
       for (const e of object.pool) {
         message.pool.push(Pool.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryVolumeRequest: object = { denom: "" };
+
+export const QueryVolumeRequest = {
+  encode(
+    message: QueryVolumeRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denom !== "") {
+      writer.uint32(10).string(message.denom);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryVolumeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryVolumeRequest } as QueryVolumeRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryVolumeRequest {
+    const message = { ...baseQueryVolumeRequest } as QueryVolumeRequest;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = String(object.denom);
+    } else {
+      message.denom = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryVolumeRequest): unknown {
+    const obj: any = {};
+    message.denom !== undefined && (obj.denom = message.denom);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryVolumeRequest>): QueryVolumeRequest {
+    const message = { ...baseQueryVolumeRequest } as QueryVolumeRequest;
+    if (object.denom !== undefined && object.denom !== null) {
+      message.denom = object.denom;
+    } else {
+      message.denom = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryVolumeResponse: object = { amount: "" };
+
+export const QueryVolumeResponse = {
+  encode(
+    message: QueryVolumeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.amount !== "") {
+      writer.uint32(10).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryVolumeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryVolumeResponse } as QueryVolumeResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryVolumeResponse {
+    const message = { ...baseQueryVolumeResponse } as QueryVolumeResponse;
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryVolumeResponse): unknown {
+    const obj: any = {};
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryVolumeResponse>): QueryVolumeResponse {
+    const message = { ...baseQueryVolumeResponse } as QueryVolumeResponse;
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryAllVolumeRequest: object = {};
+
+export const QueryAllVolumeRequest = {
+  encode(
+    message: QueryAllVolumeRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllVolumeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllVolumeRequest } as QueryAllVolumeRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllVolumeRequest {
+    const message = { ...baseQueryAllVolumeRequest } as QueryAllVolumeRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllVolumeRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllVolumeRequest>
+  ): QueryAllVolumeRequest {
+    const message = { ...baseQueryAllVolumeRequest } as QueryAllVolumeRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllVolumeResponse: object = {};
+
+export const QueryAllVolumeResponse = {
+  encode(
+    message: QueryAllVolumeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.volumes) {
+      Volume.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllVolumeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllVolumeResponse } as QueryAllVolumeResponse;
+    message.volumes = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.volumes.push(Volume.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllVolumeResponse {
+    const message = { ...baseQueryAllVolumeResponse } as QueryAllVolumeResponse;
+    message.volumes = [];
+    if (object.volumes !== undefined && object.volumes !== null) {
+      for (const e of object.volumes) {
+        message.volumes.push(Volume.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllVolumeResponse): unknown {
+    const obj: any = {};
+    if (message.volumes) {
+      obj.volumes = message.volumes.map((e) =>
+        e ? Volume.toJSON(e) : undefined
+      );
+    } else {
+      obj.volumes = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllVolumeResponse>
+  ): QueryAllVolumeResponse {
+    const message = { ...baseQueryAllVolumeResponse } as QueryAllVolumeResponse;
+    message.volumes = [];
+    if (object.volumes !== undefined && object.volumes !== null) {
+      for (const e of object.volumes) {
+        message.volumes.push(Volume.fromPartial(e));
       }
     }
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -4236,6 +4524,10 @@ export interface Query {
   Pool(request: QueryGetPoolRequest): Promise<QueryGetPoolResponse>;
   /** Queries a list of Pool items. */
   PoolAll(request: QueryAllPoolRequest): Promise<QueryAllPoolResponse>;
+  /** Queries a Volume by index. */
+  Volume(request: QueryVolumeRequest): Promise<QueryVolumeResponse>;
+  /** Queries all Volumes. */
+  VolumeAll(request: QueryAllVolumeRequest): Promise<QueryAllVolumeResponse>;
   /** Queries a Drop by index. */
   Drop(request: QueryDropRequest): Promise<QueryDropResponse>;
   /** Queries a Drop by index. */
@@ -4332,6 +4624,28 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllPoolResponse.decode(new Reader(data))
+    );
+  }
+
+  Volume(request: QueryVolumeRequest): Promise<QueryVolumeResponse> {
+    const data = QueryVolumeRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "Volume",
+      data
+    );
+    return promise.then((data) => QueryVolumeResponse.decode(new Reader(data)));
+  }
+
+  VolumeAll(request: QueryAllVolumeRequest): Promise<QueryAllVolumeResponse> {
+    const data = QueryAllVolumeRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "pendulumlabs.market.market.Query",
+      "VolumeAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllVolumeResponse.decode(new Reader(data))
     );
   }
 
