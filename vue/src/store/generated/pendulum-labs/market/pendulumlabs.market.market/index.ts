@@ -12,6 +12,7 @@ import { OrderResponse } from "./module/types/market/order"
 import { Params } from "./module/types/market/params"
 import { Pool } from "./module/types/market/pool"
 import { Leader } from "./module/types/market/pool"
+import { Volume } from "./module/types/market/pool"
 import { QueryDropOwnerPairSumRequest } from "./module/types/market/query"
 import { QueryDropOwnerPairSumResponse } from "./module/types/market/query"
 import { QueryDropOwnerPairUidsRequest } from "./module/types/market/query"
@@ -21,7 +22,7 @@ import { QueryOrderOwnerPairRequest } from "./module/types/market/query"
 import { QueryOrderOwnerPairResponse } from "./module/types/market/query"
 
 
-export { Burnings, Burned, Drop, Drops, DropPairs, Member, Order, Orders, OrderResponse, Params, Pool, Leader, QueryDropOwnerPairSumRequest, QueryDropOwnerPairSumResponse, QueryDropOwnerPairUidsRequest, QueryUidsResponse, QueryDropOwnerPairDetailRequest, QueryOrderOwnerPairRequest, QueryOrderOwnerPairResponse };
+export { Burnings, Burned, Drop, Drops, DropPairs, Member, Order, Orders, OrderResponse, Params, Pool, Leader, Volume, QueryDropOwnerPairSumRequest, QueryDropOwnerPairSumResponse, QueryDropOwnerPairUidsRequest, QueryUidsResponse, QueryDropOwnerPairDetailRequest, QueryOrderOwnerPairRequest, QueryOrderOwnerPairResponse };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -63,6 +64,8 @@ const getDefaultState = () => {
 				Burned: {},
 				Pool: {},
 				PoolAll: {},
+				Volume: {},
+				VolumeAll: {},
 				Drop: {},
 				DropAmounts: {},
 				DropCoin: {},
@@ -96,6 +99,7 @@ const getDefaultState = () => {
 						Params: getStructure(Params.fromPartial({})),
 						Pool: getStructure(Pool.fromPartial({})),
 						Leader: getStructure(Leader.fromPartial({})),
+						Volume: getStructure(Volume.fromPartial({})),
 						QueryDropOwnerPairSumRequest: getStructure(QueryDropOwnerPairSumRequest.fromPartial({})),
 						QueryDropOwnerPairSumResponse: getStructure(QueryDropOwnerPairSumResponse.fromPartial({})),
 						QueryDropOwnerPairUidsRequest: getStructure(QueryDropOwnerPairUidsRequest.fromPartial({})),
@@ -154,6 +158,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.PoolAll[JSON.stringify(params)] ?? {}
+		},
+				getVolume: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Volume[JSON.stringify(params)] ?? {}
+		},
+				getVolumeAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.VolumeAll[JSON.stringify(params)] ?? {}
 		},
 				getDrop: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -390,6 +406,54 @@ export default {
 				return getters['getPoolAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryPoolAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryVolume({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryVolume( key.denom)).data
+				
+					
+				commit('QUERY', { query: 'Volume', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryVolume', payload: { options: { all }, params: {...key},query }})
+				return getters['getVolume']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryVolume API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryVolumeAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryVolumeAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryVolumeAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'VolumeAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryVolumeAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getVolumeAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryVolumeAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
@@ -849,21 +913,6 @@ export default {
 		},
 		
 		
-		async sendMsgRedeemDrop({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRedeemDrop(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRedeemDrop:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgCreatePool({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -909,21 +958,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgMarketOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -939,20 +973,37 @@ export default {
 				}
 			}
 		},
-		
-		async MsgRedeemDrop({ rootGetters }, { value }) {
+		async sendMsgRedeemDrop({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgRedeemDrop(value)
-				return msg
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRedeemDrop:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgRedeemDrop:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		async sendMsgCancelOrder({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCancelOrder(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCancelOrder:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		
 		async MsgCreatePool({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -992,19 +1043,6 @@ export default {
 				}
 			}
 		},
-		async MsgCancelOrder({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgCancelOrder(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgMarketOrder({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -1015,6 +1053,32 @@ export default {
 					throw new Error('TxClient:MsgMarketOrder:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgMarketOrder:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRedeemDrop({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRedeemDrop(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRedeemDrop:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCancelOrder({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCancelOrder(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCancelOrder:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCancelOrder:Create Could not create message: ' + e.message)
 				}
 			}
 		},

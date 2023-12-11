@@ -16,7 +16,7 @@ export interface Order {
   prev: number;
   next: number;
   beg_time: number;
-  end_time: number;
+  upd_time: number;
 }
 
 export interface Orders {
@@ -35,7 +35,7 @@ export interface OrderResponse {
   prev: number;
   next: number;
   beg_time: number;
-  end_time: number;
+  upd_time: number;
 }
 
 const baseOrder: object = {
@@ -50,7 +50,7 @@ const baseOrder: object = {
   prev: 0,
   next: 0,
   beg_time: 0,
-  end_time: 0,
+  upd_time: 0,
 };
 
 export const Order = {
@@ -88,8 +88,8 @@ export const Order = {
     if (message.beg_time !== 0) {
       writer.uint32(88).int64(message.beg_time);
     }
-    if (message.end_time !== 0) {
-      writer.uint32(96).int64(message.end_time);
+    if (message.upd_time !== 0) {
+      writer.uint32(96).int64(message.upd_time);
     }
     return writer;
   },
@@ -136,7 +136,7 @@ export const Order = {
           message.beg_time = longToNumber(reader.int64() as Long);
           break;
         case 12:
-          message.end_time = longToNumber(reader.int64() as Long);
+          message.upd_time = longToNumber(reader.int64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -204,10 +204,10 @@ export const Order = {
     } else {
       message.beg_time = 0;
     }
-    if (object.end_time !== undefined && object.end_time !== null) {
-      message.end_time = Number(object.end_time);
+    if (object.upd_time !== undefined && object.upd_time !== null) {
+      message.upd_time = Number(object.upd_time);
     } else {
-      message.end_time = 0;
+      message.upd_time = 0;
     }
     return message;
   },
@@ -229,7 +229,7 @@ export const Order = {
     message.prev !== undefined && (obj.prev = message.prev);
     message.next !== undefined && (obj.next = message.next);
     message.beg_time !== undefined && (obj.beg_time = message.beg_time);
-    message.end_time !== undefined && (obj.end_time = message.end_time);
+    message.upd_time !== undefined && (obj.upd_time = message.upd_time);
     return obj;
   },
 
@@ -291,10 +291,10 @@ export const Order = {
     } else {
       message.beg_time = 0;
     }
-    if (object.end_time !== undefined && object.end_time !== null) {
-      message.end_time = object.end_time;
+    if (object.upd_time !== undefined && object.upd_time !== null) {
+      message.upd_time = object.upd_time;
     } else {
-      message.end_time = 0;
+      message.upd_time = 0;
     }
     return message;
   },
@@ -383,7 +383,7 @@ const baseOrderResponse: object = {
   prev: 0,
   next: 0,
   beg_time: 0,
-  end_time: 0,
+  upd_time: 0,
 };
 
 export const OrderResponse = {
@@ -421,8 +421,8 @@ export const OrderResponse = {
     if (message.beg_time !== 0) {
       writer.uint32(88).int64(message.beg_time);
     }
-    if (message.end_time !== 0) {
-      writer.uint32(96).int64(message.end_time);
+    if (message.upd_time !== 0) {
+      writer.uint32(96).int64(message.upd_time);
     }
     return writer;
   },
@@ -469,7 +469,7 @@ export const OrderResponse = {
           message.beg_time = longToNumber(reader.int64() as Long);
           break;
         case 12:
-          message.end_time = longToNumber(reader.int64() as Long);
+          message.upd_time = longToNumber(reader.int64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -537,10 +537,10 @@ export const OrderResponse = {
     } else {
       message.beg_time = 0;
     }
-    if (object.end_time !== undefined && object.end_time !== null) {
-      message.end_time = Number(object.end_time);
+    if (object.upd_time !== undefined && object.upd_time !== null) {
+      message.upd_time = Number(object.upd_time);
     } else {
-      message.end_time = 0;
+      message.upd_time = 0;
     }
     return message;
   },
@@ -562,7 +562,7 @@ export const OrderResponse = {
     message.prev !== undefined && (obj.prev = message.prev);
     message.next !== undefined && (obj.next = message.next);
     message.beg_time !== undefined && (obj.beg_time = message.beg_time);
-    message.end_time !== undefined && (obj.end_time = message.end_time);
+    message.upd_time !== undefined && (obj.upd_time = message.upd_time);
     return obj;
   },
 
@@ -624,10 +624,10 @@ export const OrderResponse = {
     } else {
       message.beg_time = 0;
     }
-    if (object.end_time !== undefined && object.end_time !== null) {
-      message.end_time = object.end_time;
+    if (object.upd_time !== undefined && object.upd_time !== null) {
+      message.upd_time = object.upd_time;
     } else {
-      message.end_time = 0;
+      message.upd_time = 0;
     }
     return message;
   },

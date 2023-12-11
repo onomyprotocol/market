@@ -36,6 +36,16 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/pool";
 	}
 
+	// Queries a Volume by index.
+	rpc Volume(QueryVolumeRequest) returns (QueryVolumeResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/volume/{denom}";
+	}
+
+	// Queries all Volumes.
+	rpc VolumeAll(QueryAllVolumeRequest) returns (QueryAllVolumeResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/volume";
+	}
+
 	// Queries a Drop by index.
 	rpc Drop(QueryDropRequest) returns (QueryDropResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
@@ -157,6 +167,23 @@ message QueryAllPoolRequest {
 
 message QueryAllPoolResponse {
 	repeated Pool pool = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryVolumeRequest {
+	string denom = 1;
+}
+
+message QueryVolumeResponse {
+	string amount = 1;
+}
+
+message QueryAllVolumeRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllVolumeResponse {
+	repeated Volume volumes = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

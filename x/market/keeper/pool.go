@@ -10,6 +10,14 @@ import (
 
 // SetPool set a specific pool in the store from its index
 func (k Keeper) SetPool(ctx sdk.Context, pool types.Pool) {
+	/*
+		var leaders []string
+
+		for i := 0; i < len(pool.Leaders); i++ {
+			leaders = append(leaders, "{"+strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ")+"}")
+		}
+	*/
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 	b := k.cdc.MustMarshal(&pool)
 	store.Set(types.PoolSetKey(
@@ -108,7 +116,7 @@ func (k Keeper) GetHistory(
 			Prev:      order.Prev,
 			Next:      order.Next,
 			BegTime:   order.BegTime,
-			EndTime:   order.EndTime,
+			UpdTime:   order.UpdTime,
 		}
 		list = append(list, orderResponse)
 		counter = counter + 1

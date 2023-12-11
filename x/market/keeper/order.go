@@ -1,6 +1,9 @@
 package keeper
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -9,6 +12,26 @@ import (
 
 // SetOrder set a specific order in the store from its index
 func (k Keeper) SetOrder(ctx sdk.Context, order types.Order) {
+
+	// order event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeOrder,
+			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(order.Uid, 10)),
+			sdk.NewAttribute(types.AttributeKeyOwner, order.Owner),
+			sdk.NewAttribute(types.AttributeKeyStatus, order.Status),
+			sdk.NewAttribute(types.AttributeKeyOrderType, order.OrderType),
+			sdk.NewAttribute(types.AttributeKeyDenomAsk, order.DenomAsk),
+			sdk.NewAttribute(types.AttributeKeyDenomBid, order.DenomBid),
+			sdk.NewAttribute(types.AttributeKeyAmount, order.Amount.String()),
+			sdk.NewAttribute(types.AttributeKeyRate, strings.Join([]string{order.Rate[0].String(), order.Rate[1].String()}, ",")),
+			sdk.NewAttribute(types.AttributeKeyPrev, strconv.FormatUint(order.Prev, 10)),
+			sdk.NewAttribute(types.AttributeKeyNext, strconv.FormatUint(order.Next, 10)),
+			sdk.NewAttribute(types.AttributeKeyBeginTime, strconv.FormatInt(order.BegTime, 10)),
+			sdk.NewAttribute(types.AttributeKeyUpdateTime, strconv.FormatInt(order.UpdTime, 10)),
+		),
+	)
+
 	store1 := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrderKeyPrefix))
 
 	b := k.cdc.MustMarshal(&order)

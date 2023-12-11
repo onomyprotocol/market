@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"sort"
-	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -84,28 +83,8 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	member1.Balance = member1.Balance.Add(dropAmtMember1)
 	k.SetMember(ctx, member1)
 
-	// update member1 event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeUpdateMember,
-			sdk.NewAttribute(types.AttributeKeyDenomA, denom2),
-			sdk.NewAttribute(types.AttributeKeyDenomB, denom1),
-			sdk.NewAttribute(types.AttributeKeyBalance, member1.Balance.String()),
-		),
-	)
-
 	member2.Balance = member2.Balance.Add(dropAmtMember2)
 	k.SetMember(ctx, member2)
-
-	// update member2 event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeUpdateMember,
-			sdk.NewAttribute(types.AttributeKeyDenomA, denom1),
-			sdk.NewAttribute(types.AttributeKeyDenomB, denom2),
-			sdk.NewAttribute(types.AttributeKeyBalance, member2.Balance.String()),
-		),
-	)
 
 	dropCreatorSum := drops
 	dropOwner, ok := k.GetDropsOwnerPair(ctx, msg.Creator, pair)
@@ -119,22 +98,6 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	pool.Drops = pool.Drops.Add(drops)
 
 	k.SetPool(ctx, pool)
-
-	var leaders []string
-
-	for i := 0; i < len(pool.Leaders); i++ {
-		leaders = append(leaders, "{"+strings.Join([]string{pool.Leaders[i].Address, pool.Leaders[i].Drops.String()}, ", ")+"}")
-	}
-
-	// update pool event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeUpdatePool,
-			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyLeaders, strings.Join(leaders, ", ")),
-			sdk.NewAttribute(types.AttributeKeyAmount, pool.Drops.String()),
-		),
-	)
 
 	var drop = types.Drop{
 		Uid:     uid,
@@ -154,18 +117,6 @@ func (k msgServer) CreateDrop(goCtx context.Context, msg *types.MsgCreateDrop) (
 	k.SetDropOwner(
 		ctx,
 		drop,
-	)
-
-	// create drop event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeCreateDrop,
-			sdk.NewAttribute(types.AttributeKeyUid, strconv.FormatUint(uid, 10)),
-			sdk.NewAttribute(types.AttributeKeyPair, pair),
-			sdk.NewAttribute(types.AttributeKeyOwner, msg.Creator),
-			sdk.NewAttribute(types.AttributeKeyAmount, drops.String()),
-			sdk.NewAttribute(types.AttributeKeyProduct, dropProduct.String()),
-		),
 	)
 
 	// Update drop uid count
