@@ -401,6 +401,7 @@ func New(
 		keys[marketmoduletypes.StoreKey],
 		keys[marketmoduletypes.MemStoreKey],
 		app.GetSubspace(marketmoduletypes.ModuleName),
+		app.BankKeeper,
 	)
 	marketModule := marketmodule.NewAppModule(appCodec, app.MarketKeeper, app.AccountKeeper, app.BankKeeper)
 

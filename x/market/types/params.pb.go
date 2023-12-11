@@ -25,6 +25,15 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the module.
 type Params struct {
+	// leader earnings rates
+	// 1,2,3 Comma separated, no space
+	EarnRates string `protobuf:"bytes,1,opt,name=earn_rates,json=earnRates,proto3" json:"earn_rates,omitempty"`
+	// pool burning rate
+	BurnRate string `protobuf:"bytes,2,opt,name=burn_rate,json=burnRate,proto3" json:"burn_rate,omitempty"`
+	// burn coin
+	BurnCoin string `protobuf:"bytes,3,opt,name=burn_coin,json=burnCoin,proto3" json:"burn_coin,omitempty"`
+	// market_fee (parameter / 10000), 9999 representing as 99.99%
+	MarketFee string `protobuf:"bytes,4,opt,name=market_fee,json=marketFee,proto3" json:"market_fee,omitempty"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
@@ -59,22 +68,56 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
+func (m *Params) GetEarnRates() string {
+	if m != nil {
+		return m.EarnRates
+	}
+	return ""
+}
+
+func (m *Params) GetBurnRate() string {
+	if m != nil {
+		return m.BurnRate
+	}
+	return ""
+}
+
+func (m *Params) GetBurnCoin() string {
+	if m != nil {
+		return m.BurnCoin
+	}
+	return ""
+}
+
+func (m *Params) GetMarketFee() string {
+	if m != nil {
+		return m.MarketFee
+	}
+	return ""
+}
+
 func init() {
-	proto.RegisterType((*Params)(nil), "market.market.Params")
+	proto.RegisterType((*Params)(nil), "pendulumlabs.market.market.Params")
 }
 
 func init() { proto.RegisterFile("market/params.proto", fileDescriptor_43480567057de0ef) }
 
 var fileDescriptor_43480567057de0ef = []byte{
-	// 123 bytes of a gzipped FileDescriptorProto
+	// 211 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0xce, 0x4d, 0x2c, 0xca,
 	0x4e, 0x2d, 0xd1, 0x2f, 0x48, 0x2c, 0x4a, 0xcc, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17,
-	0xe2, 0x85, 0x08, 0xea, 0x41, 0x28, 0x29, 0x91, 0xf4, 0xfc, 0xf4, 0x7c, 0xb0, 0x8c, 0x3e, 0x88,
-	0x05, 0x51, 0xa4, 0xc4, 0xc7, 0xc5, 0x16, 0x00, 0xd6, 0x64, 0xc5, 0x32, 0x63, 0x81, 0x3c, 0x83,
-	0x93, 0xfe, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1,
-	0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0x89, 0x42, 0xed, 0xa8,
-	0xd0, 0x87, 0x32, 0x4a, 0x2a, 0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0xe6, 0x18, 0x03, 0x02, 0x00,
-	0x00, 0xff, 0xff, 0x51, 0x51, 0x92, 0x35, 0x83, 0x00, 0x00, 0x00,
+	0x92, 0x2a, 0x48, 0xcd, 0x4b, 0x29, 0xcd, 0x29, 0xcd, 0xcd, 0x49, 0x4c, 0x2a, 0xd6, 0x83, 0xa8,
+	0x80, 0x52, 0x52, 0x22, 0xe9, 0xf9, 0xe9, 0xf9, 0x60, 0x65, 0xfa, 0x20, 0x16, 0x44, 0x87, 0x52,
+	0x1b, 0x23, 0x17, 0x5b, 0x00, 0xd8, 0x08, 0x21, 0x59, 0x2e, 0xae, 0xd4, 0xc4, 0xa2, 0xbc, 0xf8,
+	0xa2, 0xc4, 0x92, 0xd4, 0x62, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x4e, 0x90, 0x48, 0x10,
+	0x48, 0x40, 0x48, 0x9a, 0x8b, 0x33, 0xa9, 0x14, 0x2a, 0x2d, 0xc1, 0x04, 0x96, 0xe5, 0x00, 0x09,
+	0x80, 0x64, 0xe1, 0x92, 0xc9, 0xf9, 0x99, 0x79, 0x12, 0xcc, 0x08, 0x49, 0xe7, 0xfc, 0xcc, 0x3c,
+	0x90, 0xc1, 0x10, 0x37, 0xc4, 0xa7, 0xa5, 0xa6, 0x4a, 0xb0, 0x40, 0x0c, 0x86, 0x88, 0xb8, 0xa5,
+	0xa6, 0x5a, 0xb1, 0xcc, 0x58, 0x20, 0xcf, 0xe0, 0xa4, 0x7f, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47,
+	0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d,
+	0xc7, 0x72, 0x0c, 0x51, 0xa2, 0x50, 0x9f, 0x56, 0xe8, 0x43, 0x19, 0x25, 0x95, 0x05, 0xa9, 0xc5,
+	0x49, 0x6c, 0x60, 0x0f, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0x61, 0x00, 0xc3, 0xe9, 0x09,
+	0x01, 0x00, 0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -97,6 +140,34 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.MarketFee) > 0 {
+		i -= len(m.MarketFee)
+		copy(dAtA[i:], m.MarketFee)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MarketFee)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.BurnCoin) > 0 {
+		i -= len(m.BurnCoin)
+		copy(dAtA[i:], m.BurnCoin)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.BurnCoin)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.BurnRate) > 0 {
+		i -= len(m.BurnRate)
+		copy(dAtA[i:], m.BurnRate)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.BurnRate)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.EarnRates) > 0 {
+		i -= len(m.EarnRates)
+		copy(dAtA[i:], m.EarnRates)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.EarnRates)))
+		i--
+		dAtA[i] = 0xa
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -117,6 +188,22 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.EarnRates)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.BurnRate)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.BurnCoin)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.MarketFee)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
 	return n
 }
 
@@ -155,6 +242,134 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: Params: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EarnRates", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EarnRates = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BurnRate", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.BurnRate = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BurnCoin", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.BurnCoin = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MarketFee", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MarketFee = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipParams(dAtA[iNdEx:])

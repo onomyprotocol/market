@@ -3,10 +3,11 @@ package cli
 import (
 	"context"
 
+	"market/x/market/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-	"market/x/market/types"
 )
 
 func CmdQueryParams() *cobra.Command {

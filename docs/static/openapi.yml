@@ -727,6 +727,380 @@ paths:
           type: string
       tags:
         - Query
+  '/cosmos/auth/v1beta1/module_accounts/{name}':
+    get:
+      summary: ModuleAccountByName returns the module account info by module name
+      operationId: CosmosAuthV1Beta1ModuleAccountByName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              account:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                    description: >-
+                      A URL/resource name that uniquely identifies the type of
+                      the serialized
+
+                      protocol buffer message. This string must contain at least
+
+                      one "/" character. The last segment of the URL's path must
+                      represent
+
+                      the fully qualified name of the type (as in
+
+                      `path/google.protobuf.Duration`). The name should be in a
+                      canonical form
+
+                      (e.g., leading "." is not accepted).
+
+
+                      In practice, teams usually precompile into the binary all
+                      types that they
+
+                      expect it to use in the context of Any. However, for URLs
+                      which use the
+
+                      scheme `http`, `https`, or no scheme, one can optionally
+                      set up a type
+
+                      server that maps type URLs to message definitions as
+                      follows:
+
+
+                      * If no scheme is provided, `https` is assumed.
+
+                      * An HTTP GET on the URL must yield a
+                      [google.protobuf.Type][]
+                        value in binary format, or produce an error.
+                      * Applications are allowed to cache lookup results based
+                      on the
+                        URL, or have them precompiled into a binary to avoid any
+                        lookup. Therefore, binary compatibility needs to be preserved
+                        on changes to types. (Use versioned type names to manage
+                        breaking changes.)
+
+                      Note: this functionality is not currently available in the
+                      official
+
+                      protobuf release, and it is not used for type URLs
+                      beginning with
+
+                      type.googleapis.com.
+
+
+                      Schemes other than `http`, `https` (or the empty scheme)
+                      might be
+
+                      used with implementation specific semantics.
+                additionalProperties: {}
+                description: >-
+                  `Any` contains an arbitrary serialized protocol buffer message
+                  along with a
+
+                  URL that describes the type of the serialized message.
+
+
+                  Protobuf library provides support to pack/unpack Any values in
+                  the form
+
+                  of utility functions or additional generated methods of the
+                  Any type.
+
+
+                  Example 1: Pack and unpack a message in C++.
+
+                      Foo foo = ...;
+                      Any any;
+                      any.PackFrom(foo);
+                      ...
+                      if (any.UnpackTo(&foo)) {
+                        ...
+                      }
+
+                  Example 2: Pack and unpack a message in Java.
+
+                      Foo foo = ...;
+                      Any any = Any.pack(foo);
+                      ...
+                      if (any.is(Foo.class)) {
+                        foo = any.unpack(Foo.class);
+                      }
+
+                   Example 3: Pack and unpack a message in Python.
+
+                      foo = Foo(...)
+                      any = Any()
+                      any.Pack(foo)
+                      ...
+                      if any.Is(Foo.DESCRIPTOR):
+                        any.Unpack(foo)
+                        ...
+
+                   Example 4: Pack and unpack a message in Go
+
+                       foo := &pb.Foo{...}
+                       any, err := anypb.New(foo)
+                       if err != nil {
+                         ...
+                       }
+                       ...
+                       foo := &pb.Foo{}
+                       if err := any.UnmarshalTo(foo); err != nil {
+                         ...
+                       }
+
+                  The pack methods provided by protobuf library will by default
+                  use
+
+                  'type.googleapis.com/full.type.name' as the type URL and the
+                  unpack
+
+                  methods only use the fully qualified type name after the last
+                  '/'
+
+                  in the type URL, for example "foo.bar.com/x/y.z" will yield
+                  type
+
+                  name "y.z".
+
+
+
+                  JSON
+
+                  ====
+
+                  The JSON representation of an `Any` value uses the regular
+
+                  representation of the deserialized, embedded message, with an
+
+                  additional field `@type` which contains the type URL. Example:
+
+                      package google.profile;
+                      message Person {
+                        string first_name = 1;
+                        string last_name = 2;
+                      }
+
+                      {
+                        "@type": "type.googleapis.com/google.profile.Person",
+                        "firstName": <string>,
+                        "lastName": <string>
+                      }
+
+                  If the embedded message type is well-known and has a custom
+                  JSON
+
+                  representation, that representation will be embedded adding a
+                  field
+
+                  `value` which holds the custom JSON in addition to the `@type`
+
+                  field. Example (for message [google.protobuf.Duration][]):
+
+                      {
+                        "@type": "type.googleapis.com/google.protobuf.Duration",
+                        "value": "1.212s"
+                      }
+            description: >-
+              QueryModuleAccountByNameResponse is the response type for the
+              Query/ModuleAccountByName RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /cosmos/auth/v1beta1/params:
     get:
       summary: Params queries all parameters.
@@ -3341,7 +3715,7 @@ paths:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   data:
                     type: object
                     properties:
@@ -3602,8 +3976,8 @@ paths:
                                               format: byte
                                               title: original proposer of the block
                                           description: >-
-                                            Header defines the structure of a
-                                            Tendermint block header.
+                                            Header defines the structure of a block
+                                            header.
                                         commit:
                                           type: object
                                           properties:
@@ -3684,7 +4058,7 @@ paths:
                                                     format: byte
                                                 title: >-
                                                   PublicKey defines the keys available for
-                                                  use with Tendermint Validators
+                                                  use with Validators
                                               voting_power:
                                                 type: string
                                                 format: int64
@@ -3708,7 +4082,7 @@ paths:
                                                   format: byte
                                               title: >-
                                                 PublicKey defines the keys available for
-                                                use with Tendermint Validators
+                                                use with Validators
                                             voting_power:
                                               type: string
                                               format: int64
@@ -3740,7 +4114,7 @@ paths:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -4121,7 +4495,7 @@ paths:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   data:
                     type: object
                     properties:
@@ -4382,8 +4756,8 @@ paths:
                                               format: byte
                                               title: original proposer of the block
                                           description: >-
-                                            Header defines the structure of a
-                                            Tendermint block header.
+                                            Header defines the structure of a block
+                                            header.
                                         commit:
                                           type: object
                                           properties:
@@ -4464,7 +4838,7 @@ paths:
                                                     format: byte
                                                 title: >-
                                                   PublicKey defines the keys available for
-                                                  use with Tendermint Validators
+                                                  use with Validators
                                               voting_power:
                                                 type: string
                                                 format: int64
@@ -4488,7 +4862,7 @@ paths:
                                                   format: byte
                                               title: >-
                                                 PublicKey defines the keys available for
-                                                use with Tendermint Validators
+                                                use with Validators
                                             voting_power:
                                               type: string
                                               format: int64
@@ -4520,7 +4894,7 @@ paths:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -13814,7 +14188,7 @@ paths:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   valset:
                     type: array
                     items:
@@ -29199,10 +29573,10 @@ paths:
           format: uint64
       tags:
         - Query
-  /market/market/params:
+  /market/portal/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: MarketMarketParams
+      operationId: MarketPortalParams
       responses:
         '200':
           description: A successful response.
@@ -29233,6 +29607,2275 @@ paths:
                     '@type':
                       type: string
                   additionalProperties: {}
+      tags:
+        - Query
+  '/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}':
+    get:
+      summary: Queries a list of Book items.
+      operationId: PendulumlabsMarketMarketBook
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              book:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    status:
+                      type: string
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+                    beg_time:
+                      type: string
+                      format: int64
+                    upd_time:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomA
+          in: path
+          required: true
+          type: string
+        - name: denomB
+          in: path
+          required: true
+          type: string
+        - name: orderType
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}':
+    get:
+      summary: Queries a list of Bookends items.
+      operationId: PendulumlabsMarketMarketBookends
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              coinA:
+                type: string
+              coinB:
+                type: string
+              orderType:
+                type: string
+              rate:
+                type: array
+                items:
+                  type: string
+              prev:
+                type: string
+                format: uint64
+              next:
+                type: string
+                format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: coinA
+          in: path
+          required: true
+          type: string
+        - name: coinB
+          in: path
+          required: true
+          type: string
+        - name: orderType
+          in: path
+          required: true
+          type: string
+        - name: rate
+          in: path
+          required: true
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+          minItems: 1
+      tags:
+        - Query
+  /pendulum-labs/market/market/burned:
+    get:
+      summary: Queries total burned.
+      operationId: PendulumlabsMarketMarketBurned
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /pendulum-labs/market/market/burnings:
+    get:
+      summary: Queries a list of Burnings items.
+      operationId: PendulumlabsMarketMarketBurningsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              burnings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/burnings/{denom}':
+    get:
+      summary: Queries a Burnings by index.
+      operationId: PendulumlabsMarketMarketBurnings
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              burnings:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /pendulum-labs/market/market/drop:
+    get:
+      summary: Queries a list of Drop items.
+      operationId: PendulumlabsMarketMarketDropAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              drops:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    pair:
+                      type: string
+                    drops:
+                      type: string
+                    product:
+                      type: string
+                    active:
+                      type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/drop/amounts/{uid}':
+    get:
+      summary: Queries a Drop by index.
+      operationId: PendulumlabsMarketMarketDropAmounts
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom1:
+                type: string
+              denom2:
+                type: string
+              amount1:
+                type: string
+              amount2:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  '/pendulum-labs/market/market/drop/coin/{denomA}/{denomB}/{amountA}':
+    get:
+      summary: Queries a Drop by index.
+      operationId: PendulumlabsMarketMarketDropCoin
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              drops:
+                type: string
+              amountB:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomA
+          in: path
+          required: true
+          type: string
+        - name: denomB
+          in: path
+          required: true
+          type: string
+        - name: amountA
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/pendulum-labs/market/market/drop/coins/{pair}/{drops}':
+    get:
+      summary: Converts drops to coin amounts
+      operationId: PendulumlabsMarketMarketDropsToCoins
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom1:
+                type: string
+              denom2:
+                type: string
+              amount1:
+                type: string
+              amount2:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pair
+          in: path
+          required: true
+          type: string
+        - name: drops
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/pendulum-labs/market/market/drop/pairs/{address}':
+    get:
+      summary: Queries a Drop by index.
+      operationId: PendulumlabsMarketMarketDropPairs
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pairs:
+                type: array
+                items:
+                  type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/pendulum-labs/market/market/drop/{address}/{pair}':
+    get:
+      summary: Queries a Drop by index.
+      operationId: PendulumlabsMarketMarketDropOwnerPair
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              drops:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    pair:
+                      type: string
+                    drops:
+                      type: string
+                    product:
+                      type: string
+                    active:
+                      type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+        - name: pair
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/drop/{uid}':
+    get:
+      summary: Queries a Drop by index.
+      operationId: PendulumlabsMarketMarketDrop
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              drop:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    format: uint64
+                  owner:
+                    type: string
+                  pair:
+                    type: string
+                  drops:
+                    type: string
+                  product:
+                    type: string
+                  active:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  '/pendulum-labs/market/market/history/{pair}':
+    get:
+      summary: Queries pool trade history.
+      operationId: PendulumlabsMarketMarketHistory
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              history:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    status:
+                      type: string
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+                    beg_time:
+                      type: string
+                      format: int64
+                    upd_time:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pair
+          in: path
+          required: true
+          type: string
+        - name: length
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /pendulum-labs/market/market/member:
+    get:
+      summary: Queries a list of Member items.
+      operationId: PendulumlabsMarketMarketMemberAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              member:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    pair:
+                      type: string
+                    denomA:
+                      type: string
+                    denomB:
+                      type: string
+                    balance:
+                      type: string
+                    previous:
+                      type: string
+                    limit:
+                      type: string
+                      format: uint64
+                    stop:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/member/{denomA}/{denomB}':
+    get:
+      summary: Queries a Member by index.
+      operationId: PendulumlabsMarketMarketMember
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              member:
+                type: object
+                properties:
+                  pair:
+                    type: string
+                  denomA:
+                    type: string
+                  denomB:
+                    type: string
+                  balance:
+                    type: string
+                  previous:
+                    type: string
+                  limit:
+                    type: string
+                    format: uint64
+                  stop:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomA
+          in: path
+          required: true
+          type: string
+        - name: denomB
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /pendulum-labs/market/market/order:
+    get:
+      summary: Queries a list of Order items.
+      operationId: PendulumlabsMarketMarketOrderAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              orders:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    status:
+                      type: string
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+                    beg_time:
+                      type: string
+                      format: int64
+                    upd_time:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/order/uids/{address}':
+    get:
+      summary: Queries a list of Order items.
+      operationId: PendulumlabsMarketMarketOrderOwnerUids
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              orders:
+                type: object
+                properties:
+                  uids:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/order/{address}':
+    get:
+      summary: Queries a list of Order items.
+      operationId: PendulumlabsMarketMarketOrderOwner
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              orders:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uint64
+                    owner:
+                      type: string
+                    status:
+                      type: string
+                    orderType:
+                      type: string
+                    denomAsk:
+                      type: string
+                    denomBid:
+                      type: string
+                    amount:
+                      type: string
+                    rate:
+                      type: array
+                      items:
+                        type: string
+                    prev:
+                      type: string
+                      format: uint64
+                    next:
+                      type: string
+                      format: uint64
+                    beg_time:
+                      type: string
+                      format: int64
+                    upd_time:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/order/{uid}':
+    get:
+      summary: Queries a Order by index.
+      operationId: PendulumlabsMarketMarketOrder
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              order:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    format: uint64
+                  owner:
+                    type: string
+                  status:
+                    type: string
+                  orderType:
+                    type: string
+                  denomAsk:
+                    type: string
+                  denomBid:
+                    type: string
+                  amount:
+                    type: string
+                  rate:
+                    type: array
+                    items:
+                      type: string
+                  prev:
+                    type: string
+                    format: uint64
+                  next:
+                    type: string
+                    format: uint64
+                  beg_time:
+                    type: string
+                    format: int64
+                  upd_time:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /pendulum-labs/market/market/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: PendulumlabsMarketMarketParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  earn_rates:
+                    type: string
+                    title: |-
+                      leader earnings rates
+                      1,2,3 Comma separated, no space
+                  burn_rate:
+                    type: string
+                    title: pool burning rate
+                  burn_coin:
+                    type: string
+                    title: burn coin
+                  market_fee:
+                    type: string
+                    title: >-
+                      market_fee (parameter / 10000), 9999 representing as
+                      99.99%
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /pendulum-labs/market/market/pool:
+    get:
+      summary: Queries a list of Pool items.
+      operationId: PendulumlabsMarketMarketPoolAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pool:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    pair:
+                      type: string
+                    denom1:
+                      type: string
+                    denom2:
+                      type: string
+                    volume1:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                    volume2:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                    leaders:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          drops:
+                            type: string
+                    drops:
+                      type: string
+                    history:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/pool/{pair}':
+    get:
+      summary: Queries a Pool by index.
+      operationId: PendulumlabsMarketMarketPool
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pool:
+                type: object
+                properties:
+                  pair:
+                    type: string
+                  denom1:
+                    type: string
+                  denom2:
+                    type: string
+                  volume1:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                  volume2:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                  leaders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        drops:
+                          type: string
+                  drops:
+                    type: string
+                  history:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pair
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/pendulum-labs/market/market/quote/{denomBid}/{denomAsk}/{denomAmount}/{amount}':
+    get:
+      summary: Queries pool trade history.
+      operationId: PendulumlabsMarketMarketQuote
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denomBid
+          in: path
+          required: true
+          type: string
+        - name: denomAsk
+          in: path
+          required: true
+          type: string
+        - name: denomAmount
+          in: path
+          required: true
+          type: string
+        - name: amount
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /pendulum-labs/market/market/volume:
+    get:
+      summary: Queries all Volumes.
+      operationId: PendulumlabsMarketMarketVolumeAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              volumes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/pendulum-labs/market/market/volume/{denom}':
+    get:
+      summary: Queries a Volume by index.
+      operationId: PendulumlabsMarketMarketVolume
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              amount:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
       tags:
         - Query
   /tendermint/spn/monitoringp/connection_channel_id:
@@ -29704,6 +32347,169 @@ definitions:
 
 
       Since: cosmos-sdk 0.43
+  cosmos.auth.v1beta1.QueryModuleAccountByNameResponse:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          '@type':
+            type: string
+            description: >-
+              A URL/resource name that uniquely identifies the type of the
+              serialized
+
+              protocol buffer message. This string must contain at least
+
+              one "/" character. The last segment of the URL's path must
+              represent
+
+              the fully qualified name of the type (as in
+
+              `path/google.protobuf.Duration`). The name should be in a
+              canonical form
+
+              (e.g., leading "." is not accepted).
+
+
+              In practice, teams usually precompile into the binary all types
+              that they
+
+              expect it to use in the context of Any. However, for URLs which
+              use the
+
+              scheme `http`, `https`, or no scheme, one can optionally set up a
+              type
+
+              server that maps type URLs to message definitions as follows:
+
+
+              * If no scheme is provided, `https` is assumed.
+
+              * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                value in binary format, or produce an error.
+              * Applications are allowed to cache lookup results based on the
+                URL, or have them precompiled into a binary to avoid any
+                lookup. Therefore, binary compatibility needs to be preserved
+                on changes to types. (Use versioned type names to manage
+                breaking changes.)
+
+              Note: this functionality is not currently available in the
+              official
+
+              protobuf release, and it is not used for type URLs beginning with
+
+              type.googleapis.com.
+
+
+              Schemes other than `http`, `https` (or the empty scheme) might be
+
+              used with implementation specific semantics.
+        additionalProperties: {}
+        description: >-
+          `Any` contains an arbitrary serialized protocol buffer message along
+          with a
+
+          URL that describes the type of the serialized message.
+
+
+          Protobuf library provides support to pack/unpack Any values in the
+          form
+
+          of utility functions or additional generated methods of the Any type.
+
+
+          Example 1: Pack and unpack a message in C++.
+
+              Foo foo = ...;
+              Any any;
+              any.PackFrom(foo);
+              ...
+              if (any.UnpackTo(&foo)) {
+                ...
+              }
+
+          Example 2: Pack and unpack a message in Java.
+
+              Foo foo = ...;
+              Any any = Any.pack(foo);
+              ...
+              if (any.is(Foo.class)) {
+                foo = any.unpack(Foo.class);
+              }
+
+           Example 3: Pack and unpack a message in Python.
+
+              foo = Foo(...)
+              any = Any()
+              any.Pack(foo)
+              ...
+              if any.Is(Foo.DESCRIPTOR):
+                any.Unpack(foo)
+                ...
+
+           Example 4: Pack and unpack a message in Go
+
+               foo := &pb.Foo{...}
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
+               ...
+               foo := &pb.Foo{}
+               if err := any.UnmarshalTo(foo); err != nil {
+                 ...
+               }
+
+          The pack methods provided by protobuf library will by default use
+
+          'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+          methods only use the fully qualified type name after the last '/'
+
+          in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+          name "y.z".
+
+
+
+          JSON
+
+          ====
+
+          The JSON representation of an `Any` value uses the regular
+
+          representation of the deserialized, embedded message, with an
+
+          additional field `@type` which contains the type URL. Example:
+
+              package google.profile;
+              message Person {
+                string first_name = 1;
+                string last_name = 2;
+              }
+
+              {
+                "@type": "type.googleapis.com/google.profile.Person",
+                "firstName": <string>,
+                "lastName": <string>
+              }
+
+          If the embedded message type is well-known and has a custom JSON
+
+          representation, that representation will be embedded adding a field
+
+          `value` which holds the custom JSON in addition to the `@type`
+
+          field. Example (for message [google.protobuf.Duration][]):
+
+              {
+                "@type": "type.googleapis.com/google.protobuf.Duration",
+                "value": "1.212s"
+              }
+    description: >-
+      QueryModuleAccountByNameResponse is the response type for the
+      Query/ModuleAccountByName RPC method.
   cosmos.auth.v1beta1.QueryParamsResponse:
     type: object
     properties:
@@ -31744,7 +34550,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           data:
             type: object
             properties:
@@ -32002,8 +34808,8 @@ definitions:
                                       format: byte
                                       title: original proposer of the block
                                   description: >-
-                                    Header defines the structure of a Tendermint
-                                    block header.
+                                    Header defines the structure of a block
+                                    header.
                                 commit:
                                   type: object
                                   properties:
@@ -32083,7 +34889,7 @@ definitions:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -32107,7 +34913,7 @@ definitions:
                                           format: byte
                                       title: >-
                                         PublicKey defines the keys available for
-                                        use with Tendermint Validators
+                                        use with Validators
                                     voting_power:
                                       type: string
                                       format: int64
@@ -32139,7 +34945,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -32319,7 +35125,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           data:
             type: object
             properties:
@@ -32577,8 +35383,8 @@ definitions:
                                       format: byte
                                       title: original proposer of the block
                                   description: >-
-                                    Header defines the structure of a Tendermint
-                                    block header.
+                                    Header defines the structure of a block
+                                    header.
                                 commit:
                                   type: object
                                   properties:
@@ -32658,7 +35464,7 @@ definitions:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -32682,7 +35488,7 @@ definitions:
                                           format: byte
                                       title: >-
                                         PublicKey defines the keys available for
-                                        use with Tendermint Validators
+                                        use with Validators
                                     voting_power:
                                       type: string
                                       format: int64
@@ -32714,7 +35520,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -33510,7 +36316,7 @@ definitions:
       secp256k1:
         type: string
         format: byte
-    title: PublicKey defines the keys available for use with Tendermint Validators
+    title: PublicKey defines the keys available for use with Validators
   tendermint.p2p.DefaultNodeInfo:
     type: object
     properties:
@@ -33653,7 +36459,7 @@ definitions:
             type: string
             format: byte
             title: original proposer of the block
-        description: Header defines the structure of a Tendermint block header.
+        description: Header defines the structure of a block header.
       data:
         type: object
         properties:
@@ -33907,9 +36713,7 @@ definitions:
                                   type: string
                                   format: byte
                                   title: original proposer of the block
-                              description: >-
-                                Header defines the structure of a Tendermint
-                                block header.
+                              description: Header defines the structure of a block header.
                             commit:
                               type: object
                               properties:
@@ -33989,7 +36793,7 @@ definitions:
                                         format: byte
                                     title: >-
                                       PublicKey defines the keys available for
-                                      use with Tendermint Validators
+                                      use with Validators
                                   voting_power:
                                     type: string
                                     format: int64
@@ -34013,7 +36817,7 @@ definitions:
                                       format: byte
                                   title: >-
                                     PublicKey defines the keys available for use
-                                    with Tendermint Validators
+                                    with Validators
                                 voting_power:
                                   type: string
                                   format: int64
@@ -34045,7 +36849,7 @@ definitions:
                                 format: byte
                             title: >-
                               PublicKey defines the keys available for use with
-                              Tendermint Validators
+                              Validators
                           voting_power:
                             type: string
                             format: int64
@@ -34588,7 +37392,7 @@ definitions:
                         type: string
                         format: byte
                         title: original proposer of the block
-                    description: Header defines the structure of a Tendermint block header.
+                    description: Header defines the structure of a block header.
                   commit:
                     type: object
                     properties:
@@ -34668,7 +37472,7 @@ definitions:
                               format: byte
                           title: >-
                             PublicKey defines the keys available for use with
-                            Tendermint Validators
+                            Validators
                         voting_power:
                           type: string
                           format: int64
@@ -34692,7 +37496,7 @@ definitions:
                             format: byte
                         title: >-
                           PublicKey defines the keys available for use with
-                          Tendermint Validators
+                          Validators
                       voting_power:
                         type: string
                         format: int64
@@ -34722,9 +37526,7 @@ definitions:
                     secp256k1:
                       type: string
                       format: byte
-                  title: >-
-                    PublicKey defines the keys available for use with Tendermint
-                    Validators
+                  title: PublicKey defines the keys available for use with Validators
                 voting_power:
                   type: string
                   format: int64
@@ -34975,9 +37777,7 @@ definitions:
                               type: string
                               format: byte
                               title: original proposer of the block
-                          description: >-
-                            Header defines the structure of a Tendermint block
-                            header.
+                          description: Header defines the structure of a block header.
                         commit:
                           type: object
                           properties:
@@ -35057,7 +37857,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -35081,7 +37881,7 @@ definitions:
                                   format: byte
                               title: >-
                                 PublicKey defines the keys available for use
-                                with Tendermint Validators
+                                with Validators
                             voting_power:
                               type: string
                               format: int64
@@ -35113,7 +37913,7 @@ definitions:
                             format: byte
                         title: >-
                           PublicKey defines the keys available for use with
-                          Tendermint Validators
+                          Validators
                       voting_power:
                         type: string
                         format: int64
@@ -35214,7 +38014,7 @@ definitions:
         type: string
         format: byte
         title: original proposer of the block
-    description: Header defines the structure of a Tendermint block header.
+    description: Header defines the structure of a block header.
   tendermint.types.LightBlock:
     type: object
     properties:
@@ -35306,7 +38106,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           commit:
             type: object
             properties:
@@ -35380,9 +38180,7 @@ definitions:
                     secp256k1:
                       type: string
                       format: byte
-                  title: >-
-                    PublicKey defines the keys available for use with Tendermint
-                    Validators
+                  title: PublicKey defines the keys available for use with Validators
                 voting_power:
                   type: string
                   format: int64
@@ -35404,9 +38202,7 @@ definitions:
                   secp256k1:
                     type: string
                     format: byte
-                title: >-
-                  PublicKey defines the keys available for use with Tendermint
-                  Validators
+                title: PublicKey defines the keys available for use with Validators
               voting_power:
                 type: string
                 format: int64
@@ -35512,7 +38308,7 @@ definitions:
                     type: string
                     format: byte
                     title: original proposer of the block
-                description: Header defines the structure of a Tendermint block header.
+                description: Header defines the structure of a block header.
               commit:
                 type: object
                 properties:
@@ -35590,7 +38386,7 @@ definitions:
                           format: byte
                       title: >-
                         PublicKey defines the keys available for use with
-                        Tendermint Validators
+                        Validators
                     voting_power:
                       type: string
                       format: int64
@@ -35614,7 +38410,7 @@ definitions:
                         format: byte
                     title: >-
                       PublicKey defines the keys available for use with
-                      Tendermint Validators
+                      Validators
                   voting_power:
                     type: string
                     format: int64
@@ -35644,9 +38440,7 @@ definitions:
                 secp256k1:
                   type: string
                   format: byte
-              title: >-
-                PublicKey defines the keys available for use with Tendermint
-                Validators
+              title: PublicKey defines the keys available for use with Validators
             voting_power:
               type: string
               format: int64
@@ -35760,7 +38554,7 @@ definitions:
             type: string
             format: byte
             title: original proposer of the block
-        description: Header defines the structure of a Tendermint block header.
+        description: Header defines the structure of a block header.
       commit:
         type: object
         properties:
@@ -35842,9 +38636,7 @@ definitions:
           secp256k1:
             type: string
             format: byte
-        title: >-
-          PublicKey defines the keys available for use with Tendermint
-          Validators
+        title: PublicKey defines the keys available for use with Validators
       voting_power:
         type: string
         format: int64
@@ -35871,9 +38663,7 @@ definitions:
                 secp256k1:
                   type: string
                   format: byte
-              title: >-
-                PublicKey defines the keys available for use with Tendermint
-                Validators
+              title: PublicKey defines the keys available for use with Validators
             voting_power:
               type: string
               format: int64
@@ -35895,9 +38685,7 @@ definitions:
               secp256k1:
                 type: string
                 format: byte
-            title: >-
-              PublicKey defines the keys available for use with Tendermint
-              Validators
+            title: PublicKey defines the keys available for use with Validators
           voting_power:
             type: string
             format: int64
@@ -38787,7 +41575,7 @@ definitions:
             type: string
             format: byte
             title: original proposer of the block
-        description: Header defines the structure of a Tendermint block header.
+        description: Header defines the structure of a block header.
       valset:
         type: array
         items:
@@ -39714,7 +42502,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           valset:
             type: array
             items:
@@ -42007,7 +44795,7 @@ definitions:
                 type: string
                 format: byte
                 title: original proposer of the block
-            description: Header defines the structure of a Tendermint block header.
+            description: Header defines the structure of a block header.
           data:
             type: object
             properties:
@@ -42265,8 +45053,8 @@ definitions:
                                       format: byte
                                       title: original proposer of the block
                                   description: >-
-                                    Header defines the structure of a Tendermint
-                                    block header.
+                                    Header defines the structure of a block
+                                    header.
                                 commit:
                                   type: object
                                   properties:
@@ -42346,7 +45134,7 @@ definitions:
                                             format: byte
                                         title: >-
                                           PublicKey defines the keys available for
-                                          use with Tendermint Validators
+                                          use with Validators
                                       voting_power:
                                         type: string
                                         format: int64
@@ -42370,7 +45158,7 @@ definitions:
                                           format: byte
                                       title: >-
                                         PublicKey defines the keys available for
-                                        use with Tendermint Validators
+                                        use with Validators
                                     voting_power:
                                       type: string
                                       format: int64
@@ -42402,7 +45190,7 @@ definitions:
                                     format: byte
                                 title: >-
                                   PublicKey defines the keys available for use
-                                  with Tendermint Validators
+                                  with Validators
                               voting_power:
                                 type: string
                                 format: int64
@@ -49146,16 +51934,903 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
-  market.market.Params:
+  market.portal.Params:
     type: object
     description: Params defines the parameters for the module.
-  market.market.QueryParamsResponse:
+  market.portal.QueryParamsResponse:
     type: object
     properties:
       params:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  pendulumlabs.market.market.Burnings:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+  pendulumlabs.market.market.Drop:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+      owner:
+        type: string
+      pair:
+        type: string
+      drops:
+        type: string
+      product:
+        type: string
+      active:
+        type: boolean
+  pendulumlabs.market.market.Leader:
+    type: object
+    properties:
+      address:
+        type: string
+      drops:
+        type: string
+  pendulumlabs.market.market.Member:
+    type: object
+    properties:
+      pair:
+        type: string
+      denomA:
+        type: string
+      denomB:
+        type: string
+      balance:
+        type: string
+      previous:
+        type: string
+      limit:
+        type: string
+        format: uint64
+      stop:
+        type: string
+        format: uint64
+  pendulumlabs.market.market.MsgCancelOrderResponse:
+    type: object
+  pendulumlabs.market.market.MsgCreateDropResponse:
+    type: object
+  pendulumlabs.market.market.MsgCreateOrderResponse:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+  pendulumlabs.market.market.MsgCreatePoolResponse:
+    type: object
+  pendulumlabs.market.market.MsgMarketOrderResponse:
+    type: object
+    properties:
+      amountBid:
+        type: string
+      amountAsk:
+        type: string
+      slippage:
+        type: string
+  pendulumlabs.market.market.MsgRedeemDropResponse:
+    type: object
+  pendulumlabs.market.market.Order:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+      owner:
+        type: string
+      status:
+        type: string
+      orderType:
+        type: string
+      denomAsk:
+        type: string
+      denomBid:
+        type: string
+      amount:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
+      beg_time:
+        type: string
+        format: int64
+      upd_time:
+        type: string
+        format: int64
+  pendulumlabs.market.market.OrderResponse:
+    type: object
+    properties:
+      uid:
+        type: string
+        format: uint64
+      owner:
+        type: string
+      status:
+        type: string
+      orderType:
+        type: string
+      denomAsk:
+        type: string
+      denomBid:
+        type: string
+      amount:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
+      beg_time:
+        type: string
+        format: int64
+      upd_time:
+        type: string
+        format: int64
+  pendulumlabs.market.market.Orders:
+    type: object
+    properties:
+      uids:
+        type: array
+        items:
+          type: string
+          format: uint64
+  pendulumlabs.market.market.Params:
+    type: object
+    properties:
+      earn_rates:
+        type: string
+        title: |-
+          leader earnings rates
+          1,2,3 Comma separated, no space
+      burn_rate:
+        type: string
+        title: pool burning rate
+      burn_coin:
+        type: string
+        title: burn coin
+      market_fee:
+        type: string
+        title: 'market_fee (parameter / 10000), 9999 representing as 99.99%'
+    description: Params defines the parameters for the module.
+  pendulumlabs.market.market.Pool:
+    type: object
+    properties:
+      pair:
+        type: string
+      denom1:
+        type: string
+      denom2:
+        type: string
+      volume1:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+      volume2:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+      leaders:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            drops:
+              type: string
+      drops:
+        type: string
+      history:
+        type: string
+        format: uint64
+  pendulumlabs.market.market.QueryAllBurningsResponse:
+    type: object
+    properties:
+      burnings:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryAllMemberResponse:
+    type: object
+    properties:
+      member:
+        type: array
+        items:
+          type: object
+          properties:
+            pair:
+              type: string
+            denomA:
+              type: string
+            denomB:
+              type: string
+            balance:
+              type: string
+            previous:
+              type: string
+            limit:
+              type: string
+              format: uint64
+            stop:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryAllPoolResponse:
+    type: object
+    properties:
+      pool:
+        type: array
+        items:
+          type: object
+          properties:
+            pair:
+              type: string
+            denom1:
+              type: string
+            denom2:
+              type: string
+            volume1:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+            volume2:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+            leaders:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  drops:
+                    type: string
+            drops:
+              type: string
+            history:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryAllVolumeResponse:
+    type: object
+    properties:
+      volumes:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryBookResponse:
+    type: object
+    properties:
+      book:
+        type: array
+        items:
+          type: object
+          properties:
+            uid:
+              type: string
+              format: uint64
+            owner:
+              type: string
+            status:
+              type: string
+            orderType:
+              type: string
+            denomAsk:
+              type: string
+            denomBid:
+              type: string
+            amount:
+              type: string
+            rate:
+              type: array
+              items:
+                type: string
+            prev:
+              type: string
+              format: uint64
+            next:
+              type: string
+              format: uint64
+            beg_time:
+              type: string
+              format: int64
+            upd_time:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryBookendsResponse:
+    type: object
+    properties:
+      coinA:
+        type: string
+      coinB:
+        type: string
+      orderType:
+        type: string
+      rate:
+        type: array
+        items:
+          type: string
+      prev:
+        type: string
+        format: uint64
+      next:
+        type: string
+        format: uint64
+  pendulumlabs.market.market.QueryBurnedResponse:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+  pendulumlabs.market.market.QueryDropAmountsResponse:
+    type: object
+    properties:
+      denom1:
+        type: string
+      denom2:
+        type: string
+      amount1:
+        type: string
+      amount2:
+        type: string
+  pendulumlabs.market.market.QueryDropCoinResponse:
+    type: object
+    properties:
+      drops:
+        type: string
+      amountB:
+        type: string
+  pendulumlabs.market.market.QueryDropPairsResponse:
+    type: object
+    properties:
+      pairs:
+        type: array
+        items:
+          type: string
+  pendulumlabs.market.market.QueryDropResponse:
+    type: object
+    properties:
+      drop:
+        type: object
+        properties:
+          uid:
+            type: string
+            format: uint64
+          owner:
+            type: string
+          pair:
+            type: string
+          drops:
+            type: string
+          product:
+            type: string
+          active:
+            type: boolean
+  pendulumlabs.market.market.QueryDropsResponse:
+    type: object
+    properties:
+      drops:
+        type: array
+        items:
+          type: object
+          properties:
+            uid:
+              type: string
+              format: uint64
+            owner:
+              type: string
+            pair:
+              type: string
+            drops:
+              type: string
+            product:
+              type: string
+            active:
+              type: boolean
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryGetBurningsResponse:
+    type: object
+    properties:
+      burnings:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+  pendulumlabs.market.market.QueryGetMemberResponse:
+    type: object
+    properties:
+      member:
+        type: object
+        properties:
+          pair:
+            type: string
+          denomA:
+            type: string
+          denomB:
+            type: string
+          balance:
+            type: string
+          previous:
+            type: string
+          limit:
+            type: string
+            format: uint64
+          stop:
+            type: string
+            format: uint64
+  pendulumlabs.market.market.QueryGetPoolResponse:
+    type: object
+    properties:
+      pool:
+        type: object
+        properties:
+          pair:
+            type: string
+          denom1:
+            type: string
+          denom2:
+            type: string
+          volume1:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+          volume2:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+          leaders:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                drops:
+                  type: string
+          drops:
+            type: string
+          history:
+            type: string
+            format: uint64
+  pendulumlabs.market.market.QueryHistoryResponse:
+    type: object
+    properties:
+      history:
+        type: array
+        items:
+          type: object
+          properties:
+            uid:
+              type: string
+              format: uint64
+            owner:
+              type: string
+            status:
+              type: string
+            orderType:
+              type: string
+            denomAsk:
+              type: string
+            denomBid:
+              type: string
+            amount:
+              type: string
+            rate:
+              type: array
+              items:
+                type: string
+            prev:
+              type: string
+              format: uint64
+            next:
+              type: string
+              format: uint64
+            beg_time:
+              type: string
+              format: int64
+            upd_time:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryOrderOwnerUidsResponse:
+    type: object
+    properties:
+      orders:
+        type: object
+        properties:
+          uids:
+            type: array
+            items:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryOrderResponse:
+    type: object
+    properties:
+      order:
+        type: object
+        properties:
+          uid:
+            type: string
+            format: uint64
+          owner:
+            type: string
+          status:
+            type: string
+          orderType:
+            type: string
+          denomAsk:
+            type: string
+          denomBid:
+            type: string
+          amount:
+            type: string
+          rate:
+            type: array
+            items:
+              type: string
+          prev:
+            type: string
+            format: uint64
+          next:
+            type: string
+            format: uint64
+          beg_time:
+            type: string
+            format: int64
+          upd_time:
+            type: string
+            format: int64
+  pendulumlabs.market.market.QueryOrdersResponse:
+    type: object
+    properties:
+      orders:
+        type: array
+        items:
+          type: object
+          properties:
+            uid:
+              type: string
+              format: uint64
+            owner:
+              type: string
+            status:
+              type: string
+            orderType:
+              type: string
+            denomAsk:
+              type: string
+            denomBid:
+              type: string
+            amount:
+              type: string
+            rate:
+              type: array
+              items:
+                type: string
+            prev:
+              type: string
+              format: uint64
+            next:
+              type: string
+              format: uint64
+            beg_time:
+              type: string
+              format: int64
+            upd_time:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  pendulumlabs.market.market.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+        properties:
+          earn_rates:
+            type: string
+            title: |-
+              leader earnings rates
+              1,2,3 Comma separated, no space
+          burn_rate:
+            type: string
+            title: pool burning rate
+          burn_coin:
+            type: string
+            title: burn coin
+          market_fee:
+            type: string
+            title: 'market_fee (parameter / 10000), 9999 representing as 99.99%'
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  pendulumlabs.market.market.QueryQuoteResponse:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+  pendulumlabs.market.market.QueryVolumeResponse:
+    type: object
+    properties:
+      amount:
+        type: string
+  pendulumlabs.market.market.Volume:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
   tendermint.spn.monitoringp.ConnectionChannelID:
     type: object
     properties:

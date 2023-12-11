@@ -22,6 +22,7 @@ import CosmosIbcGoIbcCoreConnectionV1 from './cosmos/ibc-go/ibc.core.connection.
 import CosmosIbcGoIbcCorePortV1 from './cosmos/ibc-go/ibc.core.port.v1'
 import MarketMarketMarket from './market/market.market'
 import MarketMarketPortal from './market/market.portal'
+import MarketPendulumlabsMarketMarket from './market/pendulumlabs.market.market'
 
 
 export default { 
@@ -47,6 +48,7 @@ export default {
   CosmosIbcGoIbcCorePortV1: load(CosmosIbcGoIbcCorePortV1, 'ibc.core.port.v1'),
   MarketMarketMarket: load(MarketMarketMarket, 'market.market'),
   MarketMarketPortal: load(MarketMarketPortal, 'market.portal'),
+  MarketPendulumlabsMarketMarket: load(MarketPendulumlabsMarketMarket, 'pendulumlabs.market.market'),
   
 }
 

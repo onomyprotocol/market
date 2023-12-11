@@ -10,7 +10,7 @@ import "market/burnings.proto";
 import "market/order.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/pendulum-labs/market/x/market/types";
+option go_package = "market/x/market/types";
 
 // GenesisState defines the market module's genesis state.
 message GenesisState {

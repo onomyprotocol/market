@@ -3,16 +3,17 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	testkeeper "market/testutil/keeper"
 	"market/x/market/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetParams(t *testing.T) {
-	k, ctx := testkeeper.MarketKeeper(t)
+	k := testkeeper.CreateTestEnvironment(t)
 	params := types.DefaultParams()
 
-	k.SetParams(ctx, params)
+	k.MarketKeeper.SetParams(k.Context, params)
 
-	require.EqualValues(t, params, k.GetParams(ctx))
+	require.EqualValues(t, params, k.MarketKeeper.GetParams(k.Context))
 }
