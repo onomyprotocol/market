@@ -1,0 +1,12 @@
+syntax = "proto3";
+package market.market;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "market/x/market/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
