@@ -1,0 +1,35 @@
+syntax = "proto3";
+package pendulumlabs.market.market;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/pendulum-labs/market/x/market/types";
+option (gogoproto.goproto_stringer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message Drop {
+  uint64 uid = 1; 
+  string owner = 2; 
+  string pair = 3;
+  string drops = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string product = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ]; 
+  bool active = 6;
+}
+
+message Drops {
+  repeated uint64 uids = 1;
+  string sum = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ]; 
+}
+
+message DropPairs {
+  repeated string pairs = 1;
+}

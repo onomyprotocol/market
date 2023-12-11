@@ -1,13 +1,84 @@
 syntax = "proto3";
-package market.market;
+package pendulumlabs.market.market;
 
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  rpc CreateDrop(MsgCreateDrop) returns (MsgCreateDropResponse);
+  rpc RedeemDrop(MsgRedeemDrop) returns (MsgRedeemDropResponse);
+  rpc CreateOrder(MsgCreateOrder) returns (MsgCreateOrderResponse);
+  rpc CancelOrder(MsgCancelOrder) returns (MsgCancelOrderResponse);
+  rpc MarketOrder(MsgMarketOrder) returns (MsgMarketOrderResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreatePool {
+  string creator = 1;
+  string coinA = 2;
+  string coinB = 3;
+}
+
+message MsgCreatePoolResponse {
+}
+
+message MsgCreateDrop {
+  string creator = 1;
+  string pair = 2;
+  string drops = 3;
+}
+
+message MsgCreateDropResponse {
+}
+
+message MsgRedeemDrop {
+  string creator = 1;
+  string uid = 2;
+}
+
+message MsgRedeemDropResponse {
+}
+
+message MsgCreateOrder {
+  string creator = 1;
+  string denomAsk = 2;
+  string denomBid = 3;
+  string orderType = 4;
+  string amount = 5;
+  repeated string rate = 6;
+  string prev = 7;
+  string next = 8;
+}
+
+message MsgCreateOrderResponse {
+  uint64 uid = 1;
+}
+
+message MsgCancelOrder {
+  string creator = 1;
+  string uid = 2;
+}
+
+message MsgCancelOrderResponse {
+}
+
+message MsgMarketOrder {
+  string creator = 1;
+  string denomAsk = 2;
+	string amountAsk = 3;
+  string denomBid = 4;
+  string amountBid = 5;
+  //Slippage is percentage based on (parameter / 10000), 9999 representing as 99.99%
+  string slippage = 6;
+}
+
+message MsgMarketOrderResponse {
+	string amountBid = 1;
+	string amountAsk = 2;
+	string slippage = 3;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

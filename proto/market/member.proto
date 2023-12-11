@@ -1,0 +1,25 @@
+syntax = "proto3";
+package pendulumlabs.market.market;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/pendulum-labs/market/x/market/types";
+option (gogoproto.goproto_stringer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+message Member {
+  string pair = 1; 
+  string denomA = 2; 
+  string denomB = 3; 
+  string balance = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string previous = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ]; 
+  uint64 limit = 6; 
+  uint64 stop = 7;
+}
+

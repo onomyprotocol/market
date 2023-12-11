@@ -1,21 +1,147 @@
 syntax = "proto3";
-package market.market;
+package pendulumlabs.market.market;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "market/params.proto";
+import "market/pool.proto";
+import "market/drop.proto";
+import "market/member.proto";
+import "market/burnings.proto";
+import "market/order.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/market/market/params";
-  }
-  // this line is used by starport scaffolding # 2
+	// Parameters queries the parameters of the module.
+	rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/params";
+	}
+	
+	// Queries total burned.
+	rpc Burned(QueryBurnedRequest) returns (QueryBurnedResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/burned";
+	}
+
+  	// Queries a Pool by index.
+	rpc Pool(QueryGetPoolRequest) returns (QueryGetPoolResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/pool/{pair}";
+	}
+
+	// Queries a list of Pool items.
+	rpc PoolAll(QueryAllPoolRequest) returns (QueryAllPoolResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/pool";
+	}
+
+	// Queries a Volume by index.
+	rpc Volume(QueryVolumeRequest) returns (QueryVolumeResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/volume/{denom}";
+	}
+
+	// Queries all Volumes.
+	rpc VolumeAll(QueryAllVolumeRequest) returns (QueryAllVolumeResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/volume";
+	}
+
+	// Queries a Drop by index.
+	rpc Drop(QueryDropRequest) returns (QueryDropResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
+	}
+
+	// Queries a Drop by index.
+	rpc DropAmounts(QueryDropAmountsRequest) returns (QueryDropAmountsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/amounts/{uid}";
+	}
+
+	// Queries a Drop by index.
+	rpc DropCoin(QueryDropCoinRequest) returns (QueryDropCoinResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/coin/{denomA}/{denomB}/{amountA}";
+	}
+
+	// Converts drops to coin amounts
+	rpc DropsToCoins(QueryDropsToCoinsRequest) returns (QueryDropAmountsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/coins/{pair}/{drops}";
+	}
+
+	// Queries a Drop by index.
+	rpc DropPairs(QueryDropPairsRequest) returns (QueryDropPairsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/pairs/{address}";
+	}
+
+	// Queries a Drop by index.
+	rpc DropOwnerPair(QueryDropOwnerPairRequest) returns (QueryDropsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/{address}/{pair}";
+	}
+
+	// Queries a list of Drop items.
+	rpc DropAll(QueryAllDropRequest) returns (QueryDropsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop";
+	}
+
+	// Queries a Member by index.
+	rpc Member(QueryGetMemberRequest) returns (QueryGetMemberResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/member/{denomA}/{denomB}";
+	}
+
+	// Queries a list of Member items.
+	rpc MemberAll(QueryAllMemberRequest) returns (QueryAllMemberResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/member";
+	}
+
+	// Queries a Burnings by index.
+	rpc Burnings(QueryGetBurningsRequest) returns (QueryGetBurningsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/burnings/{denom}";
+	}
+
+	// Queries a list of Burnings items.
+	rpc BurningsAll(QueryAllBurningsRequest) returns (QueryAllBurningsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/burnings";
+	}
+
+	// Queries a Order by index.
+	rpc Order(QueryOrderRequest) returns (QueryOrderResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order/{uid}";
+	}
+
+	// Queries a list of Order items.
+	rpc OrderAll(QueryAllOrderRequest) returns (QueryOrdersResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order";
+	}
+
+	// Queries a list of Order items.
+	rpc OrderOwner(QueryOrderOwnerRequest) returns (QueryOrdersResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order/{address}";
+	}
+
+	// Queries a list of Order items.
+	rpc OrderOwnerUids(QueryOrderOwnerRequest) returns (QueryOrderOwnerUidsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/order/uids/{address}";
+	}
+
+	// Queries a list of Book items.
+	rpc Book(QueryBookRequest) returns (QueryBookResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/book/{denomA}/{denomB}/{orderType}";
+	}
+
+	// Queries a list of Bookends items.
+	rpc Bookends(QueryBookendsRequest) returns (QueryBookendsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/bookends/{coinA}/{coinB}/{orderType}/{rate}";
+	}
+
+	// Queries pool trade history.
+	rpc History(QueryHistoryRequest) returns (QueryHistoryResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/history/{pair}";
+	}
+
+	// Queries pool trade history.
+	rpc Quote(QueryQuoteRequest) returns (QueryQuoteResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/quote/{denomBid}/{denomAsk}/{denomAmount}/{amount}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +151,258 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetPoolRequest {
+	string pair = 1;
+}
+
+message QueryGetPoolResponse {
+	Pool pool = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPoolRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPoolResponse {
+	repeated Pool pool = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryVolumeRequest {
+	string denom = 1;
+}
+
+message QueryVolumeResponse {
+	string amount = 1;
+}
+
+message QueryAllVolumeRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllVolumeResponse {
+	repeated Volume volumes = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryBurnedRequest {
+}
+
+message QueryBurnedResponse {
+	string denom = 1;
+	string amount = 2;
+}
+
+message QueryDropRequest {
+	uint64 uid = 1;
+}
+
+message QueryDropCoinRequest {
+	string denomA = 1;
+	string denomB = 2;
+	string amountA = 3;
+}
+
+message QueryDropCoinResponse {
+	string drops = 1;
+	string amountB = 2;
+}
+
+message QueryDropResponse {
+	Drop drop = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryDropAmountsRequest {
+	uint64 uid = 1;
+}
+
+message QueryDropAmountsResponse {
+	string denom1 = 1;
+	string denom2 = 2;
+	string amount1 = 3;
+	string amount2 = 4;
+}
+
+message QueryDropsToCoinsRequest {
+	string pair = 1;
+	string drops = 2;
+}
+
+message QueryDropPairsRequest {
+	string address = 1;
+}
+
+message QueryDropPairsResponse {
+	repeated string pairs = 1;
+}
+
+message QueryDropOwnerPairRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryDropOwnerPairSumRequest {
+	string address = 1;
+	string pair = 2;
+}
+
+message QueryDropOwnerPairSumResponse {
+	string sum = 1;
+}
+
+message QueryDropOwnerPairUidsRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryUidsResponse {
+	repeated uint64 uids = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryDropOwnerPairDetailRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllDropRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryDropsResponse {
+	repeated Drop drops = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetMemberRequest {	  
+  	string denomA = 2;
+  	string denomB = 3;
+}
+
+message QueryGetMemberResponse {
+	Member member = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllMemberRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllMemberResponse {
+	repeated Member member = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetBurningsRequest {
+	  string denom = 1;
+
+}
+
+message QueryGetBurningsResponse {
+	Burnings burnings = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllBurningsRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllBurningsResponse {
+	repeated Burnings burnings = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOrderRequest {
+	uint64 uid = 1;
+}
+
+message QueryOrderResponse {
+	Order order = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryOrdersResponse {
+	repeated Order orders = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllOrderRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryOrderOwnerRequest {
+	string address = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryOrderOwnerUidsResponse {
+	Orders orders = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOrderOwnerPairRequest {
+	string address = 1;
+	string pair = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryOrderOwnerPairResponse {
+	repeated Order order = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryBookRequest {
+  	string denomA = 1;
+  	string denomB = 2;
+  	string orderType = 3;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+message QueryBookResponse {
+	repeated OrderResponse book = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryBookendsRequest {
+	string coinA = 1;
+	string coinB = 2;
+	string orderType = 3;
+	repeated string rate = 4;
+}
+
+message QueryBookendsResponse {
+	string coinA = 1;
+  string coinB = 2;
+  string orderType = 3;
+  repeated string rate = 4;
+	uint64 prev = 5;
+	uint64 next = 6;
+}
+
+message QueryHistoryRequest {
+	string pair = 1;
+	string length = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+  
+message QueryHistoryResponse {
+	repeated OrderResponse history = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// Market Quote: denom is the denom that is input for quote
+message QueryQuoteRequest {
+	string denomAsk = 1;
+	string denomBid = 2;
+	string denomAmount = 3;
+	string amount = 4;
+}
+  
+message QueryQuoteResponse {
+	string denom = 1;
+	string amount = 2;
 }
 
 // this line is used by starport scaffolding # 3

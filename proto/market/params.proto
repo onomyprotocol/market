@@ -1,12 +1,27 @@
 syntax = "proto3";
-package market.market;
+package pendulumlabs.market.market;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "market/x/market/types";
+option go_package = "github.com/pendulum-labs/market/x/market/types";
 
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
+
+  // earn and burn rates are (parameter / 10000), 9999 representing as 99.99%
+
+  // leader earnings rates
+  // 1,2,3 Comma separated, no space
+  string earn_rates = 1;
+
+  // pool burning rate
+  string burn_rate = 2;
+
+  // burn coin
+  string burn_coin = 3;
+
+  // market_fee (parameter / 10000), 9999 representing as 99.99%
+  string market_fee = 4;
   
 }
