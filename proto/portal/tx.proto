@@ -7,7 +7,19 @@ option go_package = "market/x/portal/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc SendSubscribeRate(MsgSendSubscribeRate) returns (MsgSendSubscribeRateResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
 }
 
+message MsgSendSubscribeRate {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string denomA = 5;
+  string denomB = 6;
+}
+
+message MsgSendSubscribeRateResponse {
+}
 // this line is used by starport scaffolding # proto/tx/message
