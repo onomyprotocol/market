@@ -29586,6 +29586,13 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  onomy_channel:
+                    type: string
+                    title: Onomy channel
+                  reserve_channel:
+                    type: string
+                    title: Reserve channel
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -51936,6 +51943,13 @@ definitions:
       the connection handshake.
   market.portal.Params:
     type: object
+    properties:
+      onomy_channel:
+        type: string
+        title: Onomy channel
+      reserve_channel:
+        type: string
+        title: Reserve channel
     description: Params defines the parameters for the module.
   market.portal.QueryParamsResponse:
     type: object
@@ -51943,6 +51957,13 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
+        properties:
+          onomy_channel:
+            type: string
+            title: Onomy channel
+          reserve_channel:
+            type: string
+            title: Reserve channel
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   pendulumlabs.market.market.Burnings:
     type: object

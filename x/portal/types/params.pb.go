@@ -25,6 +25,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the module.
 type Params struct {
+	// Onomy channel
+	OnomyChannel string `protobuf:"bytes,1,opt,name=onomy_channel,json=onomyChannel,proto3" json:"onomy_channel,omitempty"`
+	// Reserve channel
+	ReserveChannel string `protobuf:"bytes,2,opt,name=reserve_channel,json=reserveChannel,proto3" json:"reserve_channel,omitempty"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
@@ -59,6 +63,20 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
+func (m *Params) GetOnomyChannel() string {
+	if m != nil {
+		return m.OnomyChannel
+	}
+	return ""
+}
+
+func (m *Params) GetReserveChannel() string {
+	if m != nil {
+		return m.ReserveChannel
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Params)(nil), "market.portal.Params")
 }
@@ -66,16 +84,19 @@ func init() {
 func init() { proto.RegisterFile("portal/params.proto", fileDescriptor_1334e718aef311fc) }
 
 var fileDescriptor_1334e718aef311fc = []byte{
-	// 129 bytes of a gzipped FileDescriptorProto
+	// 180 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2e, 0xc8, 0x2f, 0x2a,
 	0x49, 0xcc, 0xd1, 0x2f, 0x48, 0x2c, 0x4a, 0xcc, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17,
 	0xe2, 0xcd, 0x4d, 0x2c, 0xca, 0x4e, 0x2d, 0xd1, 0x83, 0xc8, 0x49, 0x89, 0xa4, 0xe7, 0xa7, 0xe7,
-	0x83, 0x65, 0xf4, 0x41, 0x2c, 0x88, 0x22, 0x25, 0x3e, 0x2e, 0xb6, 0x00, 0xb0, 0x26, 0x2b, 0x96,
-	0x19, 0x0b, 0xe4, 0x19, 0x9c, 0xf4, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1,
-	0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58, 0x8e, 0x21,
-	0x4a, 0x14, 0x62, 0x9c, 0x7e, 0x85, 0x3e, 0xd4, 0xb2, 0x92, 0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36,
-	0xb0, 0x39, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x35, 0xb2, 0xba, 0x48, 0x83, 0x00, 0x00,
-	0x00,
+	0x83, 0x65, 0xf4, 0x41, 0x2c, 0x88, 0x22, 0xa5, 0x18, 0x2e, 0xb6, 0x00, 0xb0, 0x26, 0x21, 0x65,
+	0x2e, 0xde, 0xfc, 0xbc, 0xfc, 0xdc, 0xca, 0xf8, 0xe4, 0x8c, 0xc4, 0xbc, 0xbc, 0xd4, 0x1c, 0x09,
+	0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x1e, 0xb0, 0xa0, 0x33, 0x44, 0x4c, 0x48, 0x9d, 0x8b, 0xbf,
+	0x28, 0xb5, 0x38, 0xb5, 0xa8, 0x2c, 0x15, 0xae, 0x8c, 0x09, 0xac, 0x8c, 0x0f, 0x2a, 0x0c, 0x55,
+	0x68, 0xc5, 0x32, 0x63, 0x81, 0x3c, 0x83, 0x93, 0xfe, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9,
+	0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e,
+	0xcb, 0x31, 0x44, 0x89, 0x42, 0x1c, 0xa7, 0x5f, 0xa1, 0x0f, 0x75, 0x7a, 0x49, 0x65, 0x41, 0x6a,
+	0x71, 0x12, 0x1b, 0xd8, 0x55, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x61, 0xe9, 0xc5, 0x27,
+	0xd1, 0x00, 0x00, 0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -98,6 +119,20 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.ReserveChannel) > 0 {
+		i -= len(m.ReserveChannel)
+		copy(dAtA[i:], m.ReserveChannel)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.ReserveChannel)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.OnomyChannel) > 0 {
+		i -= len(m.OnomyChannel)
+		copy(dAtA[i:], m.OnomyChannel)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.OnomyChannel)))
+		i--
+		dAtA[i] = 0xa
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -118,6 +153,14 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.OnomyChannel)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.ReserveChannel)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
 	return n
 }
 
@@ -156,6 +199,70 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: Params: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OnomyChannel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OnomyChannel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReserveChannel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReserveChannel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipParams(dAtA[iNdEx:])

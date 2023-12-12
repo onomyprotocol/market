@@ -12,7 +12,10 @@
 /**
  * Params defines the parameters for the module.
  */
-export type PortalParams = object;
+export interface PortalParams {
+  onomy_channel?: string;
+  reserve_channel?: string;
+}
 
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.

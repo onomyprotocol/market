@@ -9,4 +9,10 @@ option go_package = "market/x/portal/types";
 message Params {
   option (gogoproto.goproto_stringer) = false;
   
+  // Onomy channel
+  string onomy_channel = 1;
+  
+  // Reserve channel
+  string reserve_channel = 2;
+
 }
