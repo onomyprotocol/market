@@ -17,9 +17,9 @@ var (
 
 var (
 	// DefaultEarnRate is default value for the DefaultEarnRate param.
-	DefaultOnomyChannel = "1" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
+	DefaultOnomyChannel = "0" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
 	// DefaultReserveChannel is default value for the DefaultReserveChannel param.
-	DefaultReserveChannel = "2" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
+	DefaultReserveChannel = "0" //nolint:gomnd,gochecknoglobals // cosmos-sdk style
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -81,7 +81,7 @@ func validateOnomyChannel(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid string number format: %q", value)
 	}
-	if onomyChannel.LTE(sdk.ZeroInt()) {
+	if onomyChannel.LT(sdk.ZeroInt()) {
 		return fmt.Errorf("onomy channel must be positive and greater than zero: %d", onomyChannel)
 	}
 
@@ -98,7 +98,7 @@ func validateReserveChannel(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid string number format: %q", value)
 	}
-	if reserveChannel.LTE(sdk.ZeroInt()) {
+	if reserveChannel.LT(sdk.ZeroInt()) {
 		return fmt.Errorf("reserve channel must be positive and greater than zero: %d", reserveChannel)
 	}
 
