@@ -1,5 +1,5 @@
 {
-  "genesis_time": "2023-09-28T16:49:43.017132956Z",
+  "genesis_time": "2023-12-25T16:49:43.017132956Z",
   "chain_id": "market",
   "initial_height": "1",
   "consensus_params": {
@@ -57,8 +57,28 @@
           "address": "onomy15d2ltjk9knex7llg25y5uwa0ulst06pghzv4ln",
           "coins": [
             {
-              "denom": "stake",
-              "amount": "20000000000000000000"
+              "denom": "abtc",
+              "amount": "150000000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "100000000000000000000000000"
+            },
+            {
+              "denom": "aonex",
+              "amount": "20000000000000000000000000"
+            },
+            {
+              "denom": "ausdc",
+              "amount": "20000000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "20000000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "20000000000000000000000000"
             }
           ]
         },
@@ -74,6 +94,10 @@
               "amount": "100000000000000000000000000"
             },
             {
+              "denom": "aonex",
+              "amount": "20000000000000000000"
+            },
+            {
               "denom": "ausdc",
               "amount": "20000000000000000000000000000"
             },
@@ -82,8 +106,62 @@
               "amount": "20000000000000000000000000000"
             },
             {
-              "denom": "stake",
+              "denom": "wei",
+              "amount": "20000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "onomy1sypmypr2hzy9neqs6uv2l23mps4jnlj9m0urj3",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "150000000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "100000000000000000000000000"
+            },
+            {
+              "denom": "aonex",
               "amount": "20000000000000000000"
+            },
+            {
+              "denom": "ausdc",
+              "amount": "20000000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "20000000000000000000000000000"
+            },
+            {
+              "denom": "wei",
+              "amount": "20000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "onomy1cacjllya87cseyknuny4gwfpc36nmne5rwhff4",
+          "coins": [
+            {
+              "denom": "abtc",
+              "amount": "150000000000000000000000"
+            },
+            {
+              "denom": "anom",
+              "amount": "100000000000000000000000000"
+            },
+            {
+              "denom": "aonex",
+              "amount": "20000000000000000000"
+            },
+            {
+              "denom": "ausdc",
+              "amount": "20000000000000000000000000000"
+            },
+            {
+              "denom": "ausdt",
+              "amount": "20000000000000000000000000000"
             },
             {
               "denom": "wei",
@@ -133,22 +211,41 @@
           "symbol": "ETH"
         },
         {
-          "name": "Nom",
-          "description": "Onomy NOM",
+          "name": "ONEX",
+          "description": "stake in consumer-side governance for ONEX",
           "denom_units": [
             {
-              "denom": "anom",
+              "denom": "aonex",
               "exponent": 0,
               "aliases": []
             },
             {
-              "denom": "nom",
+              "denom": "onex",
               "exponent": 18,
               "aliases": []
             }
           ],
+          "base": "aonex",
+          "display": "onex",
+          "symbol": "ONEX"
+        },
+        {
           "base": "anom",
+          "denom_units": [
+            {
+              "aliases": [],
+              "denom": "anom",
+              "exponent": 0
+            },
+            {
+              "aliases": [],
+              "denom": "nom",
+              "exponent": 18
+            }
+          ],
+          "description": "Onomy NOM",
           "display": "nom",
+          "name": "Nom",
           "symbol": "NOM"
         },
         {
@@ -197,7 +294,7 @@
     },
     "crisis": {
       "constant_fee": {
-        "denom": "stake",
+        "denom": "aonex",
         "amount": "1000"
       }
     },
@@ -227,69 +324,7 @@
       "allowances": []
     },
     "genutil": {
-      "gen_txs": [
-        {
-          "body": {
-            "messages": [
-              {
-                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
-                "description": {
-                  "moniker": "market",
-                  "identity": "",
-                  "website": "",
-                  "security_contact": "",
-                  "details": ""
-                },
-                "commission": {
-                  "rate": "0.100000000000000000",
-                  "max_rate": "0.200000000000000000",
-                  "max_change_rate": "0.010000000000000000"
-                },
-                "min_self_delegation": "1",
-                "delegator_address": "onomy15d2ltjk9knex7llg25y5uwa0ulst06pghzv4ln",
-                "validator_address": "onomyvaloper15d2ltjk9knex7llg25y5uwa0ulst06pgt9wzr9",
-                "pubkey": {
-                  "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "+U7h260uKe1VkVw4eXBH3UFhBvzefIYW8rcTHwYu3iU="
-                },
-                "value": {
-                  "denom": "stake",
-                  "amount": "10000000000000000000"
-                }
-              }
-            ],
-            "memo": "25b05b29fdc661eeb418d8c7a638d88845ae542f@172.17.0.3:26656",
-            "timeout_height": "0",
-            "extension_options": [],
-            "non_critical_extension_options": []
-          },
-          "auth_info": {
-            "signer_infos": [
-              {
-                "public_key": {
-                  "@type": "/cosmos.crypto.secp256k1.PubKey",
-                  "key": "AzV1bAB3hzWo5wJoURVU1gdkR5+Q9GXc2smwAb0oP69M"
-                },
-                "mode_info": {
-                  "single": {
-                    "mode": "SIGN_MODE_DIRECT"
-                  }
-                },
-                "sequence": "0"
-              }
-            ],
-            "fee": {
-              "amount": [],
-              "gas_limit": "200000",
-              "payer": "",
-              "granter": ""
-            }
-          },
-          "signatures": [
-            "fTaGvxdtoHyRLI3wYZbENT6G5v8wy4WOQrL2SRqVSv8qY9uYU8Zc9dHt6bJkmZM861Gq3S+nh9pRLyRFq7YJ9w=="
-          ]
-        }
-      ]
+      "gen_txs": []
     },
     "gov": {
       "starting_proposal_id": "1",
@@ -299,7 +334,7 @@
       "deposit_params": {
         "min_deposit": [
           {
-            "denom": "stake",
+            "denom": "aonex",
             "amount": "10000000"
           }
         ],
@@ -366,7 +401,7 @@
         "annual_provisions": "0.000000000000000000"
       },
       "params": {
-        "mint_denom": "stake",
+        "mint_denom": "aonex",
         "inflation_rate_change": "0.130000000000000000",
         "inflation_max": "0.200000000000000000",
         "inflation_min": "0.070000000000000000",
@@ -392,7 +427,7 @@
         "max_validators": 100,
         "max_entries": 7,
         "historical_entries": 10000,
-        "bond_denom": "stake"
+        "bond_denom": "aonex"
       },
       "last_total_power": "0",
       "last_validator_powers": [],
