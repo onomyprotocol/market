@@ -44,6 +44,20 @@
           "pub_key": null,
           "account_number": "1",
           "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy1sypmypr2hzy9neqs6uv2l23mps4jnlj9m0urj3",
+          "pub_key": null,
+          "account_number": "1",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "onomy1cacjllya87cseyknuny4gwfpc36nmne5rwhff4",
+          "pub_key": null,
+          "account_number": "1",
+          "sequence": "0"
         }
       ]
     },
