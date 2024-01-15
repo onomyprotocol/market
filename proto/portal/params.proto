@@ -1,0 +1,14 @@
+syntax = "proto3";
+package market.portal;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "market/x/portal/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+  string providerChannel = 1 [(gogoproto.moretags) = "yaml:\"provider_channel\""];
+  string reserveChannel = 2 [(gogoproto.moretags) = "yaml:\"reserve_channel\""];
+}
