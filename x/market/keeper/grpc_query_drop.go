@@ -159,14 +159,14 @@ func (k Keeper) DropsToCoins(c context.Context, req *types.QueryDropsToCoinsRequ
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	amountA, amountB, found := k.GetDropsToCoins(
+	amountA, amountB, err := k.GetDropsToCoins(
 		ctx,
 		req.DenomA,
 		req.DenomB,
 		req.Drops,
 	)
-	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+	if err != nil {
+		return nil, err
 	}
 
 	return &types.QueryDropsToCoinsResponse{

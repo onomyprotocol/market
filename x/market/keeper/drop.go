@@ -10,6 +10,8 @@ import (
 	"github.com/pendulum-labs/market/x/market/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // SetDrop set a specific drop in the store from its index
@@ -489,11 +491,11 @@ func (k Keeper) GetDropsToCoins(
 	denomA string,
 	denomB string,
 	drops string,
-) (amountA sdk.Int, amountB sdk.Int, found bool) {
+) (amountA sdk.Int, amountB sdk.Int, err error) {
 
 	dropsInt, ok := sdk.NewIntFromString(drops)
 	if !ok {
-		return amountA, amountB, false
+		return amountA, amountB, status.Error(codes.InvalidArgument, "drops input not valid")
 	}
 
 	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
@@ -503,7 +505,7 @@ func (k Keeper) GetDropsToCoins(
 		denomA,
 	))
 	if b == nil {
-		return amountA, amountB, false
+		return amountA, amountB, status.Error(codes.InvalidArgument, "memberA not found")
 	}
 
 	var memberA types.Member
@@ -514,7 +516,7 @@ func (k Keeper) GetDropsToCoins(
 		denomB,
 	))
 	if c == nil {
-		return amountA, amountB, false
+		return amountA, amountB, status.Error(codes.InvalidArgument, "memberB not found")
 	}
 
 	var memberB types.Member
@@ -530,7 +532,7 @@ func (k Keeper) GetDropsToCoins(
 		pair,
 	))
 	if d == nil {
-		return amountA, amountB, false
+		return amountA, amountB, status.Error(codes.InvalidArgument, "pool not found")
 	}
 
 	var pool types.Pool
@@ -538,10 +540,8 @@ func (k Keeper) GetDropsToCoins(
 
 	amountA, amountB, error := dropAmounts(dropsInt, pool, memberA, memberB)
 	if error != nil {
-		return amountA, amountB, false
+		return amountA, amountB, status.Error(codes.InvalidArgument, "drop amounts calc error")
 	}
 
-	found = true
-
-	return
+	return amountA, amountB, nil
 }
