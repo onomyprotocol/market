@@ -9,38 +9,9 @@
  * ---------------------------------------------------------------
  */
 
-export interface MarketBurnings {
-  denom?: string;
-  amount?: string;
-}
-
-export interface MarketDrop {
-  /** @format uint64 */
-  uid?: string;
-  owner?: string;
-  pair?: string;
-  drops?: string;
-  product?: string;
-  active?: boolean;
-}
-
 export interface MarketLeader {
   address?: string;
   drops?: string;
-}
-
-export interface MarketMember {
-  pair?: string;
-  denomA?: string;
-  denomB?: string;
-  balance?: string;
-  previous?: string;
-
-  /** @format uint64 */
-  limit?: string;
-
-  /** @format uint64 */
-  stop?: string;
 }
 
 export type MarketMsgCancelOrderResponse = object;
@@ -61,30 +32,6 @@ export interface MarketMsgMarketOrderResponse {
 }
 
 export type MarketMsgRedeemDropResponse = object;
-
-export interface MarketOrder {
-  /** @format uint64 */
-  uid?: string;
-  owner?: string;
-  status?: string;
-  orderType?: string;
-  denomAsk?: string;
-  denomBid?: string;
-  amount?: string;
-  rate?: string[];
-
-  /** @format uint64 */
-  prev?: string;
-
-  /** @format uint64 */
-  next?: string;
-
-  /** @format int64 */
-  beg_time?: string;
-
-  /** @format int64 */
-  upd_time?: string;
-}
 
 export interface MarketOrderResponse {
   /** @format uint64 */
@@ -114,31 +61,8 @@ export interface MarketOrders {
   uids?: string[];
 }
 
-/**
- * Params defines the parameters for the module.
- */
-export interface MarketParams {
-  earn_rates?: string;
-  burn_rate?: string;
-  burn_coin?: string;
-  market_fee?: string;
-}
-
-export interface MarketPool {
-  pair?: string;
-  denom1?: string;
-  denom2?: string;
-  volume1?: MarketVolume;
-  volume2?: MarketVolume;
-  leaders?: MarketLeader[];
-  drops?: string;
-
-  /** @format uint64 */
-  history?: string;
-}
-
 export interface MarketQueryAllBurningsResponse {
-  burnings?: MarketBurnings[];
+  burnings?: MarketmarketBurnings[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -153,7 +77,7 @@ export interface MarketQueryAllBurningsResponse {
 }
 
 export interface MarketQueryAllMemberResponse {
-  member?: MarketMember[];
+  member?: MarketmarketMember[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -168,7 +92,7 @@ export interface MarketQueryAllMemberResponse {
 }
 
 export interface MarketQueryAllPoolResponse {
-  pool?: MarketPool[];
+  pool?: MarketmarketPool[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -183,7 +107,7 @@ export interface MarketQueryAllPoolResponse {
 }
 
 export interface MarketQueryAllVolumeResponse {
-  volumes?: MarketVolume[];
+  volumes?: MarketmarketVolume[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -247,11 +171,11 @@ export interface MarketQueryDropPairsResponse {
 }
 
 export interface MarketQueryDropResponse {
-  drop?: MarketDrop;
+  drop?: MarketmarketDrop;
 }
 
 export interface MarketQueryDropsResponse {
-  drops?: MarketDrop[];
+  drops?: MarketmarketDrop[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -265,16 +189,21 @@ export interface MarketQueryDropsResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface MarketQueryDropsToCoinsResponse {
+  amountA?: string;
+  amountB?: string;
+}
+
 export interface MarketQueryGetBurningsResponse {
-  burnings?: MarketBurnings;
+  burnings?: MarketmarketBurnings;
 }
 
 export interface MarketQueryGetMemberResponse {
-  member?: MarketMember;
+  member?: MarketmarketMember;
 }
 
 export interface MarketQueryGetPoolResponse {
-  pool?: MarketPool;
+  pool?: MarketmarketPool;
 }
 
 export interface MarketQueryHistoryResponse {
@@ -308,11 +237,11 @@ export interface MarketQueryOrderOwnerUidsResponse {
 }
 
 export interface MarketQueryOrderResponse {
-  order?: MarketOrder;
+  order?: MarketmarketOrder;
 }
 
 export interface MarketQueryOrdersResponse {
-  orders?: MarketOrder[];
+  orders?: MarketmarketOrder[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -331,7 +260,7 @@ export interface MarketQueryOrdersResponse {
  */
 export interface MarketQueryParamsResponse {
   /** params holds all the parameters of this module. */
-  params?: MarketParams;
+  params?: MarketmarketParams;
 }
 
 export interface MarketQueryQuoteResponse {
@@ -343,7 +272,83 @@ export interface MarketQueryVolumeResponse {
   amount?: string;
 }
 
-export interface MarketVolume {
+export interface MarketmarketBurnings {
+  denom?: string;
+  amount?: string;
+}
+
+export interface MarketmarketDrop {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  pair?: string;
+  drops?: string;
+  product?: string;
+  active?: boolean;
+}
+
+export interface MarketmarketMember {
+  pair?: string;
+  denomA?: string;
+  denomB?: string;
+  balance?: string;
+  previous?: string;
+
+  /** @format uint64 */
+  limit?: string;
+
+  /** @format uint64 */
+  stop?: string;
+}
+
+export interface MarketmarketOrder {
+  /** @format uint64 */
+  uid?: string;
+  owner?: string;
+  status?: string;
+  orderType?: string;
+  denomAsk?: string;
+  denomBid?: string;
+  amount?: string;
+  rate?: string[];
+
+  /** @format uint64 */
+  prev?: string;
+
+  /** @format uint64 */
+  next?: string;
+
+  /** @format int64 */
+  beg_time?: string;
+
+  /** @format int64 */
+  upd_time?: string;
+}
+
+/**
+ * Params defines the parameters for the module.
+ */
+export interface MarketmarketParams {
+  earn_rates?: string;
+  burn_rate?: string;
+  burn_coin?: string;
+  market_fee?: string;
+}
+
+export interface MarketmarketPool {
+  pair?: string;
+  denom1?: string;
+  denom2?: string;
+  volume1?: MarketmarketVolume;
+  volume2?: MarketmarketVolume;
+  leaders?: MarketLeader[];
+  drops?: string;
+
+  /** @format uint64 */
+  history?: string;
+}
+
+export interface MarketmarketVolume {
   denom?: string;
   amount?: string;
 }
@@ -752,7 +757,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryDropAmounts
-   * @summary Queries a Drop by index.
+   * @summary Queries a Drop by UID and returns Denom and Amounts for when drop redeemed.
    * @request GET:/pendulum-labs/market/market/drop/amounts/{uid}
    */
   queryDropAmounts = (uid: string, params: RequestParams = {}) =>
@@ -785,11 +790,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDropsToCoins
    * @summary Converts drops to coin amounts
-   * @request GET:/pendulum-labs/market/market/drop/coins/{pair}/{drops}
+   * @request GET:/pendulum-labs/market/market/drop/coins/{denomA}/{denomB}/{drops}
    */
-  queryDropsToCoins = (pair: string, drops: string, params: RequestParams = {}) =>
-    this.request<MarketQueryDropAmountsResponse, RpcStatus>({
-      path: `/pendulum-labs/market/market/drop/coins/${pair}/${drops}`,
+  queryDropsToCoins = (denomA: string, denomB: string, drops: string, params: RequestParams = {}) =>
+    this.request<MarketQueryDropsToCoinsResponse, RpcStatus>({
+      path: `/pendulum-labs/market/market/drop/coins/${denomA}/${denomB}/${drops}`,
       method: "GET",
       format: "json",
       ...params,

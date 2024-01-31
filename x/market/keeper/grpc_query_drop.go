@@ -153,25 +153,24 @@ func (k Keeper) DropCoin(c context.Context, req *types.QueryDropCoinRequest) (*t
 	}, nil
 }
 
-func (k Keeper) DropsToCoins(c context.Context, req *types.QueryDropsToCoinsRequest) (*types.QueryDropAmountsResponse, error) {
+func (k Keeper) DropsToCoins(c context.Context, req *types.QueryDropsToCoinsRequest) (*types.QueryDropsToCoinsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	denom1, denom2, amount1, amount2, found := k.GetDropsToCoins(
+	amountA, amountB, found := k.GetDropsToCoins(
 		ctx,
-		req.Pair,
+		req.DenomA,
+		req.DenomB,
 		req.Drops,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.QueryDropAmountsResponse{
-		Denom1:  denom1,
-		Denom2:  denom2,
-		Amount1: amount1.String(),
-		Amount2: amount2.String(),
+	return &types.QueryDropsToCoinsResponse{
+		AmountA: amountA.String(),
+		AmountB: amountB.String(),
 	}, nil
 }

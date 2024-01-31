@@ -51,7 +51,7 @@ service Query {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/{uid}";
 	}
 
-	// Queries a Drop by index.
+	// Queries a Drop by UID and returns Denom and Amounts for when drop redeemed.
 	rpc DropAmounts(QueryDropAmountsRequest) returns (QueryDropAmountsResponse) {
 		option (google.api.http).get = "/pendulum-labs/market/market/drop/amounts/{uid}";
 	}
@@ -62,8 +62,8 @@ service Query {
 	}
 
 	// Converts drops to coin amounts
-	rpc DropsToCoins(QueryDropsToCoinsRequest) returns (QueryDropAmountsResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/drop/coins/{pair}/{drops}";
+	rpc DropsToCoins(QueryDropsToCoinsRequest) returns (QueryDropsToCoinsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/coins/{denomA}/{denomB}/{drops}";
 	}
 
 	// Queries a Drop by index.
@@ -226,8 +226,14 @@ message QueryDropAmountsResponse {
 }
 
 message QueryDropsToCoinsRequest {
-	string pair = 1;
-	string drops = 2;
+	string denomA = 1;
+	string denomB = 2;
+	string drops = 3;
+}
+
+message QueryDropsToCoinsResponse {
+	string amountA = 1;
+	string amountB = 2;
 }
 
 message QueryDropPairsRequest {

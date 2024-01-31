@@ -486,59 +486,59 @@ func dropCoin(amountA sdk.Int, pool types.Pool, memberA types.Member, memberB ty
 // GetOrderOwner returns orders from a single owner
 func (k Keeper) GetDropsToCoins(
 	ctx sdk.Context,
-	pair string,
+	denomA string,
+	denomB string,
 	drops string,
-) (denom1 string, denom2 string, amount1 sdk.Int, amount2 sdk.Int, found bool) {
+) (amountA sdk.Int, amountB sdk.Int, found bool) {
 
 	dropsInt, ok := sdk.NewIntFromString(drops)
 	if !ok {
-		return denom1, denom2, amount1, amount2, false
+		return amountA, amountB, false
 	}
-
-	pairArray := strings.Split(pair, ",")
-
-	denom1 = pairArray[0]
-	denom2 = pairArray[1]
 
 	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 
 	b := memberStore.Get(types.MemberKey(
-		denom2,
-		denom1,
+		denomB,
+		denomA,
 	))
 	if b == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amountA, amountB, false
 	}
 
-	var member1 types.Member
-	k.cdc.MustUnmarshal(b, &member1)
+	var memberA types.Member
+	k.cdc.MustUnmarshal(b, &memberA)
 
 	c := memberStore.Get(types.MemberKey(
-		denom1,
-		denom2,
+		denomA,
+		denomB,
 	))
 	if c == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amountA, amountB, false
 	}
 
-	var member2 types.Member
-	k.cdc.MustUnmarshal(c, &member2)
+	var memberB types.Member
+	k.cdc.MustUnmarshal(c, &memberB)
 
 	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
+
+	prePair := []string{denomA, denomB}
+	sort.Strings(prePair)
+	pair := strings.Join(prePair, ",")
 
 	d := poolStore.Get(types.PoolKey(
 		pair,
 	))
 	if d == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amountA, amountB, false
 	}
 
 	var pool types.Pool
 	k.cdc.MustUnmarshal(d, &pool)
 
-	amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
+	amountA, amountB, error := dropAmounts(dropsInt, pool, memberA, memberB)
 	if error != nil {
-		return denom1, denom2, amount1, amount2, false
+		return amountA, amountB, false
 	}
 
 	found = true
