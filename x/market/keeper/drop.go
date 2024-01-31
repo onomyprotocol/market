@@ -526,6 +526,7 @@ func (k Keeper) GetDropsToCoins(
 
 	prePair := []string{denomA, denomB}
 	sort.Strings(prePair)
+	denom1 := prePair[0]
 	pair := strings.Join(prePair, ",")
 
 	d := poolStore.Get(types.PoolKey(
@@ -537,6 +538,18 @@ func (k Keeper) GetDropsToCoins(
 
 	var pool types.Pool
 	k.cdc.MustUnmarshal(d, &pool)
+
+	if denom1 == denomA {
+		amountA, amountB, error := dropAmounts(dropsInt, pool, memberA, memberB)
+		if error != nil {
+			return amountA, amountB, error
+		}
+	} else {
+		amountB, amountA, error := dropAmounts(dropsInt, pool, memberB, memberA)
+		if error != nil {
+			return amountA, amountB, error
+		}
+	}
 
 	amountA, amountB, error := dropAmounts(dropsInt, pool, memberA, memberB)
 	if error != nil {
