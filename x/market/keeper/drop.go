@@ -540,7 +540,7 @@ func (k Keeper) GetDropsToCoins(
 
 	amountA, amountB, error := dropAmounts(dropsInt, pool, memberA, memberB)
 	if error != nil {
-		return amountA, amountB, status.Error(codes.InvalidArgument, "drop amounts calc error")
+		return amountA, amountB, error
 	}
 
 	return amountA, amountB, nil
