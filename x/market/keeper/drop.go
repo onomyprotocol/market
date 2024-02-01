@@ -393,6 +393,14 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "drops")
 	}
 
+	if member1.Balance.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "member1 balance")
+	}
+
+	if member2.Balance.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "member2 balance")
+	}
+
 	// see `msg_server_redeem_drop` for our bigint strategy
 	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
 	tmp := big.NewInt(0)
