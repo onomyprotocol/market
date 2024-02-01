@@ -389,6 +389,10 @@ func (k Keeper) GetDropAmounts(
 }
 
 func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 types.Member) (sdk.Int, sdk.Int, error) {
+	if drops.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "drops")
+	}
+
 	// see `msg_server_redeem_drop` for our bigint strategy
 	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
 	tmp := big.NewInt(0)
