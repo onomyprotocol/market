@@ -398,7 +398,11 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	}
 
 	if member2.Balance.LTE(sdk.ZeroInt()) {
-		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "member2 balance")
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "member 2 balance")
+	}
+
+	if pool.Drops.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", "pool drops")
 	}
 
 	// see `msg_server_redeem_drop` for our bigint strategy
