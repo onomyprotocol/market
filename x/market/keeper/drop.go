@@ -401,7 +401,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	dropAmtMember1 := sdk.NewIntFromBigInt(tmp)
 	tmp = big.NewInt(0)
 
-	if dropAmtMember1.LTE(sdk.ZeroInt()) {
+	if dropAmtMember1.LT(sdk.ZeroInt()) {
 		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
 	}
 
@@ -411,7 +411,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	dropAmtMember2 := sdk.NewIntFromBigInt(tmp)
 	//tmp = big.NewInt(0)
 
-	if dropAmtMember2.LTE(sdk.ZeroInt()) {
+	if dropAmtMember2.LT(sdk.ZeroInt()) {
 		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member2.DenomB)
 	}
 
