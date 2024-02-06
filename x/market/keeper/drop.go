@@ -489,11 +489,11 @@ func (k Keeper) GetDropsToCoins(
 	denom1 string,
 	denom2 string,
 	drops string,
-) (amount1 sdk.Int, amount2 sdk.Int, found bool) {
+) (amount1 sdk.Int, amount2 sdk.Int, err error) {
 
 	dropsInt, ok := sdk.NewIntFromString(drops)
 	if !ok {
-		return amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not a valid integer")
 	}
 
 	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
@@ -503,7 +503,7 @@ func (k Keeper) GetDropsToCoins(
 		denom1,
 	))
 	if b == nil {
-		return amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "member not found")
 	}
 
 	var member1 types.Member
@@ -514,7 +514,7 @@ func (k Keeper) GetDropsToCoins(
 		denom2,
 	))
 	if c == nil {
-		return amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "member not found")
 	}
 
 	var member2 types.Member
@@ -530,7 +530,7 @@ func (k Keeper) GetDropsToCoins(
 		pair,
 	))
 	if d == nil {
-		return amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pair not a valid denom pair")
 	}
 
 	var pool types.Pool
@@ -539,16 +539,14 @@ func (k Keeper) GetDropsToCoins(
 	if denom1 == prePair[0] {
 		amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
 		if error != nil {
-			return amount1, amount2, false
+			return amount1, amount2, error
 		}
 	} else {
 		amount2, amount1, error := dropAmounts(dropsInt, pool, member2, member1)
 		if error != nil {
-			return amount1, amount2, false
+			return amount2, amount1, error
 		}
 	}
-
-	found = true
 
 	return
 }
