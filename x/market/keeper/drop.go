@@ -486,19 +486,15 @@ func dropCoin(amountA sdk.Int, pool types.Pool, memberA types.Member, memberB ty
 // GetOrderOwner returns orders from a single owner
 func (k Keeper) GetDropsToCoins(
 	ctx sdk.Context,
-	pair string,
+	denom1 string,
+	denom2 string,
 	drops string,
-) (denom1 string, denom2 string, amount1 sdk.Int, amount2 sdk.Int, found bool) {
+) (amount1 sdk.Int, amount2 sdk.Int, found bool) {
 
 	dropsInt, ok := sdk.NewIntFromString(drops)
 	if !ok {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, false
 	}
-
-	pairArray := strings.Split(pair, ",")
-
-	denom1 = pairArray[0]
-	denom2 = pairArray[1]
 
 	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 
@@ -507,7 +503,7 @@ func (k Keeper) GetDropsToCoins(
 		denom1,
 	))
 	if b == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, false
 	}
 
 	var member1 types.Member
@@ -518,7 +514,7 @@ func (k Keeper) GetDropsToCoins(
 		denom2,
 	))
 	if c == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, false
 	}
 
 	var member2 types.Member
@@ -526,19 +522,30 @@ func (k Keeper) GetDropsToCoins(
 
 	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 
+	prePair := []string{denom1, denom2}
+	sort.Strings(prePair)
+	pair := strings.Join(prePair, ",")
+
 	d := poolStore.Get(types.PoolKey(
 		pair,
 	))
 	if d == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, false
 	}
 
 	var pool types.Pool
 	k.cdc.MustUnmarshal(d, &pool)
 
-	amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
-	if error != nil {
-		return denom1, denom2, amount1, amount2, false
+	if denom1 == prePair[0] {
+		amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
+		if error != nil {
+			return amount1, amount2, false
+		}
+	} else {
+		amount2, amount1, error := dropAmounts(dropsInt, pool, member2, member1)
+		if error != nil {
+			return amount1, amount2, false
+		}
 	}
 
 	found = true
