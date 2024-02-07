@@ -396,7 +396,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	tmp = big.NewInt(0)
 
 	if dropAmtMember1.LTE(sdk.ZeroInt()) {
-		return dropAmtMember1, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
+		return dropAmtMember1, sdk.ZeroInt(), sdkerrors.Wrapf(sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB), "%s", dropAmtMember1.String())
 	}
 
 	// `dropAmtMember2 = (drops * member2.Balance) / pool.Drops`
