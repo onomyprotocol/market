@@ -396,7 +396,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	tmp = big.NewInt(0)
 
 	if dropAmtMember1.LTE(sdk.ZeroInt()) {
-		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
+		return dropAmtMember1, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
 	}
 
 	// `dropAmtMember2 = (drops * member2.Balance) / pool.Drops`
@@ -406,7 +406,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	//tmp = big.NewInt(0)
 
 	if dropAmtMember2.LTE(sdk.ZeroInt()) {
-		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member2.DenomB)
+		return dropAmtMember1, dropAmtMember2, sdkerrors.Wrapf(types.ErrAmtZero, "%s", member2.DenomB)
 	}
 
 	return dropAmtMember1, dropAmtMember2, nil
@@ -536,16 +536,9 @@ func (k Keeper) GetDropsToCoins(
 	var pool types.Pool
 	k.cdc.MustUnmarshal(d, &pool)
 
-	if denom1 == prePair[0] {
-		amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
-		if error != nil {
-			return amount1, amount2, error
-		}
-	} else {
-		amount2, amount1, error := dropAmounts(dropsInt, pool, member2, member1)
-		if error != nil {
-			return amount2, amount1, error
-		}
+	amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
+	if error != nil {
+		return amount1, amount2, error
 	}
 
 	return
