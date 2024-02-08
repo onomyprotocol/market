@@ -10,6 +10,8 @@ import (
 	"github.com/pendulum-labs/market/x/market/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // SetDrop set a specific drop in the store from its index
@@ -387,6 +389,10 @@ func (k Keeper) GetDropAmounts(
 }
 
 func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 types.Member) (sdk.Int, sdk.Int, error) {
+	if drops.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), status.Error(codes.InvalidArgument, "invalid drops")
+	}
+
 	// see `msg_server_redeem_drop` for our bigint strategy
 	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
 	tmp := big.NewInt(0)
@@ -396,7 +402,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	tmp = big.NewInt(0)
 
 	if dropAmtMember1.LTE(sdk.ZeroInt()) {
-		return dropAmtMember1, sdk.ZeroInt(), sdkerrors.Wrapf(sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB), "%s", dropAmtMember1.String())
+		return dropAmtMember1, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
 	}
 
 	// `dropAmtMember2 = (drops * member2.Balance) / pool.Drops`
