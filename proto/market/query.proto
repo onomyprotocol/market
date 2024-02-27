@@ -62,8 +62,8 @@ service Query {
 	}
 
 	// Converts drops to coin amounts
-	rpc DropsToCoins(QueryDropsToCoinsRequest) returns (QueryDropAmountsResponse) {
-		option (google.api.http).get = "/pendulum-labs/market/market/drop/coins/{pair}/{drops}";
+	rpc DropsToCoins(QueryDropsToCoinsRequest) returns (QueryDropsToCoinsResponse) {
+		option (google.api.http).get = "/pendulum-labs/market/market/drop/coins/{denom1}/{denom2}/{drops}";
 	}
 
 	// Queries a Drop by index.
@@ -226,8 +226,16 @@ message QueryDropAmountsResponse {
 }
 
 message QueryDropsToCoinsRequest {
-	string pair = 1;
-	string drops = 2;
+	string denom1 = 1;
+	string denom2 = 2;
+	string drops = 3;
+}
+
+message QueryDropsToCoinsResponse {
+	string denom1 = 1;
+	string amount1 = 2;
+	string denom2 = 3;
+	string amount2 = 4;
 }
 
 message QueryDropPairsRequest {

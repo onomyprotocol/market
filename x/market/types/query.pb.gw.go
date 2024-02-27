@@ -466,15 +466,26 @@ func request_Query_DropsToCoins_0(ctx context.Context, marshaler runtime.Marshal
 		_   = err
 	)
 
-	val, ok = pathParams["pair"]
+	val, ok = pathParams["denom1"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pair")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "denom1")
 	}
 
-	protoReq.Pair, err = runtime.String(val)
+	protoReq.Denom1, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pair", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom1", err)
+	}
+
+	val, ok = pathParams["denom2"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "denom2")
+	}
+
+	protoReq.Denom2, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom2", err)
 	}
 
 	val, ok = pathParams["drops"]
@@ -504,15 +515,26 @@ func local_request_Query_DropsToCoins_0(ctx context.Context, marshaler runtime.M
 		_   = err
 	)
 
-	val, ok = pathParams["pair"]
+	val, ok = pathParams["denom1"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pair")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "denom1")
 	}
 
-	protoReq.Pair, err = runtime.String(val)
+	protoReq.Denom1, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pair", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom1", err)
+	}
+
+	val, ok = pathParams["denom2"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "denom2")
+	}
+
+	protoReq.Denom2, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom2", err)
 	}
 
 	val, ok = pathParams["drops"]
@@ -2723,7 +2745,7 @@ var (
 
 	pattern_Query_DropCoin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"pendulum-labs", "market", "drop", "coin", "denomA", "denomB", "amountA"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DropsToCoins_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"pendulum-labs", "market", "drop", "coins", "pair", "drops"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DropsToCoins_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"pendulum-labs", "market", "drop", "coins", "denom1", "denom2", "drops"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_DropPairs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"pendulum-labs", "market", "drop", "pairs", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 

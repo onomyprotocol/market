@@ -10,6 +10,8 @@ import (
 	"github.com/pendulum-labs/market/x/market/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // SetDrop set a specific drop in the store from its index
@@ -387,6 +389,10 @@ func (k Keeper) GetDropAmounts(
 }
 
 func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 types.Member) (sdk.Int, sdk.Int, error) {
+	if drops.LTE(sdk.ZeroInt()) {
+		return sdk.ZeroInt(), sdk.ZeroInt(), status.Error(codes.InvalidArgument, "invalid drops")
+	}
+
 	// see `msg_server_redeem_drop` for our bigint strategy
 	// `dropAmtMember1 = (drops * member1.Balance) / pool.Drops`
 	tmp := big.NewInt(0)
@@ -396,7 +402,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	tmp = big.NewInt(0)
 
 	if dropAmtMember1.LTE(sdk.ZeroInt()) {
-		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
+		return dropAmtMember1, sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member1.DenomB)
 	}
 
 	// `dropAmtMember2 = (drops * member2.Balance) / pool.Drops`
@@ -406,7 +412,7 @@ func dropAmounts(drops sdk.Int, pool types.Pool, member1 types.Member, member2 t
 	//tmp = big.NewInt(0)
 
 	if dropAmtMember2.LTE(sdk.ZeroInt()) {
-		return sdk.ZeroInt(), sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrAmtZero, "%s", member2.DenomB)
+		return dropAmtMember1, dropAmtMember2, sdkerrors.Wrapf(types.ErrAmtZero, "%s", member2.DenomB)
 	}
 
 	return dropAmtMember1, dropAmtMember2, nil
@@ -486,19 +492,15 @@ func dropCoin(amountA sdk.Int, pool types.Pool, memberA types.Member, memberB ty
 // GetOrderOwner returns orders from a single owner
 func (k Keeper) GetDropsToCoins(
 	ctx sdk.Context,
-	pair string,
+	denom1 string,
+	denom2 string,
 	drops string,
-) (denom1 string, denom2 string, amount1 sdk.Int, amount2 sdk.Int, found bool) {
+) (amount1 sdk.Int, amount2 sdk.Int, err error) {
 
 	dropsInt, ok := sdk.NewIntFromString(drops)
 	if !ok {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "drops not a valid integer")
 	}
-
-	pairArray := strings.Split(pair, ",")
-
-	denom1 = pairArray[0]
-	denom2 = pairArray[1]
 
 	memberStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MemberKeyPrefix))
 
@@ -507,7 +509,7 @@ func (k Keeper) GetDropsToCoins(
 		denom1,
 	))
 	if b == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "member not found")
 	}
 
 	var member1 types.Member
@@ -518,7 +520,7 @@ func (k Keeper) GetDropsToCoins(
 		denom2,
 	))
 	if c == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "member not found")
 	}
 
 	var member2 types.Member
@@ -526,11 +528,15 @@ func (k Keeper) GetDropsToCoins(
 
 	poolStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoolKeyPrefix))
 
+	prePair := []string{denom1, denom2}
+	sort.Strings(prePair)
+	pair := strings.Join(prePair, ",")
+
 	d := poolStore.Get(types.PoolKey(
 		pair,
 	))
 	if d == nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pair not a valid denom pair")
 	}
 
 	var pool types.Pool
@@ -538,10 +544,8 @@ func (k Keeper) GetDropsToCoins(
 
 	amount1, amount2, error := dropAmounts(dropsInt, pool, member1, member2)
 	if error != nil {
-		return denom1, denom2, amount1, amount2, false
+		return amount1, amount2, error
 	}
-
-	found = true
 
 	return
 }
