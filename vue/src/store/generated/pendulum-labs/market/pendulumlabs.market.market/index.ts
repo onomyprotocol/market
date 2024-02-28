@@ -13,6 +13,7 @@ import { Params } from "./module/types/market/params"
 import { Pool } from "./module/types/market/pool"
 import { Leader } from "./module/types/market/pool"
 import { Volume } from "./module/types/market/pool"
+import { CreateDenomProposal } from "./module/types/market/proposal"
 import { QueryDropOwnerPairSumRequest } from "./module/types/market/query"
 import { QueryDropOwnerPairSumResponse } from "./module/types/market/query"
 import { QueryDropOwnerPairUidsRequest } from "./module/types/market/query"
@@ -22,7 +23,7 @@ import { QueryOrderOwnerPairRequest } from "./module/types/market/query"
 import { QueryOrderOwnerPairResponse } from "./module/types/market/query"
 
 
-export { Burnings, Burned, Drop, Drops, DropPairs, Member, Order, Orders, OrderResponse, Params, Pool, Leader, Volume, QueryDropOwnerPairSumRequest, QueryDropOwnerPairSumResponse, QueryDropOwnerPairUidsRequest, QueryUidsResponse, QueryDropOwnerPairDetailRequest, QueryOrderOwnerPairRequest, QueryOrderOwnerPairResponse };
+export { Burnings, Burned, Drop, Drops, DropPairs, Member, Order, Orders, OrderResponse, Params, Pool, Leader, Volume, CreateDenomProposal, QueryDropOwnerPairSumRequest, QueryDropOwnerPairSumResponse, QueryDropOwnerPairUidsRequest, QueryUidsResponse, QueryDropOwnerPairDetailRequest, QueryOrderOwnerPairRequest, QueryOrderOwnerPairResponse };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -100,6 +101,7 @@ const getDefaultState = () => {
 						Pool: getStructure(Pool.fromPartial({})),
 						Leader: getStructure(Leader.fromPartial({})),
 						Volume: getStructure(Volume.fromPartial({})),
+						CreateDenomProposal: getStructure(CreateDenomProposal.fromPartial({})),
 						QueryDropOwnerPairSumRequest: getStructure(QueryDropOwnerPairSumRequest.fromPartial({})),
 						QueryDropOwnerPairSumResponse: getStructure(QueryDropOwnerPairSumResponse.fromPartial({})),
 						QueryDropOwnerPairUidsRequest: getStructure(QueryDropOwnerPairUidsRequest.fromPartial({})),
@@ -928,21 +930,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgRedeemDrop({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRedeemDrop(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRedeemDrop:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgMarketOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -988,6 +975,21 @@ export default {
 				}
 			}
 		},
+		async sendMsgRedeemDrop({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRedeemDrop(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRedeemDrop:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgCreateOrder({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -1014,19 +1016,6 @@ export default {
 					throw new Error('TxClient:MsgCreatePool:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCreatePool:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRedeemDrop({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRedeemDrop(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRedeemDrop:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -1066,6 +1055,19 @@ export default {
 					throw new Error('TxClient:MsgCreateDrop:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCreateDrop:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRedeemDrop({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRedeemDrop(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRedeemDrop:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRedeemDrop:Create Could not create message: ' + e.message)
 				}
 			}
 		},
