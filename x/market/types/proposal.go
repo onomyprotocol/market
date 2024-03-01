@@ -10,38 +10,38 @@ import (
 )
 
 const (
-	// ProposalTypeCreateDenomProposal defines the type for a CreateDenomProposal.
-	ProposalTypeCreateDenomProposal = "CreateDenomProposal"
+	// ProposalTypeDenomMetadataProposal defines the type for a DenomMetadataProposal.
+	ProposalTypeDenomMetadataProposal = "DenomMetadataProposal"
 )
 
 var (
-	_ govtypes.Content = &CreateDenomProposal{}
+	_ govtypes.Content = &DenomMetadataProposal{}
 )
 
 func init() { // nolint:gochecknoinits // cosmos sdk style
-	govtypes.RegisterProposalType(ProposalTypeCreateDenomProposal)
-	govtypes.RegisterProposalTypeCodec(&CreateDenomProposal{}, fmt.Sprintf("%s/%s", ModuleName, ProposalTypeCreateDenomProposal))
+	govtypes.RegisterProposalType(ProposalTypeDenomMetadataProposal)
+	govtypes.RegisterProposalTypeCodec(&DenomMetadataProposal{}, fmt.Sprintf("%s/%s", ModuleName, ProposalTypeDenomMetadataProposal))
 }
 
-// NewCreateDenomProposal creates a new fund treasury proposal.
-func NewCreateDenomProposal(sender sdk.AccAddress, title string, description string, metadata banktypes.Metadata, rate []sdk.Uint) *CreateDenomProposal {
-	return &CreateDenomProposal{sender.String(), title, description, &metadata, rate}
+// NewDenomMetadataProposal creates a new fund treasury proposal.
+func NewDenomMetadataProposal(sender sdk.AccAddress, title string, description string, metadata banktypes.Metadata, rate []sdk.Uint) *DenomMetadataProposal {
+	return &DenomMetadataProposal{sender.String(), title, description, &metadata, rate}
 }
 
 // GetTitle returns the title of a fund treasury proposal.
-func (m *CreateDenomProposal) GetTitle() string { return m.Title }
+func (m *DenomMetadataProposal) GetTitle() string { return m.Title }
 
 // GetDescription returns the description of a fund treasury proposal.
-func (m *CreateDenomProposal) GetDescription() string { return m.Description }
+func (m *DenomMetadataProposal) GetDescription() string { return m.Description }
 
 // ProposalRoute returns the routing key of a fund treasury proposal.
-func (m *CreateDenomProposal) ProposalRoute() string { return RouterKey }
+func (m *DenomMetadataProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of the fund treasury proposal.
-func (m *CreateDenomProposal) ProposalType() string { return ProposalTypeCreateDenomProposal }
+func (m *DenomMetadataProposal) ProposalType() string { return ProposalTypeDenomMetadataProposal }
 
 // ValidateBasic runs basic stateless validity checks.
-func (m *CreateDenomProposal) ValidateBasic() error {
+func (m *DenomMetadataProposal) ValidateBasic() error {
 	err := govtypes.ValidateAbstract(m)
 	if err != nil {
 		return err
@@ -58,4 +58,4 @@ func (m *CreateDenomProposal) ValidateBasic() error {
 }
 
 // GetProposer returns the proposer from the proposal struct.
-func (m *CreateDenomProposal) GetProposer() string { return m.Sender }
+func (m *DenomMetadataProposal) GetProposer() string { return m.Sender }

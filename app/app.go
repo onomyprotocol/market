@@ -93,6 +93,7 @@ import (
 
 	"github.com/pendulum-labs/market/docs"
 	marketmodule "github.com/pendulum-labs/market/x/market"
+	marketmoduleclient "github.com/pendulum-labs/market/x/market/client"
 	marketmodulekeeper "github.com/pendulum-labs/market/x/market/keeper"
 	marketmoduletypes "github.com/pendulum-labs/market/x/market/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
@@ -116,6 +117,7 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.CancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler,
 		ibcclientclient.UpgradeProposalHandler,
+		marketmoduleclient.DenomMetadataProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 

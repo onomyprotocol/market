@@ -5,7 +5,7 @@ import { Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "pendulumlabs.market.market";
 
 /** FundTreasuryProposal details a dao fund treasury proposal. */
-export interface CreateDenomProposal {
+export interface DenomMetadataProposal {
   sender: string;
   title: string;
   description: string;
@@ -13,16 +13,16 @@ export interface CreateDenomProposal {
   rate: string[];
 }
 
-const baseCreateDenomProposal: object = {
+const baseDenomMetadataProposal: object = {
   sender: "",
   title: "",
   description: "",
   rate: "",
 };
 
-export const CreateDenomProposal = {
+export const DenomMetadataProposal = {
   encode(
-    message: CreateDenomProposal,
+    message: DenomMetadataProposal,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.sender !== "") {
@@ -43,10 +43,10 @@ export const CreateDenomProposal = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): CreateDenomProposal {
+  decode(input: Reader | Uint8Array, length?: number): DenomMetadataProposal {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseCreateDenomProposal } as CreateDenomProposal;
+    const message = { ...baseDenomMetadataProposal } as DenomMetadataProposal;
     message.rate = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -74,8 +74,8 @@ export const CreateDenomProposal = {
     return message;
   },
 
-  fromJSON(object: any): CreateDenomProposal {
-    const message = { ...baseCreateDenomProposal } as CreateDenomProposal;
+  fromJSON(object: any): DenomMetadataProposal {
+    const message = { ...baseDenomMetadataProposal } as DenomMetadataProposal;
     message.rate = [];
     if (object.sender !== undefined && object.sender !== null) {
       message.sender = String(object.sender);
@@ -105,7 +105,7 @@ export const CreateDenomProposal = {
     return message;
   },
 
-  toJSON(message: CreateDenomProposal): unknown {
+  toJSON(message: DenomMetadataProposal): unknown {
     const obj: any = {};
     message.sender !== undefined && (obj.sender = message.sender);
     message.title !== undefined && (obj.title = message.title);
@@ -123,8 +123,10 @@ export const CreateDenomProposal = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<CreateDenomProposal>): CreateDenomProposal {
-    const message = { ...baseCreateDenomProposal } as CreateDenomProposal;
+  fromPartial(
+    object: DeepPartial<DenomMetadataProposal>
+  ): DenomMetadataProposal {
+    const message = { ...baseDenomMetadataProposal } as DenomMetadataProposal;
     message.rate = [];
     if (object.sender !== undefined && object.sender !== null) {
       message.sender = object.sender;

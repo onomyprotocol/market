@@ -30,7 +30,7 @@ type proposalGeneric struct {
 }
 
 // CmdFundTreasuryProposal implements the command to submit a fund-treasury proposal.
-func CmdCreateDenomProposal() *cobra.Command {
+func CmdDenomMetadataProposal() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-denom rate",
 		Args:  cobra.ExactArgs(1),
@@ -93,7 +93,7 @@ Must have denom.json in directory containing the denom metadata`,
 			}
 
 			from := clientCtx.GetFromAddress()
-			content := types.NewCreateDenomProposal(from, proposalGeneric.Title, proposalGeneric.Description, metadata, rate)
+			content := types.NewDenomMetadataProposal(from, proposalGeneric.Title, proposalGeneric.Description, metadata, rate)
 
 			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
