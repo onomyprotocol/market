@@ -945,10 +945,6 @@ func ExecuteStop(k msgServer, ctx sdk.Context, denomAsk string, denomBid string,
 	memberBid.Balance = memberBid.Balance.Add(strikeAmountBid)
 	memberAsk.Balance = memberAsk.Balance.Sub(strikeAmountAsk)
 
-	if sdkError != nil {
-		return memberAskInit, memberBidInit, sdkError
-	}
-
 	k.SetMember(ctx, memberAsk)
 	k.SetMember(ctx, memberBid)
 	return memberAsk, memberBid, nil
