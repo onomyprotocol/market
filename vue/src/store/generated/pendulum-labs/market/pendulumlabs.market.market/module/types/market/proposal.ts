@@ -10,14 +10,12 @@ export interface DenomMetadataProposal {
   title: string;
   description: string;
   metadata: Metadata | undefined;
-  rate: string[];
 }
 
 const baseDenomMetadataProposal: object = {
   sender: "",
   title: "",
   description: "",
-  rate: "",
 };
 
 export const DenomMetadataProposal = {
@@ -37,9 +35,6 @@ export const DenomMetadataProposal = {
     if (message.metadata !== undefined) {
       Metadata.encode(message.metadata, writer.uint32(34).fork()).ldelim();
     }
-    for (const v of message.rate) {
-      writer.uint32(42).string(v!);
-    }
     return writer;
   },
 
@@ -47,7 +42,6 @@ export const DenomMetadataProposal = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseDenomMetadataProposal } as DenomMetadataProposal;
-    message.rate = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -63,9 +57,6 @@ export const DenomMetadataProposal = {
         case 4:
           message.metadata = Metadata.decode(reader, reader.uint32());
           break;
-        case 5:
-          message.rate.push(reader.string());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -76,7 +67,6 @@ export const DenomMetadataProposal = {
 
   fromJSON(object: any): DenomMetadataProposal {
     const message = { ...baseDenomMetadataProposal } as DenomMetadataProposal;
-    message.rate = [];
     if (object.sender !== undefined && object.sender !== null) {
       message.sender = String(object.sender);
     } else {
@@ -97,11 +87,6 @@ export const DenomMetadataProposal = {
     } else {
       message.metadata = undefined;
     }
-    if (object.rate !== undefined && object.rate !== null) {
-      for (const e of object.rate) {
-        message.rate.push(String(e));
-      }
-    }
     return message;
   },
 
@@ -115,11 +100,6 @@ export const DenomMetadataProposal = {
       (obj.metadata = message.metadata
         ? Metadata.toJSON(message.metadata)
         : undefined);
-    if (message.rate) {
-      obj.rate = message.rate.map((e) => e);
-    } else {
-      obj.rate = [];
-    }
     return obj;
   },
 
@@ -127,7 +107,6 @@ export const DenomMetadataProposal = {
     object: DeepPartial<DenomMetadataProposal>
   ): DenomMetadataProposal {
     const message = { ...baseDenomMetadataProposal } as DenomMetadataProposal;
-    message.rate = [];
     if (object.sender !== undefined && object.sender !== null) {
       message.sender = object.sender;
     } else {
@@ -147,11 +126,6 @@ export const DenomMetadataProposal = {
       message.metadata = Metadata.fromPartial(object.metadata);
     } else {
       message.metadata = undefined;
-    }
-    if (object.rate !== undefined && object.rate !== null) {
-      for (const e of object.rate) {
-        message.rate.push(e);
-      }
     }
     return message;
   },

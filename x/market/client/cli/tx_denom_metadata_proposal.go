@@ -29,16 +29,20 @@ type proposalGeneric struct {
 	Deposit     string
 }
 
+type commandGeneric struct {
+	MetadataPath string
+}
+
 // CmdFundTreasuryProposal implements the command to submit a fund-treasury proposal.
 func CmdDenomMetadataProposal() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-denom rate",
-		Args:  cobra.ExactArgs(1),
-		Short: "Submit a create denom proposal",
+		Use:   "denom-metadata",
+		Args:  cobra.ExactArgs(0),
+		Short: "Submit a denom metadata proposal",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Submit a create denom proposal.
+			fmt.Sprintf(`Submit a denom metadata proposal.
 Example:
-$ %s tx gov submit-proposal create-denom 1,1 --title="Test Proposal" --description="My awesome proposal" --deposit="10000000000000000000aores" --from mykey
+$ %s tx gov submit-proposal denom-metadata --title="Test Proposal" --description="My awesome proposal" --deposit="10000000000000000000aonex" --from mykey
 
 Must have denom.json in directory containing the denom metadata`,
 				version.AppName,
@@ -50,22 +54,14 @@ Must have denom.json in directory containing the denom metadata`,
 				return err
 			}
 
-			rateString := args[0]
-			rateStringSplit := strings.Split(rateString, ",")
-
-			rateNumerator, err := sdk.ParseUint(rateStringSplit[0])
+			commandGeneric, err := parseCommandFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			rateDenominator, err := sdk.ParseUint(rateStringSplit[1])
-			if err != nil {
-				return err
-			}
+			path := commandGeneric.MetadataPath
 
-			rate := []sdk.Uint{rateNumerator, rateDenominator}
-
-			metadataFile, err := os.Open("metadata.json")
+			metadataFile, err := os.Open(path)
 			if err != nil {
 				return err
 			}
@@ -93,7 +89,7 @@ Must have denom.json in directory containing the denom metadata`,
 			}
 
 			from := clientCtx.GetFromAddress()
-			content := types.NewDenomMetadataProposal(from, proposalGeneric.Title, proposalGeneric.Description, metadata, rate)
+			content := types.NewDenomMetadataProposal(from, proposalGeneric.Title, proposalGeneric.Description, metadata)
 
 			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
@@ -131,8 +127,24 @@ func parseSubmitProposalFlags(fs *pflag.FlagSet) (*proposalGeneric, error) {
 	}, nil
 }
 
+func parseCommandFlags(fs *pflag.FlagSet) (*commandGeneric, error) {
+	path, err := fs.GetString("metadata-path")
+	if err != nil {
+		return nil, err
+	}
+
+	return &commandGeneric{
+		MetadataPath: path,
+	}, nil
+
+}
+
 func addProposalFlags(cmd *cobra.Command) {
 	cmd.Flags().String(govcli.FlagTitle, "", "The proposal title")
 	cmd.Flags().String(govcli.FlagDescription, "", "The proposal description")
 	cmd.Flags().String(govcli.FlagDeposit, "", "The proposal deposit")
+}
+
+func addCommandlFlags(cmd *cobra.Command) {
+	cmd.Flags().String("metadata-path", "", "The path to metadata json")
 }

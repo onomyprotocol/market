@@ -24,8 +24,8 @@ func init() { // nolint:gochecknoinits // cosmos sdk style
 }
 
 // NewDenomMetadataProposal creates a new fund treasury proposal.
-func NewDenomMetadataProposal(sender sdk.AccAddress, title string, description string, metadata banktypes.Metadata, rate []sdk.Uint) *DenomMetadataProposal {
-	return &DenomMetadataProposal{sender.String(), title, description, &metadata, rate}
+func NewDenomMetadataProposal(sender sdk.AccAddress, title string, description string, metadata banktypes.Metadata) *DenomMetadataProposal {
+	return &DenomMetadataProposal{sender.String(), title, description, &metadata}
 }
 
 // GetTitle returns the title of a fund treasury proposal.
