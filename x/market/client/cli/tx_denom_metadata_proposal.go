@@ -78,6 +78,11 @@ Must have denom.json in directory containing the denom metadata`,
 				return err
 			}
 
+			err = metadata.Validate()
+			if err != nil {
+				return err
+			}
+
 			proposalGeneric, err := parseSubmitProposalFlags(cmd.Flags())
 			if err != nil {
 				return err

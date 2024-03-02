@@ -50,4 +50,6 @@ var (
 	ErrLiquidityLow = sdkerrors.Register(ModuleName, 20, "liquidity too low") // nolint: gomnd
 	// ErrProductInvalid - liquidity is too low
 	ErrProductInvalid = sdkerrors.Register(ModuleName, 21, "product less than beg") // nolint: gomnd
+	// ErrDenomExists - denom already exists
+	ErrDenomExists = sdkerrors.Register(ModuleName, 22, "denom already exists") // nolint: gomnd
 )
