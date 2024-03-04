@@ -50,8 +50,13 @@ func (m *DenomMetadataProposal) ValidateBasic() error {
 	if err != nil {
 		return err
 	}
-	if err := sdk.VerifyAddressFormat(sender); err != nil {
+	if err = sdk.VerifyAddressFormat(sender); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address: %s", err)
+	}
+
+	err = m.Metadata.Validate()
+	if err != nil {
+		return err
 	}
 
 	return nil
