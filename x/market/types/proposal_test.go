@@ -28,13 +28,25 @@ func TestDenomMetadataProposal_ValidateBasic(t *testing.T) { //nolint:dupl // te
 		fields  fields
 		wantErr bool
 	}{
+
 		{
 			name: "positive",
 			fields: fields{
 				Sender:      GenAccountAddress().String(),
 				Title:       "title",
 				Description: "desc",
-				Metadata:    banktypes.Metadata{},
+				Metadata: banktypes.Metadata{
+					Name:        "Cosmos Hub Atom",
+					Symbol:      "ATOM",
+					Description: "The native staking token of the Cosmos Hub.",
+					DenomUnits: []*banktypes.DenomUnit{
+						{Denom: "uatom", Exponent: uint32(0), Aliases: []string{"microatom"}},
+						{Denom: "matom", Exponent: uint32(3), Aliases: []string{"milliatom"}},
+						{Denom: "atom", Exponent: uint32(6), Aliases: nil},
+					},
+					Base:    "uatom",
+					Display: "atom",
+				},
 			},
 		},
 		{
@@ -43,11 +55,23 @@ func TestDenomMetadataProposal_ValidateBasic(t *testing.T) { //nolint:dupl // te
 				Sender:      "invalid-sender",
 				Title:       "title",
 				Description: "desc",
-				Metadata:    banktypes.Metadata{},
+				Metadata: banktypes.Metadata{
+					Name:        "Cosmos Hub Atom",
+					Symbol:      "ATOM",
+					Description: "The native staking token of the Cosmos Hub.",
+					DenomUnits: []*banktypes.DenomUnit{
+						{Denom: "uatom", Exponent: uint32(0), Aliases: []string{"microatom"}},
+						{Denom: "matom", Exponent: uint32(3), Aliases: []string{"milliatom"}},
+						{Denom: "atom", Exponent: uint32(6), Aliases: nil},
+					},
+					Base:    "uatom",
+					Display: "atom",
+				},
 			},
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
