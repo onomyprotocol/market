@@ -18,18 +18,14 @@ import (
 	govcli "github.com/cosmos/cosmos-sdk/x/gov/client/cli"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	// "github.com/cosmos/cosmos-sdk/client/flags"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/pendulum-labs/market/x/market/types"
 )
 
 type proposalGeneric struct {
-	Title       string
-	Description string
-	Deposit     string
-}
-
-type commandGeneric struct {
+	Title        string
+	Description  string
+	Deposit      string
 	MetadataPath string
 }
 
@@ -42,9 +38,7 @@ func CmdDenomMetadataProposal() *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Submit a denom metadata proposal.
 Example:
-$ %s tx gov submit-proposal denom-metadata --title="Test Proposal" --description="My awesome proposal" --deposit="10000000000000000000aonex" --from mykey
-
-Must have denom.json in directory containing the denom metadata`,
+$ %s tx gov submit-proposal denom-metadata --title="Test Proposal" --description="My awesome proposal" --deposit="10000000000000000000aonex"`,
 				version.AppName,
 			),
 		),
@@ -54,12 +48,12 @@ Must have denom.json in directory containing the denom metadata`,
 				return err
 			}
 
-			commandGeneric, err := parseCommandFlags(cmd.Flags())
+			proposalGeneric, err := parseSubmitProposalFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			path := commandGeneric.MetadataPath
+			path := proposalGeneric.MetadataPath
 
 			metadataFile, err := os.Open(path)
 			if err != nil {
@@ -79,11 +73,6 @@ Must have denom.json in directory containing the denom metadata`,
 			}
 
 			err = metadata.Validate()
-			if err != nil {
-				return err
-			}
-
-			proposalGeneric, err := parseSubmitProposalFlags(cmd.Flags())
 			if err != nil {
 				return err
 			}
@@ -125,31 +114,22 @@ func parseSubmitProposalFlags(fs *pflag.FlagSet) (*proposalGeneric, error) {
 		return nil, err
 	}
 
-	return &proposalGeneric{
-		Title:       title,
-		Description: description,
-		Deposit:     deposit,
-	}, nil
-}
-
-func parseCommandFlags(fs *pflag.FlagSet) (*commandGeneric, error) {
 	path, err := fs.GetString("metadata-path")
 	if err != nil {
 		return nil, err
 	}
 
-	return &commandGeneric{
+	return &proposalGeneric{
+		Title:        title,
+		Description:  description,
+		Deposit:      deposit,
 		MetadataPath: path,
 	}, nil
-
 }
 
 func addProposalFlags(cmd *cobra.Command) {
 	cmd.Flags().String(govcli.FlagTitle, "", "The proposal title")
 	cmd.Flags().String(govcli.FlagDescription, "", "The proposal description")
 	cmd.Flags().String(govcli.FlagDeposit, "", "The proposal deposit")
-}
-
-func addCommandlFlags(cmd *cobra.Command) {
 	cmd.Flags().String("metadata-path", "", "The path to metadata json")
 }

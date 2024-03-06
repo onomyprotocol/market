@@ -1,0 +1,12 @@
+{
+    "name":        "Cosmos Hub Atom",
+    "symbol":      "ATOM",
+    "description": "The native staking token of the Cosmos Hub.",
+    "denom_units": [
+        {"denom": "uatom", "exponent": 0, "aliases": ["microatom"]},
+        {"Denom": "matom", "Exponent": 3, "Aliases": ["milliatom"]},
+        {"Denom": "atom", "Exponent": 6, "Aliases": []}
+    ],
+    "base": "uatom",
+    "display": "atom"
+}
