@@ -4,7 +4,7 @@ import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "pendulumlabs.market.market";
 
-/** FundTreasuryProposal details a dao fund treasury proposal. */
+/** DenomMetadataProposal details adding denom metadata */
 export interface DenomMetadataProposal {
   sender: string;
   title: string;

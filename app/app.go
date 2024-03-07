@@ -95,6 +95,7 @@ import (
 	market "github.com/pendulum-labs/market/x/market"
 	marketclient "github.com/pendulum-labs/market/x/market/client"
 	marketkeeper "github.com/pendulum-labs/market/x/market/keeper"
+	marketclienttypes "github.com/pendulum-labs/market/x/market/types"
 	markettypes "github.com/pendulum-labs/market/x/market/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
@@ -340,7 +341,8 @@ func New(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
+		AddRoute(marketclienttypes.RouterKey, market.NewDenomMetadataProposalHandler(app.MarketKeeper))
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(

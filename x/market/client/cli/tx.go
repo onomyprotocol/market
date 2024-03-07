@@ -30,7 +30,6 @@ func GetTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand(CmdDenomMetadataProposal())
 	cmd.AddCommand(CmdCreatePool())
 	cmd.AddCommand(CmdCreateDrop())
 	cmd.AddCommand(CmdRedeemDrop())

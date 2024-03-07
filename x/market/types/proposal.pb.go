@@ -24,7 +24,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// FundTreasuryProposal details a dao fund treasury proposal.
+// DenomMetadataProposal details adding denom metadata
 type DenomMetadataProposal struct {
 	Sender      string          `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	Title       string          `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`

@@ -7,7 +7,7 @@ import "cosmos/bank/v1beta1/bank.proto";
 option go_package = "github.com/pendulum-labs/market/x/market/types";
 option (gogoproto.equal_all) = true;
 
-// FundTreasuryProposal details a dao fund treasury proposal.
+// DenomMetadataProposal details adding denom metadata
 message DenomMetadataProposal {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;

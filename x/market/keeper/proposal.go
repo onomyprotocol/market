@@ -7,7 +7,7 @@ import (
 	"github.com/pendulum-labs/market/x/market/types"
 )
 
-// FundTreasuryProposal submits the FundTreasuryProposal.
+// DenomMetadataProposal submition.
 func (k Keeper) DenomMetadataProposal(ctx sdk.Context, request *types.DenomMetadataProposal) error {
 
 	_, exists := k.bankKeeper.GetDenomMetaData(ctx, request.Metadata.Base)
