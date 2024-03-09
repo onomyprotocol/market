@@ -95,8 +95,16 @@ export interface QueryDropAmountsResponse {
 }
 
 export interface QueryDropsToCoinsRequest {
-  pair: string;
+  denom1: string;
+  denom2: string;
   drops: string;
+}
+
+export interface QueryDropsToCoinsResponse {
+  denom1: string;
+  amount1: string;
+  denom2: string;
+  amount2: string;
 }
 
 export interface QueryDropPairsRequest {
@@ -1495,18 +1503,25 @@ export const QueryDropAmountsResponse = {
   },
 };
 
-const baseQueryDropsToCoinsRequest: object = { pair: "", drops: "" };
+const baseQueryDropsToCoinsRequest: object = {
+  denom1: "",
+  denom2: "",
+  drops: "",
+};
 
 export const QueryDropsToCoinsRequest = {
   encode(
     message: QueryDropsToCoinsRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.pair !== "") {
-      writer.uint32(10).string(message.pair);
+    if (message.denom1 !== "") {
+      writer.uint32(10).string(message.denom1);
+    }
+    if (message.denom2 !== "") {
+      writer.uint32(18).string(message.denom2);
     }
     if (message.drops !== "") {
-      writer.uint32(18).string(message.drops);
+      writer.uint32(26).string(message.drops);
     }
     return writer;
   },
@@ -1524,9 +1539,12 @@ export const QueryDropsToCoinsRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.pair = reader.string();
+          message.denom1 = reader.string();
           break;
         case 2:
+          message.denom2 = reader.string();
+          break;
+        case 3:
           message.drops = reader.string();
           break;
         default:
@@ -1541,10 +1559,15 @@ export const QueryDropsToCoinsRequest = {
     const message = {
       ...baseQueryDropsToCoinsRequest,
     } as QueryDropsToCoinsRequest;
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = String(object.pair);
+    if (object.denom1 !== undefined && object.denom1 !== null) {
+      message.denom1 = String(object.denom1);
     } else {
-      message.pair = "";
+      message.denom1 = "";
+    }
+    if (object.denom2 !== undefined && object.denom2 !== null) {
+      message.denom2 = String(object.denom2);
+    } else {
+      message.denom2 = "";
     }
     if (object.drops !== undefined && object.drops !== null) {
       message.drops = String(object.drops);
@@ -1556,7 +1579,8 @@ export const QueryDropsToCoinsRequest = {
 
   toJSON(message: QueryDropsToCoinsRequest): unknown {
     const obj: any = {};
-    message.pair !== undefined && (obj.pair = message.pair);
+    message.denom1 !== undefined && (obj.denom1 = message.denom1);
+    message.denom2 !== undefined && (obj.denom2 = message.denom2);
     message.drops !== undefined && (obj.drops = message.drops);
     return obj;
   },
@@ -1567,15 +1591,145 @@ export const QueryDropsToCoinsRequest = {
     const message = {
       ...baseQueryDropsToCoinsRequest,
     } as QueryDropsToCoinsRequest;
-    if (object.pair !== undefined && object.pair !== null) {
-      message.pair = object.pair;
+    if (object.denom1 !== undefined && object.denom1 !== null) {
+      message.denom1 = object.denom1;
     } else {
-      message.pair = "";
+      message.denom1 = "";
+    }
+    if (object.denom2 !== undefined && object.denom2 !== null) {
+      message.denom2 = object.denom2;
+    } else {
+      message.denom2 = "";
     }
     if (object.drops !== undefined && object.drops !== null) {
       message.drops = object.drops;
     } else {
       message.drops = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryDropsToCoinsResponse: object = {
+  denom1: "",
+  amount1: "",
+  denom2: "",
+  amount2: "",
+};
+
+export const QueryDropsToCoinsResponse = {
+  encode(
+    message: QueryDropsToCoinsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.denom1 !== "") {
+      writer.uint32(10).string(message.denom1);
+    }
+    if (message.amount1 !== "") {
+      writer.uint32(18).string(message.amount1);
+    }
+    if (message.denom2 !== "") {
+      writer.uint32(26).string(message.denom2);
+    }
+    if (message.amount2 !== "") {
+      writer.uint32(34).string(message.amount2);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryDropsToCoinsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDropsToCoinsResponse,
+    } as QueryDropsToCoinsResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.denom1 = reader.string();
+          break;
+        case 2:
+          message.amount1 = reader.string();
+          break;
+        case 3:
+          message.denom2 = reader.string();
+          break;
+        case 4:
+          message.amount2 = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDropsToCoinsResponse {
+    const message = {
+      ...baseQueryDropsToCoinsResponse,
+    } as QueryDropsToCoinsResponse;
+    if (object.denom1 !== undefined && object.denom1 !== null) {
+      message.denom1 = String(object.denom1);
+    } else {
+      message.denom1 = "";
+    }
+    if (object.amount1 !== undefined && object.amount1 !== null) {
+      message.amount1 = String(object.amount1);
+    } else {
+      message.amount1 = "";
+    }
+    if (object.denom2 !== undefined && object.denom2 !== null) {
+      message.denom2 = String(object.denom2);
+    } else {
+      message.denom2 = "";
+    }
+    if (object.amount2 !== undefined && object.amount2 !== null) {
+      message.amount2 = String(object.amount2);
+    } else {
+      message.amount2 = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDropsToCoinsResponse): unknown {
+    const obj: any = {};
+    message.denom1 !== undefined && (obj.denom1 = message.denom1);
+    message.amount1 !== undefined && (obj.amount1 = message.amount1);
+    message.denom2 !== undefined && (obj.denom2 = message.denom2);
+    message.amount2 !== undefined && (obj.amount2 = message.amount2);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDropsToCoinsResponse>
+  ): QueryDropsToCoinsResponse {
+    const message = {
+      ...baseQueryDropsToCoinsResponse,
+    } as QueryDropsToCoinsResponse;
+    if (object.denom1 !== undefined && object.denom1 !== null) {
+      message.denom1 = object.denom1;
+    } else {
+      message.denom1 = "";
+    }
+    if (object.amount1 !== undefined && object.amount1 !== null) {
+      message.amount1 = object.amount1;
+    } else {
+      message.amount1 = "";
+    }
+    if (object.denom2 !== undefined && object.denom2 !== null) {
+      message.denom2 = object.denom2;
+    } else {
+      message.denom2 = "";
+    }
+    if (object.amount2 !== undefined && object.amount2 !== null) {
+      message.amount2 = object.amount2;
+    } else {
+      message.amount2 = "";
     }
     return message;
   },
@@ -4539,7 +4693,7 @@ export interface Query {
   /** Converts drops to coin amounts */
   DropsToCoins(
     request: QueryDropsToCoinsRequest
-  ): Promise<QueryDropAmountsResponse>;
+  ): Promise<QueryDropsToCoinsResponse>;
   /** Queries a Drop by index. */
   DropPairs(request: QueryDropPairsRequest): Promise<QueryDropPairsResponse>;
   /** Queries a Drop by index. */
@@ -4687,7 +4841,7 @@ export class QueryClientImpl implements Query {
 
   DropsToCoins(
     request: QueryDropsToCoinsRequest
-  ): Promise<QueryDropAmountsResponse> {
+  ): Promise<QueryDropsToCoinsResponse> {
     const data = QueryDropsToCoinsRequest.encode(request).finish();
     const promise = this.rpc.request(
       "pendulumlabs.market.market.Query",
@@ -4695,7 +4849,7 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) =>
-      QueryDropAmountsResponse.decode(new Reader(data))
+      QueryDropsToCoinsResponse.decode(new Reader(data))
     );
   }
 
