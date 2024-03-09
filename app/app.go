@@ -334,6 +334,14 @@ func New(
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
 	)
+	app.MarketKeeper = *marketkeeper.NewKeeper(
+		appCodec,
+		keys[markettypes.StoreKey],
+		keys[markettypes.MemStoreKey],
+		app.GetSubspace(markettypes.ModuleName),
+
+		app.BankKeeper,
+	)
 
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -371,14 +379,6 @@ func New(
 		&stakingKeeper, govRouter,
 	)
 
-	app.MarketKeeper = *marketkeeper.NewKeeper(
-		appCodec,
-		keys[markettypes.StoreKey],
-		keys[markettypes.MemStoreKey],
-		app.GetSubspace(markettypes.ModuleName),
-
-		app.BankKeeper,
-	)
 	marketModule := market.NewAppModule(appCodec, app.MarketKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
