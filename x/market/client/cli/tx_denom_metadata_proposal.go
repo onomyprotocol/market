@@ -32,13 +32,13 @@ type proposalGeneric struct {
 // CmdFundTreasuryProposal implements the command to submit a fund-treasury proposal.
 func CmdDenomMetadataProposal() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "denom-metadata",
+		Use:   "denom-metadata --metadata-path string",
 		Args:  cobra.ExactArgs(0),
 		Short: "Submit a denom metadata proposal",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Submit a denom metadata proposal.
 Example:
-$ %s tx gov submit-proposal denom-metadata --title="Test Proposal" --description="My awesome proposal" --deposit="10000000000000000000aonex"`,
+$ %s tx gov submit-proposal denom-metadata --title="Test Proposal" --description="My awesome proposal" --deposit="10000000000000000000aonex" --metadata-path "./metadata.json"`,
 				version.AppName,
 			),
 		),
